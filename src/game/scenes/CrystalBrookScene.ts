@@ -22,16 +22,128 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
   CRYSTAL_BROOK_LOCATION_ID,
+  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
+  CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_MAP,
-  CRYSTAL_BROOK_LOWER_POOL,
-  CRYSTAL_BROOK_MAIN_ROUTE,
-  CRYSTAL_BROOK_UPPER_POOL,
+  CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
+  CRYSTAL_BROOK_REFLECTION_FEEDER,
+  CRYSTAL_BROOK_REFLECTION_POOL,
+  CRYSTAL_BROOK_UPSTREAM_CASCADE,
+  CRYSTAL_BROOK_WATER_GLINTS,
+  CRYSTAL_BROOK_WATERCOURSE,
+  type CrystalBrookWatercoursePoint,
 } from '../world/CrystalBrookMap';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
 const PLAYER_TEXTURE_KEY = 'player-unicorn-crystal-brook';
 const BROOK_VISITED_FLAG = 'flag:visited-crystal-brook';
+
+type WaterWidthKey = 'outerWidth' | 'innerWidth' | 'deepWidth';
+
+function buildRibbonPolygon(
+  points: readonly { x: number; y: number }[],
+  halfWidthAt: (index: number) => number,
+): Phaser.Math.Vector2[] {
+  const left: Phaser.Math.Vector2[] = [];
+  const right: Phaser.Math.Vector2[] = [];
+
+  for (let index = 0; index < points.length; index += 1) {
+    const previous = points[Math.max(0, index - 1)];
+    const next = points[Math.min(points.length - 1, index + 1)];
+    const dx = next.x - previous.x;
+    const dy = next.y - previous.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const normalX = -dy / length;
+    const normalY = dx / length;
+    const halfWidth = halfWidthAt(index);
+    const point = points[index];
+
+    left.push(
+      new Phaser.Math.Vector2(point.x + normalX * halfWidth, point.y + normalY * halfWidth),
+    );
+    right.push(
+      new Phaser.Math.Vector2(point.x - normalX * halfWidth, point.y - normalY * halfWidth),
+    );
+  }
+
+  return [...left, ...right.reverse()];
+}
+
+function fillVariableRibbon(
+  graphics: Phaser.GameObjects.Graphics,
+  points: readonly CrystalBrookWatercoursePoint[],
+  widthKey: WaterWidthKey,
+  colour: number,
+  alpha: number,
+): void {
+  graphics.fillStyle(colour, alpha);
+  graphics.fillPoints(
+    buildRibbonPolygon(points, (index) => points[index][widthKey] / 2),
+    true,
+  );
+}
+
+function fillConstantRibbon(
+  graphics: Phaser.GameObjects.Graphics,
+  points: readonly { x: number; y: number }[],
+  width: number,
+  colour: number,
+  alpha: number,
+): void {
+  graphics.fillStyle(colour, alpha);
+  graphics.fillPoints(
+    buildRibbonPolygon(points, () => width / 2),
+    true,
+  );
+}
+
+function smoothPoints(
+  points: readonly { x: number; y: number }[],
+  samplesPerSpan = 6,
+): { x: number; y: number }[] {
+  if (points.length < 3) {
+    return points.map(({ x, y }) => ({ x, y }));
+  }
+
+  const xs = points.map(({ x }) => x);
+  const ys = points.map(({ y }) => y);
+  const sampleCount = Math.max(points.length, (points.length - 1) * samplesPerSpan + 1);
+
+  return Array.from({ length: sampleCount }, (_, index) => {
+    const t = index / (sampleCount - 1);
+    return {
+      x: Phaser.Math.Interpolation.CatmullRom(xs, t),
+      y: Phaser.Math.Interpolation.CatmullRom(ys, t),
+    };
+  });
+}
+
+function smoothWatercourse(
+  points: readonly CrystalBrookWatercoursePoint[],
+): CrystalBrookWatercoursePoint[] {
+  if (points.length < 3) {
+    return points.map((point) => ({ ...point }));
+  }
+
+  const xs = points.map(({ x }) => x);
+  const ys = points.map(({ y }) => y);
+  const outerWidths = points.map(({ outerWidth }) => outerWidth);
+  const innerWidths = points.map(({ innerWidth }) => innerWidth);
+  const deepWidths = points.map(({ deepWidth }) => deepWidth);
+  const sampleCount = (points.length - 1) * 5 + 1;
+
+  return Array.from({ length: sampleCount }, (_, index) => {
+    const t = index / (sampleCount - 1);
+    return {
+      x: Phaser.Math.Interpolation.CatmullRom(xs, t),
+      y: Phaser.Math.Interpolation.CatmullRom(ys, t),
+      outerWidth: Math.max(1, Phaser.Math.Interpolation.CatmullRom(outerWidths, t)),
+      innerWidth: Math.max(1, Phaser.Math.Interpolation.CatmullRom(innerWidths, t)),
+      deepWidth: Math.max(1, Phaser.Math.Interpolation.CatmullRom(deepWidths, t)),
+    };
+  });
+}
 
 export class CrystalBrookScene extends Phaser.Scene {
   private readonly audio = getVerticalSliceAudio();
@@ -295,19 +407,51 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
-    const path = this.add.graphics().setDepth(2);
-    const mainRoute = CRYSTAL_BROOK_MAIN_ROUTE;
-    path.lineStyle(128, 0xe8d4a5, 0.9);
-    path.beginPath();
-    path.moveTo(mainRoute[0].x, mainRoute[0].y);
-    for (const point of mainRoute.slice(1)) {
-      path.lineTo(point.x, point.y);
-    }
-    path.strokePath();
-    path.lineStyle(72, 0xf4e8c5, 0.92);
-    path.strokePath();
+    const pathNetwork = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.86);
+
+    const drawSegments = (
+      segments: readonly (readonly { x: number; y: number }[])[],
+      width: number,
+      colour: number,
+    ): void => {
+      pathNetwork.lineStyle(width, colour, 1);
+      pathNetwork.fillStyle(colour, 1);
+      for (const segment of segments) {
+        const first = segment[0];
+        if (!first) {
+          continue;
+        }
+        const smoothedSegment = smoothPoints(segment);
+        pathNetwork.beginPath();
+        pathNetwork.moveTo(smoothedSegment[0].x, smoothedSegment[0].y);
+        for (const point of smoothedSegment.slice(1)) {
+          pathNetwork.lineTo(point.x, point.y);
+        }
+        pathNetwork.strokePath();
+        for (const point of segment) {
+          pathNetwork.fillCircle(point.x, point.y, width / 2);
+        }
+      }
+    };
+
+    // Paint every outer edge first, then every inner surface. This makes the Crystal Cup
+    // branch a genuine joined path rather than laying its darker outer band over the main trail.
+    drawSegments(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 128, 0xd7c18f);
+    drawSegments([CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE], 82, 0xd7c18f);
+    drawSegments(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 108, 0xf0dfb2);
+    drawSegments([CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE], 64, 0xf0dfb2);
+
+    this.add
+      .zone(
+        CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE[0].x,
+        CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE[0].y,
+        2,
+        2,
+      )
+      .setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
+    this.createIceBridges();
     this.createSteppingStones();
     this.createSecretTrail();
     this.createBanks();
@@ -316,26 +460,234 @@ export class CrystalBrookScene extends Phaser.Scene {
   }
 
   private createWater(): void {
-    const upperPool = CRYSTAL_BROOK_UPPER_POOL;
-    const lowerPool = CRYSTAL_BROOK_LOWER_POOL;
-    this.add.ellipse(upperPool.x, upperPool.y, 500, 260, 0x5bc4d4, 0.9).setDepth(3);
-    this.add.ellipse(upperPool.x, upperPool.y, 390, 180, 0x91e0e3, 0.65).setDepth(4);
-    this.add.ellipse(lowerPool.x, lowerPool.y, 460, 260, 0x58bfd0, 0.9).setDepth(3);
-    this.add.ellipse(lowerPool.x, lowerPool.y, 350, 170, 0x91e1e3, 0.62).setDepth(4);
+    const watercourse = smoothWatercourse(CRYSTAL_BROOK_WATERCOURSE);
+    const outerWater = this.add.graphics().setName('crystal-brook:watercourse-outer').setDepth(3);
+    fillVariableRibbon(outerWater, watercourse, 'outerWidth', 0x579da4, 0.58);
 
-    const stream = this.add.graphics().setDepth(3);
-    stream.lineStyle(CRYSTAL_BROOK_MAP.shallowStream.width, 0x63c8d5, 0.82);
-    stream.beginPath();
-    stream.moveTo(
-      CRYSTAL_BROOK_MAP.shallowStream.points[0].x,
-      CRYSTAL_BROOK_MAP.shallowStream.points[0].y,
+    const innerWater = this.add
+      .graphics()
+      .setName('crystal-brook:watercourse-inner')
+      .setDepth(3.03);
+    fillVariableRibbon(innerWater, watercourse, 'innerWidth', 0x78cbd0, 0.86);
+
+    const deepChannel = this.add
+      .graphics()
+      .setName('crystal-brook:watercourse-deep')
+      .setDepth(3.06);
+    fillVariableRibbon(deepChannel, watercourse, 'deepWidth', 0x438f9d, 0.58);
+
+    const reflectionFeeder = this.add
+      .graphics()
+      .setName('crystal-brook:reflection-feeder')
+      .setDepth(3.01);
+    fillConstantRibbon(
+      reflectionFeeder,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.points,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth,
+      0x579da4,
+      0.42,
     );
-    for (const point of CRYSTAL_BROOK_MAP.shallowStream.points.slice(1)) {
-      stream.lineTo(point.x, point.y);
+    fillConstantRibbon(
+      reflectionFeeder,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.points,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.innerWidth,
+      0x78cbd0,
+      0.72,
+    );
+
+    this.add
+      .ellipse(
+        CRYSTAL_BROOK_REFLECTION_POOL.x,
+        CRYSTAL_BROOK_REFLECTION_POOL.y,
+        292,
+        138,
+        0x579da4,
+        0.62,
+      )
+      .setName('crystal-brook:reflection-pool-outer')
+      .setDepth(3);
+    this.add
+      .ellipse(
+        CRYSTAL_BROOK_REFLECTION_POOL.x,
+        CRYSTAL_BROOK_REFLECTION_POOL.y,
+        232,
+        102,
+        0x78cbd0,
+        0.86,
+      )
+      .setName('crystal-brook:reflection-pool-inner')
+      .setDepth(3.03);
+    this.add
+      .ellipse(
+        CRYSTAL_BROOK_REFLECTION_POOL.x,
+        CRYSTAL_BROOK_REFLECTION_POOL.y,
+        118,
+        48,
+        0x438f9d,
+        0.56,
+      )
+      .setName('crystal-brook:reflection-pool-deep')
+      .setDepth(3.06);
+
+    const cascade = this.add.graphics().setName('crystal-brook:upstream-cascade').setDepth(3.08);
+    const cascadeX = CRYSTAL_BROOK_UPSTREAM_CASCADE.x;
+    const cascadeY = CRYSTAL_BROOK_UPSTREAM_CASCADE.y;
+    cascade.fillStyle(0x78cbd0, 0.72);
+    cascade.fillPoints(
+      [
+        new Phaser.Math.Vector2(cascadeX - 62, cascadeY - 86),
+        new Phaser.Math.Vector2(cascadeX + 64, cascadeY - 92),
+        new Phaser.Math.Vector2(cascadeX + 52, cascadeY + 72),
+        new Phaser.Math.Vector2(cascadeX - 50, cascadeY + 80),
+      ],
+      true,
+    );
+    cascade.fillStyle(0xcdf5f1, 0.34);
+    for (const offset of [-34, -8, 20, 44]) {
+      cascade.fillRoundedRect(
+        cascadeX + offset - 6,
+        cascadeY - 74 + Math.abs(offset) * 0.14,
+        12,
+        132 - Math.abs(offset) * 0.28,
+        6,
+      );
     }
-    stream.strokePath();
-    stream.lineStyle(54, 0xa8e9e5, 0.55);
-    stream.strokePath();
+    cascade.fillStyle(0xe9ffff, 0.34);
+    cascade.fillEllipse(cascadeX, cascadeY + 82, 150, 34);
+
+    const glints = this.add.graphics().setName('crystal-brook:water-glints').setDepth(3.12);
+    glints.lineStyle(5, 0xeaffff, 0.34);
+    for (const glint of CRYSTAL_BROOK_WATER_GLINTS) {
+      const radians = Phaser.Math.DegToRad(glint.angle);
+      const dx = Math.cos(radians) * (glint.width / 2);
+      const dy = Math.sin(radians) * (glint.width / 2);
+      glints.beginPath();
+      glints.moveTo(glint.x - dx, glint.y - dy);
+      glints.lineTo(glint.x + dx, glint.y + dy);
+      glints.strokePath();
+    }
+  }
+
+  private createIceBridges(): void {
+    for (const bridge of CRYSTAL_BROOK_ICE_BRIDGES) {
+      const container = this.add
+        .container(bridge.centre.x, bridge.centre.y)
+        .setName(`crystal-brook:ice-bridge:${bridge.id}`)
+        .setAngle(bridge.angle)
+        .setDepth(3.5);
+
+      const shadow = this.add
+        .ellipse(8, 10, bridge.length + 26, bridge.deckWidth + 22, 0x31566a, 0.16)
+        .setOrigin(0.5);
+      const deck = this.add.graphics();
+      deck.fillStyle(0xa8e7f1, 0.78);
+      deck.fillRoundedRect(
+        -bridge.length / 2,
+        -bridge.deckWidth / 2,
+        bridge.length,
+        bridge.deckWidth,
+        bridge.deckWidth / 2,
+      );
+      deck.lineStyle(4, 0xedffff, 0.9);
+      deck.strokeRoundedRect(
+        -bridge.length / 2,
+        -bridge.deckWidth / 2,
+        bridge.length,
+        bridge.deckWidth,
+        bridge.deckWidth / 2,
+      );
+      deck.fillStyle(0xe8ffff, 0.32);
+      deck.fillRoundedRect(
+        -bridge.length / 2 + 18,
+        -bridge.deckWidth * 0.22,
+        bridge.length - 36,
+        bridge.deckWidth * 0.44,
+        bridge.deckWidth * 0.22,
+      );
+
+      container.add([shadow, deck]);
+
+      const facetCount = 7;
+      const facetSpacing = (bridge.length - 46) / facetCount;
+      for (let index = 0; index < facetCount; index += 1) {
+        const x = -bridge.length / 2 + 23 + facetSpacing * (index + 0.5);
+        const facetWidth = facetSpacing * 0.9;
+        container.add(
+          this.add
+            .polygon(
+              x,
+              index % 2 === 0 ? -4 : 4,
+              [
+                -facetWidth / 2,
+                0,
+                -facetWidth * 0.16,
+                -bridge.deckWidth * 0.38,
+                facetWidth / 2,
+                -bridge.deckWidth * 0.14,
+                facetWidth * 0.2,
+                bridge.deckWidth * 0.34,
+              ],
+              index % 2 === 0 ? 0xc9f5fa : 0x9fdce9,
+              0.34,
+            )
+            .setStrokeStyle(1, 0xf6ffff, 0.24),
+        );
+      }
+
+      for (const side of [-1, 1] as const) {
+        const railY = side * (bridge.deckWidth / 2 + 11);
+        const rail = this.add.graphics();
+        rail.lineStyle(5, 0xb7edf5, 0.92);
+        rail.beginPath();
+        rail.moveTo(-bridge.length / 2 + 12, railY);
+        rail.lineTo(bridge.length / 2 - 12, railY);
+        rail.strokePath();
+
+        rail.lineStyle(2, 0xeaffff, 0.72);
+        const postXs: number[] = [];
+        for (let x = -bridge.length / 2 + 26; x <= bridge.length / 2 - 20; x += 52) {
+          postXs.push(x);
+        }
+        for (let index = 0; index < postXs.length - 1; index += 1) {
+          const x1 = postXs[index];
+          const x2 = postXs[index + 1];
+          const braceOffset = side * 14;
+          rail.beginPath();
+          rail.moveTo(x1, railY);
+          rail.lineTo((x1 + x2) / 2, railY + braceOffset);
+          rail.lineTo(x2, railY);
+          rail.strokePath();
+        }
+        container.add(rail);
+
+        for (const [index, x] of postXs.entries()) {
+          const crystalHeight = index % 3 === 0 ? 42 : index % 2 === 0 ? 31 : 25;
+          container.add(
+            this.add
+              .triangle(
+                x,
+                railY,
+                0,
+                crystalHeight,
+                12,
+                0,
+                24,
+                crystalHeight,
+                index % 3 === 0 ? 0xa9edf4 : 0xc8bcf0,
+                0.92,
+              )
+              .setStrokeStyle(2, 0xf7ffff, 0.82)
+              .setAngle(side < 0 ? 180 : 0),
+          );
+        }
+      }
+
+      container.add(
+        this.add
+          .rectangle(0, -bridge.deckWidth * 0.12, bridge.length - 54, 4, 0xffffff, 0.34)
+          .setAngle(-1),
+      );
+    }
   }
 
   private createSteppingStones(): void {

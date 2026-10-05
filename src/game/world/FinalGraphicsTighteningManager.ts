@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
-import { CRYSTAL_BROOK_MAP } from './CrystalBrookMap';
 
 const PREFIX = 'final-graphics-tightening';
 const R6_GATEWAY_ANCHOR = 'r6-region-gateway-art-anchor';
@@ -58,49 +57,8 @@ function softenBackdropCircles(
   }
 }
 
-function drawRoundedStroke(
-  graphics: Phaser.GameObjects.Graphics,
-  width: number,
-  colour: number,
-  alpha: number,
-): void {
-  const points = CRYSTAL_BROOK_MAP.shallowStream.points;
-  graphics.lineStyle(width, colour, alpha);
-  graphics.beginPath();
-  graphics.moveTo(points[0].x, points[0].y);
-  for (const point of points.slice(1)) {
-    graphics.lineTo(point.x, point.y);
-  }
-  graphics.strokePath();
-  graphics.fillStyle(colour, alpha);
-  for (const point of points) {
-    graphics.fillCircle(point.x, point.y, width / 2);
-  }
-}
-
-function replaceCrystalBrookStream(scene: Phaser.Scene): void {
-  const replacementName = `${PREFIX}:crystal-brook-stream`;
-  if (scene.children.getByName(replacementName)) {
-    return;
-  }
-
-  const legacyStream = scene.children.list.find(
-    (object): object is Phaser.GameObjects.Graphics =>
-      object instanceof Phaser.GameObjects.Graphics &&
-      object.name.length === 0 &&
-      approximately(object.depth, 3, 0.01),
-  );
-  legacyStream?.setVisible(false);
-
-  const stream = scene.add.graphics().setName(replacementName).setDepth(3.05);
-  drawRoundedStroke(stream, CRYSTAL_BROOK_MAP.shallowStream.width + 10, 0x55b8c8, 0.42);
-  drawRoundedStroke(stream, CRYSTAL_BROOK_MAP.shallowStream.width - 8, 0x63c8d5, 0.9);
-  drawRoundedStroke(stream, 48, 0xa8e9e5, 0.5);
-}
-
 function tightenCrystalBrook(scene: Phaser.Scene): void {
   softenBackdropCircles(scene, CRYSTAL_BROOK_BACKDROPS);
-  replaceCrystalBrookStream(scene);
   if (!scene.children.getByName(`${PREFIX}:crystal-brook-anchor`)) {
     scene.add.zone(-64, -64, 2, 2).setName(`${PREFIX}:crystal-brook-anchor`).setVisible(false);
   }

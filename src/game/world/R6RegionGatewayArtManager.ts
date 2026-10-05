@@ -1,11 +1,8 @@
 import Phaser from 'phaser';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import {
-  CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
   CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD,
-  CRYSTAL_BROOK_LEGACY_CASCADE,
   CRYSTAL_BROOK_MEADOW_THRESHOLD,
-  CRYSTAL_BROOK_WOODS_ROUTE,
   CRYSTAL_BROOK_WOODS_THRESHOLD,
 } from './CrystalBrookMap';
 import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
@@ -377,38 +374,162 @@ function createWoodlandThreshold(
   );
 }
 
-function createCascadeRaceGate(scene: Phaser.Scene, x: number, y: number): void {
+function createBrookEastWoodland(scene: Phaser.Scene): void {
+  const woodland = name(scene.add.container(0, 0).setDepth(6.2), 'crystal-brook:east-woodland');
+
+  const treePositions = [
+    [3345, 430, 0.78],
+    [3470, 455, 1.04],
+    [3610, 500, 0.88],
+    [3710, 590, 1.16],
+    [3380, 720, 0.68],
+    [3505, 735, 1.08],
+    [3655, 790, 0.94],
+    [3750, 900, 1.2],
+    [3420, 990, 0.76],
+    [3540, 1025, 1.14],
+    [3685, 1080, 0.9],
+    [3770, 1190, 1.24],
+    [3385, 1280, 0.72],
+    [3525, 1300, 1.08],
+    [3680, 1365, 0.98],
+    [3315, 1475, 0.74],
+    [3560, 1495, 1.12],
+    [3705, 1550, 0.9],
+    [3330, 1715, 0.86],
+    [3495, 1690, 1.18],
+    [3650, 1770, 0.96],
+    [3750, 1880, 1.2],
+    [3390, 1960, 0.78],
+    [3545, 1990, 1.1],
+    [3695, 2060, 0.92],
+  ] as const;
+
+  for (const [index, [x, y, scale]] of treePositions.entries()) {
+    const trunkWidth = (index % 3 === 0 ? 34 : 39) * scale;
+    const trunkHeight = (index % 4 === 0 ? 154 : 178) * scale;
+    const canopyA = index % 2 === 0 ? 0x2f5f48 : 0x28543f;
+    const canopyB = index % 3 === 0 ? 0x42745a : 0x37684f;
+    const canopyC = index % 4 === 0 ? 0x4e8261 : 0x46795a;
+    const lean = index % 2 === 0 ? -5 : 4;
+    const spread = 0.9 + (index % 5) * 0.05;
+
+    woodland.add([
+      scene.add
+        .rectangle(x, y, trunkWidth, trunkHeight, 0x544638, 1)
+        .setStrokeStyle(3, 0x3f372f, 0.84)
+        .setAngle(lean),
+      scene.add.ellipse(
+        x - 42 * scale,
+        y - 82 * scale,
+        132 * scale * spread,
+        100 * scale,
+        canopyA,
+        0.98,
+      ),
+      scene.add.ellipse(
+        x + 34 * scale,
+        y - 100 * scale,
+        148 * scale * spread,
+        108 * scale,
+        canopyB,
+        0.97,
+      ),
+      scene.add.ellipse(
+        x + (index % 2 === 0 ? -8 : 12) * scale,
+        y - 136 * scale,
+        122 * scale,
+        92 * scale,
+        canopyC,
+        0.92,
+      ),
+    ]);
+  }
+
+  for (const [x, y, width, height, angle] of [
+    [3370, 1435, 116, 58, -10],
+    [3490, 1450, 132, 64, 8],
+    [3620, 1510, 126, 60, -6],
+    [3410, 1620, 108, 54, 11],
+    [3570, 1650, 138, 66, -8],
+    [3710, 1670, 122, 58, 6],
+    [3440, 1850, 118, 58, -5],
+    [3610, 1890, 130, 62, 9],
+  ] as const) {
+    woodland.add([
+      scene.add.ellipse(x, y, width, height, 0x4f8057, 0.86).setAngle(angle),
+      scene.add
+        .ellipse(x + 30, y - 10, width * 0.72, height * 0.8, 0x5d9361, 0.78)
+        .setAngle(-angle),
+    ]);
+  }
+
+  for (const [x, y, scale] of [
+    [3370, 820, 0.42],
+    [3540, 1130, 0.5],
+    [3460, 1810, 0.46],
+  ] as const) {
+    woodland.add(
+      scene.add
+        .triangle(x, y, 0, 34 * scale, 13 * scale, 0, 26 * scale, 34 * scale, 0xa9eaf0, 0.72)
+        .setStrokeStyle(2, 0xf0ffff, 0.62),
+    );
+  }
+
+  // Semantic exit only: the visible language is now just trail + enclosing trees.
+  name(
+    scene.add.zone(
+      CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
+      CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
+      160,
+      180,
+    ),
+    'crystal-brook:woods-path-exit',
+  );
+}
+
+function createCrystalCupRacewayExit(scene: Phaser.Scene, x: number, y: number): void {
   const objects: Phaser.GameObjects.GameObject[] = [];
+
   objects.push(
-    scene.add.ellipse(0, 62, 250, 60, 0x65d5dc, 0.2),
-    scene.add.rectangle(-82, 0, 32, 210, 0x4d8d99, 1).setStrokeStyle(4, 0xbef3f3, 0.75),
-    scene.add.rectangle(82, 0, 32, 210, 0x4d8d99, 1).setStrokeStyle(4, 0xbef3f3, 0.75),
-    scene.add.rectangle(0, -88, 198, 48, 0xcaf6f3, 1).setStrokeStyle(5, 0x7189c3, 0.9),
+    scene.add.rectangle(-118, 28, 28, 176, 0x6ca9b3, 0.94).setStrokeStyle(4, 0xdffcff, 0.76),
+    scene.add.rectangle(118, 28, 28, 176, 0x6ca9b3, 0.94).setStrokeStyle(4, 0xdffcff, 0.76),
+    scene.add.rectangle(0, 92, 280, 42, 0x8bc9d1, 0.34).setStrokeStyle(3, 0xdffcff, 0.28),
+    scene.add.rectangle(0, -48, 300, 64, 0xe8fbff, 0.96).setStrokeStyle(6, 0x8ea7c8, 0.92),
     scene.add
-      .text(0, -88, '💎  CRYSTAL CASCADE  🏁', {
+      .text(0, -48, 'THE CRYSTAL CUP RACEWAY', {
         color: '#365965',
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '17px',
+        fontSize: '19px',
         fontStyle: 'bold',
       })
       .setOrigin(0.5),
-    scene.add.ellipse(0, 26, 128, 138, 0x3a7684, 0.32),
+    scene.add
+      .text(0, 112, '↑', {
+        color: '#eaffff',
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '34px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5),
   );
-  for (const [dx, dy, scale] of [
-    [-116, -8, 1],
-    [-122, 54, 0.7],
-    [116, -2, 0.9],
-    [126, 58, 0.68],
+
+  for (const [dx, dy, scale, colour] of [
+    [-146, 42, 1, 0xa6e9ef],
+    [-132, 104, 0.72, 0xcbbef1],
+    [145, 38, 0.9, 0xb8edf1],
+    [136, 104, 0.66, 0xd3c8f3],
   ] as const) {
     objects.push(
       scene.add
-        .triangle(dx, dy, 0, 48 * scale, 18 * scale, 0, 36 * scale, 48 * scale, 0xa1e9ef, 0.92)
-        .setStrokeStyle(3, 0xe8ffff, 0.8),
+        .triangle(dx, dy, 0, 52 * scale, 19 * scale, 0, 38 * scale, 52 * scale, colour, 0.9)
+        .setStrokeStyle(3, 0xf4ffff, 0.78),
     );
   }
+
   name(
-    scene.add.container(x, y, objects).setDepth(worldDepthForY(y, 0.8)),
-    'crystal-cascade:race-gate',
+    scene.add.container(x, y, objects).setDepth(worldDepthForY(y + 120, 0.82)),
+    'crystal-cup-raceway:edge-exit',
   );
 }
 
@@ -870,25 +991,9 @@ function updateMeadowCrystalBrookEffects(scene: Phaser.Scene): void {
 }
 
 function decorateBrook(scene: Phaser.Scene): void {
-  drawRoundedPath(scene, 'brook-woods', CRYSTAL_BROOK_WOODS_ROUTE, 88, 64, 0x8c8069, 0xcdbf96);
-  createWoodlandThreshold(
-    scene,
-    'brook-woods',
-    CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
-    CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
-    'Whispering Woods',
-  );
+  createBrookEastWoodland(scene);
 
-  drawRoundedPath(
-    scene,
-    'crystal-cascade',
-    CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
-    86,
-    60,
-    0x8aa0a2,
-    0xc6e4df,
-  );
-  createCascadeRaceGate(
+  createCrystalCupRacewayExit(
     scene,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.x,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.y,
@@ -907,7 +1012,6 @@ function decorateBrook(scene: Phaser.Scene): void {
     [520, 410, 360, 190],
     [880, 350, 300, 170],
     [2350, 310, 340, 190],
-    [3190, 520, 360, 220],
   ] as const) {
     cliffs.add(addRock(scene, x, y, width, height, 7.45, 0x748985));
     cliffs.add(addRock(scene, x, y - height * 0.16, width * 0.76, height * 0.52, 7.46, 0x8aa09a));
@@ -917,20 +1021,9 @@ function decorateBrook(scene: Phaser.Scene): void {
     [720, 455, 0.8],
     [2260, 420, 1],
     [2460, 410, 0.78],
-    [3150, 650, 1.05],
   ] as const) {
     cliffs.add(addCrystal(scene, x, y, scale, 7.6));
   }
-
-  const cascadePosition = CRYSTAL_BROOK_LEGACY_CASCADE;
-  const cascade = name(scene.add.container(0, 0).setDepth(6.2), 'crystal-brook:cascade-upgrade');
-  cascade.add([
-    scene.add.ellipse(cascadePosition.x, cascadePosition.y - 90, 310, 170, 0x637c7c, 0.9),
-    scene.add.rectangle(cascadePosition.x, cascadePosition.y, 150, 260, 0x5bc4d4, 0.82),
-    scene.add.rectangle(cascadePosition.x, cascadePosition.y, 62, 260, 0xb9f2ee, 0.48),
-    scene.add.ellipse(cascadePosition.x, cascadePosition.y + 140, 320, 104, 0x85e0e1, 0.64),
-    scene.add.ellipse(cascadePosition.x, cascadePosition.y + 136, 240, 46, 0xe6ffff, 0.46),
-  ]);
 }
 
 function decorateWoods(scene: Phaser.Scene): void {

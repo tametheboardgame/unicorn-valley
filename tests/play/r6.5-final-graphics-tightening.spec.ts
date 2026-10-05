@@ -96,27 +96,75 @@ test('Whispering Woods uses one connected entrance path and one light-shaft trea
   expect(Math.max(...largeBackdropCircles.map((object) => object.alpha))).toBeLessThanOrEqual(0.15);
 });
 
-test('Crystal Brook replaces sharp stream joins with one rounded stream treatment', async ({
+test('Crystal Brook owns one continuous filled water system without legacy replacement layers', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
   await waitForDiagnostics(page);
   await startScene(page, 'CrystalBrookScene');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:main-path');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:watercourse-outer');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:north-crossing');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:east-crossing');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:crystal-cup-spur');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-pool-outer');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:upstream-cascade');
+  await waitForObject(
+    page,
+    'CrystalBrookScene',
+    'r6-region-gateway-art:crystal-brook:east-woodland',
+  );
+  await waitForObject(
+    page,
+    'CrystalBrookScene',
+    'r6-region-gateway-art:crystal-brook:woods-path-exit',
+  );
   await waitForObject(page, 'CrystalBrookScene', 'final-graphics-tightening:crystal-brook-anchor');
 
   const objects = await getSceneObjects(page, 'CrystalBrookScene');
+  for (const name of [
+    'crystal-brook:main-path',
+    'crystal-brook:ice-bridge:north-crossing',
+    'crystal-brook:ice-bridge:east-crossing',
+    'crystal-brook:crystal-cup-spur',
+    'crystal-brook:reflection-feeder',
+    'crystal-brook:watercourse-outer',
+    'crystal-brook:watercourse-inner',
+    'crystal-brook:watercourse-deep',
+    'crystal-brook:reflection-pool-outer',
+    'crystal-brook:upstream-cascade',
+    'r6-region-gateway-art:crystal-brook:east-woodland',
+    'r6-region-gateway-art:crystal-brook:woods-path-exit',
+  ]) {
+    expect(objects.some((object) => object.name === name && object.visible)).toBe(true);
+  }
+
+  expect(
+    objects.some((object) => object.name === 'final-graphics-tightening:crystal-brook-stream'),
+  ).toBe(false);
+  expect(
+    objects.some((object) => object.name === 'exploration-path-polish' && object.visible),
+  ).toBe(false);
+  expect(
+    objects.some((object) => object.name === 'r6-wp6.18ij:crystal-cascade:path' && object.visible),
+  ).toBe(false);
+  expect(objects.some((object) => object.name === 'brook-depth:waterfall-mist-landmark')).toBe(
+    false,
+  );
+  expect(objects.some((object) => object.name === 'brook-depth:reflection-pool-landmark')).toBe(
+    false,
+  );
+  expect(
+    objects.some((object) => object.name === 'r6-region-gateway-art:crystal-brook:cascade-upgrade'),
+  ).toBe(false);
   expect(
     objects.some(
       (object) =>
-        object.name === 'final-graphics-tightening:crystal-brook-stream' && object.visible,
-    ),
-  ).toBe(true);
-  expect(
-    objects.some(
-      (object) =>
-        object.type === 'Graphics' && object.name === '' && object.depth === 3 && object.visible,
+        object.name === 'r6-region-gateway-art:brook-woods:woodland-threshold' && object.visible,
     ),
   ).toBe(false);
+  expect(objects.some((object) => object.name === 'brook-depth:cascade-memory')).toBe(false);
 
   const largeBackdropCircles = objects.filter(
     (object) => object.type === 'Arc' && object.depth === 1 && object.displayWidth > 1200,

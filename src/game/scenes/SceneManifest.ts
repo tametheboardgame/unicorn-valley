@@ -72,6 +72,13 @@ export const SCENE_MANIFEST = [
   startup('WhisperingWoodsScene', 'exploration'),
   startup('FireflyLanternScene', 'activity'),
   startup('RainbowRunEntryScene', 'exploration'),
+  runtime(
+    'CrystalCupEntryScene',
+    'exploration',
+    'on-demand',
+    'feature',
+    async () => (await import('./CrystalCupEntryScene')).CrystalCupEntryScene,
+  ),
   startup('NovaTutorialRaceScene', 'race'),
   startup('RaceScene', 'race'),
   startup('PipEggHatchScene', 'story'),

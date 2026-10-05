@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { CRYSTAL_CASCADE_RACE_ID } from '../../content/r5RaceIds';
 import {
   CRYSTAL_GROTTO_OPEN_FLAG,
   ECHO_CRYSTAL_SONG_COMPLETE_FLAG,
@@ -13,7 +12,6 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
 import {
-  CRYSTAL_BROOK_CASCADE_MEMORY,
   CRYSTAL_BROOK_ECHO_CLUE,
   CRYSTAL_BROOK_GROTTO_THRESHOLD,
   CRYSTAL_BROOK_PEBBLE_STACK,
@@ -23,7 +21,6 @@ import {
   CRYSTAL_BROOK_SINGING_CRYSTALS,
   CRYSTAL_BROOK_STEPPING_CHIME,
   CRYSTAL_BROOK_WATERFALL_MIST,
-  CRYSTAL_BROOK_WATERFALL_PRESENTATION,
 } from './CrystalBrookMap';
 import { worldDepthForY } from './WorldDepth';
 
@@ -137,15 +134,6 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     position: CRYSTAL_BROOK_PEBBLE_STACK,
     radius: 145,
     icon: '🪨',
-  },
-  {
-    id: 'cascade-memory',
-    label: 'Crystal Cascade overlook',
-    actionLabel: 'Look towards the course',
-    actionKind: 'inspect',
-    position: CRYSTAL_BROOK_CASCADE_MEMORY,
-    radius: 150,
-    icon: '🏁',
   },
 ];
 
@@ -308,9 +296,6 @@ export class CrystalBrookDepthWorldManager {
           'One, two, three… wobble… four! The tiny pebble tower stays up. For now. 🪨',
         );
         return;
-      case 'cascade-memory':
-        this.showFeedback(state, this.cascadeMessage());
-        return;
     }
   }
 
@@ -363,21 +348,11 @@ export class CrystalBrookDepthWorldManager {
     );
   }
 
-  private cascadeMessage(): string {
-    const record = this.saveService.load()?.activities.racesById[CRYSTAL_CASCADE_RACE_ID];
-    if (!record || (!record.bestTimeMs && record.ribbonIds.length === 0)) {
-      return 'The Crystal Cascade flags flicker beyond the water. The course is there whenever you fancy a run, but the Brook has plenty to do without racing.';
-    }
-    const best = record.bestTimeMs ? `${(record.bestTimeMs / 1000).toFixed(1)}s` : 'a finished run';
-    return `The course flags recognise you now: ${best}, ${record.ribbonIds.length} saved ribbon${record.ribbonIds.length === 1 ? '' : 's'}. The Brook itself is still worth exploring. 🎀`;
-  }
-
   private syncPersistent(state: BrookDepthState, force = false): void {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const signature = [
       save.world.flags[CRYSTAL_GROTTO_OPEN_FLAG] === true ? 'open' : '',
       save.world.flags[ECHO_CRYSTAL_SONG_COMPLETE_FLAG] === true ? 'song' : '',
-      save.activities.racesById[CRYSTAL_CASCADE_RACE_ID]?.ribbonIds.length ?? 0,
     ].join('|');
     if (!force && signature === state.signature) {
       return;
@@ -387,8 +362,6 @@ export class CrystalBrookDepthWorldManager {
     state.persistent?.destroy(true);
     const objects: Phaser.GameObjects.GameObject[] = [];
     this.addGrottoEntrance(state.scene, objects, this.story.isGrottoOpen());
-    this.addWaterfallLandmark(state.scene, objects);
-    this.addReflectionPoolLandmark(state.scene, objects);
     state.persistent = state.scene.add
       .container(0, 0, objects)
       .setName('brook-depth:persistent-state')
@@ -423,36 +396,6 @@ export class CrystalBrookDepthWorldManager {
           .setDepth(9),
       );
     }
-  }
-
-  private addWaterfallLandmark(
-    scene: Phaser.Scene,
-    objects: Phaser.GameObjects.GameObject[],
-  ): void {
-    const waterfall = CRYSTAL_BROOK_WATERFALL_PRESENTATION;
-    const mist = CRYSTAL_BROOK_WATERFALL_MIST;
-    objects.push(
-      scene.add
-        .rectangle(waterfall.x, waterfall.y, 145, 300, 0x8adfe5, 0.76)
-        .setStrokeStyle(4, 0xd7fbff, 0.5)
-        .setDepth(4)
-        .setName('brook-depth:waterfall-mist-landmark'),
-      scene.add.ellipse(mist.x, mist.y, 260, 110, 0xd7fbff, 0.18).setDepth(5),
-    );
-  }
-
-  private addReflectionPoolLandmark(
-    scene: Phaser.Scene,
-    objects: Phaser.GameObjects.GameObject[],
-  ): void {
-    const reflectionPool = CRYSTAL_BROOK_REFLECTION_POOL;
-    objects.push(
-      scene.add
-        .ellipse(reflectionPool.x, reflectionPool.y, 290, 125, 0x73cbd2, 0.8)
-        .setStrokeStyle(4, 0xc7f4ef, 0.62)
-        .setDepth(4)
-        .setName('brook-depth:reflection-pool-landmark'),
-    );
   }
 
   private showFeedback(state: BrookDepthState, message: string): void {

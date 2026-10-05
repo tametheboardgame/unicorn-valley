@@ -13,6 +13,7 @@ export const SCENE_KEYS = [
   'WhisperingWoodsScene',
   'FireflyLanternScene',
   'RainbowRunEntryScene',
+  'CrystalCupEntryScene',
   'NovaTutorialRaceScene',
   'RaceScene',
   'PipEggHatchScene',

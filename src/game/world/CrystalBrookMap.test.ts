@@ -2,9 +2,21 @@ import { describe, expect, it } from 'vitest';
 import {
   CRYSTAL_BROOK_ACTIVITY_POCKETS,
   CRYSTAL_BROOK_BOUNDARY_OPENINGS,
+  CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
   CRYSTAL_BROOK_DISTRICTS,
+  CRYSTAL_BROOK_EAST_BRIDGE,
+  CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_LAYOUT,
   CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_MEADOW_WATER_EXIT,
+  CRYSTAL_BROOK_NORTH_BRIDGE,
+  CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
+  CRYSTAL_BROOK_REFLECTION_FEEDER,
+  CRYSTAL_BROOK_REFLECTION_POOL,
+  CRYSTAL_BROOK_UPPER_POOL,
+  CRYSTAL_BROOK_LOWER_POOL,
+  CRYSTAL_BROOK_UPSTREAM_CASCADE,
+  CRYSTAL_BROOK_WATERCOURSE,
 } from './CrystalBrookMap';
 import {
   findUnreachableTargets,
@@ -64,9 +76,9 @@ describe('Crystal Brook map', () => {
     expect(findUnreachableTargets(CRYSTAL_BROOK_MAP, targets, 40, PLAYER_CLEARANCE)).toEqual([]);
   });
 
-  it('provides several river treasures, stepping stones, a secret route and NPC visit points', () => {
+  it('provides river treasures, a retained stepping-stone crossing, a secret route and NPC visit points', () => {
     expect(CRYSTAL_BROOK_MAP.collectableSpots.length).toBeGreaterThanOrEqual(4);
-    expect(CRYSTAL_BROOK_MAP.steppingStones.length).toBeGreaterThanOrEqual(6);
+    expect(CRYSTAL_BROOK_MAP.steppingStones.length).toBeGreaterThanOrEqual(3);
     expect(CRYSTAL_BROOK_MAP.secretRoutes).toHaveLength(1);
     expect(CRYSTAL_BROOK_MAP.npcVisitPoints.length).toBeGreaterThanOrEqual(2);
     expect(
@@ -74,9 +86,111 @@ describe('Crystal Brook map', () => {
     ).toBeGreaterThanOrEqual(2);
   });
 
+  it('defines one continuous Brook from the upstream cascade through both basins to Rainbow Meadow', () => {
+    expect(CRYSTAL_BROOK_WATERCOURSE[0].x).toBeGreaterThan(3300);
+    expect(CRYSTAL_BROOK_WATERCOURSE.at(-1)?.x).toBeLessThan(0);
+
+    for (const target of [
+      CRYSTAL_BROOK_UPSTREAM_CASCADE,
+      CRYSTAL_BROOK_UPPER_POOL,
+      CRYSTAL_BROOK_LOWER_POOL,
+      CRYSTAL_BROOK_MEADOW_WATER_EXIT,
+    ]) {
+      expect(CRYSTAL_BROOK_WATERCOURSE.some(({ x, y }) => x === target.x && y === target.y)).toBe(
+        true,
+      );
+    }
+
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.x).toBe(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.y - 100,
+    );
+
+    for (const point of CRYSTAL_BROOK_WATERCOURSE) {
+      expect(point.outerWidth).toBeGreaterThan(point.innerWidth);
+      expect(point.innerWidth).toBeGreaterThan(point.deepWidth);
+      expect(point.deepWidth).toBeGreaterThan(0);
+    }
+
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2550, y: 1290 });
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
+  });
+
+  it('keeps the west path on the cave approach while the Brook exits above it', () => {
+    const westSegment = CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0];
+    expect(westSegment[0]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
+    expect(westSegment[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(westSegment[0].y);
+    expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
+  });
+
+  it('uses a northward crossing followed by an eastward glacial bridge crossing', () => {
+    expect(CRYSTAL_BROOK_ICE_BRIDGES).toHaveLength(2);
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS).toHaveLength(3);
+
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0].at(-1)).toEqual(
+      CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
+    );
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1][0]).toEqual(
+      CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
+    );
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1].at(-1)).toEqual(
+      CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
+    );
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[2][0]).toEqual(
+      CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
+    );
+
+    expect(CRYSTAL_BROOK_NORTH_BRIDGE.endLanding.y).toBeLessThan(
+      CRYSTAL_BROOK_NORTH_BRIDGE.startLanding.y - 200,
+    );
+    expect(CRYSTAL_BROOK_EAST_BRIDGE.endLanding.x).toBeGreaterThan(
+      CRYSTAL_BROOK_EAST_BRIDGE.startLanding.x + 250,
+    );
+    expect(
+      Math.abs(CRYSTAL_BROOK_EAST_BRIDGE.endLanding.y - CRYSTAL_BROOK_EAST_BRIDGE.startLanding.y),
+    ).toBeLessThan(60);
+
+    for (const bridge of CRYSTAL_BROOK_ICE_BRIDGES) {
+      expect(bridge.length).toBeGreaterThanOrEqual(290);
+      expect(bridge.deckWidth).toBeLessThan(110);
+    }
+  });
+
+  it('keeps Crystal Cup north, Woods low-east and Prism Grotto clearly south', () => {
+    expect(CRYSTAL_BROOK_LAYOUT.thresholds.crystalCupHub.position.y).toBeLessThanOrEqual(140);
+    expect(CRYSTAL_BROOK_LAYOUT.thresholds.crystalCupHub.approach.y).toBeGreaterThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.crystalCupHub.position.y,
+    );
+    expect(CRYSTAL_BROOK_LAYOUT.thresholds.whisperingWoods.position.x).toBeGreaterThanOrEqual(3380);
+    expect(CRYSTAL_BROOK_LAYOUT.thresholds.whisperingWoods.position.y).toBeGreaterThan(1500);
+    expect(CRYSTAL_BROOK_LAYOUT.thresholds.crystalGrotto.position.y).toBeGreaterThan(2000);
+    expect(CRYSTAL_BROOK_LAYOUT.thresholds.crystalGrotto.position.x).toBeLessThan(2600);
+  });
+
+  it('lets the east Brook disappear off-map into the woodland edge', () => {
+    expect(CRYSTAL_BROOK_WATERCOURSE[0].x).toBeGreaterThan(CRYSTAL_BROOK_MAP.width);
+    expect(CRYSTAL_BROOK_WATERCOURSE[0].y).toBeGreaterThan(650);
+    expect(CRYSTAL_BROOK_WATERCOURSE[0].y).toBeLessThan(900);
+  });
+
+  it('shares one authored path junction between the main trail and Crystal Cup spur', () => {
+    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1]).toContain(
+      CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+    );
+    expect(CRYSTAL_BROOK_LAYOUT.routes.crystalCupHub[0]).toEqual(
+      CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+    );
+  });
+
   it('keeps canonical route endpoints aligned with their structural destinations', () => {
     expect(CRYSTAL_BROOK_LAYOUT.routes.main.at(0)).toEqual({ x: 100, y: 1090 });
-    expect(CRYSTAL_BROOK_LAYOUT.routes.main.at(-1)).toEqual({ x: 3230, y: 990 });
+    expect(CRYSTAL_BROOK_LAYOUT.routes.main.at(-1)).toEqual(
+      CRYSTAL_BROOK_LAYOUT.thresholds.whisperingWoods.position,
+    );
 
     expect(CRYSTAL_BROOK_LAYOUT.routes.whisperingWoods.at(-1)).toEqual(
       CRYSTAL_BROOK_LAYOUT.thresholds.whisperingWoods.position,

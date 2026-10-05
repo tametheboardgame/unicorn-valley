@@ -10,6 +10,7 @@ import type { RaceRunState } from '../racing/RaceRun';
 import { getRaceShortcut } from '../racing/RaceShortcut';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
+import { ensureSceneRegistered } from '../scenes/SceneManifest';
 import {
   CRYSTAL_BROOK_LOCATION_ID,
   CRYSTAL_BROOK_MAP,
@@ -17,6 +18,11 @@ import {
   CRYSTAL_BROOK_WOODS_THRESHOLD,
   setCrystalBrookPlayerSpawn,
 } from './CrystalBrookMap';
+import {
+  CRYSTAL_CUP_HUB_LAYOUT,
+  CRYSTAL_CUP_HUB_LOCATION_ID,
+  setCrystalCupHubPlayerSpawn,
+} from './CrystalCupHubMap';
 import {
   RAINBOW_MEADOW_LOCATION_ID,
   RAINBOW_MEADOW_MAP,
@@ -133,6 +139,7 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
     destinationFacing: 'right',
     accent: 0x7aaa78,
     icon: '🌲',
+    presentation: 'functional-only',
   },
   {
     id: 'gateway:whispering-woods-crystal-brook',
@@ -149,15 +156,15 @@ const R5_REGION_GATEWAYS: readonly RegionGatewayDefinition[] = [
   {
     id: 'gateway:crystal-brook-crystal-cascade',
     sceneKey: 'CrystalBrookScene',
-    label: 'Crystal Cascade',
+    label: 'The Crystal Cup Raceway',
     position: CRYSTAL_CASCADE_GATE_POSITION,
-    destinationSceneKey: 'RaceScene',
-    destinationLocationId: CRYSTAL_BROOK_LOCATION_ID,
-    destinationSpawn: CRYSTAL_CASCADE_RETURN_POSITION,
-    destinationFacing: 'left',
+    destinationSceneKey: 'CrystalCupEntryScene',
+    destinationLocationId: CRYSTAL_CUP_HUB_LOCATION_ID,
+    destinationSpawn: CRYSTAL_CUP_HUB_LAYOUT.playerSpawn,
+    destinationFacing: 'up',
     accent: 0x70d2da,
     icon: '🏁',
-    raceCourseId: CRYSTAL_CASCADE_RACE_ID,
+    presentation: 'functional-only',
   },
 ];
 
@@ -373,10 +380,22 @@ export class R5RegionGatewayManager {
       setRainbowMeadowPlayerSpawn(state.definition.destinationSpawn);
     } else if (state.definition.destinationSceneKey === 'WhisperingWoodsScene') {
       setWhisperingWoodsPlayerSpawn(state.definition.destinationSpawn);
+    } else if (state.definition.destinationSceneKey === 'CrystalCupEntryScene') {
+      setCrystalCupHubPlayerSpawn(state.definition.destinationSpawn);
     }
 
     setWorldArrivalFacing(state.definition.destinationSceneKey, state.definition.destinationFacing);
     saveLocationCheckpoint(getBrowserSaveService(), state.definition.destinationLocationId);
+
+    if (state.definition.destinationSceneKey === 'CrystalCupEntryScene') {
+      void ensureSceneRegistered(this.game, 'CrystalCupEntryScene').then(() => {
+        if (state.scene.scene.isActive()) {
+          state.scene.scene.start('CrystalCupEntryScene');
+        }
+      });
+      return;
+    }
+
     state.scene.scene.start(state.definition.destinationSceneKey);
   }
 
@@ -442,6 +461,13 @@ export class R5RegionGatewayManager {
 
     this.clearCrystalRacePresentation();
     if (!this.crystalRaceWasActive) {
+      return;
+    }
+
+    const crystalCupHubScene = this.game.scene.getScene('CrystalCupEntryScene');
+    if (crystalCupHubScene?.scene.isActive()) {
+      this.crystalRaceWasActive = false;
+      resetActiveRaceCourse();
       return;
     }
 
