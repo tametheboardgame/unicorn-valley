@@ -350,8 +350,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         .on('pointerdown', () => this.openAcademyMode(mode.id));
     }
 
+    const modeIndex = SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS.findIndex(
+      (definition) => definition.id === mode.id,
+    );
+
     this.add
-      .text(x - width / 2 + 34, y - 27, `${mode.icon}  ${mode.title}`, {
+      .text(x - width / 2 + 34, y - 27, `${modeIndex + 1}.  ${mode.icon}  ${mode.title}`, {
         color: available ? CHESS_ACADEMY_PALETTE.ink : '#84798f',
         fontFamily: UI_FONT,
         fontSize: '22px',
@@ -1210,8 +1214,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    const opponentIndex = SUNBEAM_CHESS_OPPONENT_DEFINITIONS.findIndex(
+      (definition) => definition.id === level,
+    );
+
     this.add
-      .text(x - 330, y - 18, opponent.title, {
+      .text(x - 330, y - 18, `${opponentIndex + 1}.  ${opponent.title}`, {
         color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '22px',
@@ -1518,6 +1526,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       BOARD_SIZE + 36,
       18,
     );
+
+    this.add
+      .text(BOARD_LEFT + BOARD_SIZE / 2, 646, 'Keyboard · Arrow keys move focus · Enter selects', {
+        color: '#f6e6c8',
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:keyboard-help');
   }
 
   private renderBoard(): void {
