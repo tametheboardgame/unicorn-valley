@@ -79,6 +79,9 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
   ).toBe(true);
   expect(brook.objects.some(({ name }) => name === 'crystal-brook:main-path')).toBe(true);
   expect(brook.objects.some(({ name }) => name === 'crystal-brook:east-woodland')).toBe(true);
+  expect(
+    brook.objects.some(({ name }) => name === 'crystal-brook:whispering-woods-sign'),
+  ).toBe(true);
   expect(rocks.filter(({ x }) => x > 3300).length).toBeGreaterThanOrEqual(10);
 });
 
