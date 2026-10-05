@@ -201,10 +201,49 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
   });
 
-  test('keeps the existing complete chess game available as Friendly Match', async ({ page }) => {
+  test('offers the child-friendly Friendly Match opponent ladder', async ({ page }) => {
     await openChessAcademy(page);
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
+
+    for (const level of ['dandelion', 'clover', 'sunbeam']) {
+      await waitForNamedObject(
+        page,
+        'ChessPlazaActivityScene',
+        `sunbeam-chess:opponent:${level}`,
+      );
+    }
+
+    const snapshot = await getDiagnosticSnapshot(page);
+    const scene = snapshot.scenes.find((entry) => entry.key === 'ChessPlazaActivityScene');
+    for (const level of ['dandelion', 'clover', 'sunbeam']) {
+      expect(
+        scene?.objects.find((object) => object.name === `sunbeam-chess:opponent:${level}`)
+          ?.interactive,
+      ).toBe(true);
+    }
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:opponent:dandelion');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    await waitForNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:friendly-opponent-title',
+    );
+
+    const match = await getDiagnosticSnapshot(page);
+    expect(objectText(match, 'sunbeam-chess:friendly-opponent-title')).toContain('Dandelion');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:friendly-opponents');
+  });
+
+  test('keeps the complete chess game and shared history available in Friendly Match', async ({
+    page,
+  }) => {
+    await openChessAcademy(page);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:opponent:clover');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:opponent:clover');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-up');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:move-history-down');
