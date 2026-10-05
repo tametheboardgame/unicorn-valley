@@ -207,11 +207,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
 
     for (const level of ['dandelion', 'clover', 'sunbeam']) {
-      await waitForNamedObject(
-        page,
-        'ChessPlazaActivityScene',
-        `sunbeam-chess:opponent:${level}`,
-      );
+      await waitForNamedObject(page, 'ChessPlazaActivityScene', `sunbeam-chess:opponent:${level}`);
     }
 
     const snapshot = await getDiagnosticSnapshot(page);
