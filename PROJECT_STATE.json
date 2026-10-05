@@ -10,7 +10,7 @@
   "autonomy_state": "amber",
   "agent_state": "waiting_human",
   "branch": "agent/r6.5-wp19h6.3-rainbow-meadow-gorge",
-  "latest_commit": "7180dc973745ea4e89d576d9cf8dd732903695c5",
+  "latest_commit": "d2187c11ff70ab167e6c15f78a22a506c2a06baa",
   "ci_state": "pending",
   "technical_validation_state": "pending",
   "human_acceptance_state": "pending",
