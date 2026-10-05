@@ -128,6 +128,8 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
 
 export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
   [
+    { x: -90, y: 1090 },
+    CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
     CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
     { x: 620, y: 1160 },
     { x: 900, y: 1220 },
@@ -191,37 +193,39 @@ export const CRYSTAL_BROOK_MEADOW_GORGE = {
   waterOpening: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   pathOpening: CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
   pathApproach: CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
-  pathFloor: [
-    { x: -90, y: 1090 },
-    { x: 90, y: 1090 },
-    CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
-    CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
-  ] as const satisfies readonly MapPoint[],
   waterThroat: {
     centre: CRYSTAL_BROOK_MEADOW_WATER_EXIT,
     width: 172,
     height: 104,
   },
+  overhang: {
+    x: 92,
+    y: 1034,
+    width: 286,
+    height: 112,
+    angle: -3,
+  },
   rockFaces: [
     { id: 'north-cap', x: 104, y: 744, width: 378, height: 224, angle: -8, colour: 0x617570 },
     { id: 'north-shoulder', x: 220, y: 838, width: 254, height: 146, angle: 6, colour: 0x71847d },
     { id: 'inner-divider', x: 206, y: 1014, width: 210, height: 82, angle: -4, colour: 0x667a75 },
-    { id: 'south-shoulder', x: 184, y: 1238, width: 252, height: 150, angle: -5, colour: 0x697c77 },
+    { id: 'south-shoulder', x: 142, y: 1252, width: 210, height: 128, angle: -6, colour: 0x697c77 },
     { id: 'south-cap', x: 80, y: 1390, width: 386, height: 242, angle: 8, colour: 0x5b706e },
   ],
   crystals: [
     { x: 238, y: 790, scale: 0.68, colour: 0xa4e9ed },
-    { x: 250, y: 1260, scale: 0.56, colour: 0xc8baf0 },
+    { x: 214, y: 1266, scale: 0.48, colour: 0xc8baf0 },
   ],
   mist: [
     { x: 120, y: 904, width: 116, height: 30 },
     { x: 72, y: 930, width: 92, height: 24 },
   ],
   sign: {
-    x: 390,
-    y: 1215,
-    angle: -4,
+    x: 430,
+    y: 1284,
+    angle: -2,
     label: 'RAINBOW MEADOW',
+    arrow: '←',
   },
 } as const;
 
