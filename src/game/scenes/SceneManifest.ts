@@ -55,8 +55,20 @@ export const SCENE_MANIFEST = [
   startup('BootScene', 'bootstrap'),
   startup('PreloadScene', 'bootstrap'),
   startup('TitleScene', 'bootstrap'),
-  startup('ResizeTestScene', 'diagnostic'),
-  startup('MovementTestScene', 'diagnostic'),
+  runtime(
+    'ResizeTestScene',
+    'diagnostic',
+    'on-demand',
+    'feature',
+    async () => (await import('./ResizeTestScene')).ResizeTestScene,
+  ),
+  runtime(
+    'MovementTestScene',
+    'diagnostic',
+    'on-demand',
+    'feature',
+    async () => (await import('./MovementTestScene')).MovementTestScene,
+  ),
   startup('MoonflowerGladeScene', 'exploration'),
   startup('CottageInteriorScene', 'interior'),
   runtime(
@@ -83,7 +95,13 @@ export const SCENE_MANIFEST = [
   startup('RaceScene', 'race'),
   startup('PipEggHatchScene', 'story'),
   startup('DoorwayStubScene', 'utility'),
-  startup('DialogueTestScene', 'diagnostic'),
+  runtime(
+    'DialogueTestScene',
+    'diagnostic',
+    'on-demand',
+    'feature',
+    async () => (await import('./DialogueTestScene')).DialogueTestScene,
+  ),
   startup('UnicornCreatorScene', 'onboarding'),
   runtime(
     'JustGamesScene',
