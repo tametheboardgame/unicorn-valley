@@ -25,6 +25,7 @@ import {
   CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
   CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_MEADOW_GORGE,
   CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
   CRYSTAL_BROOK_REFLECTION_POOL,
@@ -451,6 +452,7 @@ export class CrystalBrookScene extends Phaser.Scene {
       .setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
+    this.createMeadowGorge();
     this.createIceBridges();
     this.createSteppingStones();
     this.createSecretTrail();
@@ -566,6 +568,262 @@ export class CrystalBrookScene extends Phaser.Scene {
       glints.lineTo(glint.x + dx, glint.y + dy);
       glints.strokePath();
     }
+  }
+
+  private createMeadowGorge(): void {
+    const gorge = CRYSTAL_BROOK_MEADOW_GORGE;
+
+    const recess = this.add.graphics().setName('crystal-brook:meadow-gorge:recess').setDepth(2.72);
+    recess.fillStyle(0x263b3e, 0.97);
+    recess.fillPoints(
+      [
+        new Phaser.Math.Vector2(-70, gorge.recess.y - 190),
+        new Phaser.Math.Vector2(gorge.recess.x + 70, gorge.recess.y - 210),
+        new Phaser.Math.Vector2(gorge.recess.x + 128, gorge.recess.y - 108),
+        new Phaser.Math.Vector2(gorge.recess.x + 114, gorge.recess.y + 116),
+        new Phaser.Math.Vector2(gorge.recess.x + 48, gorge.recess.y + 220),
+        new Phaser.Math.Vector2(-70, gorge.recess.y + 206),
+      ],
+      true,
+    );
+
+    const recessDepth = this.add
+      .graphics()
+      .setName('crystal-brook:meadow-gorge:recess-depth')
+      .setDepth(2.74);
+    recessDepth.fillStyle(0x172b30, 0.98);
+    recessDepth.fillPoints(
+      [
+        new Phaser.Math.Vector2(-80, gorge.recess.y - 142),
+        new Phaser.Math.Vector2(gorge.recess.x + 34, gorge.recess.y - 150),
+        new Phaser.Math.Vector2(gorge.recess.x + 76, gorge.recess.y - 74),
+        new Phaser.Math.Vector2(gorge.recess.x + 70, gorge.recess.y + 96),
+        new Phaser.Math.Vector2(gorge.recess.x + 18, gorge.recess.y + 158),
+        new Phaser.Math.Vector2(-80, gorge.recess.y + 150),
+      ],
+      true,
+    );
+
+    this.add
+      .ellipse(
+        gorge.waterThroat.centre.x - 18,
+        gorge.waterThroat.centre.y,
+        gorge.waterThroat.width,
+        gorge.waterThroat.height,
+        0x1e4b56,
+        0.68,
+      )
+      .setName('crystal-brook:meadow-gorge:water-throat')
+      .setDepth(3.07);
+
+    const throatFoam = this.add
+      .graphics()
+      .setName('crystal-brook:meadow-gorge:water-foam')
+      .setDepth(3.13);
+    throatFoam.lineStyle(5, 0xeaffff, 0.44);
+    throatFoam.beginPath();
+    throatFoam.moveTo(gorge.waterOpening.x - 68, gorge.waterOpening.y + 4);
+    throatFoam.lineTo(gorge.waterOpening.x + 54, gorge.waterOpening.y - 4);
+    throatFoam.strokePath();
+
+    const rocks = this.add
+      .container(0, 0)
+      .setName('crystal-brook:meadow-gorge:rocks')
+      .setDepth(3.22);
+
+    for (const [index, rock] of gorge.rockFaces.entries()) {
+      const halfWidth = rock.width / 2;
+      const halfHeight = rock.height / 2;
+      const body = this.add
+        .polygon(
+          rock.x,
+          rock.y,
+          [
+            -halfWidth * 0.96,
+            halfHeight * 0.18,
+            -halfWidth * 0.78,
+            -halfHeight * 0.56,
+            -halfWidth * 0.28,
+            -halfHeight * 0.96,
+            halfWidth * 0.42,
+            -halfHeight * 0.76,
+            halfWidth * 0.94,
+            -halfHeight * 0.18,
+            halfWidth * 0.76,
+            halfHeight * 0.62,
+            halfWidth * 0.12,
+            halfHeight * 0.92,
+            -halfWidth * 0.62,
+            halfHeight * 0.7,
+          ],
+          rock.colour,
+          1,
+        )
+        .setStrokeStyle(4, 0x455b59, 0.88)
+        .setAngle(rock.angle);
+
+      const highlight = this.add
+        .ellipse(
+          rock.x - rock.width * 0.08,
+          rock.y - rock.height * 0.2,
+          rock.width * 0.58,
+          rock.height * 0.28,
+          0x91a49c,
+          index % 2 === 0 ? 0.26 : 0.2,
+        )
+        .setAngle(rock.angle - 4);
+
+      rocks.add([body, highlight]);
+    }
+
+    for (const crystal of gorge.crystals) {
+      rocks.add(
+        this.add
+          .triangle(
+            crystal.x,
+            crystal.y,
+            0,
+            50 * crystal.scale,
+            18 * crystal.scale,
+            0,
+            36 * crystal.scale,
+            50 * crystal.scale,
+            crystal.colour,
+            0.88,
+          )
+          .setStrokeStyle(2, 0xf3ffff, 0.72),
+      );
+    }
+
+    const overhang = gorge.overhang;
+    const overhangContainer = this.add
+      .container(overhang.x, overhang.y)
+      .setName('crystal-brook:meadow-gorge:path-overhang')
+      .setAngle(overhang.angle)
+      .setDepth(worldDepthForY(gorge.pathOpening.y, 2.2));
+
+    overhangContainer.add([
+      this.add
+        .polygon(
+          0,
+          0,
+          [
+            -overhang.width * 0.58,
+            -overhang.height * 0.12,
+            -overhang.width * 0.46,
+            -overhang.height * 0.48,
+            -overhang.width * 0.14,
+            -overhang.height * 0.58,
+            overhang.width * 0.34,
+            -overhang.height * 0.48,
+            overhang.width * 0.54,
+            -overhang.height * 0.2,
+            overhang.width * 0.46,
+            overhang.height * 0.24,
+            overhang.width * 0.16,
+            overhang.height * 0.42,
+            -overhang.width * 0.34,
+            overhang.height * 0.38,
+            -overhang.width * 0.56,
+            overhang.height * 0.14,
+          ],
+          0x5d716d,
+          1,
+        )
+        .setStrokeStyle(4, 0x415754, 0.92),
+      this.add
+        .polygon(
+          4,
+          overhang.height * 0.22,
+          [
+            -overhang.width * 0.5,
+            -10,
+            overhang.width * 0.44,
+            -7,
+            overhang.width * 0.28,
+            30,
+            -overhang.width * 0.34,
+            34,
+          ],
+          0x243a3b,
+          0.9,
+        ),
+      this.add.ellipse(
+        -overhang.width * 0.08,
+        -overhang.height * 0.24,
+        overhang.width * 0.58,
+        overhang.height * 0.22,
+        0x8b9f98,
+        0.2,
+      ),
+    ]);
+
+    for (const [index, mist] of gorge.mist.entries()) {
+      const plume = this.add
+        .ellipse(mist.x, mist.y, mist.width, mist.height, 0xeaffff, 0.18)
+        .setName(`crystal-brook:meadow-gorge:mist:${index}`)
+        .setDepth(3.15);
+      this.tweens.add({
+        targets: plume,
+        alpha: { from: 0.12, to: 0.28 },
+        scaleX: { from: 0.94, to: 1.08 },
+        duration: 1200 + index * 180,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
+    }
+
+    const sign = gorge.sign;
+    const signContainer = this.add
+      .container(sign.x, sign.y)
+      .setName('crystal-brook:meadow-gorge:rainbow-meadow-sign')
+      .setAngle(sign.angle)
+      .setDepth(worldDepthForY(sign.y, -1.4));
+
+    // Phaser offsets polygons built from negative local coordinates by their display origin.
+    // Keep the marker as one clean stone slab and place the carved lettering on its
+    // actual rendered face rather than at the container origin.
+    const signFaceCentre = { x: -138, y: -56 };
+
+    signContainer.add([
+      this.add
+        .polygon(
+          0,
+          0,
+          [-136, -42, -106, -58, 72, -54, 136, -24, 124, 36, 50, 54, -96, 48, -140, 14],
+          0x687b76,
+          1,
+        )
+        .setStrokeStyle(5, 0x405552, 0.96),
+      this.add
+        .text(signFaceCentre.x + 2, signFaceCentre.y + 3, `${sign.arrow}  ${sign.label}`, {
+          color: '#243a38',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '18px',
+          fontStyle: 'bold',
+          align: 'center',
+        })
+        .setOrigin(0.5),
+      this.add
+        .text(signFaceCentre.x, signFaceCentre.y, `${sign.arrow}  ${sign.label}`, {
+          color: '#e4eeea',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '18px',
+          fontStyle: 'bold',
+          align: 'center',
+          stroke: '#405552',
+          strokeThickness: 2,
+        })
+        .setOrigin(0.5),
+    ]);
+
+    this.add
+      .zone(gorge.waterOpening.x, gorge.waterOpening.y, 2, 2)
+      .setName('crystal-brook:meadow-gorge:water-opening');
+    this.add
+      .zone(gorge.pathOpening.x, gorge.pathOpening.y, 2, 2)
+      .setName('crystal-brook:meadow-gorge:path-opening');
   }
 
   private createIceBridges(): void {

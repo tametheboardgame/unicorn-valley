@@ -998,15 +998,6 @@ function decorateBrook(scene: Phaser.Scene): void {
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.x,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.y,
   );
-  createCaveMouth(
-    scene,
-    'brook-meadow',
-    CRYSTAL_BROOK_MEADOW_THRESHOLD.position.x,
-    CRYSTAL_BROOK_MEADOW_THRESHOLD.position.y,
-    'Rainbow Meadow',
-    0xf1c7e6,
-  );
-
   const cliffs = name(scene.add.container(0, 0).setDepth(7.45), 'crystal-brook:production-upgrade');
   for (const [x, y, width, height] of [
     [520, 410, 360, 190],

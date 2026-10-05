@@ -64,19 +64,19 @@ function expectNamed(scene: DiagnosticScene, name: string): DiagnosticObject {
   return object as DiagnosticObject;
 }
 
-test('Crystal Brook is reached by a separate authored meadow cave branch', async ({ page }) => {
+test('Rainbow Meadow keeps the accepted Crystal Brook waterfall basin', async ({ page }) => {
   await page.goto('/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
   await startScene(page, 'RainbowMeadowScene');
 
   const meadow = await sceneSnapshot(page, 'RainbowMeadowScene');
-  expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:path');
-  const cave = expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:cave-mouth');
-  expect(cave.y).toBeGreaterThan(1600);
-  expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:divider');
+  expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:pool');
+  expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:waterfall');
+  expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:outlet-stream');
+  expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:sign');
 });
 
-test('Crystal Brook has distinct woodland and race routes plus upgraded environment art', async ({
+test('Crystal Brook owns its gorge while keeping the current east routes area-authored', async ({
   page,
 }) => {
   await page.goto('/?diagnostics=1');
@@ -84,12 +84,16 @@ test('Crystal Brook has distinct woodland and race routes plus upgraded environm
   await startScene(page, 'CrystalBrookScene');
 
   const brook = await sceneSnapshot(page, 'CrystalBrookScene');
-  expectNamed(brook, 'r6-region-gateway-art:brook-woods:path');
-  expectNamed(brook, 'r6-region-gateway-art:brook-woods:woodland-threshold');
-  expectNamed(brook, 'r6-region-gateway-art:crystal-cascade:path');
-  expectNamed(brook, 'r6-region-gateway-art:crystal-cascade:race-gate');
+  expectNamed(brook, 'crystal-brook:meadow-gorge:recess');
+  expectNamed(brook, 'crystal-brook:meadow-gorge:path-floor');
+  expectNamed(brook, 'crystal-brook:meadow-gorge:water-throat');
+  expectNamed(brook, 'r6-region-gateway-art:crystal-brook:east-woodland');
+  expectNamed(brook, 'r6-region-gateway-art:crystal-cup-raceway:edge-exit');
   expectNamed(brook, 'r6-region-gateway-art:crystal-brook:production-upgrade');
-  expectNamed(brook, 'r6-region-gateway-art:crystal-brook:cascade-upgrade');
+
+  expect(
+    brook.objects.some((object) => object.name === 'r6-region-gateway-art:brook-meadow:cave-mouth'),
+  ).toBe(false);
 });
 
 test('Whispering Woods opens through a woodland threshold and denser forest treatment', async ({

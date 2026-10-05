@@ -6,7 +6,7 @@ Last updated: 2026-10-03
 
 The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded checkpoint: **H6.2 - Continuous Brook and Rainbow Meadow hydrology — COMPLETE / HUMAN APPROVED**
+Current bounded checkpoint: **H6.3D - Rainbow Meadow gorge path/overhang correction**
 
 Branch: `agent/r6.5-wp19h6.2-continuous-brook`
 
@@ -132,9 +132,74 @@ The final pre-approval CI red was formatting-only in three files; those formatte
 
 The accepted H6.2 composition includes the continuous/meandering Brook, crystalline bridge sequence, relocated Grotto, north-edge Crystal Cup Raceway gateway/hub topology, joined east-side path network and naturalised Woods edge.
 
+
+## H6.3A implementation
+
+Started **H6.3 - Rainbow Meadow cave/gorge entrance** from merged H6.2 main.
+
+This first bounded checkpoint establishes the west-side ownership and traversal contract before further visual refinement:
+
+- adds canonical Brook-side gorge geometry to `CrystalBrookMap`;
+- keeps the Brook water opening at `120,920` and the walking threshold at `120,1090`, so water and path pass through the same gorge alongside one another without overlapping;
+- adds a Brook-owned irregular rock/recess presentation in `CrystalBrookScene`;
+- removes the superseded generic `brook-meadow` cave-mouth presentation from `R6RegionGatewayArtManager`;
+- preserves the accepted Rainbow Meadow waterfall/pool implementation unchanged;
+- keeps existing Meadow ↔ Brook destination IDs, arrival positions and facing behaviour;
+- locks both arrival positions outside the 130px walk-through trigger radius;
+- adds browser coverage for Meadow → Brook → Meadow traversal and the no-bounce behaviour.
+
+## H6.3A gate
+
+H6.3A established the ownership/traversal contract and exposed one formatter-only failure, now fixed.
+
+## H6.3B visual refinement
+
+The Brook-side west edge has now been refined so it reads as the rear side of the accepted Rainbow Meadow waterfall/gorge system rather than a generic doorway:
+
+- replaces the simple oval recess with an irregular dark gorge throat;
+- extends the established two-layer walking path visibly off-map through the lower gorge opening;
+- keeps the Brook in a separate upper water throat, with foam/mist where the stream disappears into the gorge;
+- adds an irregular inner rock divider/overhang between the water and path passages;
+- retains the accepted H4 Rainbow Meadow pool/waterfall presentation unchanged;
+- keeps the Brook-side gorge scene-owned and the old generic `brook-meadow:cave-mouth` retired;
+- updates older gateway-art browser coverage so it validates the current H6 ownership model instead of obsolete pre-H6.2 route overlays.
+
+## H6.3C gorge polish
+
+The H6.3B visual review was accepted directionally, with three small west-edge issues remaining.
+
+H6.3C therefore:
+
+- reduces and lowers the south gorge shoulder that was crowding the walking path;
+- removes the duplicate rounded west path read by making the gorge path-floor own the route from off-map through the threshold to the canonical Brook approach, while the normal Brook path now starts exactly at that approach;
+- adds a scene-owned **RAINBOW MEADOW** waymarker beside the gorge route, styled as an irregular carved stone slab with crystal accents rather than a wooden sign;
+- keeps the upper water throat, mist, accepted Meadow-side waterfall/pool and two-way traversal contract unchanged.
+
+
+## H6.3D path, sign and overhang correction
+
+The H6.3C preview still showed three presentation problems:
+
+- a rounded path-end artefact remained at the west handoff;
+- the Rainbow Meadow wording was not convincingly contained on its rock marker;
+- the upper gorge edge did not read strongly enough as an overhang the player passes beneath.
+
+H6.3D therefore:
+
+- removes the separate gorge path renderer entirely;
+- extends the normal Crystal Brook path itself off-map through the west gorge so only one path object can exist there;
+- adds a dedicated foreground rock overhang above the path entrance so the player visually passes under the gorge lip;
+- shifts/shrinks the lower shoulder further away from the route;
+- rebuilds the Rainbow Meadow marker as a larger carved-rock sign with high-contrast inset lettering and an explicit left-pointing arrow;
+- keeps the upper water throat, accepted Meadow waterfall/pool, gateway positions and traversal behaviour unchanged.
+## H6.3 human gate
+
+H6.3D is now the visual review checkpoint. Do not begin H6.4 until David approves the single west path, foreground gorge overhang and carved Rainbow Meadow arrow marker, and two-way traversal remains green.
+
+
 ## Next work
 
-After H6.2 is merged, begin **H6.3 - Rainbow Meadow cave/gorge entrance**.
+Validate and visually review **H6.3C - Rainbow Meadow gorge polish**. Do not begin H6.4.
 
 ## Operating reminders
 

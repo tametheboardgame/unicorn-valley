@@ -8,6 +8,7 @@ import {
   CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_LAYOUT,
   CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_MEADOW_GORGE,
   CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   CRYSTAL_BROOK_NORTH_BRIDGE,
   CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
@@ -23,6 +24,8 @@ import {
   isPointBlocked,
   isPointInsideWalkableBounds,
 } from './MapTraversal';
+import { RAINBOW_MEADOW_LAYOUT } from './RainbowMeadowMap';
+import { WALK_THROUGH_GATEWAY_RADIUS } from './RegionGatewayRules';
 
 const PLAYER_CLEARANCE = 42;
 
@@ -119,12 +122,70 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
 
-  it('keeps the west path on the cave approach while the Brook exits above it', () => {
+  it('uses one continuous west path renderer through the gorge and into Crystal Brook', () => {
     const westSegment = CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0];
-    expect(westSegment[0]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
-    expect(westSegment[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
-    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(westSegment[0].y);
+
+    expect(westSegment[0].x).toBeLessThan(0);
+    expect(westSegment[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
+    expect(westSegment[2]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
+    expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y,
+    );
     expect(CRYSTAL_BROOK_WATERCOURSE.at(-2)?.outerWidth).toBeLessThanOrEqual(150);
+  });
+
+  it('keeps the Meadow path and Brook openings distinct inside one west gorge', () => {
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.pathOpening).toEqual(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.waterOpening).toEqual(CRYSTAL_BROOK_MEADOW_WATER_EXIT);
+
+    const verticalSeparation =
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y - CRYSTAL_BROOK_MEADOW_GORGE.waterOpening.y;
+    expect(verticalSeparation).toBeGreaterThan(140);
+    expect(verticalSeparation).toBeLessThan(220);
+  });
+
+  it('keeps the water throat above the path and frames the entrance with an overhang', () => {
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre).toEqual(
+      CRYSTAL_BROOK_MEADOW_GORGE.waterOpening,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre.y).toBeLessThan(
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y - 140,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.overhang.y).toBeLessThan(
+      CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.rockFaces.some(({ id }) => id === 'inner-divider')).toBe(
+      true,
+    );
+  });
+
+  it('defines a carved Rainbow Meadow waymarker with a west-pointing arrow', () => {
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.label).toBe('RAINBOW MEADOW');
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.arrow).toBe('←');
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.x).toBeGreaterThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.x,
+    );
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.sign.y).toBeGreaterThan(
+      CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position.y,
+    );
+  });
+
+  it('keeps both Meadow-Brook arrival points outside the walk-through trigger radius', () => {
+    const brookThreshold = CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow;
+    const brookArrivalDistance = Math.hypot(
+      brookThreshold.approach.x - brookThreshold.position.x,
+      brookThreshold.approach.y - brookThreshold.position.y,
+    );
+    expect(brookArrivalDistance).toBeGreaterThan(WALK_THROUGH_GATEWAY_RADIUS + 40);
+
+    const meadowThreshold = RAINBOW_MEADOW_LAYOUT.crystalBrookGateway;
+    const meadowArrivalDistance = Math.hypot(
+      meadowThreshold.approach.x - meadowThreshold.position.x,
+      meadowThreshold.approach.y - meadowThreshold.position.y,
+    );
+    expect(meadowArrivalDistance).toBeGreaterThan(WALK_THROUGH_GATEWAY_RADIUS + 20);
   });
 
   it('uses a northward crossing followed by an eastward glacial bridge crossing', () => {
