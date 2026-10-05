@@ -6,7 +6,7 @@ Last updated: 2026-10-03
 
 The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded checkpoint: **H6.3C - Rainbow Meadow gorge polish**
+Current bounded checkpoint: **H6.3D - Rainbow Meadow gorge path/overhang correction**
 
 Branch: `agent/r6.5-wp19h6.2-continuous-brook`
 
@@ -175,9 +175,26 @@ H6.3C therefore:
 - adds a scene-owned **RAINBOW MEADOW** waymarker beside the gorge route, styled as an irregular carved stone slab with crystal accents rather than a wooden sign;
 - keeps the upper water throat, mist, accepted Meadow-side waterfall/pool and two-way traversal contract unchanged.
 
+
+## H6.3D path, sign and overhang correction
+
+The H6.3C preview still showed three presentation problems:
+
+- a rounded path-end artefact remained at the west handoff;
+- the Rainbow Meadow wording was not convincingly contained on its rock marker;
+- the upper gorge edge did not read strongly enough as an overhang the player passes beneath.
+
+H6.3D therefore:
+
+- removes the separate gorge path renderer entirely;
+- extends the normal Crystal Brook path itself off-map through the west gorge so only one path object can exist there;
+- adds a dedicated foreground rock overhang above the path entrance so the player visually passes under the gorge lip;
+- shifts/shrinks the lower shoulder further away from the route;
+- rebuilds the Rainbow Meadow marker as a larger carved-rock sign with high-contrast inset lettering and an explicit left-pointing arrow;
+- keeps the upper water throat, accepted Meadow waterfall/pool, gateway positions and traversal behaviour unchanged.
 ## H6.3 human gate
 
-H6.3C is now the visual review checkpoint. Do not begin H6.4 until David approves the cleaned west path handoff, reduced rock obstruction and Rainbow Meadow waymarker, and two-way traversal remains green.
+H6.3D is now the visual review checkpoint. Do not begin H6.4 until David approves the single west path, foreground gorge overhang and carved Rainbow Meadow arrow marker, and two-way traversal remains green.
 
 
 ## Next work
