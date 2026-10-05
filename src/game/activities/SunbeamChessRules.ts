@@ -1,13 +1,5 @@
 import { Chess, type Move } from 'chess.js';
-
-const PIECE_VALUES = {
-  p: 1,
-  n: 3,
-  b: 3,
-  r: 5,
-  q: 9,
-  k: 100,
-} as const;
+import { chooseSunbeamChessOpponentMove } from './SunbeamChessOpponent';
 
 const PIECE_NAMES = {
   p: 'pawn',
@@ -22,63 +14,8 @@ function sideName(colour: 'w' | 'b'): string {
   return colour === 'w' ? 'White' : 'Black';
 }
 
-function moveScore(chess: Chess, move: Move): number {
-  const simulation = new Chess(chess.fen());
-  simulation.move({
-    from: move.from,
-    to: move.to,
-    promotion: move.promotion,
-  });
-
-  if (simulation.isCheckmate()) {
-    return 100_000;
-  }
-
-  let score = 0;
-  if (move.captured) {
-    score += PIECE_VALUES[move.captured] * 100;
-  }
-  if (move.promotion) {
-    score += PIECE_VALUES[move.promotion] * 45;
-  }
-  if (simulation.isCheck()) {
-    score += 30;
-  }
-
-  const file = move.to.charCodeAt(0) - 'a'.charCodeAt(0);
-  const rank = Number(move.to[1]) - 1;
-  const centreDistance = Math.abs(file - 3.5) + Math.abs(rank - 3.5);
-  score += Math.max(0, 7 - centreDistance) * 2;
-
-  if (move.piece === 'n' || move.piece === 'b') {
-    const startingRank = move.color === 'w' ? '1' : '8';
-    if (move.from[1] === startingRank) {
-      score += 8;
-    }
-  }
-
-  return score;
-}
-
 export function chooseVillageChessMove(chess: Chess): Move | null {
-  const moves = chess.moves({ verbose: true });
-  if (moves.length === 0) {
-    return null;
-  }
-
-  const ordered = [...moves].sort((left, right) => left.san.localeCompare(right.san));
-  let best = ordered[0];
-  let bestScore = Number.NEGATIVE_INFINITY;
-
-  for (const move of ordered) {
-    const score = moveScore(chess, move);
-    if (score > bestScore) {
-      best = move;
-      bestScore = score;
-    }
-  }
-
-  return best;
+  return chooseSunbeamChessOpponentMove(chess, 'sunbeam');
 }
 
 export function chooseTeachingMove(chess: Chess): Move | null {
