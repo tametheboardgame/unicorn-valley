@@ -410,3 +410,29 @@ Implementation rules for this slice:
 - result flow must offer a direct rematch, opponent change and Academy return;
 - the current shared move-history/check/highlight behaviour remains intact;
 - selected difficulty remains session-local in WP5E; isolated persistence belongs to WP5F.
+
+
+## MG-WP5E first implementation slice
+
+Implemented:
+
+- Friendly Match now opens an opponent-selection screen instead of immediately starting the old fixed match;
+- the approved ladder is live:
+  - **Dandelion** — very forgiving;
+  - **Clover** — beginner;
+  - **Sunbeam** — developing player;
+- opponent policy is isolated in `SunbeamChessOpponent.ts`;
+- all levels choose only legal `chess.js` moves;
+- difficulty is deterministic and created by ranked move-choice quality rather than illegal play, cheating or random board manipulation;
+- Dandelion deliberately chooses further down the plausible ranked move list;
+- Clover normally chooses the strongest candidate but periodically selects the second-ranked plan;
+- Sunbeam uses the strongest existing shallow heuristic;
+- the legacy village/teaching move helper now routes through the same Sunbeam opponent policy rather than carrying a duplicate scorer;
+- Friendly Match displays the selected opponent name/identity throughout the match;
+- Restart/rematch preserves the chosen opponent;
+- the in-match **Opponents** control returns to the ladder without leaving Chess Academy;
+- Friendly Match results offer **Rematch**, **Change opponent** and **Academy**;
+- unit coverage verifies ladder definitions, legal moves, determinism, relative ranked move quality and no-move behaviour;
+- browser coverage verifies all three opponent cards are interactive and that selecting Dandelion starts the canonical full chess match with Dandelion carried into the match UI.
+
+This remains a human-gated WP5E checkpoint. Further tuning should react to actual play feel rather than making the easiest opponent arbitrarily worse.
