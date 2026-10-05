@@ -185,6 +185,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.coachHoldingFeedback = false;
     this.coachLastPlayerFeedback = null;
     this.moveHistoryStart = -1;
+    this.friendlyOpponentLevel = 'clover';
     this.friendlyResultShown = false;
     this.opponentPending = false;
   }
@@ -1074,7 +1075,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       )
       .setOrigin(0, 0);
 
-    const yPositions = [308, 438, 568] as const;
+    const yPositions = [296, 418, 540] as const;
     SUNBEAM_CHESS_OPPONENT_DEFINITIONS.forEach((opponent, index) => {
       this.createFriendlyOpponentCard(opponent.id, 640, yPositions[index]);
     });
@@ -1201,7 +1202,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         fontSize: '23px',
         fontStyle: 'bold',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:friendly-opponent-title');
 
     const statusPanel = this.add.graphics();
     statusPanel.fillStyle(CHESS_ACADEMY_PALETTE.goldSoft, 1);
@@ -2325,25 +2327,45 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const title = result === 'win' ? 'YOU WON! ✦' : result === 'loss' ? 'GOOD GAME!' : 'GAME DRAWN';
     const isCoachMatch = this.view === 'coach-match';
+
+    if (isCoachMatch) {
+      const message =
+        result === 'win'
+          ? 'Checkmate! You found the finish. Want to try another coached game?'
+          : result === 'loss'
+            ? 'The village side found checkmate this time. Every game teaches you something new.'
+            : 'Neither side could force a win. That is a real chess result too.';
+
+      this.showCompletionCard({
+        title,
+        message,
+        accent: result === 'win' ? CHESS_ACADEMY_PALETTE.gold : CHESS_ACADEMY_PALETTE.lavender,
+        nextLabel: '↻ Play again',
+        onNext: () => this.startCoachMatch(),
+        backLabel: '← Academy',
+        onBack: () => this.showAcademyHome(),
+      });
+      return;
+    }
+
+    const opponent = getSunbeamChessOpponent(this.friendlyOpponentLevel);
     const message =
       result === 'win'
-        ? isCoachMatch
-          ? 'Checkmate! You found the finish. Want to try another coached game?'
-          : 'Checkmate! You finished the match. Want another game?'
+        ? `Checkmate! You beat ${opponent.title}. Want a rematch?`
         : result === 'loss'
-          ? 'The village side found checkmate this time. Every game teaches you something new.'
-          : 'Neither side could force a win. That is a real chess result too.';
+          ? `${opponent.title} found checkmate this time. Want to try the same opponent again?`
+          : `You and ${opponent.title} drew the game. That is a real chess result too.`;
 
     this.showCompletionCard({
       title,
       message,
       accent: result === 'win' ? CHESS_ACADEMY_PALETTE.gold : CHESS_ACADEMY_PALETTE.lavender,
-      nextLabel: '↻ Play again',
-      onNext: () => (isCoachMatch ? this.startCoachMatch() : this.restartFriendlyMatch()),
-      backLabel: isCoachMatch ? '← Academy' : 'Change opponent',
-      onBack: () => (isCoachMatch ? this.showAcademyHome() : this.showFriendlyOpponentSelect()),
-      thirdLabel: isCoachMatch ? undefined : '← Academy',
-      onThird: isCoachMatch ? undefined : () => this.showAcademyHome(),
+      nextLabel: '↻ Rematch',
+      onNext: () => this.restartFriendlyMatch(),
+      backLabel: 'Change opponent',
+      onBack: () => this.showFriendlyOpponentSelect(),
+      thirdLabel: '← Academy',
+      onThird: () => this.showAcademyHome(),
     });
   }
 
