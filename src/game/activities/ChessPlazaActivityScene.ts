@@ -2175,7 +2175,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     const history = this.chess.history();
     const rows: string[] = [];
     for (let index = 0; index < history.length; index += 2) {
-      rows.push(`${index / 2 + 1}.  ${history[index] ?? ''}    ${history[index + 1] ?? ''}`);
+      const moveNumber = String(index / 2 + 1).padStart(2, ' ');
+      const whiteMove = (history[index] ?? '').padEnd(12, ' ');
+      rows.push(`${moveNumber}. ${whiteMove}${history[index + 1] ?? ''}`);
     }
     return rows;
   }
