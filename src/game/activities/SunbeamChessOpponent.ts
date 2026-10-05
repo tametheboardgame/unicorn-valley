@@ -8,6 +8,7 @@ export interface SunbeamChessOpponentDefinition {
   title: string;
   subtitle: string;
   description: string;
+  icon: string;
 }
 
 export const SUNBEAM_CHESS_OPPONENT_DEFINITIONS = [
@@ -16,18 +17,21 @@ export const SUNBEAM_CHESS_OPPONENT_DEFINITIONS = [
     title: 'Dandelion',
     subtitle: 'Very forgiving',
     description: 'Makes simple, believable choices and leaves you plenty of room to spot ideas.',
+    icon: '🌼',
   },
   {
     id: 'clover',
     title: 'Clover',
     subtitle: 'Beginner',
     description: 'Usually finds sensible moves, but sometimes chooses an easier plan.',
+    icon: '☘️',
   },
   {
     id: 'sunbeam',
     title: 'Sunbeam',
     subtitle: 'Developing player',
     description: 'Looks for captures, checks and useful development much more consistently.',
+    icon: '☀️',
   },
 ] as const satisfies readonly SunbeamChessOpponentDefinition[];
 
