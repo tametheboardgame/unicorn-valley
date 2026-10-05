@@ -6,7 +6,7 @@ Last updated: 2026-10-03
 
 The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded checkpoint: **H6.3B - Rainbow Meadow gorge visual refinement**
+Current bounded checkpoint: **H6.3C - Rainbow Meadow gorge polish**
 
 Branch: `agent/r6.5-wp19h6.2-continuous-brook`
 
@@ -164,14 +164,25 @@ The Brook-side west edge has now been refined so it reads as the rear side of th
 - keeps the Brook-side gorge scene-owned and the old generic `brook-meadow:cave-mouth` retired;
 - updates older gateway-art browser coverage so it validates the current H6 ownership model instead of obsolete pre-H6.2 route overlays.
 
+## H6.3C gorge polish
+
+The H6.3B visual review was accepted directionally, with three small west-edge issues remaining.
+
+H6.3C therefore:
+
+- reduces and lowers the south gorge shoulder that was crowding the walking path;
+- removes the duplicate rounded west path read by making the gorge path-floor own the route from off-map through the threshold to the canonical Brook approach, while the normal Brook path now starts exactly at that approach;
+- adds a scene-owned **RAINBOW MEADOW** waymarker beside the gorge route, styled as an irregular carved stone slab with crystal accents rather than a wooden sign;
+- keeps the upper water throat, mist, accepted Meadow-side waterfall/pool and two-way traversal contract unchanged.
+
 ## H6.3 human gate
 
-H6.3B is the visual review checkpoint. Do not begin H6.4 until David approves the Brook-side gorge composition and two-way traversal remains green.
+H6.3C is now the visual review checkpoint. Do not begin H6.4 until David approves the cleaned west path handoff, reduced rock obstruction and Rainbow Meadow waymarker, and two-way traversal remains green.
 
 
 ## Next work
 
-Validate and visually review **H6.3B - Rainbow Meadow gorge visual refinement**. Do not begin H6.4.
+Validate and visually review **H6.3C - Rainbow Meadow gorge polish**. Do not begin H6.4.
 
 ## Operating reminders
 
