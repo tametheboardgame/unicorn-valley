@@ -1147,12 +1147,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     this.add
-      .text(242, 220, `Last played · ${getSunbeamChessOpponent(this.learningRecord.preferredOpponent).title}`, {
-        color: '#6b3f96',
-        fontFamily: UI_FONT,
-        fontSize: '14px',
-        fontStyle: 'bold',
-      })
+      .text(
+        242,
+        220,
+        `Last played · ${getSunbeamChessOpponent(this.learningRecord.preferredOpponent).title}`,
+        {
+          color: '#6b3f96',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
       .setOrigin(0, 0.5)
       .setName('sunbeam-chess:preferred-opponent');
 
