@@ -963,10 +963,27 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     historyPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.lavender, 0.55);
     historyPanel.strokeRoundedRect(638, 426, 524, 130, 16);
 
+    this.add
+      .text(690, 443, 'WHITE', {
+        color: '#6b3f96',
+        fontFamily: UI_FONT,
+        fontSize: '11px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    this.add
+      .text(825, 443, 'VILLAGE', {
+        color: '#6b3f96',
+        fontFamily: UI_FONT,
+        fontSize: '11px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
     this.moveLogText = this.add
-      .text(660, 443, 'No moves yet.', {
+      .text(660, 459, 'No moves yet.', {
         color: CHESS_ACADEMY_PALETTE.softInk,
-        fontFamily: 'Georgia, serif',
+        fontFamily: 'Courier New, monospace',
         fontSize: '14px',
         lineSpacing: 5,
         wordWrap: { width: 420 },
@@ -1125,11 +1142,28 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     historyPanel.lineStyle(2, CHESS_ACADEMY_PALETTE.turquoise, 0.45);
     historyPanel.strokeRoundedRect(638, 442, 524, 112, 16);
 
+    this.add
+      .text(690, 458, 'WHITE', {
+        color: '#477d74',
+        fontFamily: UI_FONT,
+        fontSize: '11px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+    this.add
+      .text(825, 458, 'VILLAGE', {
+        color: '#477d74',
+        fontFamily: UI_FONT,
+        fontSize: '11px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
     this.moveLogText = this.add
-      .text(660, 458, 'No moves yet.', {
+      .text(660, 474, 'No moves yet.', {
         color: CHESS_ACADEMY_PALETTE.softInk,
-        fontFamily: 'Georgia, serif',
-        fontSize: '14px',
+        fontFamily: 'Courier New, monospace',
+        fontSize: '13px',
         lineSpacing: 4,
         wordWrap: { width: 420 },
       })
