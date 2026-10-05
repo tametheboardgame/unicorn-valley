@@ -209,8 +209,8 @@ Human acceptance should answer:
 - **MG-WP5A - Discovery and design contract - complete**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
 - **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
 - **MG-WP5C - Puzzle Garden and curriculum expansion - complete / human-approved**: puzzles, layered hints, check/checkmate and piece-safety teaching.
-- **MG-WP5D - Coach Match - active**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
-- **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
+- **MG-WP5D - Coach Match - complete / human-approved**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
+- **MG-WP5E - Friendly Match and opponent ladder - active**: child-friendly opponent levels, rematch/result flow and match polish.
 - **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
 
 Do not chain these slices into one autonomous implementation window.
@@ -381,3 +381,58 @@ Implemented from the Coach Match human-preview feedback:
 - move history follows the newest move by default but manual scrolling can browse earlier full moves;
 - Friendly Match receives the same history navigation and automatically returns to the newest row after new play;
 - browser coverage verifies the speech bubble, readable feedback hold, preserved player + village response, history range, shared scroll controls and Coach Match undo.
+
+
+## MG-WP5D human acceptance and merge
+
+David approved the completed Coach Match experience on 2026-10-05, including the conversational coach bubble, readable response pacing, scrollable shared move history and checked-king warning treatment.
+
+MG-WP5D subsequently merged to `main` as `0da50c38c9643001477b36724ab5a3877ec5b2bb`.
+
+## MG-WP5E implementation contract
+
+WP5E now owns Friendly Match depth and opponent choice.
+
+The approved WP5A design already defines the initial opponent ladder:
+
+- **Dandelion** — very forgiving;
+- **Clover** — beginner;
+- **Sunbeam** — developing player.
+
+Implementation rules for this slice:
+
+- all three opponents use real legal `chess.js` moves;
+- difficulty is created by bounded move-choice quality, not cheating, illegal moves or arbitrary board edits;
+- easier levels make plausible beginner choices rather than random nonsense;
+- move selection remains deterministic enough for unit/browser validation;
+- Friendly Match must present opponent choice before a new match;
+- rematch keeps the selected opponent;
+- result flow must offer a direct rematch, opponent change and Academy return;
+- the current shared move-history/check/highlight behaviour remains intact;
+- selected difficulty remains session-local in WP5E; isolated persistence belongs to WP5F.
+
+
+## MG-WP5E first implementation slice
+
+Implemented:
+
+- Friendly Match now opens an opponent-selection screen instead of immediately starting the old fixed match;
+- the approved ladder is live:
+  - **Dandelion** — very forgiving;
+  - **Clover** — beginner;
+  - **Sunbeam** — developing player;
+- opponent policy is isolated in `SunbeamChessOpponent.ts`;
+- all levels choose only legal `chess.js` moves;
+- difficulty is deterministic and created by ranked move-choice quality rather than illegal play, cheating or random board manipulation;
+- Dandelion deliberately chooses further down the plausible ranked move list;
+- Clover normally chooses the strongest candidate but periodically selects the second-ranked plan;
+- Sunbeam uses the strongest existing shallow heuristic;
+- the legacy village/teaching move helper now routes through the same Sunbeam opponent policy rather than carrying a duplicate scorer;
+- Friendly Match displays the selected opponent name/identity throughout the match;
+- Restart/rematch preserves the chosen opponent;
+- the in-match **Opponents** control returns to the ladder without leaving Chess Academy;
+- Friendly Match results offer **Rematch**, **Change opponent** and **Academy**;
+- unit coverage verifies ladder definitions, legal moves, determinism, relative ranked move quality and no-move behaviour;
+- browser coverage verifies all three opponent cards are interactive and that selecting Dandelion starts the canonical full chess match with Dandelion carried into the match UI.
+
+This remains a human-gated WP5E checkpoint. Further tuning should react to actual play feel rather than making the easiest opponent arbitrarily worse.
