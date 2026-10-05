@@ -110,8 +110,16 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-pool-outer');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:upstream-cascade');
-  await waitForObject(page, 'CrystalBrookScene', 'r6-region-gateway-art:crystal-brook:east-woodland');
-  await waitForObject(page, 'CrystalBrookScene', 'r6-region-gateway-art:crystal-brook:woods-path-exit');
+  await waitForObject(
+    page,
+    'CrystalBrookScene',
+    'r6-region-gateway-art:crystal-brook:east-woodland',
+  );
+  await waitForObject(
+    page,
+    'CrystalBrookScene',
+    'r6-region-gateway-art:crystal-brook:woods-path-exit',
+  );
   await waitForObject(page, 'CrystalBrookScene', 'final-graphics-tightening:crystal-brook-anchor');
 
   const objects = await getSceneObjects(page, 'CrystalBrookScene');
