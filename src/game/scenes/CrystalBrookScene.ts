@@ -34,6 +34,7 @@ import {
   CRYSTAL_BROOK_WATERCOURSE,
   type CrystalBrookWatercoursePoint,
 } from '../world/CrystalBrookMap';
+import { createCrystalBrookBoundaryPresentation } from '../world/CrystalBrookBoundaryPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
@@ -453,6 +454,7 @@ export class CrystalBrookScene extends Phaser.Scene {
 
     this.createWater();
     this.createMeadowGorge();
+    createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
     this.createSteppingStones();
     this.createSecretTrail();
@@ -731,23 +733,22 @@ export class CrystalBrookScene extends Phaser.Scene {
           1,
         )
         .setStrokeStyle(4, 0x415754, 0.92),
-      this.add
-        .polygon(
-          4,
-          overhang.height * 0.22,
-          [
-            -overhang.width * 0.5,
-            -10,
-            overhang.width * 0.44,
-            -7,
-            overhang.width * 0.28,
-            30,
-            -overhang.width * 0.34,
-            34,
-          ],
-          0x243a3b,
-          0.9,
-        ),
+      this.add.polygon(
+        4,
+        overhang.height * 0.22,
+        [
+          -overhang.width * 0.5,
+          -10,
+          overhang.width * 0.44,
+          -7,
+          overhang.width * 0.28,
+          30,
+          -overhang.width * 0.34,
+          34,
+        ],
+        0x243a3b,
+        0.9,
+      ),
       this.add.ellipse(
         -overhang.width * 0.08,
         -overhang.height * 0.24,
@@ -992,7 +993,6 @@ export class CrystalBrookScene extends Phaser.Scene {
       [1890, 1770],
       [2440, 510],
       [3170, 560],
-      [3260, 1530],
     ] as const;
     for (const [x, y] of clumps) {
       const depth = worldDepthForY(y, 0.15);
