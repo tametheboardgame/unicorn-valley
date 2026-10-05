@@ -782,7 +782,7 @@ export class CrystalBrookScene extends Phaser.Scene {
       .setDepth(worldDepthForY(sign.y, -1.4));
 
     // Phaser offsets polygons built from negative local coordinates by their display origin.
-    // Keep the approved marker rock where it is and place the carving/crystals on its
+    // Keep the marker as one clean stone slab and place the carved lettering on its
     // actual rendered face rather than at the container origin.
     const signFaceCentre = { x: -138, y: -56 };
 
@@ -796,15 +796,6 @@ export class CrystalBrookScene extends Phaser.Scene {
           1,
         )
         .setStrokeStyle(5, 0x405552, 0.96),
-      this.add
-        .polygon(
-          -4,
-          -2,
-          [-116, -28, -88, -40, 68, -38, 112, -18, 102, 26, 42, 38, -84, 34, -118, 10],
-          0x91a39d,
-          0.34,
-        )
-        .setStrokeStyle(2, 0xbecdc8, 0.3),
       this.add
         .text(signFaceCentre.x + 2, signFaceCentre.y + 3, `${sign.arrow}  ${sign.label}`, {
           color: '#243a38',
@@ -825,34 +816,6 @@ export class CrystalBrookScene extends Phaser.Scene {
           strokeThickness: 2,
         })
         .setOrigin(0.5),
-      this.add
-        .triangle(
-          signFaceCentre.x + 112,
-          signFaceCentre.y - 42,
-          0,
-          34,
-          13,
-          0,
-          26,
-          34,
-          0xa9edf2,
-          0.88,
-        )
-        .setStrokeStyle(2, 0xf2ffff, 0.72),
-      this.add
-        .triangle(
-          signFaceCentre.x + 124,
-          signFaceCentre.y - 26,
-          0,
-          24,
-          9,
-          0,
-          18,
-          24,
-          0xc9bbef,
-          0.84,
-        )
-        .setStrokeStyle(2, 0xf5f0ff, 0.68),
     ]);
 
     this.add
