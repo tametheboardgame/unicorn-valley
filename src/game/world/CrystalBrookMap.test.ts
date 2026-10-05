@@ -153,9 +153,9 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_MEADOW_GORGE.waterThroat.centre.y).toBeLessThan(
       CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y - 140,
     );
-    expect(
-      CRYSTAL_BROOK_MEADOW_GORGE.rockFaces.some(({ id }) => id === 'inner-divider'),
-    ).toBe(true);
+    expect(CRYSTAL_BROOK_MEADOW_GORGE.rockFaces.some(({ id }) => id === 'inner-divider')).toBe(
+      true,
+    );
   });
 
   it('keeps both Meadow-Brook arrival points outside the walk-through trigger radius', () => {
