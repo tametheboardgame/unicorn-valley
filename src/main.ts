@@ -15,7 +15,6 @@ import { getLandscapeCreatorProgressiveWorldManager } from './game/ui/LandscapeC
 import { getLegacyWorldFeedbackMigrationManager } from './game/ui/LegacyWorldFeedbackMigrationManager';
 import { browserHasRaceTouchCapability } from './game/ui/RaceTouchCapability';
 import { getTitlePortraitControlsManager } from './game/ui/TitlePortraitControlsManager';
-import { getR5FinalTighteningManager } from './game/visual/R5FinalTighteningManager';
 import { getExplorationGeometryPresentationManager } from './game/world/ExplorationGeometryPresentationManager';
 import { getExplorationPathPolishManager } from './game/world/ExplorationPathPolishManager';
 import { getWorldLayerAlignmentManager } from './game/world/WorldLayerAlignmentManager';
@@ -55,7 +54,11 @@ getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getExplorationPathPolishManager(game);
 getWorldLayerAlignmentManager(game);
-getR5FinalTighteningManager(game);
+void import('./game/visual/R5FinalTighteningManager').then(
+  ({ getR5FinalTighteningManager }) => {
+    getR5FinalTighteningManager(game);
+  },
+);
 
 void Promise.all([
   import('./game/scenes/InventoryScene'),
