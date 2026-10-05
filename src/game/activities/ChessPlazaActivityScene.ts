@@ -1169,20 +1169,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0, 0);
 
-    this.createMoveHistoryScrollButton(
-      1126,
-      470,
-      '▲',
-      'sunbeam-chess:move-history-up',
-      -1,
-    );
-    this.createMoveHistoryScrollButton(
-      1126,
-      524,
-      '▼',
-      'sunbeam-chess:move-history-down',
-      1,
-    );
+    this.createMoveHistoryScrollButton(1126, 470, '▲', 'sunbeam-chess:move-history-up', -1);
+    this.createMoveHistoryScrollButton(1126, 524, '▼', 'sunbeam-chess:move-history-down', 1);
 
     this.add
       .text(900, 588, 'Full legal chess · Friendly opponent tuning arrives later in the Academy.', {
@@ -1402,11 +1390,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
               fontFamily: 'Georgia, serif',
               fontSize: '42px',
               fontStyle: 'bold',
-              stroke: checkedKing
-                ? '#a71932'
-                : piece.color === 'w'
-                  ? '#5b4a42'
-                  : '#f5e6c7',
+              stroke: checkedKing ? '#a71932' : piece.color === 'w' ? '#5b4a42' : '#f5e6c7',
               strokeThickness: checkedKing ? 5 : 2,
             })
             .setOrigin(0.5)
@@ -2213,9 +2197,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const maxStart = Math.max(0, rows.length - MOVE_HISTORY_VISIBLE_ROWS);
     const start =
-      this.moveHistoryStart < 0
-        ? maxStart
-        : Phaser.Math.Clamp(this.moveHistoryStart, 0, maxStart);
+      this.moveHistoryStart < 0 ? maxStart : Phaser.Math.Clamp(this.moveHistoryStart, 0, maxStart);
     const end = Math.min(rows.length, start + MOVE_HISTORY_VISIBLE_ROWS);
 
     this.moveLogText.setText(rows.slice(start, end).join('\n'));
@@ -2232,9 +2214,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     const maxStart = Math.max(0, rows.length - MOVE_HISTORY_VISIBLE_ROWS);
     const current =
-      this.moveHistoryStart < 0
-        ? maxStart
-        : Phaser.Math.Clamp(this.moveHistoryStart, 0, maxStart);
+      this.moveHistoryStart < 0 ? maxStart : Phaser.Math.Clamp(this.moveHistoryStart, 0, maxStart);
     const next = Phaser.Math.Clamp(current + direction, 0, maxStart);
     this.moveHistoryStart = next === maxStart ? -1 : next;
     this.renderMoveHistory();
@@ -2258,10 +2238,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     draw(CHESS_ACADEMY_PALETTE.mint);
 
     button
-      .setInteractive(
-        new Phaser.Geom.Rectangle(-22, -20, 44, 40),
-        Phaser.Geom.Rectangle.Contains,
-      )
+      .setInteractive(new Phaser.Geom.Rectangle(-22, -20, 44, 40), Phaser.Geom.Rectangle.Contains)
       .on('pointerover', () => draw(CHESS_ACADEMY_PALETTE.mintHover))
       .on('pointerout', () => draw(CHESS_ACADEMY_PALETTE.mint))
       .on('pointerdown', () => this.scrollMoveHistory(direction));
