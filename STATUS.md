@@ -6,7 +6,7 @@ Last updated: 2026-10-03
 
 The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
 
-Current bounded checkpoint: **H6.2 - Continuous Brook and Rainbow Meadow hydrology — COMPLETE / HUMAN APPROVED**
+Current bounded checkpoint: **H6.3A - Rainbow Meadow gorge ownership and traversal contract**
 
 Branch: `agent/r6.5-wp19h6.2-continuous-brook`
 
@@ -132,9 +132,29 @@ The final pre-approval CI red was formatting-only in three files; those formatte
 
 The accepted H6.2 composition includes the continuous/meandering Brook, crystalline bridge sequence, relocated Grotto, north-edge Crystal Cup Raceway gateway/hub topology, joined east-side path network and naturalised Woods edge.
 
+
+## H6.3A implementation
+
+Started **H6.3 - Rainbow Meadow cave/gorge entrance** from merged H6.2 main.
+
+This first bounded checkpoint establishes the west-side ownership and traversal contract before further visual refinement:
+
+- adds canonical Brook-side gorge geometry to `CrystalBrookMap`;
+- keeps the Brook water opening at `120,920` and the walking threshold at `120,1090`, so water and path pass through the same gorge alongside one another without overlapping;
+- adds a Brook-owned irregular rock/recess presentation in `CrystalBrookScene`;
+- removes the superseded generic `brook-meadow` cave-mouth presentation from `R6RegionGatewayArtManager`;
+- preserves the accepted Rainbow Meadow waterfall/pool implementation unchanged;
+- keeps existing Meadow ↔ Brook destination IDs, arrival positions and facing behaviour;
+- locks both arrival positions outside the 130px walk-through trigger radius;
+- adds browser coverage for Meadow → Brook → Meadow traversal and the no-bounce behaviour.
+
+## H6.3A gate
+
+H6.3A requires technical validation and an exact-head preview before the gorge composition is treated as the new visual baseline.
+
 ## Next work
 
-After H6.2 is merged, begin **H6.3 - Rainbow Meadow cave/gorge entrance**.
+Validate and visually review **H6.3A - gorge ownership and traversal contract**. Do not begin H6.4.
 
 ## Operating reminders
 
