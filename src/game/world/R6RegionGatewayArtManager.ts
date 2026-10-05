@@ -393,7 +393,6 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     [3385, 1280, 0.72],
     [3525, 1300, 1.08],
     [3680, 1365, 0.98],
-    [3315, 1475, 0.74],
     [3560, 1495, 1.12],
     [3705, 1550, 0.9],
     [3330, 1715, 0.86],
@@ -472,8 +471,8 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
   }
 
   const woodsSign = scene.add
-    .container(3190, 1450)
-    .setDepth(worldDepthForY(1450, 0.42))
+    .container(2975, 1490)
+    .setDepth(worldDepthForY(1490, 0.42))
     .setAngle(-2);
   const woodsSignRock = scene.add.graphics();
   const woodsSignPoints = [
