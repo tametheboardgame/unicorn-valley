@@ -604,26 +604,6 @@ export class CrystalBrookScene extends Phaser.Scene {
       true,
     );
 
-    const pathFloor = this.add
-      .graphics()
-      .setName('crystal-brook:meadow-gorge:path-floor')
-      .setDepth(2.84);
-    const drawPathFloor = (width: number, colour: number): void => {
-      pathFloor.lineStyle(width, colour, 1);
-      pathFloor.fillStyle(colour, 1);
-      pathFloor.beginPath();
-      pathFloor.moveTo(gorge.pathFloor[0].x, gorge.pathFloor[0].y);
-      for (const point of gorge.pathFloor.slice(1)) {
-        pathFloor.lineTo(point.x, point.y);
-      }
-      pathFloor.strokePath();
-      for (const point of gorge.pathFloor) {
-        pathFloor.fillCircle(point.x, point.y, width / 2);
-      }
-    };
-    drawPathFloor(128, 0xd7c18f);
-    drawPathFloor(108, 0xf0dfb2);
-
     this.add
       .ellipse(
         gorge.waterThroat.centre.x - 18,
@@ -715,6 +695,69 @@ export class CrystalBrookScene extends Phaser.Scene {
       );
     }
 
+    const overhang = gorge.overhang;
+    const overhangContainer = this.add
+      .container(overhang.x, overhang.y)
+      .setName('crystal-brook:meadow-gorge:path-overhang')
+      .setAngle(overhang.angle)
+      .setDepth(worldDepthForY(gorge.pathOpening.y, 2.2));
+
+    overhangContainer.add([
+      this.add
+        .polygon(
+          0,
+          0,
+          [
+            -overhang.width * 0.58,
+            -overhang.height * 0.12,
+            -overhang.width * 0.46,
+            -overhang.height * 0.48,
+            -overhang.width * 0.14,
+            -overhang.height * 0.58,
+            overhang.width * 0.34,
+            -overhang.height * 0.48,
+            overhang.width * 0.54,
+            -overhang.height * 0.2,
+            overhang.width * 0.46,
+            overhang.height * 0.24,
+            overhang.width * 0.16,
+            overhang.height * 0.42,
+            -overhang.width * 0.34,
+            overhang.height * 0.38,
+            -overhang.width * 0.56,
+            overhang.height * 0.14,
+          ],
+          0x5d716d,
+          1,
+        )
+        .setStrokeStyle(4, 0x415754, 0.92),
+      this.add
+        .polygon(
+          4,
+          overhang.height * 0.22,
+          [
+            -overhang.width * 0.5,
+            -10,
+            overhang.width * 0.44,
+            -7,
+            overhang.width * 0.28,
+            30,
+            -overhang.width * 0.34,
+            34,
+          ],
+          0x243a3b,
+          0.9,
+        ),
+      this.add.ellipse(
+        -overhang.width * 0.08,
+        -overhang.height * 0.24,
+        overhang.width * 0.58,
+        overhang.height * 0.22,
+        0x8b9f98,
+        0.2,
+      ),
+    ]);
+
     for (const [index, mist] of gorge.mist.entries()) {
       const plume = this.add
         .ellipse(mist.x, mist.y, mist.width, mist.height, 0xeaffff, 0.18)
@@ -736,44 +779,53 @@ export class CrystalBrookScene extends Phaser.Scene {
       .container(sign.x, sign.y)
       .setName('crystal-brook:meadow-gorge:rainbow-meadow-sign')
       .setAngle(sign.angle)
-      .setDepth(worldDepthForY(sign.y, 0.42));
+      .setDepth(worldDepthForY(sign.y, -1.4));
 
     signContainer.add([
       this.add
         .polygon(
           0,
           0,
-          [-94, -38, -66, -54, 54, -48, 96, -20, 82, 36, 20, 50, -70, 42, -100, 10],
-          0x71847f,
+          [-136, -42, -106, -58, 72, -54, 136, -24, 124, 36, 50, 54, -96, 48, -140, 14],
+          0x687b76,
           1,
         )
-        .setStrokeStyle(4, 0x4d625f, 0.94),
+        .setStrokeStyle(5, 0x405552, 0.96),
       this.add
         .polygon(
-          -22,
-          -8,
-          [-62, -18, -46, -32, 38, -30, 58, -10, 44, 18, -34, 22],
-          0x91a7a0,
-          0.36,
+          -4,
+          -2,
+          [-116, -28, -88, -40, 68, -38, 112, -18, 102, 26, 42, 38, -84, 34, -118, 10],
+          0x91a39d,
+          0.34,
         )
-        .setStrokeStyle(2, 0xc6d9d2, 0.28),
+        .setStrokeStyle(2, 0xbecdc8, 0.3),
       this.add
-        .text(0, 2, sign.label, {
-          color: '#29413f',
+        .text(2, 3, `${sign.arrow}  ${sign.label}`, {
+          color: '#243a38',
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '17px',
+          fontSize: '18px',
           fontStyle: 'bold',
           align: 'center',
-          stroke: '#b9cbc5',
-          strokeThickness: 1,
         })
         .setOrigin(0.5),
       this.add
-        .triangle(76, -42, 0, 34, 13, 0, 26, 34, 0xa9edf2, 0.9)
-        .setStrokeStyle(2, 0xf2ffff, 0.76),
+        .text(0, 0, `${sign.arrow}  ${sign.label}`, {
+          color: '#e4eeea',
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '18px',
+          fontStyle: 'bold',
+          align: 'center',
+          stroke: '#405552',
+          strokeThickness: 2,
+        })
+        .setOrigin(0.5),
       this.add
-        .triangle(88, -26, 0, 24, 9, 0, 18, 24, 0xc9bbef, 0.86)
-        .setStrokeStyle(2, 0xf5f0ff, 0.72),
+        .triangle(112, -42, 0, 34, 13, 0, 26, 34, 0xa9edf2, 0.88)
+        .setStrokeStyle(2, 0xf2ffff, 0.72),
+      this.add
+        .triangle(124, -26, 0, 24, 9, 0, 18, 24, 0xc9bbef, 0.84)
+        .setStrokeStyle(2, 0xf5f0ff, 0.68),
     ]);
 
     this.add
