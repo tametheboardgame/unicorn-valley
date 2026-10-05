@@ -1090,11 +1090,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     );
   }
 
-  private createFriendlyOpponentCard(
-    level: SunbeamChessOpponentLevel,
-    x: number,
-    y: number,
-  ): void {
+  private createFriendlyOpponentCard(level: SunbeamChessOpponentLevel, x: number, y: number): void {
     const opponent = getSunbeamChessOpponent(level);
     const width = 860;
     const height = 104;
@@ -2230,12 +2226,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     container.add([scrim, panel, stars, title, message]);
 
-    if (
-      options.nextLabel &&
-      options.onNext &&
-      options.thirdLabel &&
-      options.onThird
-    ) {
+    if (options.nextLabel && options.onNext && options.thirdLabel && options.onThird) {
       this.addCompletionButton(
         container,
         415,
