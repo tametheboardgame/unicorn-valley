@@ -27,12 +27,16 @@ describe('SunbeamChessLessons', () => {
     }
   });
 
-  it('ships the first four movement lessons in a stable progression', () => {
+  it('ships movement through checkmate in a stable progression', () => {
     expect(SUNBEAM_CHESS_LESSONS.map((lesson) => lesson.id)).toEqual([
       'rook-rays',
       'bishop-trails',
       'knight-jumps',
       'pawn-steps',
+      'capture-carefully',
+      'give-check',
+      'escape-check',
+      'checkmate',
     ]);
   });
 

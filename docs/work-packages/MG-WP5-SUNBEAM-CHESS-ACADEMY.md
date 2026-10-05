@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - sunbeam-chess
 
 ## Current checkpoint
 
-**MG-WP5A - Discovery and design contract** is complete. **MG-WP5B - Academy shell and teaching foundation** is implemented and human-approved. Merge remains gated on exact-head CI.
+**MG-WP5A** and **MG-WP5B** are complete. **MG-WP5C - Puzzle Garden and curriculum expansion** is the active bounded checkpoint.
 
 Detailed design contract: `docs/minigames/SUNBEAM-CHESS-ACADEMY-DESIGN.md`.
 
@@ -208,7 +208,7 @@ Human acceptance should answer:
 
 - **MG-WP5A - Discovery and design contract - complete**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
 - **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
-- **MG-WP5C - Puzzle Garden and curriculum expansion**: puzzles, layered hints, check/checkmate and piece-safety teaching.
+- **MG-WP5C - Puzzle Garden and curriculum expansion - active**: puzzles, layered hints, check/checkmate and piece-safety teaching.
 - **MG-WP5D - Coach Match**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
 - **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
 - **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
@@ -246,4 +246,81 @@ Out of scope for WP5B:
 
 David approved the WP5B Academy shell and starter lesson experience on 2026-10-04 after testing the Cloudflare branch preview.
 
-This approval covers the visual/product checkpoint for WP5B. Merge still requires the exact accepted branch head to satisfy repository CI policy.
+This approval covered the visual/product checkpoint for WP5B. The accepted checkpoint subsequently passed exact-head CI and merged to `main`.
+
+
+## MG-WP5C implementation record
+
+Implemented on the child branch so far:
+
+- Puzzle Garden is now an available Academy mode;
+- starter puzzle families cover a free capture, giving check, escaping check and mate in one;
+- every puzzle is defined as a real legal `chess.js` position with an authored legal solution;
+- puzzle validation verifies check / escape-check / mate semantics where relevant;
+- Puzzle Garden uses the same Notice -> Question -> Nudge -> Show me hint ladder;
+- legal-but-not-solution moves are acknowledged as real chess moves before the position resets;
+- the Lessons curriculum now extends beyond movement into captures, check, escaping check and checkmate;
+- the lesson list scales to eight current lessons;
+- focused browser coverage now includes solving mate in one through the real board.
+
+MG-WP5C deliberately does not implement Coach Match, opponent difficulty levels or learner persistence.
+
+
+## MG-WP5C visual-polish implementation
+
+Human review of the first Puzzle Garden preview approved the puzzle functionality but rejected the placeholder coach portrait, cramped bottom navigation and dull beige/green Academy presentation.
+
+Implemented against the roadmap brief:
+
+- replaced the original malformed side-profile coach badge with a cleaner three-quarter/front unicorn teacher portrait using one horn, one readable ear, separated mane colours, a clear eye/muzzle and an academy collar/medallion;
+- established a single `CHESS_ACADEMY_PALETTE` for the non-board interface;
+- changed the Academy outer field to deep royal violet;
+- changed the main shell to pale lilac with a gold rim and a strong violet header treatment;
+- gave Lessons, Puzzle Garden and Friendly Match distinct berry / mint / lavender accent treatments;
+- converted lesson, puzzle and match information panels from beige to pale lilac, mint and white surfaces;
+- brightened action buttons to mint/turquoise with violet outlines;
+- retained the existing classic chess-board colours as the stable visual anchor;
+- moved Home, Lessons and Puzzle Garden navigation controls into a dedicated bottom safe area;
+- all bottom action rows now sit at logical y=638 with a 52 px control height inside a shell ending at y=696, leaving a 32 px bottom inset;
+- compacted the eight-lesson selector so its final row ends well above the action row;
+- moved Puzzle Garden cards upward and reduced their height slightly to preserve the same safe area;
+- increased breathing room in the teacher/intro bands.
+
+WP5C remains human-gated for visual acceptance before MG-WP5D.
+
+
+## MG-WP5C second human-polish pass
+
+Follow-up review of the brightened Academy UI identified two remaining presentation issues and one missing interaction affordance.
+
+Implemented:
+
+- replaced the custom-drawn teacher badge with the existing production NPC/unicorn art pipeline using the happy portrait presentation, retaining a small Academy frame/medallion treatment;
+- moved all eight lesson rows downward so the first row begins below the teacher/intro band rather than intersecting the portrait;
+- kept the portrait and intro band visually separate from selectable lesson cards;
+- added a large celebratory completion card for lessons and puzzles;
+- added **Next lesson** / **Next puzzle** when another authored item follows;
+- the final lesson/puzzle returns to the relevant list rather than offering a nonexistent next item;
+- Friendly Match now receives an explicit game-result card for win/loss/draw, with **Play again** and Academy return controls;
+- completion controls are named in diagnostics and covered by browser regression tests;
+- browser coverage now proves that Rook Rays advances directly to Bishop Trails and the first Puzzle Garden challenge advances directly to the second puzzle.
+
+
+## MG-WP5C completion overlay refinement
+
+Follow-up human review approved the clearer completion state but requested that it read as a true end-state over the whole activity rather than another right-side card.
+
+Implemented:
+
+- completion now uses a centred 1000 x 500 modal spanning roughly 80% of the board + teaching content area;
+- the underlying completed board and instructions remain visible behind a violet scrim for context;
+- the scrim intercepts pointer input so the chess board and normal bottom action row cannot be used while the result modal is open;
+- Lesson / Puzzle Next and list-return actions are centred inside the modal;
+- Friendly Match uses the same full-activity result treatment.
+
+
+## MG-WP5C human acceptance
+
+David approved the final WP5C Puzzle Garden / curriculum / visual-completion experience on 2026-10-05 after testing the branch preview, including the full-width completion overlay.
+
+MG-WP5C is product-approved. Merge remains subject only to exact-head repository validation and branch reconciliation.

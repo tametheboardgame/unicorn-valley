@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP4 are complete and merged. MG-WP5 - Sunbeam Chess Academy is the active existing-game refinement package; MG-WP5A discovery/design is the current bounded checkpoint.**
+**MG-WP0 through MG-WP4 are complete and merged. MG-WP5 - Sunbeam Chess Academy is the active existing-game refinement package; MG-WP5C Puzzle Garden, curriculum expansion and its visual-polish gate are the current bounded checkpoint.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 now applies that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
@@ -319,6 +319,82 @@ Potential modes at the end of the package:
 Progress should, if persisted, use an isolated mini-game learning-record namespace and must never become adventure quest/economy/unlock state. World and Just Games entry use the same Chess Academy implementation.
 
 Human acceptance should focus on whether a seven-year-old can learn, experiment and lose without the game becoming frustrating or patronising.
+
+#### MG-WP5C visual polish implementation brief
+
+Human review of the first Puzzle Garden preview identified three concrete presentation defects that must be corrected before WP5C acceptance.
+
+**1. Replace the placeholder coach portrait**
+
+The current hand-drawn coach badge is not acceptable as a finished character asset/presentation.
+
+Implementation requirements:
+
+- replace the malformed side-profile blob with a deliberately constructed friendly unicorn teacher portrait;
+- use a clear head silhouette with readable muzzle, ear, eye, horn and mane separation;
+- face the character slightly toward the content rather than presenting a flattened horizontal head;
+- keep the portrait legible at the small Academy Home size and the smaller lesson/puzzle size;
+- use the same coach identity consistently across Academy Home, Lessons and Puzzle Garden;
+- use the existing production NPC/unicorn presentation pipeline rather than another bespoke procedural doodle;
+- give the coach a distinctive academy accent such as a small collar/medallion or star detail without adding visual clutter;
+- do not introduce a new roaming world NPC in this slice.
+
+**2. Correct Academy safe-area and spacing**
+
+The 1280 x 720 game-space composition must remain comfortably inside its rounded shell when viewed on a phone in landscape.
+
+Implementation requirements:
+
+- maintain at least 32 px visual inset between the shell edge and primary controls;
+- move the Academy Home Back control fully inside the shell rather than touching/overlapping the bottom/right border;
+- reserve a dedicated bottom action row so card content never competes with navigation controls;
+- give the teacher/intro band more vertical breathing room;
+- keep all four Academy Home mode cards visually balanced and separated;
+- ensure Lessons and Puzzle Garden lists remain readable with eight lessons / four puzzles without crowding the bottom action row;
+- the first lesson/puzzle row must begin below the teacher portrait/intro band with a clear visible gap; nothing may overlap the coach portrait;
+- keep touch targets at least 48 px high;
+- no primary text or control may visually intersect the shell border at the 1280 x 720 logical viewport.
+
+**3. Replace the dull beige/pastel shell with a more exciting Chess Academy identity**
+
+The chess board remains intentionally traditional and readable. The surrounding Academy UI should feel like a magical Unicorn Valley activity, not a muted beige chess utility.
+
+Palette direction:
+
+- deep royal violet/plum for the outer Academy field and strong headings;
+- brighter lavender/periwinkle and berry accents for mode cards;
+- turquoise/mint as the secondary action/accent colour;
+- warm gold for academy/star highlights;
+- clean pale lilac/cream content surfaces only as neutral support;
+- disabled/coming-soon content may be softened but must not turn the entire interface grey/brown.
+
+Implementation requirements:
+
+- Academy shell gets a stronger violet identity and coloured header treatment;
+- cards use distinct but related accent treatments rather than identical beige panels;
+- active buttons use brighter mint/turquoise with clear violet text/borders;
+- teacher panels and informational cards use pale lilac/blue surfaces;
+- retain sufficient contrast for child-readable text;
+- preserve the existing classic board square colours unless readability testing proves a change is necessary;
+- reuse one small Chess Academy palette constant set rather than scattering additional arbitrary colours through the scene.
+
+**WP5C visual acceptance**
+
+Before WP5C is accepted, the human preview must show:
+
+- a coherent, recognisable unicorn coach portrait;
+- no Back/action control touching the shell boundary;
+- comfortable spacing at the phone-landscape layout;
+- a visibly brighter, more magical Academy UI;
+- no regression to Lessons, Puzzle Garden or Friendly Match interaction;
+- the chess board remaining the stable visual anchor;
+- completing a lesson or puzzle must produce an obvious celebratory completion overlay rather than only changing small status text;
+- the completion overlay must be centred across roughly 80% of the activity content area, spanning both the board and teaching panel rather than living only in the right-hand panel;
+- the completed board/instructions should remain faintly visible behind a dimmed scrim so the result still relates to the position just solved;
+- underlying board and action-row input must be blocked while the completion overlay is open;
+- when another lesson/puzzle follows, completion must offer a direct **Next lesson / Next puzzle** action;
+- the final lesson/puzzle must instead provide a clear return to its list;
+- Friendly Match checkmate/draw must show a prominent result card with **Play again** and Academy return actions.
 
 ### MG-WP6 - Rainbow Disc expansion
 
