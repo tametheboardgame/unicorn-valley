@@ -54,11 +54,9 @@ getTitlePortraitControlsManager(game);
 getExplorationGeometryPresentationManager(game);
 getExplorationPathPolishManager(game);
 getWorldLayerAlignmentManager(game);
-void import('./game/visual/R5FinalTighteningManager').then(
-  ({ getR5FinalTighteningManager }) => {
-    getR5FinalTighteningManager(game);
-  },
-);
+void import('./game/visual/R5FinalTighteningManager').then(({ getR5FinalTighteningManager }) => {
+  getR5FinalTighteningManager(game);
+});
 
 void Promise.all([
   import('./game/scenes/InventoryScene'),
