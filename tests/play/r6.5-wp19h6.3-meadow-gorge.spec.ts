@@ -20,18 +20,6 @@ interface DiagnosticsApi {
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
-async function diagnostics(page: Page): Promise<DiagnosticsApi> {
-  return page.evaluateHandle(() => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    return api;
-  }) as unknown as Promise<DiagnosticsApi>;
-}
-
 async function snapshot(page: Page): Promise<DiagnosticSnapshot> {
   return page.evaluate(() => {
     const api = (
