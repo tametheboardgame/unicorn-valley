@@ -88,7 +88,9 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
 });
 
 
-test('H6.4 galloping along the rock perimeter does not snag on collision seams', async ({ page }) => {
+test('H6.4 galloping along the rock perimeter does not snag on collision seams', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?diagnostics=1');
