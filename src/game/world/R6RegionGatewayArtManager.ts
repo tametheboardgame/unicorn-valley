@@ -446,13 +446,8 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     ]);
   }
 
+  // Keep low woodland undergrowth away from the actual walk-through exit.
   for (const [x, y, width, height, angle] of [
-    [3370, 1435, 116, 58, -10],
-    [3490, 1450, 132, 64, 8],
-    [3620, 1510, 126, 60, -6],
-    [3410, 1620, 108, 54, 11],
-    [3570, 1650, 138, 66, -8],
-    [3710, 1670, 122, 58, 6],
     [3440, 1850, 118, 58, -5],
     [3610, 1890, 130, 62, 9],
   ] as const) {
