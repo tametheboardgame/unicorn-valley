@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - sunbeam-chess
 
 ## Current checkpoint
 
-**MG-WP5A** and **MG-WP5B** are complete. **MG-WP5C - Puzzle Garden and curriculum expansion** is the active bounded checkpoint.
+**MG-WP5A**, **MG-WP5B** and **MG-WP5C** are complete/human-approved. **MG-WP5D - Coach Match** is the active bounded checkpoint.
 
 Detailed design contract: `docs/minigames/SUNBEAM-CHESS-ACADEMY-DESIGN.md`.
 
@@ -208,8 +208,8 @@ Human acceptance should answer:
 
 - **MG-WP5A - Discovery and design contract - complete**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
 - **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
-- **MG-WP5C - Puzzle Garden and curriculum expansion - active**: puzzles, layered hints, check/checkmate and piece-safety teaching.
-- **MG-WP5D - Coach Match**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
+- **MG-WP5C - Puzzle Garden and curriculum expansion - complete / human-approved**: puzzles, layered hints, check/checkmate and piece-safety teaching.
+- **MG-WP5D - Coach Match - active**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
 - **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
 - **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
 
@@ -324,3 +324,24 @@ Implemented:
 David approved the final WP5C Puzzle Garden / curriculum / visual-completion experience on 2026-10-05 after testing the branch preview, including the full-width completion overlay.
 
 MG-WP5C is product-approved. Merge remains subject only to exact-head repository validation and branch reconciliation.
+
+
+## MG-WP5D implementation record
+
+Current bounded Coach Match implementation:
+
+- Coach Match is now available from Academy Home and uses the same canonical chess scene/rules engine as Friendly Match;
+- coaching analysis lives in `SunbeamChessCoach.ts`, separate from Phaser presentation and from move legality;
+- the coach only interrupts for bounded, explainable beginner situations:
+  - allowing an immediate mate-in-one against the player;
+  - hanging a rook/queen to a much cheaper piece;
+  - overlooking a safe free rook/queen capture;
+- ordinary reasonable moves are not interrupted merely because another move scores better;
+- every warning offers both **Have another look** and **Play it anyway**;
+- Coach Match supports layered hints: Notice -> Question -> Nudge -> Show me;
+- Coach Match supports undo of the player's move plus the village reply as one learning turn;
+- the existing village opponent remains in use for this slice; dedicated opponent difficulty work remains MG-WP5E;
+- unit coverage exercises explainable coaching decisions and layered hints;
+- browser coverage exercises Coach Match availability, a normal opening move, the village reply and full-turn undo.
+
+MG-WP5D remains human-gated before moving to MG-WP5E.
