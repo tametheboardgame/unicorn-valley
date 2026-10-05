@@ -1832,6 +1832,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     });
     this.selected = null;
     this.hintMove = null;
+    this.moveHistoryStart = -1;
     this.lessonText?.setText(describeTeachingMove(applied));
     this.renderBoard();
 
