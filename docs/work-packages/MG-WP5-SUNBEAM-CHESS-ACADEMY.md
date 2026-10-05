@@ -209,8 +209,8 @@ Human acceptance should answer:
 - **MG-WP5A - Discovery and design contract - complete**: current implementation audit, teaching principles, mode model, curriculum direction and implementation boundaries.
 - **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
 - **MG-WP5C - Puzzle Garden and curriculum expansion - complete / human-approved**: puzzles, layered hints, check/checkmate and piece-safety teaching.
-- **MG-WP5D - Coach Match - active**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
-- **MG-WP5E - Friendly Match and opponent ladder**: child-friendly opponent levels, rematch/result flow and match polish.
+- **MG-WP5D - Coach Match - complete / human-approved**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
+- **MG-WP5E - Friendly Match and opponent ladder - active**: child-friendly opponent levels, rematch/result flow and match polish.
 - **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
 
 Do not chain these slices into one autonomous implementation window.
@@ -381,3 +381,32 @@ Implemented from the Coach Match human-preview feedback:
 - move history follows the newest move by default but manual scrolling can browse earlier full moves;
 - Friendly Match receives the same history navigation and automatically returns to the newest row after new play;
 - browser coverage verifies the speech bubble, readable feedback hold, preserved player + village response, history range, shared scroll controls and Coach Match undo.
+
+
+## MG-WP5D human acceptance and merge
+
+David approved the completed Coach Match experience on 2026-10-05, including the conversational coach bubble, readable response pacing, scrollable shared move history and checked-king warning treatment.
+
+MG-WP5D subsequently merged to `main` as `0da50c38c9643001477b36724ab5a3877ec5b2bb`.
+
+## MG-WP5E implementation contract
+
+WP5E now owns Friendly Match depth and opponent choice.
+
+The approved WP5A design already defines the initial opponent ladder:
+
+- **Dandelion** — very forgiving;
+- **Clover** — beginner;
+- **Sunbeam** — developing player.
+
+Implementation rules for this slice:
+
+- all three opponents use real legal `chess.js` moves;
+- difficulty is created by bounded move-choice quality, not cheating, illegal moves or arbitrary board edits;
+- easier levels make plausible beginner choices rather than random nonsense;
+- move selection remains deterministic enough for unit/browser validation;
+- Friendly Match must present opponent choice before a new match;
+- rematch keeps the selected opponent;
+- result flow must offer a direct rematch, opponent change and Academy return;
+- the current shared move-history/check/highlight behaviour remains intact;
+- selected difficulty remains session-local in WP5E; isolated persistence belongs to WP5F.
