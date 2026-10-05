@@ -39,9 +39,8 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
 
 async function startScene(page: Page, sceneKey: string): Promise<void> {
   await page.evaluate((key) => {
-    const api = (
-      window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!api) {
       throw new Error('Browser diagnostics are unavailable.');
     }
@@ -59,9 +58,8 @@ async function setPlayerPosition(
 ): Promise<void> {
   await page.evaluate(
     ({ key, targetX, targetY }) => {
-      const api = (
-        window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+        .__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!api) {
         throw new Error('Browser diagnostics are unavailable.');
       }
@@ -88,7 +86,11 @@ test('Rainbow Meadow and Crystal Brook share one gorge transition without arriva
   await startScene(page, 'RainbowMeadowScene');
 
   const meadow = (await snapshot(page)).scenes.find((scene) => scene.key === 'RainbowMeadowScene');
-  expect(meadow?.objects.some((object) => object.name === 'r6-region-gateway-art:meadow-crystal-brook:pool')).toBe(true);
+  expect(
+    meadow?.objects.some(
+      (object) => object.name === 'r6-region-gateway-art:meadow-crystal-brook:pool',
+    ),
+  ).toBe(true);
   expect(
     meadow?.objects.some(
       (object) => object.name === 'r6-region-gateway-art:meadow-crystal-brook:waterfall',
@@ -103,12 +105,12 @@ test('Rainbow Meadow and Crystal Brook share one gorge transition without arriva
   expect(position.y).toBeCloseTo(1090, 0);
 
   let brook = (await snapshot(page)).scenes.find((scene) => scene.key === 'CrystalBrookScene');
-  expect(
-    brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:recess'),
-  ).toBe(true);
-  expect(
-    brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:rocks'),
-  ).toBe(true);
+  expect(brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:recess')).toBe(
+    true,
+  );
+  expect(brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:rocks')).toBe(
+    true,
+  );
   expect(
     brook?.objects.some((object) => object.name === 'crystal-brook:meadow-gorge:path-floor'),
   ).toBe(true);
