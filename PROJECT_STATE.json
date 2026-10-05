@@ -10,7 +10,7 @@
   "autonomy_state": "amber",
   "agent_state": "idle",
   "branch": "agent/r6.5-wp19h6.2-continuous-brook",
-  "latest_commit": "c95e6aaea18b1aead6b652a72ec6eebfad6e85c2",
+  "latest_commit": "f538a34aa8475666c0f7e514bfff4327c1a9381c",
   "ci_state": "pending",
   "technical_validation_state": "pending",
   "human_acceptance_state": "accepted",
