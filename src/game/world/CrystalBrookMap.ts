@@ -128,8 +128,7 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
 
 export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
   [
-    { x: 100, y: 1090 },
-    { x: 340, y: 1090 },
+    CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
     { x: 620, y: 1160 },
     { x: 900, y: 1220 },
     { x: 1200, y: 1280 },
@@ -207,7 +206,7 @@ export const CRYSTAL_BROOK_MEADOW_GORGE = {
     { id: 'north-cap', x: 104, y: 744, width: 378, height: 224, angle: -8, colour: 0x617570 },
     { id: 'north-shoulder', x: 220, y: 838, width: 254, height: 146, angle: 6, colour: 0x71847d },
     { id: 'inner-divider', x: 206, y: 1014, width: 210, height: 82, angle: -4, colour: 0x667a75 },
-    { id: 'south-shoulder', x: 192, y: 1214, width: 306, height: 190, angle: -5, colour: 0x697c77 },
+    { id: 'south-shoulder', x: 184, y: 1238, width: 252, height: 150, angle: -5, colour: 0x697c77 },
     { id: 'south-cap', x: 80, y: 1390, width: 386, height: 242, angle: 8, colour: 0x5b706e },
   ],
   crystals: [
@@ -218,6 +217,12 @@ export const CRYSTAL_BROOK_MEADOW_GORGE = {
     { x: 120, y: 904, width: 116, height: 30 },
     { x: 72, y: 930, width: 92, height: 24 },
   ],
+  sign: {
+    x: 390,
+    y: 1215,
+    angle: -4,
+    label: 'RAINBOW MEADOW',
+  },
 } as const;
 
 export const CRYSTAL_BROOK_WATERCOURSE = [
