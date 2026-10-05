@@ -375,10 +375,7 @@ function createWoodlandThreshold(
 }
 
 function createBrookEastWoodland(scene: Phaser.Scene): void {
-  const woodland = name(
-    scene.add.container(0, 0).setDepth(6.2),
-    'crystal-brook:east-woodland',
-  );
+  const woodland = name(scene.add.container(0, 0).setDepth(6.2), 'crystal-brook:east-woodland');
 
   const treePositions = [
     [3345, 430, 0.78],
@@ -481,13 +478,12 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
 
   // Semantic exit only: the visible language is now just trail + enclosing trees.
   name(
-    scene.add
-      .zone(
-        CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
-        CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
-        160,
-        180,
-      ),
+    scene.add.zone(
+      CRYSTAL_BROOK_WOODS_THRESHOLD.position.x,
+      CRYSTAL_BROOK_WOODS_THRESHOLD.position.y,
+      160,
+      180,
+    ),
     'crystal-brook:woods-path-exit',
   );
 }
