@@ -2,18 +2,15 @@ import type Phaser from 'phaser';
 import { BootScene } from './BootScene';
 import { CottageInteriorScene } from './CottageInteriorScene';
 import { CrystalBrookScene } from './CrystalBrookScene';
-import { DialogueTestScene } from './DialogueTestScene';
 import { DoorwayStubScene } from './DoorwayStubScene';
 import { FireflyLanternScene } from './FireflyLanternScene';
 import { MoonflowerGladeScene } from './MoonflowerGladeScene';
-import { MovementTestScene } from './MovementTestScene';
 import { NovaTutorialRaceScene } from './NovaTutorialRaceScene';
 import { PipEggHatchScene } from './PipEggHatchScene';
 import { PreloadScene } from './PreloadScene';
 import { RaceScene } from './RaceScene';
 import { RainbowMeadowScene } from './RainbowMeadowScene';
 import { RainbowRunEntryScene } from './RainbowRunEntryScene';
-import { ResizeTestScene } from './ResizeTestScene';
 import { getStartupSceneKeys, type StartupSceneKey } from './SceneManifest';
 import { SunbeamVillageScene } from './SunbeamVillageScene';
 import { TitleScene } from './TitleScene';
@@ -26,8 +23,6 @@ const STARTUP_SCENE_CONSTRUCTORS: Record<StartupSceneKey, SceneConstructor> = {
   BootScene,
   PreloadScene,
   TitleScene,
-  ResizeTestScene,
-  MovementTestScene,
   MoonflowerGladeScene,
   CottageInteriorScene,
   SunbeamVillageScene,
@@ -40,7 +35,6 @@ const STARTUP_SCENE_CONSTRUCTORS: Record<StartupSceneKey, SceneConstructor> = {
   RaceScene,
   PipEggHatchScene,
   DoorwayStubScene,
-  DialogueTestScene,
   UnicornCreatorScene,
 };
 
