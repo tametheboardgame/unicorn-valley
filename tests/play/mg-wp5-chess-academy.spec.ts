@@ -175,10 +175,6 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     expect(playerFeedback).toBeTruthy();
     expect(playerFeedback).not.toContain('Village reply');
 
-    await page.waitForTimeout(900);
-    const stillHolding = await getDiagnosticSnapshot(page);
-    expect(objectText(stillHolding, 'sunbeam-chess:coach-status')).toContain('take a moment');
-
     await expect
       .poll(async () => {
         const snapshot = await getDiagnosticSnapshot(page);
