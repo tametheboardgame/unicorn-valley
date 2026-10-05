@@ -1,11 +1,5 @@
-import {
-  SUNBEAM_CHESS_LESSON_IDS,
-  type SunbeamChessLessonId,
-} from './SunbeamChessLessons';
-import {
-  SUNBEAM_CHESS_PUZZLE_IDS,
-  type SunbeamChessPuzzleId,
-} from './SunbeamChessPuzzles';
+import { SUNBEAM_CHESS_LESSON_IDS, type SunbeamChessLessonId } from './SunbeamChessLessons';
+import { SUNBEAM_CHESS_PUZZLE_IDS, type SunbeamChessPuzzleId } from './SunbeamChessPuzzles';
 import {
   SUNBEAM_CHESS_OPPONENT_LEVELS,
   type SunbeamChessOpponentLevel,
@@ -43,15 +37,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isLessonId(value: unknown): value is SunbeamChessLessonId {
   return (
-    typeof value === 'string' &&
-    (SUNBEAM_CHESS_LESSON_IDS as readonly string[]).includes(value)
+    typeof value === 'string' && (SUNBEAM_CHESS_LESSON_IDS as readonly string[]).includes(value)
   );
 }
 
 function isPuzzleId(value: unknown): value is SunbeamChessPuzzleId {
   return (
-    typeof value === 'string' &&
-    (SUNBEAM_CHESS_PUZZLE_IDS as readonly string[]).includes(value)
+    typeof value === 'string' && (SUNBEAM_CHESS_PUZZLE_IDS as readonly string[]).includes(value)
   );
 }
 
@@ -72,9 +64,7 @@ function sanitiseIds<T extends string>(
   return [...new Set(value.filter(predicate))];
 }
 
-export function sanitiseSunbeamChessLearningRecord(
-  value: unknown,
-): SunbeamChessLearningRecord {
+export function sanitiseSunbeamChessLearningRecord(value: unknown): SunbeamChessLearningRecord {
   const defaults = createDefaultSunbeamChessLearningRecord();
   if (!isRecord(value) || value.version !== SUNBEAM_CHESS_LEARNING_RECORD_VERSION) {
     return defaults;
@@ -176,8 +166,6 @@ export function loadBrowserSunbeamChessLearningRecord(): SunbeamChessLearningRec
   return loadSunbeamChessLearningRecord(browserStorage());
 }
 
-export function saveBrowserSunbeamChessLearningRecord(
-  record: SunbeamChessLearningRecord,
-): boolean {
+export function saveBrowserSunbeamChessLearningRecord(record: SunbeamChessLearningRecord): boolean {
   return saveSunbeamChessLearningRecord(browserStorage(), record);
 }
