@@ -1280,7 +1280,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5);
     this.add
-      .text(825, 458, 'VILLAGE', {
+      .text(825, 458, opponent.title.toUpperCase(), {
         color: '#477d74',
         fontFamily: UI_FONT,
         fontSize: '11px',
@@ -2019,7 +2019,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         to: chosen.to,
         promotion: chosen.promotion,
       });
-      const villageFeedback = `Village reply: ${describeTeachingMove(applied)}`;
+      const opponentName =
+        this.view === 'friendly-match'
+          ? getSunbeamChessOpponent(this.friendlyOpponentLevel).title
+          : 'Village';
+      const villageFeedback = `${opponentName} reply: ${describeTeachingMove(applied)}`;
       if (this.view === 'coach-match' && this.coachLastPlayerFeedback) {
         this.lessonText?.setText(`${this.coachLastPlayerFeedback}\n\n${villageFeedback}`);
       } else {
@@ -2503,8 +2507,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.lessonText?.setText(describeChessPosition(this.chess));
       this.showMatchResult('draw');
     } else if (this.opponentPending || this.chess.turn() === 'b') {
+      const opponent = getSunbeamChessOpponent(this.friendlyOpponentLevel);
       this.statusText.setText(
-        this.chess.isCheck() ? 'CHECK · Village must respond' : 'Village is thinking…',
+        this.chess.isCheck()
+          ? `CHECK · ${opponent.title} must respond`
+          : `${opponent.title} is thinking…`,
       );
     } else if (this.chess.isCheck()) {
       this.statusText.setText('CHECK · Protect your king');
