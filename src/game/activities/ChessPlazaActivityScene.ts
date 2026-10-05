@@ -990,20 +990,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0, 0);
 
-    this.createMoveHistoryScrollButton(
-      1126,
-      458,
-      '▲',
-      'sunbeam-chess:move-history-up',
-      -1,
-    );
-    this.createMoveHistoryScrollButton(
-      1126,
-      522,
-      '▼',
-      'sunbeam-chess:move-history-down',
-      1,
-    );
+    this.createMoveHistoryScrollButton(1126, 458, '▲', 'sunbeam-chess:move-history-up', -1);
+    this.createMoveHistoryScrollButton(1126, 522, '▼', 'sunbeam-chess:move-history-down', 1);
 
     this.add
       .text(900, 588, 'Hints get more specific only when you keep asking.', {
