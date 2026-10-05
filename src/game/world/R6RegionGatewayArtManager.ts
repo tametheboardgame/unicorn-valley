@@ -475,17 +475,24 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     .container(3190, 1450)
     .setDepth(worldDepthForY(1450, 0.42))
     .setAngle(-2);
+  const woodsSignRock = scene.add.graphics();
+  const woodsSignPoints = [
+    new Phaser.Math.Vector2(-122, -42),
+    new Phaser.Math.Vector2(-92, -55),
+    new Phaser.Math.Vector2(88, -48),
+    new Phaser.Math.Vector2(124, -22),
+    new Phaser.Math.Vector2(112, 38),
+    new Phaser.Math.Vector2(56, 50),
+    new Phaser.Math.Vector2(-88, 45),
+    new Phaser.Math.Vector2(-126, 16),
+  ];
+  woodsSignRock.fillStyle(0x687b76, 1);
+  woodsSignRock.fillPoints(woodsSignPoints, true);
+  woodsSignRock.lineStyle(5, 0x405552, 0.96);
+  woodsSignRock.strokePoints(woodsSignPoints, true);
 
   woodsSign.add([
-    scene.add
-      .polygon(
-        0,
-        0,
-        [-122, -42, -92, -55, 88, -48, 124, -22, 112, 38, 56, 50, -88, 45, -126, 16],
-        0x687b76,
-        1,
-      )
-      .setStrokeStyle(5, 0x405552, 0.96),
+    woodsSignRock,
     scene.add
       .text(2, 3, 'WHISPERING WOODS  →', {
         color: '#243a38',
