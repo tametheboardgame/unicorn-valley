@@ -31,9 +31,7 @@ function objectText(
 }
 
 test.describe('MG-WP5 Sunbeam Chess Academy', () => {
-  test('opens the Academy Home and keeps unfinished modes visibly unavailable', async ({
-    page,
-  }) => {
+  test('opens the Academy Home with Coach Match available', async ({ page }) => {
     await openChessAcademy(page);
 
     for (const name of [
@@ -55,7 +53,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     );
 
     expect(puzzleGarden?.interactive).toBe(true);
-    expect(coachMatch?.interactive).toBe(false);
+    expect(coachMatch?.interactive).toBe(true);
   });
 
   test('completes the first rook movement lesson through real board interaction', async ({
@@ -136,6 +134,34 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     expect(objectText(snapshot, 'sunbeam-chess:puzzle-status')).toContain('Puzzle solved');
     expect(objectText(snapshot, 'sunbeam-chess:puzzle-message')).toContain('Checkmate');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:completion-card');
+  });
+
+  test('plays a normal coached opening move and undoes the full turn', async ({ page }) => {
+    await openChessAcademy(page);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:coach-match');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:coach-undo');
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:e4');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
+
+    await expect
+      .poll(async () => {
+        const snapshot = await getDiagnosticSnapshot(page);
+        return objectText(snapshot, 'sunbeam-chess:coach-status');
+      })
+      .toContain('Your move');
+
+    const afterReply = await getDiagnosticSnapshot(page);
+    const warning = afterReply.scenes
+      .find((scene) => scene.key === 'ChessPlazaActivityScene')
+      ?.objects.some((object) => object.name === 'sunbeam-chess:coach-warning' && object.visible);
+    expect(warning).not.toBe(true);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:coach-undo');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
   });
 
   test('keeps the existing complete chess game available as Friendly Match', async ({ page }) => {
