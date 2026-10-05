@@ -50,6 +50,29 @@ export interface CrystalBrookWatercoursePoint extends MapPoint {
   deepWidth: number;
 }
 
+export type CrystalBrookBoundaryRockKind =
+  | 'rounded'
+  | 'slab'
+  | 'lopsided'
+  | 'spire'
+  | 'stack'
+  | 'shelf';
+
+export interface CrystalBrookBoundaryRock {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  angle: number;
+  kind: CrystalBrookBoundaryRockKind;
+  colour: number;
+  crystalColour?: number;
+  collisionScaleX: number;
+  collisionScaleY: number;
+  collisionOffsetY: number;
+}
+
 const DEFAULT_PLAYER_SPAWN = { x: 360, y: 1090 } as const;
 
 export const CRYSTAL_BROOK_MEADOW_THRESHOLD = {
@@ -322,6 +345,52 @@ export const CRYSTAL_BROOK_DISTRICTS = [
   { id: 'grotto-bank', centre: { x: 2440, y: 1840 }, radiusX: 430, radiusY: 330 },
 ] as const;
 
+export const CRYSTAL_BROOK_BOUNDARY_ROCKS = [
+  // North rim, with a deliberate central opening for the Crystal Cup Raceway route.
+  { id: 'north-west-shelf', x: 180, y: 155, width: 340, height: 170, angle: -3, kind: 'shelf', colour: 0x5f716e, collisionScaleX: 0.86, collisionScaleY: 0.62, collisionOffsetY: 22 },
+  { id: 'north-west-round', x: 500, y: 150, width: 300, height: 160, angle: 4, kind: 'rounded', colour: 0x6b7d78, collisionScaleX: 0.84, collisionScaleY: 0.58, collisionOffsetY: 24 },
+  { id: 'north-west-spires', x: 785, y: 155, width: 230, height: 198, angle: -5, kind: 'spire', colour: 0x617570, crystalColour: 0xa7e6ec, collisionScaleX: 0.78, collisionScaleY: 0.56, collisionOffsetY: 31 },
+  { id: 'north-pool-slab', x: 1080, y: 145, width: 350, height: 158, angle: 2, kind: 'slab', colour: 0x70817b, collisionScaleX: 0.88, collisionScaleY: 0.58, collisionOffsetY: 24 },
+  { id: 'north-centre-stack', x: 1425, y: 155, width: 285, height: 174, angle: -4, kind: 'stack', colour: 0x657873, collisionScaleX: 0.82, collisionScaleY: 0.62, collisionOffsetY: 27 },
+  { id: 'north-centre-ledge', x: 1735, y: 142, width: 355, height: 150, angle: 1, kind: 'shelf', colour: 0x5c706d, collisionScaleX: 0.88, collisionScaleY: 0.58, collisionOffsetY: 22 },
+  { id: 'north-crystal-lopsided', x: 2075, y: 158, width: 300, height: 182, angle: 5, kind: 'lopsided', colour: 0x697c77, crystalColour: 0xc6b8ed, collisionScaleX: 0.82, collisionScaleY: 0.58, collisionOffsetY: 29 },
+  { id: 'north-cup-left', x: 2420, y: 152, width: 330, height: 164, angle: -2, kind: 'slab', colour: 0x60736f, collisionScaleX: 0.86, collisionScaleY: 0.58, collisionOffsetY: 25 },
+  { id: 'north-cup-right', x: 3260, y: 152, width: 385, height: 176, angle: 3, kind: 'shelf', colour: 0x657874, crystalColour: 0xa5e5ea, collisionScaleX: 0.88, collisionScaleY: 0.6, collisionOffsetY: 26 },
+
+  // West rim deliberately stops around the H6.3 Rainbow Meadow gorge.
+  { id: 'west-upper-stack', x: 125, y: 360, width: 255, height: 245, angle: -5, kind: 'stack', colour: 0x5d716e, collisionScaleX: 0.64, collisionScaleY: 0.78, collisionOffsetY: 15 },
+  { id: 'west-upper-lopsided', x: 130, y: 590, width: 270, height: 230, angle: 7, kind: 'lopsided', colour: 0x687a75, collisionScaleX: 0.64, collisionScaleY: 0.76, collisionOffsetY: 12 },
+  { id: 'west-lower-spire', x: 125, y: 1620, width: 245, height: 250, angle: -4, kind: 'spire', colour: 0x627570, crystalColour: 0xc7baf0, collisionScaleX: 0.62, collisionScaleY: 0.76, collisionOffsetY: 16 },
+  { id: 'west-lower-round', x: 130, y: 1860, width: 270, height: 225, angle: 5, kind: 'rounded', colour: 0x70817b, collisionScaleX: 0.66, collisionScaleY: 0.76, collisionOffsetY: 14 },
+  { id: 'south-west-corner', x: 175, y: 2070, width: 330, height: 210, angle: -3, kind: 'shelf', colour: 0x5d706d, collisionScaleX: 0.8, collisionScaleY: 0.68, collisionOffsetY: 12 },
+
+  // East rim frames the upstream water outlet and leaves the Woods pass open.
+  { id: 'east-upper-slab', x: 3380, y: 350, width: 255, height: 300, angle: 3, kind: 'slab', colour: 0x627570, collisionScaleX: 0.66, collisionScaleY: 0.8, collisionOffsetY: 8 },
+  { id: 'east-water-shoulder', x: 3400, y: 565, width: 240, height: 175, angle: -6, kind: 'lopsided', colour: 0x6c7e78, crystalColour: 0xa7e7ec, collisionScaleX: 0.62, collisionScaleY: 0.7, collisionOffsetY: 8 },
+  { id: 'east-water-lower', x: 3405, y: 1035, width: 250, height: 220, angle: 4, kind: 'stack', colour: 0x617470, collisionScaleX: 0.64, collisionScaleY: 0.72, collisionOffsetY: 10 },
+  { id: 'east-mid-shelf', x: 3395, y: 1265, width: 275, height: 230, angle: -4, kind: 'shelf', colour: 0x667974, collisionScaleX: 0.66, collisionScaleY: 0.74, collisionOffsetY: 10 },
+  { id: 'east-lower-lopsided', x: 3400, y: 1885, width: 265, height: 270, angle: 6, kind: 'lopsided', colour: 0x5f736f, collisionScaleX: 0.64, collisionScaleY: 0.78, collisionOffsetY: 10 },
+  { id: 'south-east-corner', x: 3350, y: 2070, width: 350, height: 210, angle: 2, kind: 'stack', colour: 0x697b76, crystalColour: 0xc6b8ed, collisionScaleX: 0.8, collisionScaleY: 0.68, collisionOffsetY: 12 },
+
+  // South rim, leaving a broad Crystal Grotto opening centred on x=2440.
+  { id: 'south-west-round', x: 470, y: 2070, width: 300, height: 205, angle: 4, kind: 'rounded', colour: 0x697b76, collisionScaleX: 0.82, collisionScaleY: 0.66, collisionOffsetY: 12 },
+  { id: 'south-west-slab', x: 760, y: 2075, width: 285, height: 190, angle: -3, kind: 'slab', colour: 0x60736f, collisionScaleX: 0.84, collisionScaleY: 0.66, collisionOffsetY: 10 },
+  { id: 'south-checkers-spire', x: 1045, y: 2070, width: 245, height: 225, angle: 5, kind: 'spire', colour: 0x657873, crystalColour: 0xa6e6eb, collisionScaleX: 0.78, collisionScaleY: 0.68, collisionOffsetY: 14 },
+  { id: 'south-centre-shelf', x: 1330, y: 2070, width: 330, height: 200, angle: -2, kind: 'shelf', colour: 0x5d716e, collisionScaleX: 0.86, collisionScaleY: 0.66, collisionOffsetY: 12 },
+  { id: 'south-crystalarium-stack', x: 1655, y: 2070, width: 285, height: 210, angle: 4, kind: 'stack', colour: 0x6b7d78, collisionScaleX: 0.82, collisionScaleY: 0.68, collisionOffsetY: 12 },
+  { id: 'south-grotto-left', x: 1980, y: 2070, width: 335, height: 205, angle: -3, kind: 'lopsided', colour: 0x60736f, collisionScaleX: 0.84, collisionScaleY: 0.66, collisionOffsetY: 12 },
+  { id: 'south-grotto-right', x: 2880, y: 2070, width: 350, height: 210, angle: 3, kind: 'shelf', colour: 0x637671, collisionScaleX: 0.86, collisionScaleY: 0.68, collisionOffsetY: 12 },
+  { id: 'south-east-slab', x: 3175, y: 2070, width: 275, height: 195, angle: -4, kind: 'slab', colour: 0x6c7d78, collisionScaleX: 0.82, collisionScaleY: 0.66, collisionOffsetY: 10 },
+] as const satisfies readonly CrystalBrookBoundaryRock[];
+
+export const CRYSTAL_BROOK_PERIMETER_COLLIDERS = CRYSTAL_BROOK_BOUNDARY_ROCKS.map((rock) => ({
+  id: `collision:brook-perimeter:${rock.id}`,
+  x: rock.x,
+  y: rock.y + rock.collisionOffsetY,
+  width: rock.width * rock.collisionScaleX,
+  height: rock.height * rock.collisionScaleY,
+})) satisfies readonly CollisionRectangle[];
+
 export const CRYSTAL_BROOK_BOUNDARY_OPENINGS = [
   {
     id: 'rainbow-meadow-gorge',
@@ -340,6 +409,12 @@ export const CRYSTAL_BROOK_BOUNDARY_OPENINGS = [
     position: CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position,
     approach: CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.approach,
     width: 300,
+  },
+  {
+    id: 'crystal-grotto-route',
+    position: CRYSTAL_BROOK_GROTTO_THRESHOLD.position,
+    approach: CRYSTAL_BROOK_GROTTO_THRESHOLD.approach,
+    width: 320,
   },
 ] as const;
 
@@ -404,6 +479,10 @@ export const CRYSTAL_BROOK_LAYOUT = {
     crystalGrottoCue: CRYSTAL_BROOK_GROTTO_CUE,
   },
   echo: { waypoints: CRYSTAL_BROOK_ECHO_WAYPOINTS },
+  boundaries: {
+    rocks: CRYSTAL_BROOK_BOUNDARY_ROCKS,
+    openings: CRYSTAL_BROOK_BOUNDARY_OPENINGS,
+  },
 } as const;
 
 const playerSpawn: MapPoint = { ...DEFAULT_PLAYER_SPAWN };
@@ -495,13 +574,8 @@ export const CRYSTAL_BROOK_MAP = {
   colliders: [
     { id: 'collision:brook-upper-deep-water', x: 1370, y: 540, width: 230, height: 82 },
     { id: 'collision:brook-lower-deep-water', x: 2740, y: 1280, width: 180, height: 76 },
-    { id: 'collision:cliff-west', x: 520, y: 410, width: 320, height: 150 },
-    { id: 'collision:cliff-north-west', x: 880, y: 350, width: 260, height: 135 },
-    { id: 'collision:cliff-north-east', x: 2350, y: 310, width: 300, height: 150 },
-    { id: 'collision:cliff-east', x: 3190, y: 520, width: 300, height: 170 },
-    { id: 'collision:north-crystal-bank', x: 2470, y: 505, width: 230, height: 125 },
-    { id: 'collision:south-reed-bank', x: 1890, y: 1770, width: 230, height: 115 },
     { id: 'collision:brook-upstream-cascade', x: 3320, y: 790, width: 120, height: 170 },
+    ...CRYSTAL_BROOK_PERIMETER_COLLIDERS,
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
