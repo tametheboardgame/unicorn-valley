@@ -993,7 +993,6 @@ export class CrystalBrookScene extends Phaser.Scene {
       [1890, 1770],
       [2440, 510],
       [3170, 560],
-      [3260, 1530],
     ] as const;
     for (const [x, y] of clumps) {
       const depth = worldDepthForY(y, 0.15);
