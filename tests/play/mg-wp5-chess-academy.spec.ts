@@ -92,21 +92,13 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       'ChessPlazaActivityScene',
       'sunbeam-chess:lesson-card:give-check',
     );
-    await clickNamedObject(
-      page,
-      'ChessPlazaActivityScene',
-      'sunbeam-chess:lesson-card:give-check',
-    );
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:lesson-card:give-check');
 
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:r:a1');
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:r:a1');
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:a8');
 
-    await waitForNamedObject(
-      page,
-      'ChessPlazaActivityScene',
-      'sunbeam-chess:check-warning:h8',
-    );
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:check-warning:h8');
   });
 
   test('cycles directly to the next Puzzle Garden challenge after a solve', async ({ page }) => {
