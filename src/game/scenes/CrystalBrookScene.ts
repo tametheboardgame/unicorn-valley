@@ -449,7 +449,7 @@ export class CrystalBrookScene extends Phaser.Scene {
         .setVisible(false);
     }
 
-    this.add.zone(2490, 1060, 2, 2).setName('crystal-brook:crystal-cup-spur').setVisible(false);
+    this.add.zone(2490, 1060, 2, 2).setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
     this.createMeadowGorge();
