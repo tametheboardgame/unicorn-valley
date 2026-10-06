@@ -349,7 +349,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.createTimingMeter();
-    this.createButton(165, 617, 180, 'Modes', () => this.openModeMenu(), 'modes');
+    this.createButton(165, 617, 180, 'Modes', () => this.returnToCurrentModeMenu(), 'modes');
     this.createButton(1090, 617, 210, this.backLabel(), () => this.leaveActivity(), 'back');
     this.refreshModeChrome();
   }
@@ -686,6 +686,27 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.fieldModeLabel?.setText(this.mode === 'practice' ? 'PRACTICE' : 'END\nZONE');
   }
 
+  private returnToCurrentModeMenu(): void {
+    if (this.actionLocked) {
+      return;
+    }
+
+    this.modeMenu = false;
+    this.completed = false;
+    this.dragging = false;
+    this.practiceFailureReason = null;
+    this.refreshModeChrome();
+
+    if (this.mode === 'practice') {
+      this.returnToPracticeMenu();
+      return;
+    }
+
+    this.matchSetup = true;
+    this.resetMatchState();
+    this.renderPossession();
+  }
+
   private openModeMenu(): void {
     if (this.actionLocked) {
       return;
@@ -702,11 +723,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private renderModeMenu(): void {
-    this.statusText?.setText('Choose Match or Practice without leaving Rainbow Disc.');
-    this.progressText?.setText('RAINBOW DISC · Choose a mode');
+    this.statusText?.setText('Switch between the Match and Practice branches.');
+    this.progressText?.setText('RAINBOW DISC · Match or Practice');
 
     const title = this.add
-      .text(640, 220, 'Choose a mode', {
+      .text(640, 220, 'Match or Practice?', {
         color: '#5f496d',
         fontFamily: UI_FONT,
         fontSize: '30px',
@@ -835,6 +856,16 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.playLayer,
     );
 
+    this.createButton(
+      1080,
+      205,
+      220,
+      'Match / Practice',
+      () => this.openModeMenu(),
+      'switch-mode-branch',
+      this.playLayer,
+    );
+
     const help = this.add
       .text(640, 440, 'Tap a level, or press 1, 2 or 3.', {
         color: UI_COLOURS.softInk,
@@ -868,6 +899,16 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setName('rainbow-disc-activity:practice-menu-title');
     this.playLayer?.add(title);
+
+    this.createButton(
+      1080,
+      176,
+      220,
+      'Match / Practice',
+      () => this.openModeMenu(),
+      'switch-mode-branch',
+      this.playLayer,
+    );
 
     const assistanceLabel = this.add
       .text(325, 236, 'Throw help', {
