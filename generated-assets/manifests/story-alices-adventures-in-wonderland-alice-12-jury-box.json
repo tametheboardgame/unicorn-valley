@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1U-5qDP-3b0W6LbBbKYip2qxv0z0o1_6Y"
+  },
+  "expectedSourceName": "alice-12-jury-box.png",
+  "destination": "public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-12-jury-box.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

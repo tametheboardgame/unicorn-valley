@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1xqdqE8XJQDND4H585HyiHMKXhfL111dr"
+  },
+  "expectedSourceName": "alice-02-pool-of-tears.png",
+  "destination": "public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-02-pool-of-tears.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

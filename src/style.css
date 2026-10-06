@@ -1665,6 +1665,11 @@ canvas {
   background: #e7eef1;
 }
 
+.story-library-book[data-story-id="alices-adventures-in-wonderland"]
+  .story-library-cover[data-cover-style="modern"] img {
+  object-position: 78% center;
+}
+
 .story-library-cover.is-dual-focus {
   display: grid;
   grid-template-rows: 1fr 1fr;

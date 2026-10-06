@@ -16,6 +16,12 @@
           "label": "Classic Covers",
           "coverPath": "/stories/alices-adventures-in-wonderland/covers/cover.webp",
           "coverAlt": "John Tenniel's historic Alice in Wonderland frontispiece."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/alices-adventures-in-wonderland/illustrations/generated/alice-01-white-rabbit.webp",
+          "coverAlt": "Alice turns in surprise as the hurried White Rabbit races past with his pocket watch beside the sunlit river."
         }
       ],
       "series": null,
