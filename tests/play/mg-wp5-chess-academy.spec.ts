@@ -237,11 +237,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       'sunbeam-chess:coach-resume-new-game',
     );
 
-    await clickNamedObject(
-      page,
-      'ChessPlazaActivityScene',
-      'sunbeam-chess:coach-resume-carry-on',
-    );
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:coach-resume-carry-on');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
 
     const restored = await getDiagnosticSnapshot(page);
