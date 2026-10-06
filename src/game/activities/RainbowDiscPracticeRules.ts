@@ -1,8 +1,4 @@
-export type RainbowDiscPracticeDrill =
-  | 'menu'
-  | 'target-range'
-  | 'passing-drill'
-  | 'rainbow-streak';
+export type RainbowDiscPracticeDrill = 'menu' | 'target-range' | 'passing-drill' | 'rainbow-streak';
 
 export const RAINBOW_DISC_TARGET_RANGE_THROWS = 5;
 export const RAINBOW_DISC_PASSING_DRILL_ROUNDS = 6;
