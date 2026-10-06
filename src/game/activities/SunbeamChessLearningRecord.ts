@@ -71,6 +71,9 @@ function sanitiseFriendlyMatchSession(value: unknown): SunbeamChessFriendlyMatch
     const chess = new Chess();
     if (value.pgn.trim().length > 0) {
       chess.loadPgn(value.pgn);
+      if (chess.history().length === 0) {
+        return null;
+      }
     }
     if (chess.isGameOver()) {
       return null;
