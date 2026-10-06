@@ -39,6 +39,8 @@ export interface DiagnosticObjectSnapshot {
   bodyY: number | null;
   bodyWidth: number | null;
   bodyHeight: number | null;
+  bodyVelocityX: number | null;
+  bodyVelocityY: number | null;
 }
 
 export interface DiagnosticSceneState {
@@ -244,6 +246,8 @@ function snapshotObject(
     bodyY: arcadeBody ? arcadeBody.y : null,
     bodyWidth: arcadeBody ? arcadeBody.width : null,
     bodyHeight: arcadeBody ? arcadeBody.height : null,
+    bodyVelocityX: arcadeBody instanceof Phaser.Physics.Arcade.Body ? arcadeBody.velocity.x : null,
+    bodyVelocityY: arcadeBody instanceof Phaser.Physics.Arcade.Body ? arcadeBody.velocity.y : null,
   };
 }
 
