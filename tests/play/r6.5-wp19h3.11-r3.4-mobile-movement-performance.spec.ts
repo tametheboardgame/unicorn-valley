@@ -471,10 +471,9 @@ test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame ti
         constrainedWalk.speed,
         `${profile.name} constrained walk speed`,
       ).toBeGreaterThanOrEqual(WALK_SPEED_TARGET * SETTLED_SPEED_FRACTION);
-      expect(
-        constrainedWalk.speed,
-        `${profile.name} constrained walk speed`,
-      ).toBeLessThanOrEqual(WALK_SPEED_TARGET * 1.05);
+      expect(constrainedWalk.speed, `${profile.name} constrained walk speed`).toBeLessThanOrEqual(
+        WALK_SPEED_TARGET * 1.05,
+      );
       expect(constrainedWalk.speed / normalWalk.speed).toBeGreaterThan(0.85);
       expect(constrainedWalk.speed / normalWalk.speed).toBeLessThan(1.15);
       expect(constrainedGallop.speed / normalGallop.speed).toBeGreaterThan(0.85);
