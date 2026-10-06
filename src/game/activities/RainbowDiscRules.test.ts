@@ -9,6 +9,7 @@ import {
   rainbowDiscDefenceTelegraphAlpha,
   rainbowDiscMissOffset,
   rainbowDiscOpenLane,
+  varyRainbowDiscTimingChallenge,
 } from './RainbowDiscRules';
 
 describe('RainbowDiscRules', () => {
@@ -71,5 +72,27 @@ describe('RainbowDiscRules', () => {
       rainbowDiscDefenceTelegraphAlpha('challenge'),
     );
     expect(rainbowDiscDefenceTelegraphAlpha('challenge')).toBeGreaterThan(0);
+  });
+
+  it('moves and resizes the green timing window between throws deterministically', () => {
+    const base = { tolerance: 0.2, sweepSpeed: 0.004, label: 'Match' };
+    const first = varyRainbowDiscTimingChallenge(base, 0);
+    const second = varyRainbowDiscTimingChallenge(base, 1);
+    const third = varyRainbowDiscTimingChallenge(base, 2);
+
+    expect(second.centre).not.toBe(first.centre);
+    expect(second.tolerance).not.toBe(first.tolerance);
+    expect(third.centre).not.toBe(second.centre);
+    expect(varyRainbowDiscTimingChallenge(base, 1)).toEqual(second);
+  });
+
+  it('keeps every varied timing window fully inside the timing track', () => {
+    const base = { tolerance: 0.34, sweepSpeed: 0.004, label: 'Gentle' };
+
+    for (let index = 0; index < 24; index += 1) {
+      const challenge = varyRainbowDiscTimingChallenge(base, index);
+      expect(challenge.centre - challenge.tolerance).toBeGreaterThanOrEqual(0);
+      expect(challenge.centre + challenge.tolerance).toBeLessThanOrEqual(1);
+    }
   });
 });
