@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   SUNBEAM_CHESS_LEARNING_STORAGE_KEY,
+  clearSunbeamChessCoachMatch,
   completeSunbeamChessLesson,
   completeSunbeamChessPuzzle,
   createDefaultSunbeamChessLearningRecord,
   clearSunbeamChessFriendlyMatch,
   loadSunbeamChessLearningRecord,
+  saveSunbeamChessCoachMatch,
   saveSunbeamChessFriendlyMatch,
   saveSunbeamChessLearningRecord,
   setSunbeamChessPreferredOpponent,
@@ -33,6 +35,7 @@ describe('SunbeamChessLearningRecord', () => {
       puzzleSolveCounts: {},
       preferredOpponent: 'clover',
       activeFriendlyMatch: null,
+      activeCoachMatch: null,
     });
     expect(SUNBEAM_CHESS_LEARNING_STORAGE_KEY).not.toContain('unicorn-valley.save');
   });
@@ -81,6 +84,7 @@ describe('SunbeamChessLearningRecord', () => {
       puzzleSolveCounts: { 'free-rook': 2 },
       preferredOpponent: 'clover',
       activeFriendlyMatch: null,
+      activeCoachMatch: null,
     });
   });
 
@@ -129,6 +133,41 @@ describe('SunbeamChessLearningRecord', () => {
       }),
     );
     expect(loadSunbeamChessLearningRecord(storage).activeFriendlyMatch).toBeNull();
+  });
+
+  it('stores and clears a resumable Coach Match PGN', () => {
+    const storage = new MemoryStorage();
+    let record = saveSunbeamChessCoachMatch(
+      createDefaultSunbeamChessLearningRecord(),
+      '1. e4 e5 2. Nf3',
+    );
+
+    expect(saveSunbeamChessLearningRecord(storage, record)).toBe(true);
+    record = loadSunbeamChessLearningRecord(storage);
+    expect(record.activeCoachMatch).toEqual({ pgn: '1. e4 e5 2. Nf3' });
+
+    expect(clearSunbeamChessCoachMatch(record).activeCoachMatch).toBeNull();
+  });
+
+  it('drops corrupt or already-finished Coach Match sessions', () => {
+    const storage = new MemoryStorage();
+    storage.setItem(
+      SUNBEAM_CHESS_LEARNING_STORAGE_KEY,
+      JSON.stringify({
+        ...createDefaultSunbeamChessLearningRecord(),
+        activeCoachMatch: { pgn: 'not valid pgn' },
+      }),
+    );
+    expect(loadSunbeamChessLearningRecord(storage).activeCoachMatch).toBeNull();
+
+    storage.setItem(
+      SUNBEAM_CHESS_LEARNING_STORAGE_KEY,
+      JSON.stringify({
+        ...createDefaultSunbeamChessLearningRecord(),
+        activeCoachMatch: { pgn: '1. f3 e5 2. g4 Qh4#' },
+      }),
+    );
+    expect(loadSunbeamChessLearningRecord(storage).activeCoachMatch).toBeNull();
   });
 
   it('fails soft when storage is unavailable or corrupt', () => {
