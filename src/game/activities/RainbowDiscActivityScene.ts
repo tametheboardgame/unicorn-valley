@@ -117,6 +117,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private timingPhase = 0;
   private timingValue = 0.5;
   private assistance: RainbowDiscAssistanceLevel = 'standard';
+  private matchSetup = true;
   private dragStartPoint: Point | null = null;
 
   private playLayer: Phaser.GameObjects.Container | null = null;
@@ -166,6 +167,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.timingPhase = 0;
     this.timingValue = 0.5;
     this.assistance = 'standard';
+    this.matchSetup = this.mode === 'match';
     this.dragStartPoint = null;
 
     this.cameras.main.setBackgroundColor('#6ead72');
@@ -401,6 +403,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
+    if (this.mode === 'match' && this.matchSetup) {
+      this.renderMatchSetup();
+      return;
+    }
+
     if (this.mode === 'practice') {
       if (this.practiceDrill === 'menu') {
         this.renderPracticeMenu();
@@ -631,12 +638,93 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.refreshReceiverSelection();
   }
 
+  private renderMatchSetup(): void {
+    this.statusText?.setText('Choose how much throw help you want. You can change it after the match.');
+    this.progressText?.setText('MATCH · First to 2 goals');
+
+    const title = this.add
+      .text(640, 215, 'Choose your throw help', {
+        color: '#5f496d',
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('rainbow-disc-activity:match-setup-title');
+    this.playLayer?.add(title);
+
+    const copy = this.add
+      .text(
+        640,
+        260,
+        'Gentle gives you more time. Standard is the normal game. Challenge is quicker and tighter.',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 820 },
+        },
+      )
+      .setOrigin(0.5);
+    this.playLayer?.add(copy);
+
+    this.createButton(
+      390,
+      365,
+      220,
+      '1 · Gentle',
+      () => this.startMatch('gentle'),
+      'match-assistance-gentle',
+      this.playLayer,
+    );
+    this.createButton(
+      640,
+      365,
+      220,
+      '2 · Standard',
+      () => this.startMatch('standard'),
+      'match-assistance-standard',
+      this.playLayer,
+    );
+    this.createButton(
+      890,
+      365,
+      220,
+      '3 · Challenge',
+      () => this.startMatch('challenge'),
+      'match-assistance-challenge',
+      this.playLayer,
+    );
+
+    const help = this.add
+      .text(640, 440, 'Tap a level, or press 1, 2 or 3.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    this.playLayer?.add(help);
+  }
+
+  private startMatch(level: RainbowDiscAssistanceLevel): void {
+    this.assistance = level;
+    this.matchSetup = false;
+    this.resetMatchState();
+    this.renderPossession();
+  }
+
   private renderPracticeMenu(): void {
-    this.statusText?.setText('Pick a drill. Each one practises a different Rainbow Disc skill.');
+    const assistance = getRainbowDiscAssistanceProfile(this.assistance);
+    this.statusText?.setText(
+      `Pick a drill. Throw help is set to ${assistance.title}.`,
+    );
     this.progressText?.setText('PRACTICE · Choose a drill');
 
     const title = this.add
-      .text(640, 205, 'Choose a practice drill', {
+      .text(640, 176, 'Choose a practice drill', {
         color: '#5f496d',
         fontFamily: UI_FONT,
         fontSize: '26px',
@@ -646,9 +734,36 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setName('rainbow-disc-activity:practice-menu-title');
     this.playLayer?.add(title);
 
+    const assistanceLabel = this.add
+      .text(325, 236, 'Throw help', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '14px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    this.playLayer?.add(assistanceLabel);
+
+    for (const [level, x, key] of [
+      ['gentle', 470, 'G'],
+      ['standard', 650, 'S'],
+      ['challenge', 830, 'C'],
+    ] as const) {
+      const profile = getRainbowDiscAssistanceProfile(level);
+      this.createButton(
+        x,
+        236,
+        160,
+        `${this.assistance === level ? '✓ ' : ''}${key} · ${profile.title}`,
+        () => this.setPracticeAssistance(level),
+        `practice-assistance-${level}`,
+        this.playLayer,
+      );
+    }
+
     this.createButton(
       640,
-      285,
+      320,
       520,
       `1 · Target Range  ·  Best ${this.bestTargetRangeScore}`,
       () => this.startPracticeDrill('target-range'),
@@ -657,7 +772,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     );
     this.createButton(
       640,
-      385,
+      410,
       520,
       `2 · Passing Drill  ·  Best streak ${this.bestPassingStreak}`,
       () => this.startPracticeDrill('passing-drill'),
@@ -666,7 +781,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     );
     this.createButton(
       640,
-      485,
+      500,
       520,
       `3 · Rainbow Streak  ·  Best streak ${this.bestRainbowStreak}`,
       () => this.startPracticeDrill('rainbow-streak'),
@@ -675,7 +790,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     );
 
     const help = this.add
-      .text(640, 548, 'Tap a drill, or press 1, 2 or 3.', {
+      .text(640, 554, '1/2/3 choose a drill · G/S/C changes throw help.', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '15px',
@@ -1046,15 +1161,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       790,
       460,
       250,
-      this.mode === 'practice' ? 'Practice menu' : this.backLabel(),
+      this.mode === 'practice' ? 'Practice menu' : 'Change level',
       () => {
         if (this.mode === 'practice') {
           this.returnToPracticeMenu();
         } else {
-          this.leaveActivity();
+          this.returnToMatchSetup();
         }
       },
-      this.mode === 'practice' ? 'result-menu' : 'result-back',
+      this.mode === 'practice' ? 'result-menu' : 'result-change-level',
       this.playLayer,
     );
   }
@@ -1596,6 +1711,20 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private handlePracticeMenuKeyboard(event: KeyboardEvent): void {
+    if (this.mode === 'match' && this.matchSetup) {
+      if (event.key === '1') {
+        event.preventDefault();
+        this.startMatch('gentle');
+      } else if (event.key === '2') {
+        event.preventDefault();
+        this.startMatch('standard');
+      } else if (event.key === '3') {
+        event.preventDefault();
+        this.startMatch('challenge');
+      }
+      return;
+    }
+
     if (this.mode !== 'practice' || this.practiceDrill !== 'menu') {
       return;
     }
@@ -1609,7 +1738,27 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     } else if (event.key === '3') {
       event.preventDefault();
       this.startPracticeDrill('rainbow-streak');
+    } else if (event.key.toLowerCase() === 'g') {
+      event.preventDefault();
+      this.setPracticeAssistance('gentle');
+    } else if (event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      this.setPracticeAssistance('standard');
+    } else if (event.key.toLowerCase() === 'c') {
+      event.preventDefault();
+      this.setPracticeAssistance('challenge');
     }
+  }
+
+  private setPracticeAssistance(level: RainbowDiscAssistanceLevel): void {
+    this.assistance = level;
+    this.renderPossession();
+  }
+
+  private returnToMatchSetup(): void {
+    this.completed = false;
+    this.matchSetup = true;
+    this.renderPossession();
   }
 
   private returnToPracticeMenu(): void {
@@ -1642,6 +1791,21 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.selectedReceiver = 1;
   }
 
+  private resetMatchState(): void {
+    this.possession = 0;
+    this.playerScore = 0;
+    this.oppositionScore = 0;
+    this.attackSequence = 0;
+    this.defenceSequence = 0;
+    this.phase = 'attack';
+    this.opponentAdvance = 0;
+    this.defenceAttackLane = rainbowDiscDefenceLane(0, 0);
+    this.selectedReceiver = 1;
+    this.completed = false;
+    this.actionLocked = false;
+    this.timingPhase = 0;
+  }
+
   private restartRun(): void {
     if (this.mode === 'practice') {
       if (this.practiceDrill === 'menu') {
@@ -1659,20 +1823,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
-    this.possession = 0;
-    this.playerScore = 0;
-    this.oppositionScore = 0;
-    this.attackSequence = 0;
-    this.defenceSequence = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
-    this.phase = 'attack';
-    this.opponentAdvance = 0;
-    this.defenceAttackLane = rainbowDiscDefenceLane(0, 0);
-    this.selectedReceiver = 1;
-    this.completed = false;
-    this.actionLocked = false;
-    this.timingPhase = 0;
+    this.resetMatchState();
     this.renderPossession();
   }
 
