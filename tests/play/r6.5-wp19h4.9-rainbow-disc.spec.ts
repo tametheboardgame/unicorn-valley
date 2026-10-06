@@ -131,20 +131,32 @@ async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promis
       const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
       return scene.objects.some(
         ({ name, effectiveVisible }) =>
-          name.startsWith('rainbow-disc-activity:defence-telegraph:') && effectiveVisible,
+          name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
       );
     })
     .toBe(true);
 
-  const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-  const telegraph = scene.objects.find(
+  const cueScene = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const cue = cueScene.objects.find(
     ({ name, effectiveVisible }) =>
-      name.startsWith('rainbow-disc-activity:defence-telegraph:') && effectiveVisible,
+      name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
   );
-  if (!telegraph) throw new Error('Rainbow Disc defence telegraph is unavailable.');
-  const telegraphedLane = Number(telegraph.name.split(':').at(-1));
-  const chosenLane = chooseCorrectly ? telegraphedLane : (telegraphedLane + 1) % 3;
-  const receiver = scene.objects.find(
+  if (!cue) throw new Error('Rainbow Disc defence read cue is unavailable.');
+  const readLane = Number(cue.name.split(':').at(-1));
+
+  await expect
+    .poll(async () => {
+      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
+      );
+    })
+    .toBe(false);
+
+  const choiceScene = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const chosenLane = chooseCorrectly ? readLane : (readLane + 1) % 3;
+  const receiver = choiceScene.objects.find(
     ({ name, effectiveVisible }) =>
       name === `rainbow-disc-activity:opponent-receiver:${chosenLane}` && effectiveVisible,
   );
@@ -581,15 +593,7 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
     })
     .toBe(true);
 
-  const defence = await snapshotScene(page, 'RainbowDiscActivityScene');
-  const laneOne = defence.objects.find(
-    ({ name, effectiveVisible }) =>
-      name === 'rainbow-disc-activity:opponent-receiver:1' && effectiveVisible,
-  );
-  expect(laneOne).toBeDefined();
-  if (!laneOne) throw new Error('Defence lane one is unavailable.');
-
-  await page.mouse.click(laneOne.x, laneOne.y);
+  await defendTelegraphedLane(page, true);
 
   await expect
     .poll(async () => {
