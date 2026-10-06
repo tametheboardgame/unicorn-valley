@@ -25,7 +25,9 @@ import {
   rainbowDiscDefenceTelegraphAlpha,
   rainbowDiscMissOffset,
   rainbowDiscOpenLane,
+  varyRainbowDiscTimingChallenge,
   type RainbowDiscAssistanceLevel,
+  type RainbowDiscTimingChallenge,
 } from './RainbowDiscRules';
 import {
   createRainbowDiscRing,
@@ -116,6 +118,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private completed = false;
   private timingPhase = 0;
   private timingValue = 0.5;
+  private timingChallengeIndex = 0;
   private assistance: RainbowDiscAssistanceLevel = 'standard';
   private matchSetup = true;
   private dragStartPoint: Point | null = null;
@@ -125,6 +128,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private aimGraphics: Phaser.GameObjects.Graphics | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private progressText: Phaser.GameObjects.Text | null = null;
+  private timingLabel: Phaser.GameObjects.Text | null = null;
+  private timingTrack: Phaser.GameObjects.Graphics | null = null;
   private timingMarker: Phaser.GameObjects.Rectangle | null = null;
   private timingSuccessZone: Phaser.GameObjects.Rectangle | null = null;
   private timingDifficultyText: Phaser.GameObjects.Text | null = null;
@@ -166,6 +171,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.completed = false;
     this.timingPhase = 0;
     this.timingValue = 0.5;
+    this.timingChallengeIndex = 0;
     this.assistance = 'standard';
     this.matchSetup = this.mode === 'match';
     this.dragStartPoint = null;
@@ -211,6 +217,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.aimGraphics = null;
       this.statusText = null;
       this.progressText = null;
+      this.timingLabel = null;
+      this.timingTrack = null;
       this.timingMarker = null;
       this.timingSuccessZone = null;
       this.timingDifficultyText = null;
@@ -221,7 +229,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   public update(_time: number, delta: number): void {
-    if (this.completed || this.actionLocked) {
+    if (!this.isTimingActive()) {
       return;
     }
 
@@ -230,6 +238,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
     this.timingMarker?.setX(TIMING_TRACK_LEFT + this.timingValue * TIMING_TRACK_WIDTH);
     this.updateTimingSuccessZone();
+    this.refreshTimingMeterVisibility();
   }
 
   private createBackdrop(): void {
@@ -341,20 +350,21 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private createTimingMeter(): void {
-    this.add
+    this.timingLabel = this.add
       .text(332, 660, 'Throw timing', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '12px',
         fontStyle: 'bold',
       })
-      .setOrigin(1, 0.5);
+      .setOrigin(1, 0.5)
+      .setName('rainbow-disc-activity:timing-label');
 
-    const track = this.add.graphics().setName('rainbow-disc-activity:timing-track');
-    track.fillStyle(0xd8cfc0, 1);
-    track.lineStyle(2, 0x9b8977, 0.65);
-    track.fillRoundedRect(TIMING_TRACK_LEFT, 649, TIMING_TRACK_WIDTH, 22, 11);
-    track.strokeRoundedRect(TIMING_TRACK_LEFT, 649, TIMING_TRACK_WIDTH, 22, 11);
+    this.timingTrack = this.add.graphics().setName('rainbow-disc-activity:timing-track');
+    this.timingTrack.fillStyle(0xd8cfc0, 1);
+    this.timingTrack.lineStyle(2, 0x9b8977, 0.65);
+    this.timingTrack.fillRoundedRect(TIMING_TRACK_LEFT, 649, TIMING_TRACK_WIDTH, 22, 11);
+    this.timingTrack.strokeRoundedRect(TIMING_TRACK_LEFT, 649, TIMING_TRACK_WIDTH, 22, 11);
 
     this.timingSuccessZone = this.add
       .rectangle(TIMING_TRACK_LEFT, 660, 120, 14, 0x9fd394, 0.95)
@@ -397,6 +407,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.dragStartPoint = null;
     this.actionLocked = false;
     this.selectedReceiver = Phaser.Math.Clamp(this.selectedReceiver, 0, RECEIVER_Y.length - 1);
+    this.refreshTimingMeterVisibility();
 
     if (this.completed) {
       this.renderResult();
@@ -804,6 +815,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.completed = false;
     this.actionLocked = false;
     this.timingPhase = 0;
+    this.timingChallengeIndex = 0;
     this.renderPossession();
   }
 
@@ -1257,8 +1269,12 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const target = this.receiverPoint(this.selectedReceiver);
     const profile = this.currentTimingProfile();
-    const accurate = isRainbowDiscReleaseAccurate(this.timingValue, profile.tolerance);
-    const missOffset = rainbowDiscMissOffset(this.timingValue);
+    const accurate = isRainbowDiscReleaseAccurate(
+      this.timingValue,
+      profile.tolerance,
+      profile.centre,
+    );
+    const missOffset = rainbowDiscMissOffset(this.timingValue, profile.centre);
 
     this.resolveThrow(
       target,
@@ -1266,6 +1282,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       accurate ? target : { x: target.x - 20, y: target.y + missOffset },
       this.selectedReceiver,
     );
+    this.timingChallengeIndex += 1;
   }
 
   private resolveThrow(
@@ -1580,7 +1597,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
   }
 
-  private currentTimingProfile(): { tolerance: number; sweepSpeed: number; label: string } {
+  private currentTimingProfile(): RainbowDiscTimingChallenge {
     const baseProfile =
       this.mode === 'practice'
         ? this.practiceDrill === 'passing-drill'
@@ -1597,7 +1614,35 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
               })()
         : { tolerance: 0.22, sweepSpeed: 0.0042, label: 'Match' };
 
-    return applyRainbowDiscAssistance(baseProfile, this.assistance);
+    return varyRainbowDiscTimingChallenge(
+      applyRainbowDiscAssistance(baseProfile, this.assistance),
+      this.timingChallengeIndex,
+    );
+  }
+
+  private isTimingActive(): boolean {
+    if (this.completed || this.actionLocked) {
+      return false;
+    }
+
+    if (this.mode === 'match') {
+      return !this.matchSetup && this.phase === 'attack';
+    }
+
+    return this.practiceDrill !== 'menu';
+  }
+
+  private refreshTimingMeterVisibility(): void {
+    const visible = this.isTimingActive();
+    this.timingLabel?.setVisible(visible);
+    this.timingTrack?.setVisible(visible);
+    this.timingSuccessZone?.setVisible(visible);
+    this.timingMarker?.setVisible(visible);
+    this.timingDifficultyText?.setVisible(visible);
+
+    if (visible) {
+      this.updateTimingSuccessZone();
+    }
   }
 
   private updateTimingSuccessZone(): void {
@@ -1606,9 +1651,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     const profile = this.currentTimingProfile();
-    const centre = 0.55;
-    const start = Phaser.Math.Clamp(centre - profile.tolerance, 0, 1);
-    const end = Phaser.Math.Clamp(centre + profile.tolerance, 0, 1);
+    const start = Phaser.Math.Clamp(profile.centre - profile.tolerance, 0, 1);
+    const end = Phaser.Math.Clamp(profile.centre + profile.tolerance, 0, 1);
     const width = (end - start) * TIMING_TRACK_WIDTH;
     const x = TIMING_TRACK_LEFT + ((start + end) / 2) * TIMING_TRACK_WIDTH;
 
@@ -1797,6 +1841,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.completed = false;
     this.actionLocked = false;
     this.timingPhase = 0;
+    this.timingChallengeIndex = 0;
   }
 
   private restartRun(): void {
