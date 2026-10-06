@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  POND_LEAP_ASSISTANCE_LEVELS,
+  POND_LEAP_COURSE_IDS,
   POND_LEAP_COURSES,
   POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT,
   getPondLeapTimingChallenge,
@@ -9,6 +11,11 @@ import {
 } from './PondLeapRules';
 
 describe('PondLeapRules', () => {
+  it('keeps course and help selectors in a stable child-facing order', () => {
+    expect(POND_LEAP_COURSE_IDS).toEqual(['sunny-steps', 'reed-weave', 'twinkle-trail']);
+    expect(POND_LEAP_ASSISTANCE_LEVELS).toEqual(['relaxed', 'standard', 'quick']);
+  });
+
   it('keeps Relaxed slower and wider while Quick is faster and tighter', () => {
     const relaxed = getPondLeapTimingChallenge('sunny-steps', 2, 'relaxed');
     const standard = getPondLeapTimingChallenge('sunny-steps', 2, 'standard');
