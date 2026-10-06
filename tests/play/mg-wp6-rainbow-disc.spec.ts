@@ -184,6 +184,111 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
       .toBe(true);
   });
 
+  test('Modes switches between active Match and Practice without returning to Just Games', async ({
+    page,
+  }) => {
+    await openRainbowDiscFromJustGames(page, 'match');
+
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:match-assistance-standard',
+    );
+    await waitForNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:thrower');
+
+    await clickNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:modes');
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:mode-menu-title',
+    );
+
+    await clickNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:mode-practice');
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-menu-title',
+    );
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:header-title')?.text).toBe(
+      'Rainbow Disc Practice',
+    );
+
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-target-range',
+    );
+    await waitForNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:disc');
+
+    await clickNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:modes');
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:mode-menu-title',
+    );
+
+    await clickNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:mode-match');
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:match-setup-title',
+    );
+
+    snapshot = await getDiagnosticSnapshot(page);
+    expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:header-title')?.text).toBe(
+      'Rainbow Disc',
+    );
+    expect(
+      snapshot.scenes.find(({ key }) => key === 'JustGamesScene')?.health?.lifecycleState,
+    ).not.toBe('active');
+  });
+
+  test('Rainbow Streak ends immediately on a wrong target with an explicit reason', async ({
+    page,
+  }) => {
+    await openRainbowDiscFromJustGames(page, 'practice');
+
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-rainbow-streak',
+    );
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-targets',
+    );
+
+    // First called target is the middle ring. Deliberately select the left ring.
+    await page.keyboard.press('ArrowLeft');
+    await waitForGoodTiming(page);
+    await page.keyboard.press('Space');
+
+    await expect
+      .poll(async () => {
+        const snapshot = await getDiagnosticSnapshot(page);
+        return rainbowDiscObject(snapshot, 'rainbow-disc-activity:result')?.text;
+      })
+      .toBe('STREAK OVER');
+
+    const snapshot = await getDiagnosticSnapshot(page);
+    const activity = snapshot.scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
+    expect(
+      activity?.objects.some(
+        ({ text, effectiveVisible }) =>
+          effectiveVisible && text?.startsWith('Wrong target. You reached a streak of') === true,
+      ),
+    ).toBe(true);
+    expect(
+      activity?.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:disc' && effectiveVisible,
+      ),
+    ).toBe(false);
+  });
+
   test('Match setup and Practice hub are keyboard navigable', async ({ page }) => {
     await openRainbowDiscFromJustGames(page, 'match');
 
