@@ -216,14 +216,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
         .ellipse(pad.x, pad.y, 112 * scale, 52 * scale, 0x659b61, 1)
         .setStrokeStyle(3, 0x4f7d50, 0.8)
         .setName(`pond-leap:pad:${index}`);
-      const inner = this.add.ellipse(
-        pad.x - 12,
-        pad.y - 7,
-        65 * scale,
-        24 * scale,
-        0x7fb476,
-        0.72,
-      );
+      const inner = this.add.ellipse(pad.x - 12, pad.y - 7, 65 * scale, 24 * scale, 0x7fb476, 0.72);
       layer.add([lily, inner]);
 
       if (index % 2 === 1) {
