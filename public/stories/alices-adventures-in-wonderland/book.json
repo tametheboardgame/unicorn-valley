@@ -6,7 +6,7 @@
   "catalogueBlurb": "Follow Alice down the rabbit-hole into a world where almost nothing makes sense.",
   "cover": {
     "path": "covers/cover.webp",
-    "alt": "Alice turns in surprise as the hurried White Rabbit races past with his pocket watch beside the sunlit river."
+    "alt": "John Tenniel's historic Alice in Wonderland frontispiece."
   },
   "series": null,
   "tags": [
@@ -1141,6 +1141,35 @@
           "path": "editions/full-classic/pages/ch12-p06.md"
         }
       ]
+    }
+  ],
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "John Tenniel's historic Alice in Wonderland frontispiece."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Original Alice's Adventures in Wonderland illustrations by John Tenniel",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Alice%27s_Adventures_in_Wonderland",
+        "notes": "The selected historic Tenniel files are identified as public domain on Wikimedia Commons."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/alice-01-white-rabbit.webp",
+        "alt": "Alice turns in surprise as the hurried White Rabbit races past with his pocket watch beside the sunlit river."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Reuses the approved modern White Rabbit illustration from R6.5-WP19SH1.6.1."
+      }
     }
   ]
 }
