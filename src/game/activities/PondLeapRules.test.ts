@@ -31,9 +31,7 @@ describe('PondLeapRules', () => {
       expect(course.sweepSpeeds).toHaveLength(5);
     }
 
-    expect(POND_LEAP_COURSES['reed-weave'].pads).not.toEqual(
-      POND_LEAP_COURSES['sunny-steps'].pads,
-    );
+    expect(POND_LEAP_COURSES['reed-weave'].pads).not.toEqual(POND_LEAP_COURSES['sunny-steps'].pads);
     expect(POND_LEAP_COURSES['twinkle-trail'].timingCentres).not.toEqual(
       POND_LEAP_COURSES['reed-weave'].timingCentres,
     );
