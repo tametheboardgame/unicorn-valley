@@ -427,10 +427,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     const throwOrigin = this.throwOrigin();
-    const targetX =
-      this.mode === 'practice' && this.practiceDrill === 'passing-drill'
-        ? 900
-        : (TARGET_X[this.possession] ?? TARGET_X[0]);
+    const targetX = TARGET_X[this.possession] ?? TARGET_X[0];
     const openLane = rainbowDiscOpenLane(this.attackSequence, this.possession);
 
     const thrower = this.add
