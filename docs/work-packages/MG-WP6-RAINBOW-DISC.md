@@ -270,3 +270,29 @@ Automated coverage now includes:
 - representative portrait-tablet canvas containment.
 
 Final acceptance still requires the child-facing human playtest. Do not merge before that approval.
+
+
+## MG-WP6F human-playtest follow-up — timing challenge behaviour
+
+Human review identified two timing-meter issues:
+
+1. the throw timing marker was still animating while the player was choosing a Match assistance level or Practice drill;
+2. the green release window was too static between throws.
+
+Accepted follow-up behaviour:
+
+- the timing meter is inactive/hidden whenever there is no throw to make:
+  - Match assistance setup;
+  - Practice hub;
+  - defence phase;
+  - completed/result state;
+- the meter becomes active only when the player has an actual disc throw available;
+- every throw receives a deterministic timing challenge that can:
+  - shift the green release zone left or right;
+  - vary the green zone width within safe bounds;
+- Gentle / Standard / Challenge still controls the overall forgiveness of that changing window;
+- Target Range target difficulty, Passing Drill and Rainbow Streak continue to layer their own intended difficulty over the shared timing challenge;
+- release success is judged against the exact visible window centre/width for that throw;
+- early/late miss direction is also relative to the current visible window rather than a fixed centre.
+
+Automated qualification now checks that the timing UI is hidden on mode-selection screens and that consecutive throws can present different green-zone position/width values.
