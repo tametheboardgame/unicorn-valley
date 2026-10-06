@@ -430,33 +430,23 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const headline = this.add
-      .text(
-        640,
-        375,
-        result.headline,
-        {
-          color: UI_COLOURS.ink,
-          fontFamily: UI_FONT,
-          fontSize: '24px',
-          fontStyle: 'bold',
-          align: 'center',
-        },
-      )
+      .text(640, 375, result.headline, {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
       .setOrigin(0.5);
 
     const summary = this.add
-      .text(
-        640,
-        420,
-        result.summary,
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '17px',
-          align: 'center',
-          wordWrap: { width: 760 },
-        },
-      )
+      .text(640, 420, result.summary, {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '17px',
+        align: 'center',
+        wordWrap: { width: 760 },
+      })
       .setOrigin(0.5);
 
     const padRow = this.add
@@ -709,7 +699,11 @@ export class PondLeapActivityScene extends Phaser.Scene {
     return 'Cross five lily pads. Splashing simply retries the same pad.';
   }
 
-  private modeProgressLabel(courseTitle: string, assistanceTitle: string, totalHops: number): string {
+  private modeProgressLabel(
+    courseTitle: string,
+    assistanceTitle: string,
+    totalHops: number,
+  ): string {
     const modeTitle = pondLeapModeTitle(this.mode);
     if (this.mode === 'practice') {
       const shownAttempt = this.completed
