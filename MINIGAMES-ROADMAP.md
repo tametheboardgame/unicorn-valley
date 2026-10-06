@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP5 are complete and merged. MG-WP5 - Sunbeam Chess Academy is closed / human-approved. MG-WP6 - Rainbow Disc is the next existing-game refinement package.**
+**MG-WP0 through MG-WP5 are complete and merged. MG-WP5 - Sunbeam Chess Academy is closed / human-approved. MG-WP6 - Rainbow Disc is the next existing-game refinement package. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 applied that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
@@ -563,6 +563,84 @@ Acceptance:
 - refined games have an explicit replay/depth model rather than accidental one-shot behaviour;
 - future mini-games still have one documented authoring path;
 - no roadmap-specific exception is required simply to expose a game in both contexts.
+
+## Later second-pass expansion
+
+### MG-WP14 - Sunbeam Chess Academy: Advanced Curriculum & Pass-and-Play
+
+Goal: return to the completed Chess Academy after the first portfolio refinement cycle and substantially deepen it without replacing the child-first teaching model established in MG-WP5.
+
+This is a **second-pass expansion**, not unfinished MG-WP5 work.
+
+#### Expanded Lessons
+
+Significantly increase the lesson curriculum beyond the initial foundation set.
+
+Candidate lesson families include:
+
+- piece value and sensible trades;
+- protecting pieces and spotting pieces that are hanging;
+- opening principles: centre, development and king safety;
+- castling and when it is useful;
+- simple checkmate patterns;
+- forks;
+- pins;
+- skewers;
+- discovered attacks;
+- defended versus undefended captures;
+- basic pawn structure ideas;
+- passed pawns and promotion;
+- simple king-and-pawn endings;
+- introductory rook endings;
+- recognising stalemate and avoiding accidental draws.
+
+Lessons should remain short, visual and interactive rather than becoming a textbook. Advanced concepts may be split into multiple tiny lessons where that is more appropriate for a young player.
+
+#### Expanded Puzzle Garden
+
+Build a substantially larger puzzle library with enough breadth that Puzzle Garden becomes a repeatable practice mode rather than a small demonstration set.
+
+The expanded puzzle system should support:
+
+- themed puzzle groups matching the lesson curriculum;
+- multiple puzzles per concept;
+- clear beginner / developing difficulty bands;
+- mate-in-one and selected mate-in-two puzzles;
+- capture, defence and tactical pattern puzzles;
+- lightweight progression through a theme without locking unrelated content;
+- repeat play and previously-solved markers;
+- deterministic legal positions with automated solvability validation;
+- enough variation that a child can return regularly without immediately exhausting the set.
+
+Avoid puzzle volume for its own sake: each position should teach or practise a recognisable idea.
+
+#### Pass-and-Play
+
+Add a local **two-human-player** chess mode designed specifically for sharing one tablet.
+
+Requirements:
+
+- White and Black are both controlled by people; no AI opponent is involved;
+- use the same real `chess.js` legality, board, move history, check and result handling as the other Chess Academy modes;
+- provide an explicit turn handover state suitable for physically passing the tablet;
+- clearly show whose turn it is before play resumes;
+- consider optional board rotation / orientation switching between White and Black, with the final behaviour chosen through tablet playtesting;
+- accidental input during handover must be prevented;
+- Restart / New Game / Academy return behaviour must be obvious;
+- an unfinished Pass-and-Play game should use the same isolated resumable-session philosophy as Friendly Match and Coach Match;
+- no online multiplayer, accounts, matchmaking or network dependency are in scope.
+
+#### Qualification
+
+The second-pass package should include:
+
+- automated legal-position and puzzle-solvability validation;
+- curriculum coverage tests;
+- Pass-and-Play turn/handover lifecycle coverage;
+- resume/restart coverage;
+- portrait/tablet touch validation;
+- human playtesting with two people physically sharing the same device;
+- confirmation that all Chess Academy learning/session state remains isolated from adventure progression.
 
 ## Future game idea library
 
