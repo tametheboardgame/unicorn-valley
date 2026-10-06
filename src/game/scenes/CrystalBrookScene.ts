@@ -22,11 +22,10 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { saveLocationCheckpoint } from '../save/saveLocationCheckpoint';
 import {
   CRYSTAL_BROOK_LOCATION_ID,
-  CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE,
   CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_MAP,
   CRYSTAL_BROOK_MEADOW_GORGE,
-  CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
+  CRYSTAL_BROOK_LOCAL_TRAILS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPSTREAM_CASCADE,
@@ -409,55 +408,54 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
-    const pathNetwork = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.86);
+    const pathEdges = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.84);
+    const pathSurfaces = this.add.graphics().setName('crystal-brook:path-surfaces').setDepth(2.86);
 
-    const drawSegments = (
-      segments: readonly (readonly { x: number; y: number }[])[],
+    const drawTrail = (
+      graphics: Phaser.GameObjects.Graphics,
+      points: readonly { x: number; y: number }[],
       width: number,
       colour: number,
     ): void => {
-      pathNetwork.lineStyle(width, colour, 1);
-      pathNetwork.fillStyle(colour, 1);
-      for (const segment of segments) {
-        const first = segment[0];
-        if (!first) {
-          continue;
-        }
-        const smoothedSegment = smoothPoints(segment);
-        pathNetwork.beginPath();
-        pathNetwork.moveTo(smoothedSegment[0].x, smoothedSegment[0].y);
-        for (const point of smoothedSegment.slice(1)) {
-          pathNetwork.lineTo(point.x, point.y);
-        }
-        pathNetwork.strokePath();
-        for (const point of segment) {
-          pathNetwork.fillCircle(point.x, point.y, width / 2);
-        }
+      const first = points[0];
+      if (!first) {
+        return;
+      }
+      const smoothed = smoothPoints(points);
+      graphics.lineStyle(width, colour, 1);
+      graphics.fillStyle(colour, 1);
+      graphics.beginPath();
+      graphics.moveTo(smoothed[0].x, smoothed[0].y);
+      for (const point of smoothed.slice(1)) {
+        graphics.lineTo(point.x, point.y);
+      }
+      graphics.strokePath();
+      for (const point of points) {
+        graphics.fillCircle(point.x, point.y, width / 2);
       }
     };
 
-    // Paint every outer edge first, then every inner surface. This makes the Crystal Cup
-    // branch a genuine joined path rather than laying its darker outer band over the main trail.
-    drawSegments(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 128, 0xd7c18f);
-    drawSegments([CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE], 82, 0xd7c18f);
-    drawSegments(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS, 108, 0xf0dfb2);
-    drawSegments([CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE], 64, 0xf0dfb2);
+    // H6.5 owns Brook paths locally. Trails terminate at bridge decks, activity approaches
+    // and destination terrain instead of continuing underneath incompatible scenery.
+    for (const trail of CRYSTAL_BROOK_LOCAL_TRAILS) {
+      drawTrail(pathEdges, trail.points, trail.width + 18, 0xd7c18f);
+    }
+    for (const trail of CRYSTAL_BROOK_LOCAL_TRAILS) {
+      drawTrail(pathSurfaces, trail.points, trail.width, 0xf0dfb2);
+      const anchor = trail.points[0];
+      this.add
+        .zone(anchor.x, anchor.y, 2, 2)
+        .setName(`crystal-brook:path:${trail.id}`)
+        .setVisible(false);
+    }
 
-    this.add
-      .zone(
-        CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE[0].x,
-        CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE[0].y,
-        2,
-        2,
-      )
-      .setName('crystal-brook:crystal-cup-spur');
+    this.add.zone(2490, 1060, 2, 2).setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
     this.createMeadowGorge();
     createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
-    this.createSteppingStones();
-    this.createSecretTrail();
+    this.createGrottoTrailCues();
     this.createBanks();
     this.createNpcVisitPoints();
     this.createAmbientSparkles();
@@ -949,29 +947,8 @@ export class CrystalBrookScene extends Phaser.Scene {
     }
   }
 
-  private createSteppingStones(): void {
-    for (const [index, point] of CRYSTAL_BROOK_MAP.steppingStones.entries()) {
-      this.add
-        .ellipse(point.x, point.y, 92, 50, index % 2 === 0 ? 0xa8a8a0 : 0xb8b4a7, 1)
-        .setStrokeStyle(4, 0x81877d, 0.8)
-        .setDepth(worldDepthForY(point.y, 0.1));
-      this.add
-        .circle(point.x - 20, point.y - 5, 7, 0xe7f0dc, 0.36)
-        .setDepth(worldDepthForY(point.y, 0.12));
-    }
-  }
-
-  private createSecretTrail(): void {
+  private createGrottoTrailCues(): void {
     const route = CRYSTAL_BROOK_MAP.secretRoutes[0];
-    const path = this.add.graphics().setDepth(2);
-    path.lineStyle(48, 0xd8c7a4, 0.52);
-    path.beginPath();
-    path.moveTo(route.trail[0].x, route.trail[0].y);
-    for (const point of route.trail.slice(1)) {
-      path.lineTo(point.x, point.y);
-    }
-    path.strokePath();
-
     for (const [index, point] of route.trail.entries()) {
       this.add
         .text(point.x, point.y - 24, index % 2 === 0 ? '·' : '✦', {

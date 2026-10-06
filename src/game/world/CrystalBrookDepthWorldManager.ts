@@ -19,7 +19,6 @@ import {
   CRYSTAL_BROOK_SHALLOW_RIPPLE,
   CRYSTAL_BROOK_SHELL_SPARKLE,
   CRYSTAL_BROOK_SINGING_CRYSTALS,
-  CRYSTAL_BROOK_STEPPING_CHIME,
   CRYSTAL_BROOK_WATERFALL_MIST,
 } from './CrystalBrookMap';
 import { worldDepthForY } from './WorldDepth';
@@ -89,15 +88,6 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
     position: CRYSTAL_BROOK_REFLECTION_POOL,
     radius: 120,
     icon: '💧',
-  },
-  {
-    id: 'stepping-chime',
-    label: 'Stepping-Stone Bend',
-    actionLabel: 'Try the stones',
-    actionKind: 'interact',
-    position: CRYSTAL_BROOK_STEPPING_CHIME,
-    radius: 150,
-    icon: '🪨',
   },
   {
     id: 'shallow-ripple',
@@ -266,9 +256,6 @@ export class CrystalBrookDepthWorldManager {
       case 'reflection-pool':
         this.activateReflectionPool(state);
         return;
-      case 'stepping-chime':
-        this.activateSteppingChime(state);
-        return;
       case 'shallow-ripple':
         state.scene.cameras.main.flash(70, 196, 241, 246, false);
         this.showFeedback(
@@ -334,17 +321,6 @@ export class CrystalBrookDepthWorldManager {
       fresh
         ? 'Tiny bright points appear in the still water. There are more reflected stars than there are stars overhead. ✨💧'
         : 'The extra reflected stars are still there, quietly refusing to explain themselves.',
-    );
-  }
-
-  private activateSteppingChime(state: BrookDepthState): void {
-    const fresh = this.story.discoverSteppingChime();
-    state.scene.cameras.main.flash(65, 215, 247, 255, false);
-    this.showFeedback(
-      state,
-      fresh
-        ? 'Tap, plip, ting! Three flat stones make three different notes when the stream slips around them. A new Brook secret! 🪨🎵'
-        : 'Tap, plip, ting! The stepping stones play their little three-note pattern again.',
     );
   }
 
