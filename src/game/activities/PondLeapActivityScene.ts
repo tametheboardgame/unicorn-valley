@@ -2,6 +2,9 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
+  POND_LEAP_ASSISTANCE_LEVELS,
+  POND_LEAP_COURSE_IDS,
+  getPondLeapAssistanceProfile,
   getPondLeapCourse,
   getPondLeapTimingChallenge,
   isPondLeapCourseComplete,
@@ -15,6 +18,8 @@ import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGame
 interface PondLeapActivitySceneData {
   returnScene?: string;
   discoveredReflection?: boolean;
+  assistance?: PondLeapAssistanceLevel;
+  courseId?: PondLeapCourseId;
 }
 
 const TIMING_LEFT = 355;
@@ -33,6 +38,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private timingValue = 0.5;
   private assistance: PondLeapAssistanceLevel = 'standard';
   private courseId: PondLeapCourseId = 'sunny-steps';
+  private courseLayer: Phaser.GameObjects.Container | null = null;
+  private nextPadHighlight: Phaser.GameObjects.Ellipse | null = null;
   private frog: Phaser.GameObjects.Container | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private progressText: Phaser.GameObjects.Text | null = null;
@@ -49,6 +56,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.returnScene =
       this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
     this.discoveredReflection = data.discoveredReflection === true;
+    this.assistance = data.assistance ?? 'standard';
+    this.courseId = data.courseId ?? 'sunny-steps';
     this.restartRun();
 
     this.cameras.main.setBackgroundColor('#5d8f76');
@@ -65,7 +74,9 @@ export class PondLeapActivityScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-SPACE', this.tryLeap, this);
       this.input.keyboard?.off('keydown-ENTER', this.tryLeap, this);
       this.input.keyboard?.off('keydown-ESC', this.leaveActivity, this);
-      this.frog?.destroy(true);
+      this.courseLayer?.destroy(true);
+      this.courseLayer = null;
+      this.nextPadHighlight = null;
       this.frog = null;
       this.statusText = null;
       this.progressText = null;
@@ -157,26 +168,122 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   private createPondCourse(): void {
+    this.courseLayer?.destroy(true);
+    this.courseLayer = null;
+    this.nextPadHighlight = null;
+    this.frog = null;
+
     const course = getPondLeapCourse(this.courseId);
+    const layer = this.add.container(0, 0).setName('pond-leap:course-layer');
+
+    const route = this.add.graphics().setName(`pond-leap:course-route:${course.id}`);
+    route.lineStyle(5, course.accent, 0.28);
+    for (let index = 0; index < course.pads.length - 1; index += 1) {
+      const from = course.pads[index];
+      const to = course.pads[index + 1];
+      if (from && to) {
+        route.lineBetween(from.x, from.y, to.x, to.y);
+      }
+    }
+    layer.add(route);
+
+    this.createCourseAccent(layer);
+
+    this.nextPadHighlight = this.add
+      .ellipse(0, 0, 132, 66, course.accent, 0.08)
+      .setStrokeStyle(5, course.accent, 0.95)
+      .setName('pond-leap:next-pad');
+    layer.add(this.nextPadHighlight);
+    this.tweens.add({
+      targets: this.nextPadHighlight,
+      alpha: { from: 0.45, to: 1 },
+      scaleX: { from: 0.96, to: 1.05 },
+      scaleY: { from: 0.96, to: 1.05 },
+      duration: 520,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
     course.pads.forEach((pad, index) => {
       const scale = 1 - index * 0.035;
       const lily = this.add
         .ellipse(pad.x, pad.y, 112 * scale, 52 * scale, 0x659b61, 1)
         .setStrokeStyle(3, 0x4f7d50, 0.8)
         .setName(`pond-leap:pad:${index}`);
-      this.add.ellipse(pad.x - 12, pad.y - 7, 65 * scale, 24 * scale, 0x7fb476, 0.72);
+      const inner = this.add.ellipse(
+        pad.x - 12,
+        pad.y - 7,
+        65 * scale,
+        24 * scale,
+        0x7fb476,
+        0.72,
+      );
+      layer.add([lily, inner]);
 
       if (index % 2 === 1) {
-        this.add
+        const flower = this.add
           .circle(pad.x + 18, pad.y - 10, 9 * scale, index % 4 === 1 ? 0xffd0e8 : 0xffed9d, 1)
           .setStrokeStyle(2, 0xffffff, 0.45);
+        layer.add(flower);
       }
-
-      lily.setDepth(4);
     });
 
     const start = course.pads[0] ?? { x: 190, y: 395 };
     this.frog = this.createFrog(start.x, start.y - 22);
+    layer.add(this.frog);
+    this.courseLayer = layer;
+    this.refreshNextPadHighlight();
+  }
+
+  private createCourseAccent(layer: Phaser.GameObjects.Container): void {
+    const course = getPondLeapCourse(this.courseId);
+
+    if (course.id === 'reed-weave') {
+      const reeds = this.add.graphics().setName('pond-leap:course-accent:reeds');
+      reeds.lineStyle(4, 0x4f8b65, 0.5);
+      for (const x of [126, 152, 178, 1100, 1126, 1152]) {
+        const baseY = x < 640 ? 446 : 438;
+        reeds.lineBetween(x, baseY, x + 4, baseY - 56);
+        reeds.lineBetween(x + 8, baseY, x + 10, baseY - 42);
+      }
+      layer.add(reeds);
+      return;
+    }
+
+    if (course.id === 'twinkle-trail') {
+      const sparkles = [
+        [275, 245],
+        [605, 438],
+        [820, 230],
+        [1015, 435],
+      ] as const;
+      for (const [x, y] of sparkles) {
+        const sparkle = this.add
+          .text(x, y, '✦', {
+            color: '#fff2a8',
+            fontFamily: UI_FONT,
+            fontSize: '24px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5)
+          .setName('pond-leap:course-accent:twinkle');
+        layer.add(sparkle);
+      }
+      return;
+    }
+
+    for (const [x, y] of [
+      [270, 440],
+      [660, 220],
+      [1000, 445],
+    ] as const) {
+      const glint = this.add
+        .circle(x, y, 8, course.accent, 0.55)
+        .setStrokeStyle(2, 0xffffff, 0.45)
+        .setName('pond-leap:course-accent:sunny');
+      layer.add(glint);
+    }
   }
 
   private createFrog(x: number, y: number): Phaser.GameObjects.Container {
@@ -210,11 +317,13 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setStrokeStyle(2, 0xffffff, 0.9);
 
     this.createRoundedButton(1040, 590, 180, 'LEAP!', () => this.tryLeap(), 'leap', true);
-    this.createRoundedButton(1060, 80, 130, 'Back', () => this.leaveActivity(), 'back');
+    this.createRoundedButton(1125, 80, 130, 'Back', () => this.leaveActivity(), 'back');
     this.createRoundedButton(205, 590, 170, 'Restart', () => this.restartRun(), 'restart');
+    this.createRoundedButton(190, 645, 190, 'Course ↻', () => this.cycleCourse(), 'course');
+    this.createRoundedButton(1090, 645, 180, 'Help ↻', () => this.cycleAssistance(), 'help');
 
     this.add
-      .text(640, 635, 'SPACE / ENTER or tap LEAP!', {
+      .text(640, 638, 'SPACE / ENTER or tap LEAP!', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '14px',
@@ -232,11 +341,13 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setDisplaySize(zoneWidth, 18);
 
     const totalHops = Math.max(1, course.pads.length - 1);
+    const assistance = getPondLeapAssistanceProfile(this.assistance);
     this.progressText?.setText(
       this.completed
-        ? `${totalHops} / ${totalHops} pads crossed`
-        : `Pad ${this.hopIndex + 1} of ${totalHops}`,
+        ? `${course.title} · ${assistance.title} · ${totalHops} / ${totalHops}`
+        : `${course.title} · ${assistance.title} · Pad ${this.hopIndex + 1} of ${totalHops}`,
     );
+    this.refreshNextPadHighlight();
 
     if (this.completed) {
       this.statusText?.setText('');
@@ -257,6 +368,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     const perfect = this.misses === 0;
+    const course = getPondLeapCourse(this.courseId);
+    const totalHops = Math.max(1, course.pads.length - 1);
     const layer = this.add.container(0, 0).setName('pond-leap:completion').setDepth(40);
 
     const panel = this.add.graphics().setName('pond-leap:completion-panel');
@@ -287,13 +400,18 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const headline = this.add
-      .text(640, 375, perfect ? 'Not a single splash!' : 'You made it across all five lily pads!', {
+      .text(
+        640,
+        375,
+        perfect ? 'Not a single splash!' : `You made it across all ${totalHops} lily pads!`,
+        {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '24px',
         fontStyle: 'bold',
-        align: 'center',
-      })
+          align: 'center',
+        },
+      )
       .setOrigin(0.5);
 
     const summary = this.add
@@ -301,8 +419,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
         640,
         420,
         perfect
-          ? 'Five leaps. Five clean landings. The pond frogs are impressed.'
-          : `${this.misses} splash${this.misses === 1 ? '' : 'es'}, five successful leaps, and one very determined frog.`,
+          ? `${totalHops} leaps. ${totalHops} clean landings. The pond frogs are impressed.`
+          : `${this.misses} splash${this.misses === 1 ? '' : 'es'}, ${totalHops} successful leaps, and one very determined frog.`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -314,7 +432,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const padRow = this.add
-      .text(640, 468, '●   ●   ●   ●   ●', {
+      .text(640, 468, Array.from({ length: totalHops }, () => '●').join('   '), {
         color: '#6fa76c',
         fontFamily: UI_FONT,
         fontSize: '24px',
@@ -442,6 +560,43 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
     const start = getPondLeapCourse(this.courseId).pads[0] ?? { x: 190, y: 395 };
     this.frog?.setPosition(start.x, start.y - 22);
+    this.syncRunPresentation();
+  }
+
+  private refreshNextPadHighlight(): void {
+    if (!this.nextPadHighlight) {
+      return;
+    }
+
+    if (this.completed) {
+      this.nextPadHighlight.setVisible(false);
+      return;
+    }
+
+    const next = getPondLeapCourse(this.courseId).pads[this.hopIndex + 1];
+    if (!next) {
+      this.nextPadHighlight.setVisible(false);
+      return;
+    }
+
+    this.nextPadHighlight.setPosition(next.x, next.y).setVisible(true);
+  }
+
+  private cycleCourse(): void {
+    const currentIndex = POND_LEAP_COURSE_IDS.indexOf(this.courseId);
+    this.courseId =
+      POND_LEAP_COURSE_IDS[(currentIndex + 1) % POND_LEAP_COURSE_IDS.length] ?? 'sunny-steps';
+    this.createPondCourse();
+    this.restartRun();
+  }
+
+  private cycleAssistance(): void {
+    const currentIndex = POND_LEAP_ASSISTANCE_LEVELS.indexOf(this.assistance);
+    this.assistance =
+      POND_LEAP_ASSISTANCE_LEVELS[(currentIndex + 1) % POND_LEAP_ASSISTANCE_LEVELS.length] ??
+      'standard';
+    this.timingPhase = 0;
+    this.timingValue = 0.5;
     this.syncRunPresentation();
   }
 
