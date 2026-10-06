@@ -3,17 +3,25 @@ import {
   POND_LEAP_ASSISTANCE_LEVELS,
   POND_LEAP_COURSE_IDS,
   POND_LEAP_COURSES,
+  POND_LEAP_MODES,
+  POND_LEAP_PRACTICE_ATTEMPTS,
+  POND_LEAP_RIPPLE_RUSH_HOPS,
   POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT,
+  applyPondLeapModePressure,
+  createPondLeapModeRunState,
   getPondLeapTimingChallenge,
   isPondLeapCourseComplete,
+  isPondLeapModeFinished,
   isPondLeapRippleRushFailed,
   isPondLeapTimingSuccessful,
+  recordPondLeapModeAttempt,
 } from './PondLeapRules';
 
 describe('PondLeapRules', () => {
   it('keeps course and help selectors in a stable child-facing order', () => {
     expect(POND_LEAP_COURSE_IDS).toEqual(['sunny-steps', 'reed-weave', 'twinkle-trail']);
     expect(POND_LEAP_ASSISTANCE_LEVELS).toEqual(['relaxed', 'standard', 'quick']);
+    expect(POND_LEAP_MODES).toEqual(['classic', 'practice', 'ripple-rush']);
   });
 
   it('keeps Relaxed slower and wider while Quick is faster and tighter', () => {
@@ -73,6 +81,55 @@ describe('PondLeapRules', () => {
     expect(POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT).toBe(3);
     expect(isPondLeapRippleRushFailed(2)).toBe(false);
     expect(isPondLeapRippleRushFailed(3)).toBe(true);
+  });
+
+  it('tracks Practice Pond streaks without creating a fail state', () => {
+    let state = createPondLeapModeRunState();
+    state = recordPondLeapModeAttempt(state, true);
+    state = recordPondLeapModeAttempt(state, true);
+    state = recordPondLeapModeAttempt(state, false);
+
+    expect(state).toMatchObject({
+      attempts: 3,
+      successes: 2,
+      streak: 0,
+      bestStreak: 2,
+      splashes: 1,
+    });
+    expect(isPondLeapModeFinished('practice', state)).toBe(false);
+
+    for (let index = state.attempts; index < POND_LEAP_PRACTICE_ATTEMPTS; index += 1) {
+      state = recordPondLeapModeAttempt(state, false);
+    }
+
+    expect(isPondLeapModeFinished('practice', state)).toBe(true);
+  });
+
+  it('finishes Ripple Rush after eight clean hops or the third splash', () => {
+    let completed = createPondLeapModeRunState();
+    for (let index = 0; index < POND_LEAP_RIPPLE_RUSH_HOPS; index += 1) {
+      completed = recordPondLeapModeAttempt(completed, true);
+    }
+
+    expect(isPondLeapModeFinished('ripple-rush', completed)).toBe(true);
+
+    let failed = createPondLeapModeRunState();
+    failed = recordPondLeapModeAttempt(failed, false);
+    failed = recordPondLeapModeAttempt(failed, false);
+    expect(isPondLeapModeFinished('ripple-rush', failed)).toBe(false);
+    failed = recordPondLeapModeAttempt(failed, false);
+    expect(isPondLeapModeFinished('ripple-rush', failed)).toBe(true);
+  });
+
+  it('progressively tightens and speeds Ripple Rush using visible timing rules', () => {
+    const base = getPondLeapTimingChallenge('sunny-steps', 2, 'standard');
+    const early = applyPondLeapModePressure(base, 'ripple-rush', 0);
+    const later = applyPondLeapModePressure(base, 'ripple-rush', 6);
+
+    expect(later.tolerance).toBeLessThan(early.tolerance);
+    expect(later.sweepSpeed).toBeGreaterThan(early.sweepSpeed);
+    expect(applyPondLeapModePressure(base, 'practice', 6)).toEqual(base);
+    expect(applyPondLeapModePressure(base, 'classic', 6)).toEqual(base);
   });
 
   it('clamps out-of-range hop requests to a valid deterministic challenge', () => {
