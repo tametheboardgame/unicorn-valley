@@ -1,6 +1,14 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
+import {
+  getPondLeapCourse,
+  getPondLeapTimingChallenge,
+  isPondLeapCourseComplete,
+  isPondLeapTimingSuccessful,
+  type PondLeapAssistanceLevel,
+  type PondLeapCourseId,
+} from './PondLeapRules';
 import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 
@@ -9,22 +17,6 @@ interface PondLeapActivitySceneData {
   discoveredReflection?: boolean;
 }
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-const PADS: readonly Point[] = [
-  { x: 190, y: 395 },
-  { x: 360, y: 300 },
-  { x: 545, y: 410 },
-  { x: 725, y: 285 },
-  { x: 910, y: 390 },
-  { x: 1080, y: 295 },
-];
-
-const TARGET_CENTRES = [0.34, 0.62, 0.48, 0.7, 0.42] as const;
-const TARGET_TOLERANCES = [0.18, 0.16, 0.14, 0.13, 0.12] as const;
 const TIMING_LEFT = 355;
 const TIMING_WIDTH = 570;
 const TIMING_Y = 590;
@@ -39,6 +31,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private completed = false;
   private timingPhase = 0;
   private timingValue = 0.5;
+  private assistance: PondLeapAssistanceLevel = 'standard';
+  private courseId: PondLeapCourseId = 'sunny-steps';
   private frog: Phaser.GameObjects.Container | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private progressText: Phaser.GameObjects.Text | null = null;
@@ -87,7 +81,12 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    this.timingPhase += delta * (0.0042 + this.hopIndex * 0.00035);
+    const challenge = getPondLeapTimingChallenge(
+      this.courseId,
+      this.hopIndex,
+      this.assistance,
+    );
+    this.timingPhase += delta * challenge.sweepSpeed;
     this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
     this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
   }
@@ -162,7 +161,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   private createPondCourse(): void {
-    PADS.forEach((pad, index) => {
+    const course = getPondLeapCourse(this.courseId);
+    course.pads.forEach((pad, index) => {
       const scale = 1 - index * 0.035;
       const lily = this.add
         .ellipse(pad.x, pad.y, 112 * scale, 52 * scale, 0x659b61, 1)
@@ -179,7 +179,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
       lily.setDepth(4);
     });
 
-    this.frog = this.createFrog(PADS[0]?.x ?? 190, (PADS[0]?.y ?? 395) - 22);
+    const start = course.pads[0] ?? { x: 190, y: 395 };
+    this.frog = this.createFrog(start.x, start.y - 22);
   }
 
   private createFrog(x: number, y: number): Phaser.GameObjects.Container {
@@ -227,15 +228,22 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   private syncRunPresentation(): void {
-    const targetCentre = TARGET_CENTRES[this.hopIndex] ?? 0.5;
-    const tolerance = TARGET_TOLERANCES[this.hopIndex] ?? 0.12;
-    const zoneWidth = TIMING_WIDTH * tolerance * 2;
+    const course = getPondLeapCourse(this.courseId);
+    const challenge = getPondLeapTimingChallenge(
+      this.courseId,
+      this.hopIndex,
+      this.assistance,
+    );
+    const zoneWidth = TIMING_WIDTH * challenge.tolerance * 2;
     this.timingZone
-      ?.setPosition(TIMING_LEFT + targetCentre * TIMING_WIDTH, TIMING_Y)
+      ?.setPosition(TIMING_LEFT + challenge.centre * TIMING_WIDTH, TIMING_Y)
       .setDisplaySize(zoneWidth, 18);
 
+    const totalHops = Math.max(1, course.pads.length - 1);
     this.progressText?.setText(
-      this.completed ? '5 / 5 pads crossed' : `Pad ${this.hopIndex + 1} of 5`,
+      this.completed
+        ? `${totalHops} / ${totalHops} pads crossed`
+        : `Pad ${this.hopIndex + 1} of ${totalHops}`,
     );
 
     if (this.completed) {
@@ -361,9 +369,13 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    const targetCentre = TARGET_CENTRES[this.hopIndex] ?? 0.5;
-    const tolerance = TARGET_TOLERANCES[this.hopIndex] ?? 0.12;
-    const success = Math.abs(this.timingValue - targetCentre) <= tolerance;
+    const course = getPondLeapCourse(this.courseId);
+    const challenge = getPondLeapTimingChallenge(
+      this.courseId,
+      this.hopIndex,
+      this.assistance,
+    );
+    const success = isPondLeapTimingSuccessful(this.timingValue, challenge);
 
     this.actionLocked = true;
     if (!success) {
@@ -371,8 +383,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    const from = PADS[this.hopIndex];
-    const to = PADS[this.hopIndex + 1];
+    const from = course.pads[this.hopIndex];
+    const to = course.pads[this.hopIndex + 1];
     if (!from || !to) {
       this.actionLocked = false;
       return;
@@ -396,7 +408,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
       onComplete: () => {
         this.hopIndex += 1;
         this.actionLocked = false;
-        if (this.hopIndex >= PADS.length - 1) {
+        if (isPondLeapCourseComplete(this.hopIndex, this.courseId)) {
           this.completed = true;
           this.cameras.main.flash(120, 225, 255, 208, false);
         }
@@ -407,7 +419,9 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
   private handleMiss(): void {
     this.misses += 1;
-    const next = PADS[this.hopIndex + 1] ?? PADS[this.hopIndex] ?? { x: 640, y: 350 };
+    const course = getPondLeapCourse(this.courseId);
+    const next =
+      course.pads[this.hopIndex + 1] ?? course.pads[this.hopIndex] ?? { x: 640, y: 350 };
     const splash = this.add.graphics().setPosition(next.x, next.y).setDepth(7);
     splash.lineStyle(4, 0xe0fbff, 0.9);
     splash.strokeEllipse(0, 8, 38, 14);
@@ -439,7 +453,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.timingPhase = 0;
     this.timingValue = 0.5;
 
-    const start = PADS[0] ?? { x: 190, y: 395 };
+    const start = getPondLeapCourse(this.courseId).pads[0] ?? { x: 190, y: 395 };
     this.frog?.setPosition(start.x, start.y - 22);
     this.syncRunPresentation();
   }
