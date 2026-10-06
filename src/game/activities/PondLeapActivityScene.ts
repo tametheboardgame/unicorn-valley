@@ -81,11 +81,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    const challenge = getPondLeapTimingChallenge(
-      this.courseId,
-      this.hopIndex,
-      this.assistance,
-    );
+    const challenge = getPondLeapTimingChallenge(this.courseId, this.hopIndex, this.assistance);
     this.timingPhase += delta * challenge.sweepSpeed;
     this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
     this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
@@ -420,8 +416,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private handleMiss(): void {
     this.misses += 1;
     const course = getPondLeapCourse(this.courseId);
-    const next =
-      course.pads[this.hopIndex + 1] ?? course.pads[this.hopIndex] ?? { x: 640, y: 350 };
+    const next = course.pads[this.hopIndex + 1] ?? course.pads[this.hopIndex] ?? { x: 640, y: 350 };
     const splash = this.add.graphics().setPosition(next.x, next.y).setDepth(7);
     splash.lineStyle(4, 0xe0fbff, 0.9);
     splash.strokeEllipse(0, 8, 38, 14);
