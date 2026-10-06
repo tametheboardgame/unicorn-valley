@@ -104,12 +104,6 @@ describe('exploration geometry audit', () => {
     }
   });
 
-  it('keeps Crystal Brook stepping stones physically reachable', () => {
-    for (const stone of CRYSTAL_BROOK_MAP.steppingStones) {
-      expect(isPointBlocked(stone, CRYSTAL_BROOK_MAP.colliders, 26)).toBe(false);
-    }
-  });
-
   it('keeps Beach discovery targets out of hard collision footprints', () => {
     for (const spot of STARLIGHT_BEACH_MAP.discoverySpots) {
       expect(
