@@ -14,8 +14,6 @@ interface DiagnosticObject {
   y: number;
   visible: boolean;
   interactive: boolean;
-  bodyVelocityX: number | null;
-  bodyVelocityY: number | null;
 }
 
 interface DiagnosticSceneHealth {
@@ -36,6 +34,7 @@ interface BrowserDiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
   performance(): FramePerformanceSnapshot;
   resetPerformance(): void;
+  arcadeSpriteVelocity(sceneKey: string, objectName: string): { x: number; y: number };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -335,28 +334,27 @@ async function measureMovement(
       { timeout: 8_000 },
     );
 
-    const snapshot = await getSnapshot(page);
-    const player = snapshot.scenes
-      .find((scene) => scene.key === SCENE_KEY)
-      ?.objects.find((object) => object.name === PLAYER_NAME);
-    if (!player || player.bodyVelocityX === null || player.bodyVelocityY === null) {
-      throw new Error('Moonflower Glade player velocity diagnostics are unavailable.');
-    }
-
-    const performance = await page.evaluate(() => {
-      const api = (
-        window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+    const after = await playerPosition(page);
+    const { velocity, performance } = await page.evaluate(
+      ({ sceneKey, objectName }) => {
+        const api = (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        if (!api) {
+          throw new Error('Browser diagnostics are unavailable.');
         }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      if (!api) {
-        throw new Error('Browser diagnostics are unavailable.');
-      }
-      return api.performance();
-    });
+        return {
+          velocity: api.arcadeSpriteVelocity(sceneKey, objectName),
+          performance: api.performance(),
+        };
+      },
+      { sceneKey: SCENE_KEY, objectName: PLAYER_NAME },
+    );
     return {
-      distance: Math.hypot(player.x - activeStart.x, player.y - activeStart.y),
-      speed: Math.hypot(player.bodyVelocityX, player.bodyVelocityY),
+      distance: Math.hypot(after.x - activeStart.x, after.y - activeStart.y),
+      speed: Math.hypot(velocity.x, velocity.y),
       performance,
     };
   } finally {
