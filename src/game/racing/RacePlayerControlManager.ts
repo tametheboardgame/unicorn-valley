@@ -49,8 +49,12 @@ export class RacePlayerControlManager {
         continue;
       }
 
-      const state = this.ensureScene(scene);
       const runtime = asRaceScene(scene);
+      if (!runtime.runState?.movement) {
+        continue;
+      }
+
+      const state = this.ensureScene(scene);
       const rightDown = state.rightKey?.isDown ?? false;
       const dDown = state.dKey?.isDown ?? false;
       state.keyboardArmed = updateRaceKeyboardArmed(state.keyboardArmed, rightDown, dDown);

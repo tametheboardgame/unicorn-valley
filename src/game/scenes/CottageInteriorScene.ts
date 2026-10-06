@@ -9,6 +9,7 @@ import {
   COTTAGE_STYLE_OPEN_EVENT,
 } from '../home/CottageDecorateModeState';
 import { CottageFriendVisitManager } from '../home/CottageFriendVisitManager';
+import { renderCottageDecoration } from '../home/CottageDecorationPresentation';
 import {
   renderCottagePermanentFurnishings,
   renderCottageWonderbookNook,
@@ -17,6 +18,7 @@ import { buildCottageHomeView, type CottageHomeView } from '../home/CottageHomeV
 import { HomeDecorationService } from '../home/HomeDecorationService';
 import { resolveCottageDecorationPlacementBehaviour } from '../home/CottageDecorationCatalogue';
 import { resolveCottageStyle } from '../home/CottageStyleCatalogue';
+import { renderCottageFuturePortalBay } from '../home/CottageStoryArchitectureRenderer';
 import { renderCottageRoomSurfaces } from '../home/CottageSurfaceRenderer';
 import { CottageSleepController } from '../home/CottageSleepController';
 import { InputController } from '../input/InputController';
@@ -723,9 +725,6 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private async renderStoryArchitecture(): Promise<void> {
-    const { renderCottageFuturePortalBay } = await import(
-      '../home/CottageStoryArchitectureRenderer'
-    );
     if (!this.scene.isActive()) {
       return;
     }
@@ -778,7 +777,6 @@ export class CottageInteriorScene extends Phaser.Scene {
   private async renderPlacedDecorations(homeView: CottageHomeView): Promise<void> {
     if (homeView.placements.length === 0) return;
 
-    const { renderCottageDecoration } = await import('../home/CottageDecorationPresentation');
     if (!this.scene.isActive()) return;
 
     const allSlots: readonly CottageDecorationSlot[] = [
