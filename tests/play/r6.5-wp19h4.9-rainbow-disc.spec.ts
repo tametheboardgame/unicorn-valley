@@ -55,24 +55,14 @@ async function clickNamedObject(page: Page, sceneKey: string, name: string): Pro
   await page.mouse.click(object.x, object.y);
 }
 
-async function dragDiscToRing(page: Page, receiverIndex: number): Promise<void> {
-  const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-  const disc = scene.objects.find(
-    ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
+async function throwToPracticeTarget(page: Page, receiverIndex: number): Promise<void> {
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    `rainbow-disc-activity:receiver-ring:${receiverIndex}`,
   );
-  const ring = scene.objects.find(
-    ({ name, effectiveVisible }) =>
-      name === `rainbow-disc-activity:receiver-ring:${receiverIndex}` && effectiveVisible,
-  );
-  if (!disc || !ring) throw new Error('Rainbow Disc target throw objects are unavailable.');
-
-  await page.mouse.move(disc.x, disc.y);
-  await page.mouse.down();
-  await page.mouse.move(ring.x, ring.y, { steps: 8 });
-  await waitForGoodThrowTiming(page);
-  await page.mouse.up();
+  await page.keyboard.press('Space');
 }
-
 async function setMeadowPlayerPosition(page: Page, x: number, y: number): Promise<void> {
   await page.evaluate(
     ({ targetX, targetY }) => {
@@ -93,32 +83,6 @@ async function waitForActiveScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
-async function waitForGoodThrowTiming(page: Page): Promise<void> {
-  await page.waitForFunction(
-    () => {
-      const api = (
-        window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
-        }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
-      const marker = scene?.objects.find(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
-      );
-      const zone = scene?.objects.find(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:timing-success-zone' && effectiveVisible,
-      );
-      if (!marker || !zone) return false;
-      const left = zone.x - zone.displayWidth / 2;
-      const right = zone.x + zone.displayWidth / 2;
-      return marker.x >= left && marker.x <= right;
-    },
-    undefined,
-    { timeout: 6000 },
-  );
-}
 
 async function currentOpenLane(page: Page): Promise<number> {
   const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -210,8 +174,31 @@ async function startStandardMatch(page: Page): Promise<void> {
     .toBe(true);
 }
 
+async function startGentleMatch(page: Page): Promise<void> {
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    'rainbow-disc-activity:match-assistance-gentle',
+  );
+  await expect
+    .poll(async () => {
+      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:thrower' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+}
+
 async function completeOpenLanePass(page: Page): Promise<void> {
-  await dragDiscToReceiver(page, await currentOpenLane(page));
+  const receiverIndex = await currentOpenLane(page);
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    `rainbow-disc-activity:receiver:${receiverIndex}`,
+  );
+  await page.keyboard.press('Space');
 }
 
 async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
@@ -230,7 +217,6 @@ async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> 
   await page.mouse.move(disc.x, disc.y);
   await page.mouse.down();
   await page.mouse.move(receiver.x, receiver.y, { steps: 8 });
-  await waitForGoodThrowTiming(page);
   await page.mouse.up();
 }
 
@@ -346,7 +332,7 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
-  await startStandardMatch(page);
+  await startGentleMatch(page);
 
   await expect
     .poll(async () =>
@@ -478,6 +464,11 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
+    'rainbow-disc-activity:practice-assistance-gentle',
+  );
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
     'rainbow-disc-activity:practice-target-range',
   );
 
@@ -507,20 +498,18 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
   ).toBe('Graphics');
 
   for (let throwIndex = 0; throwIndex < 5; throwIndex += 1) {
-    const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
-    const disc = activity.objects.find(
-      ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
-    );
-    if (!disc) throw new Error('Practice disc is unavailable.');
-
-    await page.mouse.move(disc.x, disc.y);
-    await page.mouse.down();
-    await page.mouse.move(890, 325, { steps: 8 });
-    await waitForGoodThrowTiming(page);
-    await page.mouse.up();
+    await throwToPracticeTarget(page, 0);
 
     if (throwIndex < 4) {
-      await page.waitForTimeout(520);
+      await expect
+        .poll(async () => {
+          const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+          return activity.objects.some(
+            ({ name, effectiveVisible }) =>
+              name === 'rainbow-disc-activity:disc' && effectiveVisible,
+          );
+        })
+        .toBe(true);
     }
   }
 
@@ -720,6 +709,11 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
+    'rainbow-disc-activity:practice-assistance-gentle',
+  );
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
     'rainbow-disc-activity:practice-passing-drill',
   );
   await completeOpenLanePass(page);
@@ -753,6 +747,11 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
+    'rainbow-disc-activity:practice-assistance-gentle',
+  );
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
     'rainbow-disc-activity:practice-rainbow-streak',
   );
 
@@ -773,7 +772,7 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
   if (!calledRing) throw new Error('Rainbow Streak called ring is unavailable.');
 
   const calledIndex = Number(calledRing.name.split(':').at(-1));
-  await dragDiscToRing(page, calledIndex);
+  await throwToPracticeTarget(page, calledIndex);
 
   await expect
     .poll(async () => {
