@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP4 are complete and merged. MG-WP5 - Sunbeam Chess Academy is the active existing-game refinement package; MG-WP5D Coach Match is complete/human-approved and MG-WP5E Friendly Match + opponent ladder is the active child checkpoint.**
+**MG-WP0 through MG-WP5 are complete / human-approved, with MG-WP5 - Sunbeam Chess Academy awaiting this final merge. MG-WP6 - Rainbow Disc is the next existing-game refinement package.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 now applies that platform to a substantial child-first teaching and play redesign of the existing chess game.
 

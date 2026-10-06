@@ -38,6 +38,19 @@ import {
   getSunbeamChessOpponent,
   type SunbeamChessOpponentLevel,
 } from './SunbeamChessOpponent';
+import {
+  clearSunbeamChessCoachMatch,
+  clearSunbeamChessFriendlyMatch,
+  completeSunbeamChessLesson,
+  completeSunbeamChessPuzzle,
+  createDefaultSunbeamChessLearningRecord,
+  loadBrowserSunbeamChessLearningRecord,
+  saveBrowserSunbeamChessLearningRecord,
+  saveSunbeamChessCoachMatch,
+  saveSunbeamChessFriendlyMatch,
+  setSunbeamChessPreferredOpponent,
+  type SunbeamChessLearningRecord,
+} from './SunbeamChessLearningRecord';
 
 interface ChessPlazaSceneData {
   returnScene?: string;
@@ -49,7 +62,9 @@ type ChessAcademyView =
   | 'lesson'
   | 'puzzle-list'
   | 'puzzle'
+  | 'coach-resume'
   | 'coach-match'
+  | 'friendly-resume'
   | 'friendly-select'
   | 'friendly-match';
 
@@ -131,6 +146,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   private moveHistoryStart = -1;
   private coachHoldingFeedback = false;
   private coachLastPlayerFeedback: string | null = null;
+  private learningRecord: SunbeamChessLearningRecord = createDefaultSunbeamChessLearningRecord();
+  private keyboardSquare: Square = 'e2';
   private friendlyOpponentLevel: SunbeamChessOpponentLevel = 'clover';
   private homeMessageText: Phaser.GameObjects.Text | null = null;
   private currentLesson: SunbeamChessLessonDefinition | null = null;
@@ -152,12 +169,16 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.returnScene =
       this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'SunbeamVillageScene';
     this.resetRuntimeState();
+    this.learningRecord = loadBrowserSunbeamChessLearningRecord();
+    this.friendlyOpponentLevel = this.learningRecord.preferredOpponent;
     this.showAcademyHome();
 
+    this.input.keyboard?.on('keydown', this.handleKeyboardInput, this);
     this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
     this.input.keyboard?.on('keydown-R', this.restartCurrentActivity, this);
     this.input.keyboard?.on('keydown-H', this.showHint, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.keyboard?.off('keydown', this.handleKeyboardInput, this);
       this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
       this.input.keyboard?.off('keydown-R', this.restartCurrentActivity, this);
       this.input.keyboard?.off('keydown-H', this.showHint, this);
@@ -181,10 +202,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.puzzleResetPending = false;
     this.coachPendingMove = null;
     this.coachHintStage = 0;
+    this.keyboardSquare = 'e2';
     this.coachUndoPlies = 0;
     this.coachHoldingFeedback = false;
     this.coachLastPlayerFeedback = null;
     this.moveHistoryStart = -1;
+    this.keyboardSquare = 'e2';
     this.friendlyOpponentLevel = 'clover';
     this.friendlyResultShown = false;
     this.opponentPending = false;
@@ -248,6 +271,21 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         },
       )
       .setOrigin(0, 0);
+
+    this.add
+      .text(
+        242,
+        229,
+        `Learning record · ${this.learningRecord.completedLessonIds.length}/${SUNBEAM_CHESS_LESSONS.length} lessons · ${this.learningRecord.completedPuzzleIds.length}/${SUNBEAM_CHESS_PUZZLES.length} puzzles`,
+        {
+          color: '#6b3f96',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:learning-summary');
 
     const positions = [
       { x: 350, y: 338 },
@@ -316,8 +354,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         .on('pointerdown', () => this.openAcademyMode(mode.id));
     }
 
+    const modeIndex = SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS.findIndex(
+      (definition) => definition.id === mode.id,
+    );
+
     this.add
-      .text(x - width / 2 + 34, y - 27, `${mode.icon}  ${mode.title}`, {
+      .text(x - width / 2 + 34, y - 27, `${modeIndex + 1}.  ${mode.icon}  ${mode.title}`, {
         color: available ? CHESS_ACADEMY_PALETTE.ink : '#84798f',
         fontFamily: UI_FONT,
         fontSize: '22px',
@@ -357,11 +399,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
     if (modeId === 'coach-match') {
-      this.startCoachMatch();
+      if (this.learningRecord.activeCoachMatch) {
+        this.showCoachResumeChoice();
+      } else {
+        this.startCoachMatch();
+      }
       return;
     }
     if (modeId === 'friendly-match') {
-      this.showFriendlyOpponentSelect();
+      if (this.learningRecord.activeFriendlyMatch) {
+        this.showFriendlyResumeChoice();
+      } else {
+        this.showFriendlyOpponentSelect();
+      }
       return;
     }
   }
@@ -382,12 +432,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     this.add
-      .text(238, 184, 'Nothing is locked. Pick the piece you want to practise.', {
-        color: CHESS_ACADEMY_PALETTE.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '16px',
-      })
-      .setOrigin(0, 0.5);
+      .text(
+        238,
+        184,
+        `Nothing is locked. Pick anything to practise · ${this.learningRecord.completedLessonIds.length}/${SUNBEAM_CHESS_LESSONS.length} complete`,
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:lesson-progress-summary');
 
     const positions = [
       { x: 350, y: 296 },
@@ -459,6 +515,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         fontStyle: 'bold',
       })
       .setOrigin(0, 0.5);
+
+    if (this.learningRecord.completedLessonIds.includes(lesson.id)) {
+      this.add
+        .text(x + width / 2 - 20, y, '✓ Done', {
+          color: '#477d74',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(1, 0.5)
+        .setName(`sunbeam-chess:lesson-complete:${lesson.id}`);
+    }
   }
 
   private startLesson(id: SunbeamChessLessonId): void {
@@ -471,6 +539,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.selected = null;
     this.hintMove = null;
     this.lessonHintStage = 0;
+    this.keyboardSquare = lesson.pieceSquare;
     this.lessonComplete = false;
     this.lessonResetPending = false;
     this.clearCompletionCard();
@@ -582,14 +651,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       .text(
         238,
         184,
-        'Every puzzle uses a real legal chess position. Hints grow only when you ask.',
+        `Real legal positions · hints grow only when you ask · ${this.learningRecord.completedPuzzleIds.length}/${SUNBEAM_CHESS_PUZZLES.length} solved`,
         {
           color: CHESS_ACADEMY_PALETTE.softInk,
           fontFamily: UI_FONT,
           fontSize: '16px',
         },
       )
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:puzzle-progress-summary');
 
     const positions = [
       { x: 350, y: 338 },
@@ -664,6 +734,19 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         fontSize: '14px',
       })
       .setOrigin(0, 0.5);
+
+    const solveCount = this.learningRecord.puzzleSolveCounts[puzzle.id] ?? 0;
+    if (solveCount > 0) {
+      this.add
+        .text(x + width / 2 - 20, y - 34, solveCount > 1 ? `✓ ×${solveCount}` : '✓ Solved', {
+          color: '#477d74',
+          fontFamily: UI_FONT,
+          fontSize: '13px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(1, 0.5)
+        .setName(`sunbeam-chess:puzzle-complete:${puzzle.id}`);
+    }
   }
 
   private startPuzzle(id: SunbeamChessPuzzleId): void {
@@ -676,6 +759,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.selected = null;
     this.hintMove = null;
     this.puzzleHintStage = 0;
+    this.keyboardSquare = puzzle.from;
     this.puzzleComplete = false;
     this.puzzleResetPending = false;
     this.clearCompletionCard();
@@ -820,6 +904,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     if (isSolution) {
       this.puzzleComplete = true;
+      this.persistLearningRecord(completeSunbeamChessPuzzle(this.learningRecord, puzzle.id));
       this.statusText?.setText('Puzzle solved ✦');
       this.lessonText?.setText(puzzle.success);
       this.renderBoard();
@@ -870,7 +955,193 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.renderBoard();
   }
 
+  private showCoachResumeChoice(): void {
+    const activeMatch = this.learningRecord.activeCoachMatch;
+    if (!activeMatch) {
+      this.startCoachMatch();
+      return;
+    }
+
+    const preview = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        preview.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+      this.startCoachMatch();
+      return;
+    }
+
+    this.clearView();
+    this.view = 'coach-resume';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.selected = null;
+    this.hintMove = null;
+    this.opponentPending = false;
+
+    this.drawAcademyShell(
+      'Coach Match',
+      'You have a coached game in progress. Carry on where you left off, or begin again.',
+    );
+    this.drawTeacherPortrait(156, 178, 0.82);
+
+    this.add
+      .text(242, 154, 'Previous coached game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:coach-resume-title');
+
+    const moveCount = preview.history().length;
+    this.add
+      .text(
+        242,
+        190,
+        moveCount === 0
+          ? 'The coached game has started, but no moves have been played yet.'
+          : `${moveCount} move${moveCount === 1 ? '' : 's'} played so far.`,
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5);
+
+    const resumePanel = this.add.graphics();
+    resumePanel.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    resumePanel.fillRoundedRect(210, 286, 860, 116, 24);
+    resumePanel.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 1);
+    resumePanel.strokeRoundedRect(210, 286, 860, 116, 24);
+
+    this.add
+      .text(250, 320, '1.  Carry on previous coached game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 359, 'Restore the board and move history. The coach will pick up from there.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .rectangle(640, 344, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:coach-resume-carry-on')
+      .on('pointerdown', () => this.resumeCoachMatch());
+
+    const newPanel = this.add.graphics();
+    newPanel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
+    newPanel.fillRoundedRect(210, 430, 860, 116, 24);
+    newPanel.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 1);
+    newPanel.strokeRoundedRect(210, 430, 860, 116, 24);
+
+    this.add
+      .text(250, 464, '2.  Start a new coached game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 503, 'Replace the previous game and return to the starting position.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .rectangle(640, 488, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:coach-resume-new-game')
+      .on('pointerdown', () => {
+        this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+        this.startCoachMatch();
+      });
+
+    this.createRoundedButton(
+      1080,
+      638,
+      190,
+      '← Academy',
+      () => this.showAcademyHome(),
+      'sunbeam-chess:coach-resume-back',
+    );
+  }
+
+  private resumeCoachMatch(): void {
+    const activeMatch = this.learningRecord.activeCoachMatch;
+    if (!activeMatch) {
+      this.startCoachMatch();
+      return;
+    }
+
+    const restored = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        restored.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+      this.startCoachMatch();
+      return;
+    }
+
+    if (restored.isGameOver()) {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+      this.startCoachMatch();
+      return;
+    }
+
+    this.clearView();
+    this.view = 'coach-match';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.chess = restored;
+    this.selected = null;
+    this.hintMove = null;
+    this.coachPendingMove = null;
+    this.coachHintStage = 0;
+    this.keyboardSquare = restored.turn() === 'w' ? 'e2' : 'e7';
+    this.coachUndoPlies =
+      restored.turn() === 'w' && restored.history().length >= 2
+        ? 2
+        : restored.turn() === 'b'
+          ? 1
+          : 0;
+    this.coachHoldingFeedback = false;
+    this.coachLastPlayerFeedback = null;
+    this.moveHistoryStart = -1;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
+    this.clearCoachWarning();
+    this.opponentPending = restored.turn() === 'b';
+    this.createCoachMatchBackdrop();
+    this.lessonText?.setText('Welcome back. Your coached game is ready to continue.');
+    this.renderBoard();
+
+    if (this.opponentPending) {
+      this.time.delayedCall(520, () => this.makeOpponentMove());
+    }
+  }
+
   private startCoachMatch(): void {
+    this.persistLearningRecord(saveSunbeamChessCoachMatch(this.learningRecord, ''));
     this.clearView();
     this.view = 'coach-match';
     this.currentLesson = null;
@@ -1037,6 +1308,182 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     );
   }
 
+  private showFriendlyResumeChoice(): void {
+    const activeMatch = this.learningRecord.activeFriendlyMatch;
+    if (!activeMatch) {
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    const opponent = getSunbeamChessOpponent(activeMatch.opponent);
+    const preview = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        preview.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    this.clearView();
+    this.view = 'friendly-resume';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.selected = null;
+    this.hintMove = null;
+    this.opponentPending = false;
+
+    this.drawAcademyShell(
+      'Friendly Match',
+      'You have a game in progress. Carry on where you left off, or begin a new one.',
+    );
+    this.drawTeacherPortrait(156, 178, 0.82);
+
+    this.add
+      .text(242, 154, `Previous game · ${opponent.icon} ${opponent.title}`, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:resume-opponent');
+
+    const moveCount = preview.history().length;
+    this.add
+      .text(
+        242,
+        190,
+        moveCount === 0
+          ? 'The game has started, but no moves have been played yet.'
+          : `${moveCount} move${moveCount === 1 ? '' : 's'} played so far.`,
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5);
+
+    const resumePanel = this.add.graphics();
+    resumePanel.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    resumePanel.fillRoundedRect(210, 286, 860, 116, 24);
+    resumePanel.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 1);
+    resumePanel.strokeRoundedRect(210, 286, 860, 116, 24);
+
+    this.add
+      .text(250, 320, '1.  Carry on previous game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 359, `Resume against ${opponent.title} with the board exactly as you left it.`, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    const carryOn = this.add
+      .rectangle(640, 344, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:resume-carry-on');
+    carryOn.on('pointerdown', () => this.resumeFriendlyMatch());
+
+    const newPanel = this.add.graphics();
+    newPanel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
+    newPanel.fillRoundedRect(210, 430, 860, 116, 24);
+    newPanel.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 1);
+    newPanel.strokeRoundedRect(210, 430, 860, 116, 24);
+
+    this.add
+      .text(250, 464, '2.  Start a new game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 503, 'Choose Dandelion, Clover or Sunbeam and replace the previous game.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    const startNew = this.add
+      .rectangle(640, 488, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:resume-new-game');
+    startNew.on('pointerdown', () => {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+    });
+
+    this.createRoundedButton(
+      1080,
+      638,
+      190,
+      '← Academy',
+      () => this.showAcademyHome(),
+      'sunbeam-chess:resume-back',
+    );
+  }
+
+  private resumeFriendlyMatch(): void {
+    const activeMatch = this.learningRecord.activeFriendlyMatch;
+    if (!activeMatch) {
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    const restored = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        restored.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    if (restored.isGameOver()) {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    this.friendlyOpponentLevel = activeMatch.opponent;
+    this.clearView();
+    this.view = 'friendly-match';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.chess = restored;
+    this.selected = null;
+    this.hintMove = null;
+    this.keyboardSquare = restored.turn() === 'w' ? 'e2' : 'e7';
+    this.moveHistoryStart = -1;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
+    this.opponentPending = restored.turn() === 'b';
+    this.createFriendlyBackdrop();
+    this.lessonText?.setText('Welcome back. Your previous Friendly Match is ready to continue.');
+    this.renderBoard();
+
+    if (this.opponentPending) {
+      this.time.delayedCall(520, () => this.makeOpponentMove());
+    }
+  }
+
   private showFriendlyOpponentSelect(): void {
     this.clearView();
     this.view = 'friendly-select';
@@ -1074,6 +1521,21 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         },
       )
       .setOrigin(0, 0);
+
+    this.add
+      .text(
+        242,
+        220,
+        `Last played · ${getSunbeamChessOpponent(this.learningRecord.preferredOpponent).title}`,
+        {
+          color: '#6b3f96',
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          fontStyle: 'bold',
+        },
+      )
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:preferred-opponent');
 
     const yPositions = [296, 418, 540] as const;
     SUNBEAM_CHESS_OPPONENT_DEFINITIONS.forEach((opponent, index) => {
@@ -1133,8 +1595,12 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    const opponentIndex = SUNBEAM_CHESS_OPPONENT_DEFINITIONS.findIndex(
+      (definition) => definition.id === level,
+    );
+
     this.add
-      .text(x - 330, y - 18, opponent.title, {
+      .text(x - 330, y - 18, `${opponentIndex + 1}.  ${opponent.title}`, {
         color: CHESS_ACADEMY_PALETTE.ink,
         fontFamily: UI_FONT,
         fontSize: '22px',
@@ -1160,10 +1626,29 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         wordWrap: { width: 420 },
       })
       .setOrigin(0, 0.5);
+
+    if (level === this.learningRecord.preferredOpponent) {
+      this.add
+        .text(x + width / 2 - 24, y - 31, 'LAST PLAYED', {
+          color: CHESS_ACADEMY_PALETTE.ink,
+          fontFamily: UI_FONT,
+          fontSize: '11px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(1, 0.5)
+        .setName(`sunbeam-chess:opponent-last-played:${level}`);
+    }
   }
 
   private startFriendlyMatch(level: SunbeamChessOpponentLevel = this.friendlyOpponentLevel): void {
     this.friendlyOpponentLevel = level;
+    this.persistLearningRecord(
+      saveSunbeamChessFriendlyMatch(
+        setSunbeamChessPreferredOpponent(this.learningRecord, level),
+        level,
+        '',
+      ),
+    );
     this.clearView();
     this.view = 'friendly-match';
     this.currentLesson = null;
@@ -1171,6 +1656,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.chess = new Chess();
     this.selected = null;
     this.hintMove = null;
+    this.keyboardSquare = 'e2';
     this.moveHistoryStart = -1;
     this.friendlyResultShown = false;
     this.clearCompletionCard();
@@ -1439,6 +1925,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       BOARD_SIZE + 36,
       18,
     );
+
+    this.add
+      .text(BOARD_LEFT + BOARD_SIZE / 2, 646, 'Keyboard · Arrow keys move focus · Enter selects', {
+        color: '#f6e6c8',
+        fontFamily: UI_FONT,
+        fontSize: '12px',
+        fontStyle: 'bold',
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setName('sunbeam-chess:keyboard-help');
   }
 
   private renderBoard(): void {
@@ -1460,6 +1957,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         const hintFrom = this.hintMove?.from === square;
         const hintTo = this.hintMove?.to === square;
         const isGoal = goalSquare === square;
+        const keyboardFocus = this.keyboardSquare === square;
         const piece = this.chess.get(square);
         const checkedKing =
           this.chess.isCheck() && piece?.type === 'k' && piece.color === this.chess.turn();
@@ -1482,6 +1980,15 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
           .setName(`sunbeam-chess:square:${square}`);
         tile.on('pointerdown', () => this.handleSquarePress(square));
         this.boardContainer.add(tile);
+
+        if (keyboardFocus) {
+          this.boardContainer.add(
+            this.add
+              .rectangle(x, y, SQUARE_SIZE - 7, SQUARE_SIZE - 7, 0xffffff, 0)
+              .setStrokeStyle(4, 0x472868, 1)
+              .setName(`sunbeam-chess:keyboard-focus:${square}`),
+          );
+        }
 
         if (checkedKing) {
           this.boardContainer.add(
@@ -1574,6 +2081,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
   }
 
   private handleSquarePress(square: Square): void {
+    this.keyboardSquare = square;
     if (this.view === 'lesson') {
       this.handleLessonSquarePress(square);
       return;
@@ -1644,6 +2152,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
     if (chosen.to === lesson.goalSquare) {
       this.lessonComplete = true;
+      this.persistLearningRecord(completeSunbeamChessLesson(this.learningRecord, lesson.id));
       this.statusText?.setText('Lesson complete ✦');
       this.lessonText?.setText(lesson.success);
       this.renderBoard();
@@ -1843,6 +2352,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.coachHoldingFeedback = !this.chess.isGameOver();
     this.moveHistoryStart = -1;
     this.lessonText?.setText(this.coachLastPlayerFeedback);
+    this.persistActiveCoachMatch();
 
     this.opponentPending = !this.chess.isGameOver();
     this.renderBoard();
@@ -1895,6 +2405,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.lessonText?.setText(
       'Undone. Try a different idea — there is no penalty for experimenting.',
     );
+    this.persistActiveCoachMatch();
     this.renderBoard();
   }
 
@@ -1967,6 +2478,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.hintMove = null;
     this.moveHistoryStart = -1;
     this.lessonText?.setText(describeTeachingMove(applied));
+    this.persistActiveFriendlyMatch();
     this.renderBoard();
 
     if (!this.chess.isGameOver()) {
@@ -2026,6 +2538,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         this.lessonText?.setText(villageFeedback);
       }
       this.moveHistoryStart = -1;
+      if (this.view === 'friendly-match') {
+        this.persistActiveFriendlyMatch();
+      } else if (this.view === 'coach-match') {
+        this.persistActiveCoachMatch();
+      }
     }
 
     if (this.view === 'coach-match') {
@@ -2324,6 +2841,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     const isCoachMatch = this.view === 'coach-match';
 
     if (isCoachMatch) {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
       const message =
         result === 'win'
           ? 'Checkmate! You found the finish. Want to try another coached game?'
@@ -2343,6 +2861,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
 
+    this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
     const opponent = getSunbeamChessOpponent(this.friendlyOpponentLevel);
     const message =
       result === 'win'
@@ -2423,14 +2942,14 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     const draw = (fill: number): void => {
       button.clear();
       button.fillStyle(fill, 1);
-      button.fillRoundedRect(-22, -20, 44, 40, 12);
+      button.fillRoundedRect(-24, -22, 48, 44, 12);
       button.lineStyle(2, CHESS_ACADEMY_PALETTE.header, 1);
-      button.strokeRoundedRect(-22, -20, 44, 40, 12);
+      button.strokeRoundedRect(-24, -22, 48, 44, 12);
     };
     draw(CHESS_ACADEMY_PALETTE.mint);
 
     button
-      .setInteractive(new Phaser.Geom.Rectangle(-22, -20, 44, 40), Phaser.Geom.Rectangle.Contains)
+      .setInteractive(new Phaser.Geom.Rectangle(-24, -22, 48, 44), Phaser.Geom.Rectangle.Contains)
       .on('pointerover', () => draw(CHESS_ACADEMY_PALETTE.mintHover))
       .on('pointerout', () => draw(CHESS_ACADEMY_PALETTE.mint))
       .on('pointerdown', () => this.scrollMoveHistory(direction));
@@ -2529,6 +3048,125 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     }[piece];
   }
 
+  private handleKeyboardInput(event: KeyboardEvent): void {
+    const numericIndex = /^[1-9]$/.test(event.key) ? Number(event.key) - 1 : -1;
+
+    if (this.view === 'home' && numericIndex >= 0) {
+      const mode = SUNBEAM_CHESS_ACADEMY_MODE_DEFINITIONS[numericIndex];
+      if (mode?.availability === 'available') {
+        event.preventDefault();
+        this.openAcademyMode(mode.id);
+      }
+      return;
+    }
+
+    if (this.view === 'lesson-list' && numericIndex >= 0) {
+      const lesson = SUNBEAM_CHESS_LESSONS[numericIndex];
+      if (lesson) {
+        event.preventDefault();
+        this.startLesson(lesson.id);
+      }
+      return;
+    }
+
+    if (this.view === 'puzzle-list' && numericIndex >= 0) {
+      const puzzle = SUNBEAM_CHESS_PUZZLES[numericIndex];
+      if (puzzle) {
+        event.preventDefault();
+        this.startPuzzle(puzzle.id);
+      }
+      return;
+    }
+
+    if (this.view === 'coach-resume' && numericIndex >= 0) {
+      event.preventDefault();
+      if (numericIndex === 0) {
+        this.resumeCoachMatch();
+      } else if (numericIndex === 1) {
+        this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+        this.startCoachMatch();
+      }
+      return;
+    }
+
+    if (this.view === 'friendly-resume' && numericIndex >= 0) {
+      event.preventDefault();
+      if (numericIndex === 0) {
+        this.resumeFriendlyMatch();
+      } else if (numericIndex === 1) {
+        this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+        this.showFriendlyOpponentSelect();
+      }
+      return;
+    }
+
+    if (this.view === 'friendly-select' && numericIndex >= 0) {
+      const opponent = SUNBEAM_CHESS_OPPONENT_DEFINITIONS[numericIndex];
+      if (opponent) {
+        event.preventDefault();
+        this.startFriendlyMatch(opponent.id);
+      }
+      return;
+    }
+
+    if (!['lesson', 'puzzle', 'coach-match', 'friendly-match'].includes(this.view)) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.handleSquarePress(this.keyboardSquare);
+      return;
+    }
+
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+      return;
+    }
+
+    event.preventDefault();
+    const file = FILES.indexOf(this.keyboardSquare[0]);
+    const rank = Number(this.keyboardSquare[1]);
+    const nextFile = Phaser.Math.Clamp(
+      file + (event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0),
+      0,
+      7,
+    );
+    const nextRank = Phaser.Math.Clamp(
+      rank + (event.key === 'ArrowDown' ? -1 : event.key === 'ArrowUp' ? 1 : 0),
+      1,
+      8,
+    );
+    this.keyboardSquare = `${FILES[nextFile]}${nextRank}` as Square;
+    this.renderBoard();
+  }
+
+  private persistActiveCoachMatch(): void {
+    if (this.view !== 'coach-match' || this.chess.isGameOver()) {
+      return;
+    }
+
+    this.persistLearningRecord(saveSunbeamChessCoachMatch(this.learningRecord, this.chess.pgn()));
+  }
+
+  private persistActiveFriendlyMatch(): void {
+    if (this.view !== 'friendly-match' || this.chess.isGameOver()) {
+      return;
+    }
+
+    this.persistLearningRecord(
+      saveSunbeamChessFriendlyMatch(
+        this.learningRecord,
+        this.friendlyOpponentLevel,
+        this.chess.pgn(),
+      ),
+    );
+  }
+
+  private persistLearningRecord(record: SunbeamChessLearningRecord): void {
+    this.learningRecord = record;
+    saveBrowserSunbeamChessLearningRecord(record);
+  }
+
   private restartCurrentActivity(): void {
     if (this.view === 'lesson') {
       this.resetLesson();
@@ -2543,6 +3181,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
   private restartFriendlyMatch(): void {
     this.chess.reset();
+    this.persistActiveFriendlyMatch();
     this.selected = null;
     this.hintMove = null;
     this.opponentPending = false;
@@ -2565,7 +3204,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     if (
       this.view === 'lesson-list' ||
       this.view === 'puzzle-list' ||
+      this.view === 'coach-resume' ||
       this.view === 'coach-match' ||
+      this.view === 'friendly-resume' ||
       this.view === 'friendly-select' ||
       this.view === 'friendly-match'
     ) {

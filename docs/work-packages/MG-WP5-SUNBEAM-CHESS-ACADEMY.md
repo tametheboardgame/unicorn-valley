@@ -210,8 +210,8 @@ Human acceptance should answer:
 - **MG-WP5B - Academy shell and teaching foundation - complete / human-approved**: Academy Home, teacher presentation foundation, reusable lesson runner and first piece lessons.
 - **MG-WP5C - Puzzle Garden and curriculum expansion - complete / human-approved**: puzzles, layered hints, check/checkmate and piece-safety teaching.
 - **MG-WP5D - Coach Match - complete / human-approved**: explainable coaching, another-look/play-anyway flow, undo and layered match hints.
-- **MG-WP5E - Friendly Match and opponent ladder - active**: child-friendly opponent levels, rematch/result flow and match polish.
-- **MG-WP5F - Learning records, responsive polish and human playtest**: isolated learning persistence if worthwhile, final world/Just Games reconciliation and acceptance.
+- **MG-WP5E - Friendly Match and opponent ladder - complete / merged**: child-friendly opponent levels, rematch/result flow and match polish.
+- **MG-WP5F - Learning records, responsive polish and human playtest - active**: isolated learning persistence, final world/Just Games reconciliation, responsive/accessibility qualification and acceptance.
 
 Do not chain these slices into one autonomous implementation window.
 
@@ -436,3 +436,115 @@ Implemented:
 - browser coverage verifies all three opponent cards are interactive and that selecting Dandelion starts the canonical full chess match with Dandelion carried into the match UI.
 
 This remains a human-gated WP5E checkpoint. Further tuning should react to actual play feel rather than making the easiest opponent arbitrarily worse.
+
+
+## MG-WP5E merge record
+
+MG-WP5E merged to `main` on 2026-10-05 as `1b10399daf67076326238db1b0790812c926f129`.
+
+The merged Friendly Match experience provides Dandelion, Clover and Sunbeam opponent levels, deterministic legal move selection, opponent selection/rematch flow and shared match-history presentation.
+
+## MG-WP5F implementation contract
+
+WP5F is the final Chess Academy qualification checkpoint.
+
+Learning records are implemented as a **separate versioned browser-storage namespace**, `unicorn-valley.learning.sunbeam-chess.v1`, rather than adding chess state to the adventure `SaveGame`.
+
+Permitted persisted data in this namespace:
+
+- completed lesson IDs;
+- completed puzzle IDs;
+- per-puzzle solve counts;
+- last selected Friendly Match opponent.
+
+The learning record must never:
+
+- advance or gate quests;
+- mutate relationships;
+- grant or consume inventory or Shimmer;
+- alter world/story flags;
+- unlock collections or locations;
+- make lessons, puzzles or opponent levels inaccessible.
+
+Storage failure or corrupt learning data must fail soft to an empty/default learning record and must never block Chess Academy play.
+
+Responsive/accessibility qualification for WP5F:
+
+- retain Phaser's canonical 1280×720 logical canvas with `FIT` scaling rather than adding a second layout/scaling system;
+- prove the Academy canvas remains contained in a representative portrait/tablet viewport;
+- retain touch/pointer hit targets and enlarge undersized move-history controls to at least 44 px high;
+- add keyboard-only Academy navigation through numbered choices;
+- add arrow-key board focus plus Enter/Space selection;
+- make keyboard focus and controls visibly discoverable.
+
+Final automated qualification must cover the isolated learning namespace, completion restoration/display, keyboard-only play and portrait/tablet containment.
+
+Final human acceptance remains mandatory. The playtest should judge the complete Academy as a child experience: lesson clarity, Puzzle Garden comprehension, Coach Match helpfulness, Dandelion beatability without absurd play, Friendly Match replay flow, touch/keyboard usability, and whether the child wants to keep playing.
+
+
+## MG-WP5F human-playtest follow-up — Friendly Match continuity
+
+Human review found the overall WP5F preview strong, but the Friendly Match memory contract was not sufficient. Remembering only the last opponent does not make an unfinished chess game feel continuous.
+
+Accepted follow-up behaviour:
+
+- an unfinished Friendly Match is persisted inside the isolated Chess Academy learning namespace;
+- the saved session uses PGN so board state, legal-move context and move history restore together;
+- returning to Friendly Match with an unfinished game presents:
+  - **Carry on previous game**;
+  - **Start a new game**;
+- Carry on restores the same opponent, board position and move history;
+- if the saved position has Black to move, the opponent continues normally after restore;
+- Start a new game explicitly replaces the old unfinished game and returns to opponent selection;
+- Restart replaces the saved game with a fresh game against the same opponent;
+- a completed game is removed from the resumable-session slot;
+- the preferred/last-played opponent remains visibly identified on the opponent selector;
+- corrupt, illegal or completed stored PGN is discarded safely rather than blocking play;
+- the resumable game remains learning/practice data only and has no adventure progression coupling.
+
+Automated qualification must prove the session survives leaving Chess Academy back to Just Games and re-entering the chess scene before resuming.
+
+
+## MG-WP5F human-playtest follow-up — Coach Match continuity
+
+The same continuity principle now applies to Coach Match.
+
+Accepted behaviour:
+
+- an unfinished Coach Match is persisted in the isolated Chess Academy learning namespace;
+- returning to Coach Match offers:
+  - **Carry on previous coached game**;
+  - **Start a new coached game**;
+- Carry on restores the board and move history from the last committed legal position;
+- transient coaching presentation state is deliberately not persisted:
+  - an open “Have another look / Play it anyway” prompt;
+  - current hint stage;
+  - temporary coach feedback timing;
+- if the saved position is waiting for the village reply, resuming safely completes that reply;
+- Undo updates the persisted coached-game position;
+- Start a new coached game replaces the previous unfinished game;
+- a completed coached game is removed from the resumable-session slot;
+- the resumed Coach Match remains isolated learning/practice state and cannot affect adventure progression.
+
+Automated qualification must prove the coached game survives leaving Chess Academy back to Just Games and re-entering before resuming.
+
+
+## MG-WP5F final human acceptance
+
+David approved the completed WP5F Chess Academy experience on 2026-10-06 after testing the learning records, responsive presentation, Friendly Match continuity and Coach Match continuity in the Cloudflare branch preview.
+
+This closes the human-playtest gate for MG-WP5.
+
+Accepted final package state:
+
+- Lessons and Puzzle Garden are complete and replayable;
+- Coach Match provides explainable beginner coaching without permanently blocking legal moves;
+- Friendly Match provides the Dandelion / Clover / Sunbeam opponent ladder;
+- completed lessons and puzzles persist only in the isolated Chess Academy learning namespace;
+- unfinished Friendly Match and Coach Match games can be resumed after leaving and re-entering Chess Academy;
+- resumable match state does not mutate or gate adventure progression;
+- touch/pointer and keyboard play remain supported;
+- representative portrait/tablet containment is covered;
+- the package is ready to merge and MG-WP5 is complete after that merge.
+
+The next mini-game refinement package is **MG-WP6 — Rainbow Disc**.
