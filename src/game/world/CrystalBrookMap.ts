@@ -213,7 +213,16 @@ export const CRYSTAL_BROOK_GROTTO_ROUTE = [
 ] as const;
 
 export const CRYSTAL_BROOK_MAIN_ROUTE = [
-  ...CRYSTAL_BROOK_MEADOW_SOUTH_BANK_ROUTE.slice(1),
+  { x: 100, y: 1090 },
+  CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
+  { x: 620, y: 1160 },
+  { x: 820, y: 1240 },
+  { x: 980, y: 1320 },
+  { x: 1160, y: 1360 },
+  { x: 1450, y: 1390 },
+  { x: 1770, y: 1380 },
+  { x: 2070, y: 1380 },
+  CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
   CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
   CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
   CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
