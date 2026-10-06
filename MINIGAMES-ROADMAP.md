@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP6 are complete. MG-WP6 — Rainbow Disc received final human approval and merged on 2026-10-06. MG-WP7 — Pond Leap expansion is now active, with MG-WP7A-C complete and MG-WP7D Practice Pond/Ripple Rush underway. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
+**MG-WP0 through MG-WP6 are complete. MG-WP6 — Rainbow Disc received final human approval and merged on 2026-10-06. MG-WP7 — Pond Leap expansion is now active, with MG-WP7A-C complete and MG-WP7D Practice Pond/Ripple Rush implemented pending automated qualification. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 applied that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
@@ -441,7 +441,7 @@ World integration remains Rainbow Meadow. The same variants/modes appear through
 
 ### MG-WP7 - Pond Leap expansion
 
-**Status: active — MG-WP7A-C complete; MG-WP7D Practice Pond/Ripple Rush underway.**
+**Status: active — MG-WP7A-C complete; MG-WP7D Practice Pond/Ripple Rush implemented pending automated qualification.**
 
 Detailed package: `docs/work-packages/MG-WP7-POND-LEAP.md`.
 
