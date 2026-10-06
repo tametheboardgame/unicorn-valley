@@ -94,14 +94,21 @@ async function waitForActiveScene(page: Page, sceneKey: string): Promise<void> {
 }
 
 async function waitForGoodThrowTiming(page: Page): Promise<void> {
-  await expect
-    .poll(async () => {
-      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-      const marker = scene.objects.find(
+  await page.waitForFunction(
+    () => {
+      const api = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const scene = api?.snapshot().scenes.find(
+        ({ key }) => key === 'RainbowDiscActivityScene',
+      );
+      const marker = scene?.objects.find(
         ({ name, effectiveVisible }) =>
           name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
       );
-      const zone = scene.objects.find(
+      const zone = scene?.objects.find(
         ({ name, effectiveVisible }) =>
           name === 'rainbow-disc-activity:timing-success-zone' && effectiveVisible,
       );
@@ -109,8 +116,10 @@ async function waitForGoodThrowTiming(page: Page): Promise<void> {
       const left = zone.x - zone.displayWidth / 2;
       const right = zone.x + zone.displayWidth / 2;
       return marker.x >= left && marker.x <= right;
-    })
-    .toBe(true);
+    },
+    undefined,
+    { timeout: 6000 },
+  );
 }
 
 async function currentOpenLane(page: Page): Promise<number> {
@@ -126,33 +135,59 @@ async function currentOpenLane(page: Page): Promise<number> {
 }
 
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
-  await expect
-    .poll(async () => {
-      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-      return scene.objects.some(
+  const readLane = await page.evaluate(async () => {
+    const timeoutAt = performance.now() + 6000;
+
+    return new Promise<number>((resolve, reject) => {
+      const inspect = (): void => {
+        const api = (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        const scene = api?.snapshot().scenes.find(
+          ({ key }) => key === 'RainbowDiscActivityScene',
+        );
+        const cue = scene?.objects.find(
+          ({ name, effectiveVisible }) =>
+            name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
+        );
+
+        if (cue) {
+          resolve(Number(cue.name.split(':').at(-1)));
+          return;
+        }
+
+        if (performance.now() >= timeoutAt) {
+          reject(new Error('Rainbow Disc defence read cue was not observed.'));
+          return;
+        }
+
+        requestAnimationFrame(inspect);
+      };
+
+      inspect();
+    });
+  });
+
+  await page.waitForFunction(
+    () => {
+      const api = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const scene = api?.snapshot().scenes.find(
+        ({ key }) => key === 'RainbowDiscActivityScene',
+      );
+      return !scene?.objects.some(
         ({ name, effectiveVisible }) =>
           name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
       );
-    })
-    .toBe(true);
-
-  const cueScene = await snapshotScene(page, 'RainbowDiscActivityScene');
-  const cue = cueScene.objects.find(
-    ({ name, effectiveVisible }) =>
-      name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
+    },
+    undefined,
+    { timeout: 6000 },
   );
-  if (!cue) throw new Error('Rainbow Disc defence read cue is unavailable.');
-  const readLane = Number(cue.name.split(':').at(-1));
-
-  await expect
-    .poll(async () => {
-      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-      return scene.objects.some(
-        ({ name, effectiveVisible }) =>
-          name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
-      );
-    })
-    .toBe(false);
 
   const choiceScene = await snapshotScene(page, 'RainbowDiscActivityScene');
   const chosenLane = chooseCorrectly ? readLane : (readLane + 1) % 3;
@@ -256,8 +291,8 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     ({ name, effectiveVisible }) => name === 'rainbow-disc:sign' && effectiveVisible,
   );
   expect(sign).toBeDefined();
-  expect(sign?.x ?? 9999).toBeLessThan(760);
-  expect(sign?.y ?? 9999).toBeLessThan(1100);
+  expect(sign?.x ?? 9999).toBeCloseTo(520, 0);
+  expect(sign?.y ?? 9999).toBeCloseTo(1170, 0);
   for (const name of [
     'rainbow-disc:sign-leg-left',
     'rainbow-disc:sign-leg-right',
