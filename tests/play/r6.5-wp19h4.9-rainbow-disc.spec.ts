@@ -30,6 +30,7 @@ interface DiagnosticsApi {
     health: { scenes: DiagnosticHealthScene[] };
   };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
+  primeRainbowDiscTiming(): void;
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -44,6 +45,15 @@ async function snapshotScene(page: Page, key: string): Promise<DiagnosticScene> 
     if (!scene) throw new Error(`Missing diagnostic scene ${sceneKey}.`);
     return scene;
   }, key);
+}
+
+async function primeSuccessfulTiming(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) throw new Error('Browser diagnostics unavailable.');
+    api.primeRainbowDiscTiming();
+  });
 }
 
 async function clickNamedObject(page: Page, sceneKey: string, name: string): Promise<void> {
@@ -61,6 +71,7 @@ async function throwToPracticeTarget(page: Page, receiverIndex: number): Promise
     'RainbowDiscActivityScene',
     `rainbow-disc-activity:receiver-ring:${receiverIndex}`,
   );
+  await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
 }
 async function setMeadowPlayerPosition(page: Page, x: number, y: number): Promise<void> {
@@ -197,6 +208,7 @@ async function completeOpenLanePass(page: Page): Promise<void> {
     'RainbowDiscActivityScene',
     `rainbow-disc-activity:receiver:${receiverIndex}`,
   );
+  await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
 }
 
