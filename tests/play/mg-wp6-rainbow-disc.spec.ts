@@ -118,4 +118,64 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
       'rainbow-disc-activity:practice-rainbow-streak',
     );
   });
+
+
+  test('Match setup and Practice hub are keyboard navigable', async ({ page }) => {
+    await openRainbowDiscFromJustGames(page, 'match');
+
+    await page.keyboard.press('2');
+    await waitForNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:thrower');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-difficulty')?.text).toContain(
+      'Standard',
+    );
+
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'JustGamesScene');
+
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:rainbow-disc');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:practice');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForScene(page, 'RainbowDiscActivityScene');
+
+    await page.keyboard.press('3');
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-targets',
+    );
+
+    snapshot = await getDiagnosticSnapshot(page);
+    const scene = snapshot.scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
+    expect(
+      scene?.objects.some(
+        ({ text, effectiveVisible }) => effectiveVisible && text?.startsWith('★ ') === true,
+      ),
+    ).toBe(true);
+  });
+
+  test('keeps the 16:9 activity canvas contained in a portrait tablet viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await openRainbowDiscFromJustGames(page, 'practice');
+
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-menu-title',
+    );
+
+    const box = await page.locator('canvas').boundingBox();
+    expect(box).not.toBeNull();
+    if (!box) throw new Error('Game canvas is unavailable.');
+
+    expect(box.width).toBeLessThanOrEqual(768);
+    expect(box.height).toBeLessThanOrEqual(1024);
+    expect(box.width / box.height).toBeCloseTo(16 / 9, 1);
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+  });
 });
