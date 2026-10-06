@@ -7,10 +7,7 @@ import {
   waitForNamedObject,
 } from '../support/browserDiagnostics';
 
-function pondObject(
-  snapshot: Awaited<ReturnType<typeof getDiagnosticSnapshot>>,
-  name: string,
-) {
+function pondObject(snapshot: Awaited<ReturnType<typeof getDiagnosticSnapshot>>, name: string) {
   return snapshot.scenes
     .find((scene) => scene.key === 'PondLeapActivityScene')
     ?.objects.find((object) => object.name === name);
