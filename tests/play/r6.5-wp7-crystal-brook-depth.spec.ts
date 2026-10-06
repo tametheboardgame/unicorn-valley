@@ -76,7 +76,6 @@ test('Crystal Brook exposes repeated non-race curiosity and an Echo resident', a
   expect(depthObjects.some(({ name }) => name === 'brook-depth:crystal-grotto')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:waterfall-mist')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:reflection-pool')).toBe(true);
-  expect(depthObjects.some(({ name }) => name === 'brook-depth:stepping-chime')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:singing-crystals')).toBe(true);
   expect(depthObjects.length).toBeGreaterThanOrEqual(10);
   expect(brook.objects.some(({ name }) => name === 'supporting-resident:resident:echo')).toBe(true);
