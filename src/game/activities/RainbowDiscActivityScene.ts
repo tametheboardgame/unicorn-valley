@@ -757,14 +757,19 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     );
 
     const help = this.add
-      .text(640, 430, 'Modes keeps you inside Rainbow Disc. Back exits to the Meadow or Just Games.', {
-        color: UI_COLOURS.softInk,
-        fontFamily: UI_FONT,
-        fontSize: '15px',
-        fontStyle: 'bold',
-        align: 'center',
-        wordWrap: { width: 760 },
-      })
+      .text(
+        640,
+        430,
+        'Modes keeps you inside Rainbow Disc. Back exits to the Meadow or Just Games.',
+        {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '15px',
+          fontStyle: 'bold',
+          align: 'center',
+          wordWrap: { width: 760 },
+        },
+      )
       .setOrigin(0.5);
     this.playLayer?.add(help);
   }
@@ -1575,11 +1580,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     if (this.practiceDrill === 'rainbow-streak') {
-      const outcome = resolveRainbowDiscStreakAttempt(
-        this.practiceThrows,
-        receiverIndex,
-        success,
-      );
+      const outcome = resolveRainbowDiscStreakAttempt(this.practiceThrows, receiverIndex, success);
 
       this.practiceThrows += 1;
 
