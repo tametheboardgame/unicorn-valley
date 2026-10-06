@@ -31,6 +31,20 @@ function rainbowDiscObject(
     ?.objects.find((object) => object.name === name);
 }
 
+async function waitForGoodTiming(page: Page): Promise<void> {
+  await expect
+    .poll(async () => {
+      const snapshot = await getDiagnosticSnapshot(page);
+      const marker = rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-marker');
+      const zone = rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone');
+      if (!marker?.effectiveVisible || !zone?.effectiveVisible) return false;
+      const left = zone.x - zone.displayWidth / 2;
+      const right = zone.x + zone.displayWidth / 2;
+      return marker.x >= left && marker.x <= right;
+    })
+    .toBe(true);
+}
+
 test.describe('MG-WP6 Rainbow Disc integration', () => {
   test('Just Games Match opens assistance setup and returns to the catalogue', async ({ page }) => {
     await openRainbowDiscFromJustGames(page, 'match');
@@ -71,52 +85,103 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     await waitForScene(page, 'JustGamesScene');
   });
 
-  test('Practice assistance visibly changes the timing window without changing drill access', async ({
+  test('Practice assistance changes the active throw window without animating on the hub', async ({
     page,
   }) => {
     await openRainbowDiscFromJustGames(page, 'practice');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-marker')?.effectiveVisible,
+    ).toBe(false);
+    expect(
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone')?.effectiveVisible,
+    ).toBe(false);
 
     await clickNamedObject(
       page,
       'RainbowDiscActivityScene',
       'rainbow-disc-activity:practice-assistance-gentle',
     );
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-target-range',
+    );
 
-    await expect
-      .poll(async () => {
-        const snapshot = await getDiagnosticSnapshot(page);
-        return rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-difficulty')?.text;
-      })
-      .toContain('Gentle');
-
-    const gentle = await getDiagnosticSnapshot(page);
+    snapshot = await getDiagnosticSnapshot(page);
+    expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-difficulty')?.text).toContain(
+      'Gentle',
+    );
     const gentleWidth =
-      rainbowDiscObject(gentle, 'rainbow-disc-activity:timing-success-zone')?.displayWidth ?? 0;
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone')?.displayWidth ?? 0;
+
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'JustGamesScene');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:rainbow-disc');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:practice');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForScene(page, 'RainbowDiscActivityScene');
 
     await clickNamedObject(
       page,
       'RainbowDiscActivityScene',
       'rainbow-disc-activity:practice-assistance-challenge',
     );
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-target-range',
+    );
 
-    await expect
-      .poll(async () => {
-        const snapshot = await getDiagnosticSnapshot(page);
-        return rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-difficulty')?.text;
-      })
-      .toContain('Challenge');
-
-    const challenge = await getDiagnosticSnapshot(page);
+    snapshot = await getDiagnosticSnapshot(page);
+    expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-difficulty')?.text).toContain(
+      'Challenge',
+    );
     const challengeWidth =
-      rainbowDiscObject(challenge, 'rainbow-disc-activity:timing-success-zone')?.displayWidth ??
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone')?.displayWidth ??
       999;
 
     expect(challengeWidth).toBeLessThan(gentleWidth);
-    await waitForNamedObject(
+  });
+
+  test('timing waits for play and shifts position and width between throws', async ({ page }) => {
+    await openRainbowDiscFromJustGames(page, 'match');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-marker')?.effectiveVisible,
+    ).toBe(false);
+    expect(
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone')?.effectiveVisible,
+    ).toBe(false);
+
+    await clickNamedObject(
       page,
       'RainbowDiscActivityScene',
-      'rainbow-disc-activity:practice-rainbow-streak',
+      'rainbow-disc-activity:match-assistance-standard',
     );
+    await waitForNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:thrower');
+
+    snapshot = await getDiagnosticSnapshot(page);
+    const firstZone = rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone');
+    expect(firstZone?.effectiveVisible).toBe(true);
+    if (!firstZone) throw new Error('First timing window is unavailable.');
+
+    await waitForGoodTiming(page);
+    await page.keyboard.press('Space');
+
+    await expect
+      .poll(async () => {
+        const next = await getDiagnosticSnapshot(page);
+        const zone = rainbowDiscObject(next, 'rainbow-disc-activity:timing-success-zone');
+        if (!zone?.effectiveVisible) return false;
+        return (
+          Math.abs(zone.x - firstZone.x) > 1 ||
+          Math.abs(zone.displayWidth - firstZone.displayWidth) > 1
+        );
+      })
+      .toBe(true);
   });
 
   test('Match setup and Practice hub are keyboard navigable', async ({ page }) => {
