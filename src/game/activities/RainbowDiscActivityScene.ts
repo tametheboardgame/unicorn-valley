@@ -8,10 +8,15 @@ import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
+  RAINBOW_DISC_GOALS_TO_WIN,
   applyRainbowDiscAssistance,
   getRainbowDiscAssistanceProfile,
+  isRainbowDiscMatchComplete,
   isRainbowDiscReleaseAccurate,
+  rainbowDiscDefenceLane,
+  rainbowDiscDefenceTelegraphAlpha,
   rainbowDiscMissOffset,
+  rainbowDiscOpenLane,
   type RainbowDiscAssistanceLevel,
 } from './RainbowDiscRules';
 import {
@@ -72,7 +77,6 @@ const PRACTICE_TARGETS = [
     label: 'Hard',
   },
 ] as const;
-const OPEN_LANE_BY_PASS = [1, 2, 0] as const;
 const ACTIVITY_THROWER_SIZE = { width: 122, height: 86 } as const;
 const ACTIVITY_RESIDENT_SCALE = 0.62;
 const ACTIVITY_RESIDENT_BODY_ORIGIN = resolveRainbowDiscResidentBodyOrigin(false);
@@ -85,6 +89,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private returnScene = 'RainbowMeadowScene';
   private mode: 'match' | 'practice' = 'match';
   private possession = 0;
+  private playerScore = 0;
+  private oppositionScore = 0;
+  private attackSequence = 0;
+  private defenceSequence = 0;
   private practiceThrows = 0;
   private practiceScore = 0;
   private phase: 'attack' | 'defence' = 'attack';
@@ -125,6 +133,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
           ? 'match'
           : (data.mode ?? 'match');
     this.possession = 0;
+    this.playerScore = 0;
+    this.oppositionScore = 0;
+    this.attackSequence = 0;
+    this.defenceSequence = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
     this.phase = 'attack';
@@ -228,7 +240,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         101,
         this.mode === 'practice'
           ? 'Five throws. Use ←/→ to choose a target. Smaller rings are worth more, faster and tighter.'
-          : 'Build a three-catch chain. Read the defenders, pick the open lane and protect the disc.',
+          : 'First to 2 goals. Build a three-catch chain, read the defenders and protect the disc.',
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -277,16 +289,17 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const progressCard = this.add.graphics();
     progressCard.fillStyle(0xf4ead8, 1);
-    progressCard.fillRoundedRect(94, 116, 260, 36, 16);
+    progressCard.fillRoundedRect(94, 116, 340, 36, 16);
     this.progressText = this.add
-      .text(224, 134, '', {
+      .text(264, 134, '', {
         color: '#5f496d',
         fontFamily: UI_FONT,
-        fontSize: '15px',
+        fontSize: '14px',
         fontStyle: 'bold',
         align: 'center',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('rainbow-disc-activity:scoreline');
 
     const statusCard = this.add.graphics();
     statusCard.fillStyle(0xf4ead8, 1);
@@ -381,7 +394,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const throwOrigin = this.throwOrigin();
     const targetX = TARGET_X[this.possession] ?? TARGET_X[0];
-    const openLane = OPEN_LANE_BY_PASS[this.possession] ?? OPEN_LANE_BY_PASS[0];
+    const openLane = rainbowDiscOpenLane(this.attackSequence, this.possession);
 
     const thrower = this.add
       .sprite(throwOrigin.x - 28, throwOrigin.y, PLAYER_TEXTURE_KEY)
@@ -479,9 +492,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         ? 'Final pass: find the open lane and reach the end zone.'
         : `Pass ${this.possession + 1} of ${PASS_COUNT}: two lanes are marked — find the open receiver.`,
     );
-    this.progressText?.setText(
-      `Your chain: ${'●'.repeat(this.possession)}${'○'.repeat(PASS_COUNT - this.possession)}`,
-    );
+    this.progressText?.setText(this.matchScoreLabel());
     this.refreshReceiverSelection();
   }
 
@@ -554,11 +565,38 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setDepth(30);
     this.playLayer?.add(this.disc);
 
+    const telegraphAlpha = rainbowDiscDefenceTelegraphAlpha(this.assistance);
+    const telegraphY = RECEIVER_Y[this.defenceAttackLane] ?? RECEIVER_Y[1];
+    const telegraph = this.add
+      .graphics()
+      .setName(`rainbow-disc-activity:defence-telegraph:${this.defenceAttackLane}`)
+      .setDepth(18);
+    telegraph.lineStyle(9, 0x88c9e8, telegraphAlpha);
+    telegraph.lineBetween(opponentThrowerX + 55, 370, opponentReceiverX - 72, telegraphY);
+    telegraph.fillStyle(0xbfe7f7, telegraphAlpha);
+    telegraph.fillTriangle(
+      opponentReceiverX - 72,
+      telegraphY,
+      opponentReceiverX - 96,
+      telegraphY - 13,
+      opponentReceiverX - 96,
+      telegraphY + 13,
+    );
+    this.playLayer?.add(telegraph);
+    this.tweens.add({
+      targets: telegraph,
+      alpha: { from: 0.62, to: 1 },
+      duration: 460,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
     this.statusText?.setText(
-      'DEFEND: choose which lane they will use. Tap a lane, or use ↑/↓ then Space.',
+      'DEFEND: watch the blue route shimmer, then cover that lane. Tap it, or use ↑/↓ then Space.',
     );
     this.progressText?.setText(
-      `Opposition advance: ${'●'.repeat(this.opponentAdvance)}${'○'.repeat(2 - this.opponentAdvance)}`,
+      `${this.matchScoreLabel()} · Attack ${this.opponentAdvance + 1}/2`,
     );
     this.refreshReceiverSelection();
   }
@@ -660,8 +698,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         `Practice: ${PRACTICE_THROW_COUNT}/${PRACTICE_THROW_COUNT} • Score: ${this.practiceScore}`,
       );
     } else {
-      this.statusText?.setText('Score! Three catches all the way into the end zone.');
-      this.progressText?.setText('Catch chain: ●●●');
+      this.statusText?.setText(
+        this.playerScore > this.oppositionScore ? 'You win the Rainbow Disc match!' : 'Good match!',
+      );
+      this.progressText?.setText(this.matchScoreLabel());
     }
 
     const burst = this.add.graphics().setName('rainbow-disc-activity:score-burst');
@@ -676,7 +716,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         300,
-        this.mode === 'practice' ? 'PRACTICE COMPLETE!' : 'RAINBOW DISC SCORE!',
+        this.mode === 'practice'
+          ? 'PRACTICE COMPLETE!'
+          : this.playerScore > this.oppositionScore
+            ? 'YOU WIN!'
+            : 'GOOD MATCH!',
         {
           color: '#5f496d',
           fontFamily: UI_FONT,
@@ -692,7 +736,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         365,
         this.mode === 'practice'
           ? `You scored ${this.practiceScore} points from five throws.`
-          : 'Nice passing. The team catches the third throw inside the end zone.',
+          : `Final score: You ${this.playerScore} · ${this.oppositionScore} Village`,
         {
           color: UI_COLOURS.softInk,
           fontFamily: UI_FONT,
@@ -875,9 +919,22 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     this.possession += 1;
     if (this.possession >= PASS_COUNT) {
-      this.completed = true;
+      this.playerScore += 1;
+      this.attackSequence += 1;
+      this.possession = 0;
       this.cameras.main.flash(150, 255, 239, 164, false);
-      this.renderPossession();
+
+      if (isRainbowDiscMatchComplete(this.playerScore, this.oppositionScore)) {
+        this.completed = true;
+        this.statusText?.setText('Goal! That wins the match.');
+        this.progressText?.setText(this.matchScoreLabel());
+        this.time.delayedCall(520, () => this.renderPossession());
+        return;
+      }
+
+      this.statusText?.setText('Goal! The village team starts the next possession.');
+      this.beginDefence();
+      this.time.delayedCall(620, () => this.renderPossession());
       return;
     }
 
@@ -912,10 +969,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         : 'Loose throw! They collect it — switch to defence.',
     );
     this.cameras.main.shake(110, 0.002);
-    this.phase = 'defence';
-    this.opponentAdvance = 0;
-    this.defenceAttackLane = (this.possession + this.selectedReceiver + 1) % RECEIVER_Y.length;
-    this.selectedReceiver = 1;
+    this.attackSequence += 1;
+    this.possession = 0;
+    this.beginDefence();
     this.time.delayedCall(520, () => this.renderPossession());
   }
 
@@ -1084,7 +1140,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private isReceiverMarked(index: number): boolean {
-    const openLane = OPEN_LANE_BY_PASS[this.possession] ?? OPEN_LANE_BY_PASS[0];
+    const openLane = rainbowDiscOpenLane(this.attackSequence, this.possession);
     return index !== openLane;
   }
 
@@ -1108,40 +1164,73 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const correct = index === this.defenceAttackLane;
     if (correct) {
-      this.statusText?.setText('Blocked! You read the lane and win the disc back.');
+      this.statusText?.setText('Intercepted! You read the route and win the disc back.');
       this.cameras.main.flash(100, 215, 244, 193, false);
-      this.phase = 'attack';
-      this.opponentAdvance = 0;
-      this.selectedReceiver = 1;
+      this.defenceSequence += 1;
+      this.beginAttack();
       this.time.delayedCall(520, () => this.renderPossession());
       return;
     }
 
     this.opponentAdvance += 1;
     if (this.opponentAdvance >= 2) {
-      this.statusText?.setText('They break through and score. Your team restarts with the disc.');
+      this.oppositionScore += 1;
       this.cameras.main.shake(110, 0.002);
-      this.phase = 'attack';
-      this.opponentAdvance = 0;
-      this.possession = 0;
-      this.selectedReceiver = 1;
+      this.defenceSequence += 1;
+
+      if (isRainbowDiscMatchComplete(this.playerScore, this.oppositionScore)) {
+        this.completed = true;
+        this.statusText?.setText('The village team scores. Good match — have another go!');
+        this.progressText?.setText(this.matchScoreLabel());
+        this.time.delayedCall(620, () => this.renderPossession());
+        return;
+      }
+
+      this.statusText?.setText('Village goal. Your team starts with the disc.');
+      this.beginAttack();
       this.time.delayedCall(620, () => this.renderPossession());
       return;
     }
 
-    this.statusText?.setText('Wrong lane — they advance. Read the next pass and defend again.');
-    this.defenceAttackLane = (this.defenceAttackLane + 1) % RECEIVER_Y.length;
+    this.statusText?.setText('They advance. Read the next blue route and cover it.');
+    this.defenceAttackLane = rainbowDiscDefenceLane(
+      this.defenceSequence,
+      this.opponentAdvance,
+    );
     this.selectedReceiver = 1;
     this.time.delayedCall(520, () => this.renderPossession());
   }
 
+  private matchScoreLabel(): string {
+    return `YOU ${this.playerScore}  •  ${this.oppositionScore} VILLAGE  ·  First to ${RAINBOW_DISC_GOALS_TO_WIN}`;
+  }
+
+  private beginAttack(): void {
+    this.phase = 'attack';
+    this.opponentAdvance = 0;
+    this.possession = 0;
+    this.selectedReceiver = 1;
+  }
+
+  private beginDefence(): void {
+    this.phase = 'defence';
+    this.opponentAdvance = 0;
+    this.possession = 0;
+    this.defenceAttackLane = rainbowDiscDefenceLane(this.defenceSequence, 0);
+    this.selectedReceiver = 1;
+  }
+
   private restartRun(): void {
     this.possession = 0;
+    this.playerScore = 0;
+    this.oppositionScore = 0;
+    this.attackSequence = 0;
+    this.defenceSequence = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
     this.phase = 'attack';
     this.opponentAdvance = 0;
-    this.defenceAttackLane = 1;
+    this.defenceAttackLane = rainbowDiscDefenceLane(0, 0);
     this.selectedReceiver = 1;
     this.completed = false;
     this.actionLocked = false;
