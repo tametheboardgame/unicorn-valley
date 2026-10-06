@@ -296,3 +296,24 @@ Accepted follow-up behaviour:
 - early/late miss direction is also relative to the current visible window rather than a fixed centre.
 
 Automated qualification now checks that the timing UI is hidden on mode-selection screens and that consecutive throws can present different green-zone position/width values.
+
+
+## MG-WP6F human-playtest follow-up — defence readability
+
+Human review found that the first defence telegraph was too explicit: a persistent route/arrow effectively told the player which unicorn to select.
+
+Accepted correction:
+
+- remove the persistent arrow to the correct receiver;
+- lock defensive input during the read cue;
+- briefly animate the intended receiver making a cut;
+- show only a partial route shimmer near the thrower rather than a line ending on the answer;
+- remove the cue before the player is allowed to choose a lane;
+- require the player to remember/read the setup and then commit;
+- assistance controls cue clarity:
+  - Gentle: longer cue, stronger route shimmer and an additional ring pulse;
+  - Standard: medium-duration receiver cut plus partial route shimmer;
+  - Challenge: shorter/subtler cue with no answer-highlight ring;
+- after a missed defensive read, the next opposition attack provides a fresh read cue.
+
+Automated browser coverage captures the intended lane during the brief cue, waits until the cue has disappeared, and only then makes the defensive choice.
