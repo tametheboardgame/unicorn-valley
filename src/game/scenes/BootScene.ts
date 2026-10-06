@@ -15,7 +15,9 @@ import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getSettingsAudioControlsManager } from '../ui/SettingsAudioControlsManager';
+import { getCreatorDelightPresentationManager } from '../visual/CreatorDelightPresentationManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
+import { getUiProductionPresentationManager } from '../visual/UiProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getR65StarlightBeachGatewayManager } from '../world/R65StarlightBeachGatewayManager';
@@ -69,6 +71,8 @@ export class BootScene extends Phaser.Scene {
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
+    getUiProductionPresentationManager(this.sys.game);
+    getCreatorDelightPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getR65StarlightBeachGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
