@@ -1,5 +1,8 @@
 export type PondLeapAssistanceLevel = 'relaxed' | 'standard' | 'quick';
 export type PondLeapCourseId = 'sunny-steps' | 'reed-weave' | 'twinkle-trail';
+export type PondLeapMode = 'classic' | 'practice' | 'ripple-rush';
+
+export const POND_LEAP_MODES: readonly PondLeapMode[] = ['classic', 'practice', 'ripple-rush'];
 
 export const POND_LEAP_ASSISTANCE_LEVELS: readonly PondLeapAssistanceLevel[] = [
   'relaxed',
@@ -39,6 +42,14 @@ export interface PondLeapTimingChallenge {
   centre: number;
   tolerance: number;
   sweepSpeed: number;
+}
+
+export interface PondLeapModeRunState {
+  attempts: number;
+  successes: number;
+  streak: number;
+  bestStreak: number;
+  splashes: number;
 }
 
 export const POND_LEAP_PRACTICE_ATTEMPTS = 10;
@@ -166,4 +177,63 @@ export function isPondLeapRippleRushFailed(
   splashLimit = POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT,
 ): boolean {
   return splashes >= splashLimit;
+}
+
+export function createPondLeapModeRunState(): PondLeapModeRunState {
+  return {
+    attempts: 0,
+    successes: 0,
+    streak: 0,
+    bestStreak: 0,
+    splashes: 0,
+  };
+}
+
+export function recordPondLeapModeAttempt(
+  state: PondLeapModeRunState,
+  success: boolean,
+): PondLeapModeRunState {
+  const streak = success ? state.streak + 1 : 0;
+  return {
+    attempts: state.attempts + 1,
+    successes: state.successes + (success ? 1 : 0),
+    streak,
+    bestStreak: Math.max(state.bestStreak, streak),
+    splashes: state.splashes + (success ? 0 : 1),
+  };
+}
+
+export function isPondLeapModeFinished(mode: PondLeapMode, state: PondLeapModeRunState): boolean {
+  if (mode === 'practice') {
+    return state.attempts >= POND_LEAP_PRACTICE_ATTEMPTS;
+  }
+
+  if (mode === 'ripple-rush') {
+    return (
+      state.successes >= POND_LEAP_RIPPLE_RUSH_HOPS ||
+      isPondLeapRippleRushFailed(state.splashes)
+    );
+  }
+
+  return false;
+}
+
+export function applyPondLeapModePressure(
+  challenge: PondLeapTimingChallenge,
+  mode: PondLeapMode,
+  successfulHops: number,
+): PondLeapTimingChallenge {
+  if (mode !== 'ripple-rush') {
+    return challenge;
+  }
+
+  const progress = Math.max(0, Math.min(POND_LEAP_RIPPLE_RUSH_HOPS - 1, successfulHops));
+  const toleranceScale = Math.max(0.76, 1 - progress * 0.035);
+  const speedScale = Math.min(1.26, 1 + progress * 0.04);
+
+  return {
+    ...challenge,
+    tolerance: Math.max(0.06, challenge.tolerance * toleranceScale),
+    sweepSpeed: challenge.sweepSpeed * speedScale,
+  };
 }
