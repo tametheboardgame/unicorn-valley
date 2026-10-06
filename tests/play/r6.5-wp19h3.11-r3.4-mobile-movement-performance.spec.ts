@@ -396,64 +396,102 @@ async function measureMovement(
 }
 
 test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame timing', async ({
-  page,
+  browser,
+  baseURL,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
+
   const projectName = test.info().project.name;
-  const supportedProject =
-    projectName === 'chromium-tablet-touch' || projectName === 'chromium-mobile-touch';
+  const runHarnessHere = projectName === '' || projectName === 'chromium-desktop';
   test.skip(
-    !supportedProject,
-    'R3.4 movement evidence runs on Chromium tablet and phone profiles.',
+    !runHarnessHere,
+    'R3.4 owns its Chromium tablet and phone contexts and runs once per CI invocation.',
   );
 
-  await seedIntroducedPip(page);
-  const cdp = await page.context().newCDPSession(page);
+  const profiles = [
+    {
+      name: 'chromium-tablet-touch',
+      viewport: { width: 1024, height: 768 },
+    },
+    {
+      name: 'chromium-mobile-touch',
+      viewport: { width: 390, height: 844 },
+    },
+  ] as const;
 
-  await loadGlade(page);
-  const normalHealthBefore = await sceneHealth(page);
-  const normalWalk = await measureMovement(page, cdp, projectName, false);
-  const normalGallop = await measureMovement(page, cdp, projectName, true);
-  await page.waitForTimeout(400);
-  const normalHealthAfter = await sceneHealth(page);
+  for (const profile of profiles) {
+    const context = await browser.newContext({
+      baseURL: baseURL ?? 'http://127.0.0.1:4173',
+      viewport: profile.viewport,
+      hasTouch: true,
+    });
 
-  expect(normalWalk.speed).toBeGreaterThanOrEqual(WALK_SPEED_MIN);
-  expect(normalGallop.speed / normalWalk.speed).toBeGreaterThan(1.48);
-  expect(normalGallop.speed / normalWalk.speed).toBeLessThan(1.72);
-  expect(normalHealthAfter.objectCount).toBeLessThanOrEqual(normalHealthBefore.objectCount + 4);
-  expect(normalHealthAfter.tweenCount ?? 0).toBeLessThanOrEqual(
-    (normalHealthBefore.tweenCount ?? 0) + 4,
-  );
+    try {
+      const page = await context.newPage();
+      await seedIntroducedPip(page);
+      const cdp = await context.newCDPSession(page);
 
-  await installThirtyFpsFrameConstraint(page);
-  await loadGlade(page);
-  const constrainedHealthBefore = await sceneHealth(page);
-  const constrainedWalk = await measureMovement(page, cdp, projectName, false);
-  const constrainedGallop = await measureMovement(page, cdp, projectName, true);
-  await page.waitForTimeout(400);
-  const constrainedHealthAfter = await sceneHealth(page);
+      await loadGlade(page);
+      const normalHealthBefore = await sceneHealth(page);
+      const normalWalk = await measureMovement(page, cdp, profile.name, false);
+      const normalGallop = await measureMovement(page, cdp, profile.name, true);
+      await page.waitForTimeout(400);
+      const normalHealthAfter = await sceneHealth(page);
 
-  expect(constrainedWalk.speed).toBeGreaterThanOrEqual(WALK_SPEED_MIN);
-  expect(constrainedWalk.speed / normalWalk.speed).toBeGreaterThan(0.85);
-  expect(constrainedWalk.speed / normalWalk.speed).toBeLessThan(1.15);
-  expect(constrainedGallop.speed / normalGallop.speed).toBeGreaterThan(0.85);
-  expect(constrainedGallop.speed / normalGallop.speed).toBeLessThan(1.15);
-  expect(constrainedGallop.speed / constrainedWalk.speed).toBeGreaterThan(1.48);
-  expect(constrainedGallop.speed / constrainedWalk.speed).toBeLessThan(1.72);
-  expect(constrainedWalk.performance.sampleCount).toBeGreaterThanOrEqual(PERFORMANCE_SAMPLE_FRAMES);
-  expect(constrainedGallop.performance.sampleCount).toBeGreaterThanOrEqual(
-    PERFORMANCE_SAMPLE_FRAMES,
-  );
-  expect(constrainedWalk.performance.p95FrameMs).toBeLessThan(90);
-  expect(constrainedGallop.performance.p95FrameMs).toBeLessThan(90);
-  expect(constrainedWalk.performance.worstFrameMs).toBeLessThan(250);
-  expect(constrainedGallop.performance.worstFrameMs).toBeLessThan(250);
-  expect(constrainedHealthAfter.objectCount).toBeLessThanOrEqual(
-    constrainedHealthBefore.objectCount + 4,
-  );
-  expect(constrainedHealthAfter.tweenCount ?? 0).toBeLessThanOrEqual(
-    (constrainedHealthBefore.tweenCount ?? 0) + 4,
-  );
+      expect(normalWalk.speed, `${profile.name} normal walk speed`).toBeGreaterThanOrEqual(
+        WALK_SPEED_MIN,
+      );
+      expect(
+        normalGallop.speed / normalWalk.speed,
+        `${profile.name} normal gallop multiplier`,
+      ).toBeGreaterThan(1.48);
+      expect(
+        normalGallop.speed / normalWalk.speed,
+        `${profile.name} normal gallop multiplier`,
+      ).toBeLessThan(1.72);
+      expect(normalHealthAfter.objectCount).toBeLessThanOrEqual(normalHealthBefore.objectCount + 4);
+      expect(normalHealthAfter.tweenCount ?? 0).toBeLessThanOrEqual(
+        (normalHealthBefore.tweenCount ?? 0) + 4,
+      );
 
-  await cdp.detach();
+      await installThirtyFpsFrameConstraint(page);
+      await loadGlade(page);
+      const constrainedHealthBefore = await sceneHealth(page);
+      const constrainedWalk = await measureMovement(page, cdp, profile.name, false);
+      const constrainedGallop = await measureMovement(page, cdp, profile.name, true);
+      await page.waitForTimeout(400);
+      const constrainedHealthAfter = await sceneHealth(page);
+
+      expect(
+        constrainedWalk.speed,
+        `${profile.name} constrained walk speed`,
+      ).toBeGreaterThanOrEqual(WALK_SPEED_MIN);
+      expect(constrainedWalk.speed / normalWalk.speed).toBeGreaterThan(0.85);
+      expect(constrainedWalk.speed / normalWalk.speed).toBeLessThan(1.15);
+      expect(constrainedGallop.speed / normalGallop.speed).toBeGreaterThan(0.85);
+      expect(constrainedGallop.speed / normalGallop.speed).toBeLessThan(1.15);
+      expect(constrainedGallop.speed / constrainedWalk.speed).toBeGreaterThan(1.48);
+      expect(constrainedGallop.speed / constrainedWalk.speed).toBeLessThan(1.72);
+      expect(constrainedWalk.performance.sampleCount).toBeGreaterThanOrEqual(
+        PERFORMANCE_SAMPLE_FRAMES,
+      );
+      expect(constrainedGallop.performance.sampleCount).toBeGreaterThanOrEqual(
+        PERFORMANCE_SAMPLE_FRAMES,
+      );
+      expect(constrainedWalk.performance.p95FrameMs).toBeLessThan(90);
+      expect(constrainedGallop.performance.p95FrameMs).toBeLessThan(90);
+      expect(constrainedWalk.performance.worstFrameMs).toBeLessThan(250);
+      expect(constrainedGallop.performance.worstFrameMs).toBeLessThan(250);
+      expect(constrainedHealthAfter.objectCount).toBeLessThanOrEqual(
+        constrainedHealthBefore.objectCount + 4,
+      );
+      expect(constrainedHealthAfter.tweenCount ?? 0).toBeLessThanOrEqual(
+        (constrainedHealthBefore.tweenCount ?? 0) + 4,
+      );
+
+      await cdp.detach();
+    } finally {
+      await context.close();
+    }
+  }
 });
