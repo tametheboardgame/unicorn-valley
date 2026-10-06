@@ -112,6 +112,17 @@ describe('MiniGameCatalogue', () => {
     );
   });
 
+  it('exposes all three Pond Leap play modes as Just Games variants', () => {
+    const pondLeap = MINI_GAME_CATALOGUE.find(
+      (definition) => definition.id === MINI_GAME_IDS.pondLeap,
+    );
+    expect(pondLeap?.variants.map((variant) => variant.id)).toEqual([
+      'classic',
+      'practice',
+      'ripple-rush',
+    ]);
+  });
+
   it('defaults every current Just Games family to no adventure side effects', () => {
     for (const definition of getJustGamesDefinitions()) {
       expect(definition.sandbox.sideEffects).toBe('none');
