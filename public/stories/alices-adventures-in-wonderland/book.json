@@ -469,6 +469,111 @@
                   "caption": "Modern Story House illustration."
                 }
               ]
+            },
+            {
+              "chapterId": "a-mad-tea-party",
+              "illustrations": [
+                {
+                  "id": "modern-tea-party-arrival",
+                  "blockId": "no-room",
+                  "path": "illustrations/generated/alice-07-tea-party-arrival.webp",
+                  "alt": "Alice arrives at the long outdoor tea table beneath a huge tree, where the Hatter, March Hare and sleepy Dormouse are already gathered.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-tea-party-conversation",
+                  "blockId": "tea-party-conversation",
+                  "path": "illustrations/generated/alice-07-tea-party-conversation.webp",
+                  "alt": "Alice listens with growing disbelief as the Hatter and March Hare argue through another ridiculous tea-party conversation while the Dormouse dozes.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-tea-time-forever",
+                  "blockId": "tea-time-forever",
+                  "path": "illustrations/generated/alice-07-tea-time-forever.webp",
+                  "alt": "The endless tea party has filled the table with stacks of dirty cups as the Hatter and March Hare shift around and Alice looks thoroughly exhausted.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-queens-croquet-ground",
+              "illustrations": [
+                {
+                  "id": "modern-painting-roses",
+                  "blockId": "painting-the-roses",
+                  "path": "illustrations/generated/alice-08-painting-roses.webp",
+                  "alt": "Alice discovers three Spade gardeners frantically painting white roses red in the Queen's elaborate rose garden.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-queen-arrives",
+                  "blockId": "the-queen-arrives",
+                  "path": "illustrations/generated/alice-08-queen-arrives.webp",
+                  "alt": "Alice faces the imperious Queen in the rose garden as the King, White Rabbit and card attendants gather around them.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-croquet",
+                  "blockId": "croquet-chaos",
+                  "path": "illustrations/generated/alice-08-croquet.webp",
+                  "alt": "Alice tries to play the Queen's chaotic croquet game with a flamingo mallet, a hedgehog ball and Spade attendants bent into hoops.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-cat-returns",
+                  "blockId": "the-cat-returns",
+                  "path": "illustrations/generated/alice-08-cat-returns.webp",
+                  "alt": "Alice watches as the Queen, King and executioner argue beneath the Cheshire Cat's disembodied smoky head and golden grin.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-mock-turtles-story",
+              "illustrations": [
+                {
+                  "id": "modern-gryphon-mock-turtle",
+                  "blockId": "meeting-the-gryphon",
+                  "path": "illustrations/generated/alice-09-gryphon-mock-turtle.webp",
+                  "alt": "On a rocky shore, the Gryphon introduces Alice to the melancholy Mock Turtle, whose calf-like face rises from a turtle's shell and flippers.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-school-under-sea",
+                  "blockId": "school-under-the-sea",
+                  "path": "illustrations/generated/alice-09-school-under-sea.webp",
+                  "alt": "In the Mock Turtle's memory, his younger self sits among sea-creature classmates at shell desks while an elderly Turtle teacher leads lessons beneath the sea.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
