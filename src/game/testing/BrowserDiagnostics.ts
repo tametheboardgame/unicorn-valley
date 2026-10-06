@@ -596,9 +596,7 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
       }
       const object = scene.children.getByName(objectName);
       if (!(object instanceof Phaser.Physics.Arcade.Sprite)) {
-        throw new Error(
-          `Cannot inspect ${objectName}: expected an Arcade Sprite in ${sceneKey}.`,
-        );
+        throw new Error(`Cannot inspect ${objectName}: expected an Arcade Sprite in ${sceneKey}.`);
       }
       const body = object.body;
       if (!(body instanceof Phaser.Physics.Arcade.Body)) {
