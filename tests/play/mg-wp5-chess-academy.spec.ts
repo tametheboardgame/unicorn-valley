@@ -197,6 +197,58 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
   });
 
+  test('offers to resume an unfinished Coach Match after leaving Chess Academy', async ({
+    page,
+  }) => {
+    await openChessAcademy(page);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:coach-match');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:e4');
+
+    await expect
+      .poll(async () => {
+        const snapshot = await getDiagnosticSnapshot(page);
+        return objectText(snapshot, 'sunbeam-chess:coach-status');
+      })
+      .toContain('Your move');
+
+    await page.keyboard.press('Escape');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:teacher');
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'JustGamesScene');
+
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:sunbeam-chess');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForScene(page, 'ChessPlazaActivityScene');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:teacher');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:coach-match');
+
+    await waitForNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:coach-resume-carry-on',
+    );
+    await waitForNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:coach-resume-new-game',
+    );
+
+    await clickNamedObject(
+      page,
+      'ChessPlazaActivityScene',
+      'sunbeam-chess:coach-resume-carry-on',
+    );
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
+
+    const restored = await getDiagnosticSnapshot(page);
+    expect(objectText(restored, 'sunbeam-chess:move-history-range')).toContain('1–1 of 1');
+    expect(objectText(restored, 'sunbeam-chess:coach-message')).toContain('Welcome back');
+  });
+
   test('offers the child-friendly Friendly Match opponent ladder', async ({ page }) => {
     await openChessAcademy(page);
 
