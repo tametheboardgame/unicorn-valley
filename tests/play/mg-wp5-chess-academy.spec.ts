@@ -228,6 +228,40 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:friendly-opponents');
   });
 
+  test('offers to resume an unfinished Friendly Match and restores its board', async ({ page }) => {
+    await openChessAcademy(page);
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:opponent:dandelion');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:e4');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
+
+    await expect
+      .poll(async () => {
+        const snapshot = await getDiagnosticSnapshot(page);
+        return objectText(snapshot, 'sunbeam-chess:move-history-range');
+      })
+      .toContain('1–1 of 1');
+
+    await page.keyboard.press('Escape');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:teacher');
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
+
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:resume-carry-on');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:resume-new-game');
+    const resume = await getDiagnosticSnapshot(page);
+    expect(objectText(resume, 'sunbeam-chess:resume-opponent')).toContain('Dandelion');
+
+    await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:resume-carry-on');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
+    const restored = await getDiagnosticSnapshot(page);
+    expect(objectText(restored, 'sunbeam-chess:friendly-opponent-title')).toContain('Dandelion');
+    expect(objectText(restored, 'sunbeam-chess:move-history-range')).toContain('1–1 of 1');
+  });
+
   test('stores learning progress outside the adventure save and shows it in the Academy', async ({
     page,
   }) => {
