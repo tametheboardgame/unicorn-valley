@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1StQOKYxf0t1g1u61VN5L3aAeNdLZePpU"
+  },
+  "expectedSourceName": "alice-12-pack-of-cards.png",
+  "destination": "public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-12-pack-of-cards.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

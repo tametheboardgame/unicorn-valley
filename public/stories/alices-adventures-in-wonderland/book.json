@@ -574,6 +574,101 @@
                   "caption": "Modern Story House illustration."
                 }
               ]
+            },
+            {
+              "chapterId": "the-lobster-quadrille",
+              "illustrations": [
+                {
+                  "id": "modern-lobster-quadrille",
+                  "blockId": "the-dance",
+                  "path": "illustrations/generated/alice-10-lobster-quadrille.webp",
+                  "alt": "On the rocky shore, the Gryphon and Mock Turtle demonstrate the Lobster Quadrille while Alice watches and bright red lobsters gather around them.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-songs-stories",
+                  "blockId": "songs-and-stories",
+                  "path": "illustrations/generated/alice-10-songs-stories.webp",
+                  "alt": "At sunset by the sea, Alice listens as the Mock Turtle sings and the Gryphon gestures beside him among shells, rocks and lingering lobsters.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "who-stole-the-tarts",
+              "illustrations": [
+                {
+                  "id": "modern-trial-begins",
+                  "blockId": "the-trial",
+                  "path": "illustrations/generated/alice-11-trial-begins.webp",
+                  "alt": "The royal courtroom is packed as the Queen and King preside, the White Rabbit reads the charge, the Knave of Hearts stands accused and a plate of tarts waits nearby.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-hatter-evidence",
+                  "blockId": "very-strange-witnesses",
+                  "path": "illustrations/generated/alice-11-hatter-evidence.webp",
+                  "alt": "The nervous Hatter gives evidence while clutching his teacup as the Queen interrogates him and Alice watches from the crowded courtroom.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-alice-growing-trial",
+                  "blockId": "alice-growing",
+                  "path": "illustrations/generated/alice-11-alice-growing.webp",
+                  "alt": "Alice grows noticeably larger than the jurors and spectators as the startled royal court reacts around her.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "alices-evidence",
+              "illustrations": [
+                {
+                  "id": "modern-jury-box",
+                  "blockId": "alice-takes-the-stand",
+                  "path": "illustrations/generated/alice-12-jury-box.webp",
+                  "alt": "Enlarged Alice jumps up when called and accidentally tips over the jury box, sending the tiny jurors tumbling onto the courtroom floor.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-pack-of-cards",
+                  "blockId": "only-a-pack-of-cards",
+                  "path": "illustrations/generated/alice-12-pack-of-cards.webp",
+                  "alt": "Alice stands defiantly against the Queen as the courtroom breaks into chaos and playing cards whirl through the air around the panicking court.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-waking-riverbank",
+                  "blockId": "waking-up",
+                  "path": "illustrations/generated/alice-12-waking-riverbank.webp",
+                  "alt": "Alice wakes beneath the riverside tree with ordinary leaves scattered across her dress while her sister sits beside her holding the book.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
