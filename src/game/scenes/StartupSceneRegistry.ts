@@ -14,9 +14,7 @@ import { WhisperingWoodsScene } from './WhisperingWoodsScene';
 
 type SceneConstructor = new () => Phaser.Scene;
 
-let deferredStartupScenes:
-  | Promise<typeof import('./DeferredStartupScenes')>
-  | null = null;
+let deferredStartupScenes: Promise<typeof import('./DeferredStartupScenes')> | null = null;
 
 function loadDeferredStartupScene(key: DeferredStartupSceneKey): Promise<SceneConstructor> {
   deferredStartupScenes ??= import('./DeferredStartupScenes');
