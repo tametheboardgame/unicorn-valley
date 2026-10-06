@@ -1,7 +1,7 @@
 ---
 id: MG-WP7
 title: Pond Leap expansion
-status: active
+status: in_progress
 autonomy: amber
 depends_on: [MG-WP6]
 parallel_safe: true
