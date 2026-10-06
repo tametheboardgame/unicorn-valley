@@ -1,5 +1,23 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-06 R6.5-WP19SH1.6 dual-edition illustration sequence advanced
+
+**SH1.6.1 - Alice's Adventures in Wonderland is complete, human-approved and merged via PR #291.**
+The finished Story House edition now has 36 approved modern illustrations, independent Classic /
+Modern illustration selection and the approved White Rabbit modern cover treatment while preserving
+the historic/classic material.
+
+**Next: SH1.6.2 - The Tale of Peter Rabbit.** Work starts with the five-chapter Story House audit and
+visual bible, then bounded Chapters 1-2 and Chapters 3-5 generation batches, followed by integration,
+modern-cover closeout and human preview. The 10-page Full Classic Text and all 26 historic Beatrix
+Potter illustrations are preservation requirements and must not be altered.
+
+After Peter Rabbit, **SH1.6.3 - The Tale of Jemima Puddle-Duck** remains next, preserving its 25
+historic Full Classic illustrations.
+
+Authoritative detail:
+`docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`.
+
 ## 2026-09-28 R6.5-WP19SH1 Story House illustrated classics parallel stream planned
 
 A separate Story House content stream is now planned alongside the main H3.11.5+ world/interior
