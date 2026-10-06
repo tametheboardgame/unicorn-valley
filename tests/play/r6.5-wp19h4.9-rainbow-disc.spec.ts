@@ -86,6 +86,49 @@ async function waitForGoodThrowTiming(page: Page): Promise<void> {
     .toBe(true);
 }
 
+async function currentOpenLane(page: Page): Promise<number> {
+  const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+  for (let index = 0; index < 3; index += 1) {
+    const defender = scene.objects.find(
+      ({ name, effectiveVisible }) =>
+        name === `rainbow-disc-activity:defender:${index}` && effectiveVisible,
+    );
+    if (!defender) return index;
+  }
+  throw new Error('No open Rainbow Disc lane is visible.');
+}
+
+async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
+  await expect
+    .poll(async () => {
+      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name.startsWith('rainbow-disc-activity:defence-telegraph:') && effectiveVisible,
+      );
+    })
+    .toBe(true);
+
+  const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const telegraph = scene.objects.find(
+    ({ name, effectiveVisible }) =>
+      name.startsWith('rainbow-disc-activity:defence-telegraph:') && effectiveVisible,
+  );
+  if (!telegraph) throw new Error('Rainbow Disc defence telegraph is unavailable.');
+  const telegraphedLane = Number(telegraph.name.split(':').at(-1));
+  const chosenLane = chooseCorrectly ? telegraphedLane : (telegraphedLane + 1) % 3;
+  const receiver = scene.objects.find(
+    ({ name, effectiveVisible }) =>
+      name === `rainbow-disc-activity:opponent-receiver:${chosenLane}` && effectiveVisible,
+  );
+  if (!receiver) throw new Error('Rainbow Disc defence receiver is unavailable.');
+  await page.mouse.click(receiver.x, receiver.y);
+}
+
+async function completeOpenLanePass(page: Page): Promise<void> {
+  await dragDiscToReceiver(page, await currentOpenLane(page));
+}
+
 async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
   const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
   const disc = scene.objects.find(
@@ -230,21 +273,35 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     )
     .toBe('paused');
 
-  const safeLaneByPass = [1, 2, 0] as const;
-  for (let pass = 0; pass < 3; pass += 1) {
-    await dragDiscToReceiver(page, safeLaneByPass[pass]);
-    if (pass < 2) {
-      const expectedFilled = '●'.repeat(pass + 1);
+  for (let goal = 0; goal < 2; goal += 1) {
+    for (let pass = 0; pass < 3; pass += 1) {
+      await completeOpenLanePass(page);
+      if (pass < 2) {
+        await page.waitForTimeout(520);
+      }
+    }
+
+    if (goal === 0) {
+      await expect
+        .poll(async () => {
+          const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+          return activity.objects.find(
+            ({ name, effectiveVisible }) =>
+              name === 'rainbow-disc-activity:scoreline' && effectiveVisible,
+          )?.text;
+        })
+        .toContain('YOU 1');
+
+      await defendTelegraphedLane(page, true);
       await expect
         .poll(async () => {
           const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
           return activity.objects.some(
-            ({ text, effectiveVisible }) =>
-              effectiveVisible && text?.includes(`Your chain: ${expectedFilled}`) === true,
+            ({ name, effectiveVisible }) =>
+              name === 'rainbow-disc-activity:thrower' && effectiveVisible,
           );
         })
         .toBe(true);
-      await page.waitForTimeout(520);
     }
   }
 
@@ -256,6 +313,14 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
       );
     })
     .toBe(true);
+
+  const finalMatch = await snapshotScene(page, 'RainbowDiscActivityScene');
+  expect(
+    finalMatch.objects.find(
+      ({ name, effectiveVisible }) =>
+        name === 'rainbow-disc-activity:scoreline' && effectiveVisible,
+    )?.text,
+  ).toContain('YOU 2');
 
   await page.keyboard.press('Escape');
   await waitForActiveScene(page, 'RainbowMeadowScene');
@@ -439,6 +504,64 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   if (!laneOne) throw new Error('Defence lane one is unavailable.');
 
   await page.mouse.click(laneOne.x, laneOne.y);
+
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:thrower' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+});
+
+test('MG-WP6C defence telegraph can be read or missed and the opposition can score', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForDiagnostics(page);
+  await waitForActiveScene(page, 'RainbowMeadowScene');
+
+  await setMeadowPlayerPosition(page, 700, 1400);
+  await expect
+    .poll(async () => {
+      const meadow = await snapshotScene(page, 'RainbowMeadowScene');
+      return meadow.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'exploration-interaction-prompt-label' && effectiveVisible,
+      )?.text;
+    })
+    .toBe('Join the game');
+
+  await page.keyboard.press('E');
+  await waitForActiveScene(page, 'RainbowDiscActivityScene');
+
+  const attack = await snapshotScene(page, 'RainbowDiscActivityScene');
+  const markedLane = [0, 1, 2].find((index) =>
+    attack.objects.some(
+      ({ name, effectiveVisible }) =>
+        name === `rainbow-disc-activity:defender:${index}` && effectiveVisible,
+    ),
+  );
+  if (markedLane === undefined) throw new Error('No marked lane is available.');
+
+  await dragDiscToReceiver(page, markedLane);
+
+  await defendTelegraphedLane(page, false);
+  await defendTelegraphedLane(page, false);
+
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:scoreline' && effectiveVisible,
+      )?.text;
+    })
+    .toContain('1 VILLAGE');
 
   await expect
     .poll(async () => {
