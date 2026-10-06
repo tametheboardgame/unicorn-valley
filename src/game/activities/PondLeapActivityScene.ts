@@ -225,11 +225,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
   private syncRunPresentation(): void {
     const course = getPondLeapCourse(this.courseId);
-    const challenge = getPondLeapTimingChallenge(
-      this.courseId,
-      this.hopIndex,
-      this.assistance,
-    );
+    const challenge = getPondLeapTimingChallenge(this.courseId, this.hopIndex, this.assistance);
     const zoneWidth = TIMING_WIDTH * challenge.tolerance * 2;
     this.timingZone
       ?.setPosition(TIMING_LEFT + challenge.centre * TIMING_WIDTH, TIMING_Y)
