@@ -237,3 +237,26 @@ export function applyPondLeapModePressure(
     sweepSpeed: challenge.sweepSpeed * speedScale,
   };
 }
+
+
+export function pondLeapModeTitle(mode: PondLeapMode): string {
+  switch (mode) {
+    case 'classic':
+      return 'Classic Crossing';
+    case 'practice':
+      return 'Practice Pond';
+    case 'ripple-rush':
+      return 'Ripple Rush';
+  }
+}
+
+export function defaultPondLeapAssistance(mode: PondLeapMode): PondLeapAssistanceLevel {
+  switch (mode) {
+    case 'practice':
+      return 'relaxed';
+    case 'ripple-rush':
+      return 'quick';
+    case 'classic':
+      return 'standard';
+  }
+}
