@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - rainbow-disc
 
 ## Current checkpoint
 
-**MG-WP6A — audit and expansion design and MG-WP6B — unified throw and assistance foundation are complete/human-approved. MG-WP6C — real short-match loop is active.**
+**MG-WP6A — audit/design and MG-WP6B — unified throw/assistance are complete; WP6B is human-approved. MG-WP6C — real short-match loop, MG-WP6D — Practice hub/drills and MG-WP6E — integration/replay polish are implemented. MG-WP6F — responsive/accessibility qualification and human playtest is active.**
 
 Detailed design contract: `docs/minigames/RAINBOW-DISC-EXPANSION-DESIGN.md`.
 
@@ -130,6 +130,8 @@ Acceptance:
 - defence can be read from a visible cue;
 - no hidden cheating/random catch override.
 
+**Status: implemented; automated/final human qualification pending.**
+
 ### MG-WP6D — Practice hub and drills
 
 Deliverables:
@@ -148,6 +150,8 @@ Acceptance:
 - modes reuse shared throw rules;
 - no adventure progression writes.
 
+**Status: implemented; automated/final human qualification pending.**
+
 ### MG-WP6E — Mode/integration and replay polish
 
 Deliverables:
@@ -165,6 +169,8 @@ Acceptance:
 - one canonical scene serves every entry;
 - no world-only or Just-Games-only rules fork;
 - Back labels/return behaviour remain session-driven.
+
+**Status: implemented; automated/final human qualification pending.**
 
 ### MG-WP6F — Responsive/accessibility qualification and human playtest
 
@@ -224,3 +230,43 @@ The active short-match slice now includes:
 - match completion supports either side reaching the target;
 - result presentation reports the final score;
 - browser qualification covers a two-goal player win and an opposition goal path.
+
+
+## MG-WP6D implementation checkpoint
+
+Practice now opens a single in-scene hub rather than a second gameplay scene.
+
+Implemented drills:
+
+- **Target Range** — the original five-throw range, retained and moved behind the hub;
+- **Passing Drill** — six open-lane reads using the shared aim/timing rules;
+- **Rainbow Streak** — eight called-target throws with a progressively tighter timing profile.
+
+Session-local best target score and streak values are shown in the hub. No durable adventure or mini-game progression is written.
+
+## MG-WP6E implementation checkpoint
+
+Integration/replay polish now includes:
+
+- player-selectable **Gentle / Standard / Challenge** assistance;
+- a Match pre-game assistance screen;
+- assistance controls inside the Practice hub;
+- first-to-two Match rematch and Change Level flow;
+- Practice Again and Practice Menu result flow;
+- explicit Just Games browser coverage for Match and Practice;
+- preservation of Rainbow Meadow Match and Practice entry points;
+- one canonical `RainbowDiscActivityScene` for every path.
+
+## MG-WP6F active qualification
+
+Automated coverage now includes:
+
+- deterministic assistance, match and practice-rule unit tests;
+- player and opposition scoring paths;
+- readable defence telegraph;
+- all three Practice drills;
+- Match/Practice Just Games launch and return;
+- keyboard-only setup/hub navigation;
+- representative portrait-tablet canvas containment.
+
+Final acceptance still requires the child-facing human playtest. Do not merge before that approval.
