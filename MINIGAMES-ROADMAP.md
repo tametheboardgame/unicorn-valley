@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP5 are complete and merged. MG-WP6 - Rainbow Disc is active: MG-WP6A audit/design is complete and MG-WP6B unified throw + assistance foundation is in progress. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
+**MG-WP0 through MG-WP5 are complete and merged. MG-WP6 - Rainbow Disc is active: MG-WP6A audit/design and MG-WP6B unified throw + assistance foundation are complete/human-approved; MG-WP6C real short-match loop is active. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 applied that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
