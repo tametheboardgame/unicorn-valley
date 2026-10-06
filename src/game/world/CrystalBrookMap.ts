@@ -139,9 +139,7 @@ export interface CrystalBrookLocalTrail {
     | 'bridge-link'
     | 'woods-pass'
     | 'crystal-cup'
-    | 'crystal-grotto'
-    | 'crystalarium'
-    | 'crystal-checkers';
+    | 'crystal-grotto';
   points: readonly MapPoint[];
   width: number;
 }
@@ -238,22 +236,6 @@ export const CRYSTAL_BROOK_LOCAL_TRAILS = [
     id: 'crystal-grotto',
     points: CRYSTAL_BROOK_GROTTO_ROUTE,
     width: 62,
-  },
-  {
-    id: 'crystalarium',
-    points: [
-      { x: 1450, y: 1390 },
-      { x: 1450, y: 1450 },
-    ],
-    width: 58,
-  },
-  {
-    id: 'crystal-checkers',
-    points: [
-      { x: 820, y: 1240 },
-      { x: 820, y: 1380 },
-    ],
-    width: 58,
   },
 ] as const satisfies readonly CrystalBrookLocalTrail[];
 
