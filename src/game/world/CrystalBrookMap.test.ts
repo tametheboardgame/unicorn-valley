@@ -244,13 +244,21 @@ describe('Crystal Brook map', () => {
     );
   });
 
-  it('keeps reserved activity pockets connected without adding water-crossing side paths', () => {
-    const crystalarium = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystalarium');
-    const checkers = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-checkers');
+  it('keeps reserved activity pockets clear without drawing dead-end feeder trails', () => {
+    const trailIds = CRYSTAL_BROOK_LOCAL_TRAILS.map(({ id }) => id);
 
-    expect(CRYSTAL_BROOK_LOCAL_TRAILS.some(({ id }) => id.includes('stepping-stones'))).toBe(false);
-    expect(crystalarium?.points.at(-1)).toEqual(CRYSTAL_BROOK_ACTIVITY_POCKETS[0].approach);
-    expect(checkers?.points.at(-1)).toEqual(CRYSTAL_BROOK_ACTIVITY_POCKETS[1].approach);
+    expect(trailIds).not.toContain('crystalarium');
+    expect(trailIds).not.toContain('crystal-checkers');
+    expect(trailIds.some((id) => id.includes('stepping-stones'))).toBe(false);
+
+    for (const pocket of CRYSTAL_BROOK_ACTIVITY_POCKETS) {
+      expect(
+        isPointInsideWalkableBounds(CRYSTAL_BROOK_MAP, pocket.approach, PLAYER_CLEARANCE),
+      ).toBe(true);
+      expect(isPointBlocked(pocket.approach, CRYSTAL_BROOK_MAP.colliders, PLAYER_CLEARANCE)).toBe(
+        false,
+      );
+    }
   });
 
   it('keeps canonical route endpoints aligned with their structural destinations', () => {
