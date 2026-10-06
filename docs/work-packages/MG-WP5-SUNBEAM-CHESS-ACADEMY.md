@@ -527,3 +527,24 @@ Accepted behaviour:
 - the resumed Coach Match remains isolated learning/practice state and cannot affect adventure progression.
 
 Automated qualification must prove the coached game survives leaving Chess Academy back to Just Games and re-entering before resuming.
+
+
+## MG-WP5F final human acceptance
+
+David approved the completed WP5F Chess Academy experience on 2026-10-06 after testing the learning records, responsive presentation, Friendly Match continuity and Coach Match continuity in the Cloudflare branch preview.
+
+This closes the human-playtest gate for MG-WP5.
+
+Accepted final package state:
+
+- Lessons and Puzzle Garden are complete and replayable;
+- Coach Match provides explainable beginner coaching without permanently blocking legal moves;
+- Friendly Match provides the Dandelion / Clover / Sunbeam opponent ladder;
+- completed lessons and puzzles persist only in the isolated Chess Academy learning namespace;
+- unfinished Friendly Match and Coach Match games can be resumed after leaving and re-entering Chess Academy;
+- resumable match state does not mutate or gate adventure progression;
+- touch/pointer and keyboard play remain supported;
+- representative portrait/tablet containment is covered;
+- the package is ready to merge and MG-WP5 is complete after that merge.
+
+The next mini-game refinement package is **MG-WP6 — Rainbow Disc**.
