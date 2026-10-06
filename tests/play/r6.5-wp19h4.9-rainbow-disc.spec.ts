@@ -492,11 +492,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
     })
     .toBe(true);
 
-  await clickNamedObject(
-    page,
-    'RainbowDiscActivityScene',
-    'rainbow-disc-activity:result-menu',
-  );
+  await clickNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:result-menu');
   await expect
     .poll(async () => {
       const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -739,10 +735,7 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
       ({ name, effectiveVisible }) =>
         name.startsWith('rainbow-disc-activity:receiver-ring:') && effectiveVisible,
     )
-    .sort(
-      (left, right) =>
-        Math.abs(left.x - calledLabel.x) - Math.abs(right.x - calledLabel.x),
-    )[0];
+    .sort((left, right) => Math.abs(left.x - calledLabel.x) - Math.abs(right.x - calledLabel.x))[0];
   expect(calledRing).toBeDefined();
   if (!calledRing) throw new Error('Rainbow Streak called ring is unavailable.');
 
