@@ -123,6 +123,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private timingPhase = 0;
   private timingValue = 0.5;
   private timingChallengeIndex = 0;
+  private diagnosticTimingPinned = false;
   private assistance: RainbowDiscAssistanceLevel = 'standard';
   private matchSetup = true;
   private dragStartPoint: Point | null = null;
