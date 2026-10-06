@@ -367,6 +367,21 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     )?.text,
   ).toContain('YOU 2');
 
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    'rainbow-disc-activity:result-change-level',
+  );
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:match-setup-title' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+
   await page.keyboard.press('Escape');
   await waitForActiveScene(page, 'RainbowMeadowScene');
 });
@@ -473,6 +488,21 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
       const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
       return activity.objects.some(
         ({ text, effectiveVisible }) => effectiveVisible && text === 'PRACTICE COMPLETE!',
+      );
+    })
+    .toBe(true);
+
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    'rainbow-disc-activity:result-menu',
+  );
+  await expect
+    .poll(async () => {
+      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return activity.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:practice-menu-title' && effectiveVisible,
       );
     })
     .toBe(true);
