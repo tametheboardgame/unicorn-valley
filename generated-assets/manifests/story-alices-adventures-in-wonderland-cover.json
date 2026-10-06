@@ -5,11 +5,11 @@
     "fileId": "1XwgT6w-IXV_vbzPtEJCGcZocYMvG23B7"
   },
   "expectedSourceName": "alice-cover-cropped.webp",
-  "destination": "public/stories/alices-adventures-in-wonderland/covers/cover.webp",
+  "destination": "public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-cover-cropped.webp",
   "transform": {
     "maxWidth": 480,
     "maxHeight": 640,
     "quality": 88
   },
-  "revision": 1
+  "revision": 2
 }
