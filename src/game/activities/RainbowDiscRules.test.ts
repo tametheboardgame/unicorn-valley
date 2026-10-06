@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  RAINBOW_DISC_GOALS_TO_WIN,
   applyRainbowDiscAssistance,
   getRainbowDiscAssistanceProfile,
+  isRainbowDiscMatchComplete,
   isRainbowDiscReleaseAccurate,
+  rainbowDiscDefenceLane,
+  rainbowDiscDefenceTelegraphAlpha,
   rainbowDiscMissOffset,
+  rainbowDiscOpenLane,
 } from './RainbowDiscRules';
 
 describe('RainbowDiscRules', () => {
@@ -38,4 +43,34 @@ describe('RainbowDiscRules', () => {
     expect(rainbowDiscMissOffset(0.2)).toBeLessThan(0);
     expect(rainbowDiscMissOffset(0.9)).toBeGreaterThan(0);
   });
+  it('rotates authored attack lane patterns between possessions', () => {
+    expect([0, 1, 2].map((pass) => rainbowDiscOpenLane(0, pass))).toEqual([1, 2, 0]);
+    expect([0, 1, 2].map((pass) => rainbowDiscOpenLane(1, pass))).toEqual([2, 0, 1]);
+    expect([0, 1, 2].map((pass) => rainbowDiscOpenLane(2, pass))).toEqual([0, 1, 2]);
+  });
+
+  it('uses deterministic readable opposition lane sequences', () => {
+    expect(rainbowDiscDefenceLane(0, 0)).toBe(1);
+    expect(rainbowDiscDefenceLane(0, 1)).toBe(2);
+    expect(rainbowDiscDefenceLane(1, 0)).toBe(0);
+    expect(rainbowDiscDefenceLane(1, 1)).toBe(1);
+  });
+
+  it('completes a short match when either side reaches the target score', () => {
+    expect(RAINBOW_DISC_GOALS_TO_WIN).toBe(2);
+    expect(isRainbowDiscMatchComplete(1, 1)).toBe(false);
+    expect(isRainbowDiscMatchComplete(2, 0)).toBe(true);
+    expect(isRainbowDiscMatchComplete(0, 2)).toBe(true);
+  });
+
+  it('keeps defence telegraph visible at every assistance level', () => {
+    expect(rainbowDiscDefenceTelegraphAlpha('gentle')).toBeGreaterThan(
+      rainbowDiscDefenceTelegraphAlpha('standard'),
+    );
+    expect(rainbowDiscDefenceTelegraphAlpha('standard')).toBeGreaterThan(
+      rainbowDiscDefenceTelegraphAlpha('challenge'),
+    );
+    expect(rainbowDiscDefenceTelegraphAlpha('challenge')).toBeGreaterThan(0);
+  });
+
 });
