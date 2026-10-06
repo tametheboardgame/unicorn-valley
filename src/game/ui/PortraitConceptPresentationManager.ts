@@ -279,7 +279,7 @@ export class PortraitConceptPresentationManager {
       return;
     }
     if (!scene.game.scene.keys.InventoryScene) {
-      const { InventoryScene } = await import('../scenes/InventoryScene');
+      const { InventoryScene } = await import('../runtime/PortraitModalScenes');
       scene.scene.add('InventoryScene', InventoryScene, false);
     }
     if (!scene.scene.isActive() || scene.scene.isActive('InventoryScene')) {
@@ -294,7 +294,7 @@ export class PortraitConceptPresentationManager {
       return;
     }
     if (!scene.game.scene.keys.WonderbookScene) {
-      const { WonderbookScene } = await import('../scenes/WonderbookScene');
+      const { WonderbookScene } = await import('../runtime/PortraitModalScenes');
       scene.scene.add('WonderbookScene', WonderbookScene, false);
     }
     if (!scene.scene.isActive() || scene.scene.isActive('WonderbookScene')) {
@@ -309,7 +309,7 @@ export class PortraitConceptPresentationManager {
       return;
     }
     if (!scene.game.scene.keys.SettingsScene) {
-      const { SettingsScene } = await import('../scenes/SettingsScene');
+      const { SettingsScene } = await import('../runtime/PortraitModalScenes');
       scene.scene.add('SettingsScene', SettingsScene, false);
     }
     if (!scene.scene.isActive() || scene.scene.isActive('SettingsScene')) {
