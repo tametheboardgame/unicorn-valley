@@ -503,3 +503,27 @@ Accepted follow-up behaviour:
 - the resumable game remains learning/practice data only and has no adventure progression coupling.
 
 Automated qualification must prove the session survives leaving Chess Academy back to Just Games and re-entering the chess scene before resuming.
+
+
+## MG-WP5F human-playtest follow-up — Coach Match continuity
+
+The same continuity principle now applies to Coach Match.
+
+Accepted behaviour:
+
+- an unfinished Coach Match is persisted in the isolated Chess Academy learning namespace;
+- returning to Coach Match offers:
+  - **Carry on previous coached game**;
+  - **Start a new coached game**;
+- Carry on restores the board and move history from the last committed legal position;
+- transient coaching presentation state is deliberately not persisted:
+  - an open “Have another look / Play it anyway” prompt;
+  - current hint stage;
+  - temporary coach feedback timing;
+- if the saved position is waiting for the village reply, resuming safely completes that reply;
+- Undo updates the persisted coached-game position;
+- Start a new coached game replaces the previous unfinished game;
+- a completed coached game is removed from the resumable-session slot;
+- the resumed Coach Match remains isolated learning/practice state and cannot affect adventure progression.
+
+Automated qualification must prove the coached game survives leaving Chess Academy back to Just Games and re-entering before resuming.
