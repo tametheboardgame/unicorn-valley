@@ -14,6 +14,8 @@ interface DiagnosticObject {
   y: number;
   visible: boolean;
   interactive: boolean;
+  bodyVelocityX: number | null;
+  bodyVelocityY: number | null;
 }
 
 interface DiagnosticSceneHealth {
@@ -44,6 +46,7 @@ interface Point {
 
 interface MovementMeasurement {
   distance: number;
+  speed: number;
   performance: FramePerformanceSnapshot;
 }
 
@@ -51,7 +54,7 @@ const SCENE_KEY = 'MoonflowerGladeScene';
 const PLAYER_NAME = 'world-player-unicorn';
 const START_X = 1600;
 const START_Y = 900;
-const HOLD_MS = 600;
+const MOVEMENT_SAMPLE_FRAMES = 18;
 
 async function seedIntroducedPip(page: Page): Promise<void> {
   await page.addInitScript(() => {
@@ -315,8 +318,31 @@ async function measureMovement(
       api?.resetPerformance();
     });
 
-    await page.waitForTimeout(HOLD_MS);
-    const after = await playerPosition(page);
+    // Sample a fixed number of actual game frames rather than a fixed amount of wall-clock time.
+    // Loaded CI runners can stall the browser between frames, which previously made a healthy
+    // velocity look like a movement regression simply because fewer simulation frames occurred
+    // during the 600 ms hold window.
+    await page.waitForFunction(
+      (requiredSamples) => {
+        const api = (
+          window as typeof window & {
+            __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
+          }
+        ).__UNICORN_VALLEY_DIAGNOSTICS__;
+        return (api?.performance().sampleCount ?? 0) >= requiredSamples;
+      },
+      MOVEMENT_SAMPLE_FRAMES,
+      { timeout: 8_000 },
+    );
+
+    const snapshot = await getSnapshot(page);
+    const player = snapshot.scenes
+      .find((scene) => scene.key === SCENE_KEY)
+      ?.objects.find((object) => object.name === PLAYER_NAME);
+    if (!player || player.bodyVelocityX === null || player.bodyVelocityY === null) {
+      throw new Error('Moonflower Glade player velocity diagnostics are unavailable.');
+    }
+
     const performance = await page.evaluate(() => {
       const api = (
         window as typeof window & {
@@ -329,7 +355,8 @@ async function measureMovement(
       return api.performance();
     });
     return {
-      distance: Math.hypot(after.x - activeStart.x, after.y - activeStart.y),
+      distance: Math.hypot(player.x - activeStart.x, player.y - activeStart.y),
+      speed: Math.hypot(player.bodyVelocityX, player.bodyVelocityY),
       performance,
     };
   } finally {
@@ -359,9 +386,10 @@ test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame ti
   await page.waitForTimeout(400);
   const normalHealthAfter = await sceneHealth(page);
 
-  expect(normalWalk.distance).toBeGreaterThan(120);
-  expect(normalGallop.distance / normalWalk.distance).toBeGreaterThan(1.48);
-  expect(normalGallop.distance / normalWalk.distance).toBeLessThan(1.72);
+  expect(normalWalk.distance).toBeGreaterThan(8);
+  expect(normalWalk.speed).toBeGreaterThan(240);
+  expect(normalGallop.speed / normalWalk.speed).toBeGreaterThan(1.48);
+  expect(normalGallop.speed / normalWalk.speed).toBeLessThan(1.72);
   expect(normalHealthAfter.objectCount).toBeLessThanOrEqual(normalHealthBefore.objectCount + 4);
   expect(normalHealthAfter.tweenCount ?? 0).toBeLessThanOrEqual(
     (normalHealthBefore.tweenCount ?? 0) + 4,
@@ -375,12 +403,15 @@ test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame ti
   await page.waitForTimeout(400);
   const constrainedHealthAfter = await sceneHealth(page);
 
-  expect(constrainedWalk.distance / normalWalk.distance).toBeGreaterThan(0.85);
-  expect(constrainedWalk.distance / normalWalk.distance).toBeLessThan(1.15);
-  expect(constrainedGallop.distance / normalGallop.distance).toBeGreaterThan(0.85);
-  expect(constrainedGallop.distance / normalGallop.distance).toBeLessThan(1.15);
-  expect(constrainedGallop.distance / constrainedWalk.distance).toBeGreaterThan(1.48);
-  expect(constrainedGallop.distance / constrainedWalk.distance).toBeLessThan(1.72);
+  expect(constrainedWalk.distance).toBeGreaterThan(8);
+  expect(constrainedWalk.speed / normalWalk.speed).toBeGreaterThan(0.85);
+  expect(constrainedWalk.speed / normalWalk.speed).toBeLessThan(1.15);
+  expect(constrainedGallop.speed / normalGallop.speed).toBeGreaterThan(0.85);
+  expect(constrainedGallop.speed / normalGallop.speed).toBeLessThan(1.15);
+  expect(constrainedGallop.speed / constrainedWalk.speed).toBeGreaterThan(1.48);
+  expect(constrainedGallop.speed / constrainedWalk.speed).toBeLessThan(1.72);
+  expect(constrainedWalk.performance.sampleCount).toBeGreaterThanOrEqual(MOVEMENT_SAMPLE_FRAMES);
+  expect(constrainedGallop.performance.sampleCount).toBeGreaterThanOrEqual(MOVEMENT_SAMPLE_FRAMES);
   expect(constrainedWalk.performance.p95FrameMs).toBeLessThan(90);
   expect(constrainedGallop.performance.p95FrameMs).toBeLessThan(90);
   expect(constrainedWalk.performance.worstFrameMs).toBeLessThan(250);
