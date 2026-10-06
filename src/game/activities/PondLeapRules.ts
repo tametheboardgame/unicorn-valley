@@ -210,8 +210,7 @@ export function isPondLeapModeFinished(mode: PondLeapMode, state: PondLeapModeRu
 
   if (mode === 'ripple-rush') {
     return (
-      state.successes >= POND_LEAP_RIPPLE_RUSH_HOPS ||
-      isPondLeapRippleRushFailed(state.splashes)
+      state.successes >= POND_LEAP_RIPPLE_RUSH_HOPS || isPondLeapRippleRushFailed(state.splashes)
     );
   }
 
