@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - rainbow-disc
 
 ## Current checkpoint
 
-**MG-WP6A — audit and expansion design is complete. MG-WP6B — unified throw and assistance foundation is active.**
+**MG-WP6A — audit and expansion design and MG-WP6B — unified throw and assistance foundation are complete/human-approved. MG-WP6C — real short-match loop is active.**
 
 Detailed design contract: `docs/minigames/RAINBOW-DISC-EXPANSION-DESIGN.md`.
 
@@ -109,6 +109,8 @@ Acceptance:
 - keyboard is not forced through hidden spatial precision;
 - Gentle widens/slows transparently rather than silently converting failures to successes.
 
+**Status: complete / human-approved on 2026-10-06.**
+
 ### MG-WP6C — Real short-match loop
 
 Deliverables:
@@ -201,3 +203,24 @@ Do not merge final WP6 until the human gate is explicitly approved.
 Run the game-owned unit/browser contracts plus the shared mini-game launch/return contract.
 
 Do not weaken performance or architecture thresholds to make WP6 green. Existing unrelated baseline failures must be identified as baseline rather than “fixed” inside this package unless they block WP6 directly.
+
+
+## MG-WP6B human acceptance
+
+The first WP6 preview was accepted on 2026-10-06. The shared visible timing model, drag-to-aim behaviour and corrected input parity were considered a good foundation, so implementation proceeded directly into WP6C.
+
+## MG-WP6C implementation checkpoint
+
+The active short-match slice now includes:
+
+- first-to-two scoring;
+- persistent player/opposition scoreline during the match;
+- three-pass chains score a goal instead of ending the activity;
+- authored attack lane patterns rotate between possessions;
+- turnovers hand possession to the opposition;
+- opposition attacks expose a visible blue route shimmer;
+- correct defensive reads intercept and regain possession;
+- two missed defensive reads allow the opposition to score;
+- match completion supports either side reaching the target;
+- result presentation reports the final score;
+- browser qualification covers a two-goal player win and an opposition goal path.
