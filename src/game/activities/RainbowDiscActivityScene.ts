@@ -632,14 +632,14 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.statusText?.setText(
       'DEFEND: watch the blue route shimmer, then cover that lane. Tap it, or use ↑/↓ then Space.',
     );
-    this.progressText?.setText(
-      `${this.matchScoreLabel()} · Attack ${this.opponentAdvance + 1}/2`,
-    );
+    this.progressText?.setText(`${this.matchScoreLabel()} · Attack ${this.opponentAdvance + 1}/2`);
     this.refreshReceiverSelection();
   }
 
   private renderMatchSetup(): void {
-    this.statusText?.setText('Choose how much throw help you want. You can change it after the match.');
+    this.statusText?.setText(
+      'Choose how much throw help you want. You can change it after the match.',
+    );
     this.progressText?.setText('MATCH · First to 2 goals');
 
     const title = this.add
@@ -718,9 +718,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   private renderPracticeMenu(): void {
     const assistance = getRainbowDiscAssistanceProfile(this.assistance);
-    this.statusText?.setText(
-      `Pick a drill. Throw help is set to ${assistance.title}.`,
-    );
+    this.statusText?.setText(`Pick a drill. Throw help is set to ${assistance.title}.`);
     this.progressText?.setText('PRACTICE · Choose a drill');
 
     const title = this.add
@@ -825,7 +823,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.playLayer?.add(thrower);
 
     RECEIVER_Y.forEach((receiverY, index) => {
-      const appearance = RAINBOW_DISC_PLAYER_APPEARANCES[(index + 1) % RAINBOW_DISC_PLAYER_APPEARANCES.length];
+      const appearance =
+        RAINBOW_DISC_PLAYER_APPEARANCES[(index + 1) % RAINBOW_DISC_PLAYER_APPEARANCES.length];
       const receiver = createResidentAppearanceSprite(
         this,
         `rainbow-disc-practice:receiver:${this.practiceThrows}:${index}`,
@@ -1682,10 +1681,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     this.statusText?.setText('They advance. Read the next blue route and cover it.');
-    this.defenceAttackLane = rainbowDiscDefenceLane(
-      this.defenceSequence,
-      this.opponentAdvance,
-    );
+    this.defenceAttackLane = rainbowDiscDefenceLane(this.defenceSequence, this.opponentAdvance);
     this.selectedReceiver = 1;
     this.time.delayedCall(520, () => this.renderPossession());
   }
