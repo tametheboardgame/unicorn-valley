@@ -8,6 +8,14 @@ import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
+  RAINBOW_DISC_PASSING_DRILL_ROUNDS,
+  RAINBOW_DISC_STREAK_THROWS,
+  RAINBOW_DISC_TARGET_RANGE_THROWS,
+  rainbowDiscStreakTarget,
+  rainbowDiscStreakTiming,
+  type RainbowDiscPracticeDrill,
+} from './RainbowDiscPracticeRules';
+import {
   RAINBOW_DISC_GOALS_TO_WIN,
   applyRainbowDiscAssistance,
   getRainbowDiscAssistanceProfile,
@@ -46,7 +54,6 @@ const RECEIVER_Y = [225, 360, 495] as const;
 const THROW_X = [220, 440, 680] as const;
 const TARGET_X = [535, 775, 1040] as const;
 const PASS_COUNT = 3;
-const PRACTICE_THROW_COUNT = 5;
 const PRACTICE_TARGET_BASE_Y = 470;
 const PRACTICE_TARGETS = [
   {
@@ -95,6 +102,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private defenceSequence = 0;
   private practiceThrows = 0;
   private practiceScore = 0;
+  private practiceStreak = 0;
+  private practiceDrill: RainbowDiscPracticeDrill = 'menu';
+  private bestTargetRangeScore = 0;
+  private bestPassingStreak = 0;
+  private bestRainbowStreak = 0;
   private phase: 'attack' | 'defence' = 'attack';
   private opponentAdvance = 0;
   private defenceAttackLane = 1;
@@ -139,6 +151,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.defenceSequence = 0;
     this.practiceThrows = 0;
     this.practiceScore = 0;
+    this.practiceStreak = 0;
+    this.practiceDrill = this.mode === 'practice' ? 'menu' : 'target-range';
+    this.bestTargetRangeScore = 0;
+    this.bestPassingStreak = 0;
+    this.bestRainbowStreak = 0;
     this.phase = 'attack';
     this.opponentAdvance = 0;
     this.defenceAttackLane = 1;
@@ -168,6 +185,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-D', this.selectNextPracticeTarget, this);
     this.input.keyboard?.on('keydown-SPACE', this.keyboardThrow, this);
     this.input.keyboard?.on('keydown-ENTER', this.keyboardThrow, this);
+    this.input.keyboard?.on('keydown', this.handlePracticeMenuKeyboard, this);
     this.input.keyboard?.on('keydown-ESC', this.leaveActivity, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -183,6 +201,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-D', this.selectNextPracticeTarget, this);
       this.input.keyboard?.off('keydown-SPACE', this.keyboardThrow, this);
       this.input.keyboard?.off('keydown-ENTER', this.keyboardThrow, this);
+      this.input.keyboard?.off('keydown', this.handlePracticeMenuKeyboard, this);
       this.input.keyboard?.off('keydown-ESC', this.leaveActivity, this);
       this.playLayer?.destroy(true);
       this.playLayer = null;
@@ -239,7 +258,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         GAME_WIDTH / 2,
         101,
         this.mode === 'practice'
-          ? 'Five throws. Use ←/→ to choose a target. Smaller rings are worth more, faster and tighter.'
+          ? 'Choose a drill: target throwing, open-lane passing or a progressive Rainbow Streak.'
           : 'First to 2 goals. Build a three-catch chain, read the defenders and protect the disc.',
         {
           color: UI_COLOURS.softInk,
@@ -383,7 +402,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     if (this.mode === 'practice') {
-      this.renderPracticeRound();
+      if (this.practiceDrill === 'menu') {
+        this.renderPracticeMenu();
+      } else if (this.practiceDrill === 'passing-drill') {
+        this.renderPassingDrillRound();
+      } else if (this.practiceDrill === 'rainbow-streak') {
+        this.renderRainbowStreakRound();
+      } else {
+        this.renderPracticeRound();
+      }
       return;
     }
 
@@ -393,7 +420,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     const throwOrigin = this.throwOrigin();
-    const targetX = TARGET_X[this.possession] ?? TARGET_X[0];
+    const targetX =
+      this.mode === 'practice' && this.practiceDrill === 'passing-drill'
+        ? 900
+        : (TARGET_X[this.possession] ?? TARGET_X[0]);
     const openLane = rainbowDiscOpenLane(this.attackSequence, this.possession);
 
     const thrower = this.add
@@ -601,6 +631,262 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.refreshReceiverSelection();
   }
 
+  private renderPracticeMenu(): void {
+    this.statusText?.setText('Pick a drill. Each one practises a different Rainbow Disc skill.');
+    this.progressText?.setText('PRACTICE · Choose a drill');
+
+    this.add
+      .text(640, 205, 'Choose a practice drill', {
+        color: '#5f496d',
+        fontFamily: UI_FONT,
+        fontSize: '26px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('rainbow-disc-activity:practice-menu-title');
+
+    this.createButton(
+      640,
+      285,
+      520,
+      `1 · Target Range  ·  Best ${this.bestTargetRangeScore}`,
+      () => this.startPracticeDrill('target-range'),
+      'practice-target-range',
+      this.playLayer,
+    );
+    this.createButton(
+      640,
+      385,
+      520,
+      `2 · Passing Drill  ·  Best streak ${this.bestPassingStreak}`,
+      () => this.startPracticeDrill('passing-drill'),
+      'practice-passing-drill',
+      this.playLayer,
+    );
+    this.createButton(
+      640,
+      485,
+      520,
+      `3 · Rainbow Streak  ·  Best streak ${this.bestRainbowStreak}`,
+      () => this.startPracticeDrill('rainbow-streak'),
+      'practice-rainbow-streak',
+      this.playLayer,
+    );
+
+    const help = this.add
+      .text(640, 548, 'Tap a drill, or press 1, 2 or 3.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
+    this.playLayer?.add(help);
+  }
+
+  private startPracticeDrill(drill: Exclude<RainbowDiscPracticeDrill, 'menu'>): void {
+    this.practiceDrill = drill;
+    this.practiceThrows = 0;
+    this.practiceScore = 0;
+    this.practiceStreak = 0;
+    this.selectedReceiver = 1;
+    this.completed = false;
+    this.actionLocked = false;
+    this.timingPhase = 0;
+    this.renderPossession();
+  }
+
+  private renderPassingDrillRound(): void {
+    const throwOrigin = this.throwOrigin();
+    const targetX = 900;
+    const openLane = rainbowDiscOpenLane(this.practiceThrows, this.practiceThrows % 3);
+
+    const thrower = this.add
+      .sprite(throwOrigin.x - 28, throwOrigin.y, PLAYER_TEXTURE_KEY)
+      .setDisplaySize(ACTIVITY_THROWER_SIZE.width, ACTIVITY_THROWER_SIZE.height)
+      .setOrigin(0.5)
+      .setName('rainbow-disc-activity:thrower');
+    this.playLayer?.add(thrower);
+
+    RECEIVER_Y.forEach((receiverY, index) => {
+      const appearance = RAINBOW_DISC_PLAYER_APPEARANCES[(index + 1) % RAINBOW_DISC_PLAYER_APPEARANCES.length];
+      const receiver = createResidentAppearanceSprite(
+        this,
+        `rainbow-disc-practice:receiver:${this.practiceThrows}:${index}`,
+        `rainbow-disc-activity:receiver:${index}`,
+        appearance,
+      )
+        .setPosition(targetX, receiverY)
+        .setOrigin(ACTIVITY_RESIDENT_BODY_ORIGIN.x, ACTIVITY_RESIDENT_BODY_ORIGIN.y)
+        .setScale(ACTIVITY_RESIDENT_SCALE)
+        .setInteractive({ useHandCursor: true });
+      receiver.on('pointerdown', () => this.selectReceiver(index));
+      this.receiverSprites.push(receiver);
+
+      const marked = index !== openLane;
+      const ring = this.add
+        .circle(
+          targetX,
+          receiverY,
+          55,
+          marked ? 0xf2b4c2 : 0xfff4b8,
+          index === this.selectedReceiver ? 0.2 : 0.05,
+        )
+        .setStrokeStyle(
+          4,
+          index === this.selectedReceiver ? 0xf4c96b : marked ? 0xd9899f : 0xc9b55f,
+          index === this.selectedReceiver ? 0.94 : 0.5,
+        )
+        .setName(`rainbow-disc-activity:receiver-ring:${index}`);
+      this.receiverRings.push(ring);
+      this.playLayer?.add([ring, receiver]);
+
+      if (marked) {
+        const defenderPoint = this.defenderPoint(index);
+        const defender = createResidentAppearanceSprite(
+          this,
+          `rainbow-disc-practice:defender:${this.practiceThrows}:${index}`,
+          `rainbow-disc-activity:defender:${index}`,
+          RAINBOW_DISC_PLAYER_APPEARANCES[(index + 3) % RAINBOW_DISC_PLAYER_APPEARANCES.length],
+        )
+          .setPosition(defenderPoint.x, defenderPoint.y)
+          .setOrigin(
+            ACTIVITY_FLIPPED_RESIDENT_BODY_ORIGIN.x,
+            ACTIVITY_FLIPPED_RESIDENT_BODY_ORIGIN.y,
+          )
+          .setScale(ACTIVITY_RESIDENT_SCALE)
+          .setFlipX(true);
+        this.playLayer?.add(defender);
+      }
+    });
+
+    this.aimGraphics = this.add.graphics().setName('rainbow-disc-activity:aim-line').setDepth(25);
+    this.playLayer?.add(this.aimGraphics);
+    this.disc = createRainbowDiscRing(
+      this,
+      'rainbow-disc-activity:disc',
+      throwOrigin.x,
+      throwOrigin.y,
+      18,
+      7,
+    )
+      .setScale(1, 0.62)
+      .setDepth(30);
+    this.disc.on('pointerdown', () => {
+      if (!this.actionLocked) {
+        this.dragging = true;
+        this.dragStartPoint = this.throwOrigin();
+      }
+    });
+    this.playLayer?.add(this.disc);
+
+    this.statusText?.setText(
+      `Pass ${this.practiceThrows + 1} of ${RAINBOW_DISC_PASSING_DRILL_ROUNDS}: find the open receiver and release in the green.`,
+    );
+    this.progressText?.setText(
+      `Passing · Score ${this.practiceScore}/${RAINBOW_DISC_PASSING_DRILL_ROUNDS} · Streak ${this.practiceStreak} · Best ${this.bestPassingStreak}`,
+    );
+    this.refreshReceiverSelection();
+  }
+
+  private renderRainbowStreakRound(): void {
+    const throwOrigin = this.throwOrigin();
+    const calledTarget = rainbowDiscStreakTarget(this.practiceThrows);
+
+    const thrower = this.add
+      .sprite(throwOrigin.x - 28, throwOrigin.y, PLAYER_TEXTURE_KEY)
+      .setDisplaySize(ACTIVITY_THROWER_SIZE.width, ACTIVITY_THROWER_SIZE.height)
+      .setOrigin(0.5)
+      .setName('rainbow-disc-activity:thrower');
+    this.playLayer?.add(thrower);
+
+    const targets = this.add
+      .graphics()
+      .setName('rainbow-disc-activity:practice-targets')
+      .setDepth(16);
+    this.playLayer?.add(targets);
+
+    targets.lineStyle(4, 0xf4edc4, 0.55);
+    targets.lineBetween(
+      PRACTICE_TARGETS[0].x - 105,
+      PRACTICE_TARGET_BASE_Y,
+      PRACTICE_TARGETS[PRACTICE_TARGETS.length - 1].x + 105,
+      PRACTICE_TARGET_BASE_Y,
+    );
+
+    PRACTICE_TARGETS.forEach((target, index) => {
+      targets.lineStyle(8, 0x7d5b44, 0.9);
+      targets.lineBetween(target.x, target.y + target.radius, target.x, PRACTICE_TARGET_BASE_Y);
+      drawRainbowTarget(targets, target.x, target.y, target.radius, 9);
+      targets.fillStyle(index === calledTarget ? 0xffffff : 0xffefae, 0.95);
+      targets.fillCircle(target.x, target.y, Math.max(7, target.radius * 0.16));
+
+      const selector = this.add
+        .circle(
+          target.x,
+          target.y,
+          target.radius + 14,
+          index === calledTarget ? 0xc9f4ff : 0xfff4b8,
+          index === this.selectedReceiver ? 0.16 : index === calledTarget ? 0.1 : 0,
+        )
+        .setStrokeStyle(
+          index === calledTarget ? 6 : 4,
+          index === this.selectedReceiver ? 0xf4c96b : index === calledTarget ? 0x69bddd : 0xc9b55f,
+          index === calledTarget || index === this.selectedReceiver ? 0.95 : 0.18,
+        )
+        .setInteractive({ useHandCursor: true })
+        .setName(`rainbow-disc-activity:receiver-ring:${index}`);
+      selector.on('pointerdown', () => this.selectReceiver(index));
+      this.receiverRings.push(selector);
+      this.playLayer?.add(selector);
+
+      const label = this.add
+        .text(
+          target.x,
+          PRACTICE_TARGET_BASE_Y + 22,
+          index === calledTarget ? `★ ${target.label.toUpperCase()}` : target.label,
+          {
+            color: '#5f496d',
+            fontFamily: UI_FONT,
+            fontSize: '13px',
+            fontStyle: 'bold',
+            align: 'center',
+          },
+        )
+        .setOrigin(0.5);
+      this.playLayer?.add(label);
+    });
+
+    this.aimGraphics = this.add.graphics().setName('rainbow-disc-activity:aim-line').setDepth(25);
+    this.playLayer?.add(this.aimGraphics);
+    this.disc = createRainbowDiscRing(
+      this,
+      'rainbow-disc-activity:disc',
+      throwOrigin.x,
+      throwOrigin.y,
+      18,
+      7,
+    )
+      .setScale(1, 0.62)
+      .setDepth(30);
+    this.disc.on('pointerdown', () => {
+      if (!this.actionLocked) {
+        this.dragging = true;
+        this.dragStartPoint = this.throwOrigin();
+      }
+    });
+    this.playLayer?.add(this.disc);
+
+    const called = PRACTICE_TARGETS[calledTarget] ?? PRACTICE_TARGETS[1];
+    this.statusText?.setText(
+      `Throw ${this.practiceThrows + 1} of ${RAINBOW_DISC_STREAK_THROWS}: hit the ★ ${called.label} target and keep the streak alive.`,
+    );
+    this.progressText?.setText(
+      `Rainbow Streak · Hits ${this.practiceScore} · Streak ${this.practiceStreak} · Best ${this.bestRainbowStreak}`,
+    );
+    this.refreshReceiverSelection();
+  }
+
   private renderPracticeRound(): void {
     const throwOrigin = this.throwOrigin();
 
@@ -682,10 +968,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const selected = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
     this.statusText?.setText(
-      `Throw ${this.practiceThrows + 1} of ${PRACTICE_THROW_COUNT}: ${selected.label} target — ${selected.points} point${selected.points === 1 ? '' : 's'}.`,
+      `Throw ${this.practiceThrows + 1} of ${RAINBOW_DISC_TARGET_RANGE_THROWS}: ${selected.label} target — ${selected.points} point${selected.points === 1 ? '' : 's'}.`,
     );
     this.progressText?.setText(
-      `Practice: ${this.practiceThrows}/${PRACTICE_THROW_COUNT} • Score: ${this.practiceScore}`,
+      `Practice: ${this.practiceThrows}/${RAINBOW_DISC_TARGET_RANGE_THROWS} • Score: ${this.practiceScore}`,
     );
     this.refreshReceiverSelection();
     this.updateTimingSuccessZone();
@@ -695,7 +981,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     if (this.mode === 'practice') {
       this.statusText?.setText('Practice complete!');
       this.progressText?.setText(
-        `Practice: ${PRACTICE_THROW_COUNT}/${PRACTICE_THROW_COUNT} • Score: ${this.practiceScore}`,
+        `Practice: ${RAINBOW_DISC_TARGET_RANGE_THROWS}/${RAINBOW_DISC_TARGET_RANGE_THROWS} • Score: ${this.practiceScore}`,
       );
     } else {
       this.statusText?.setText(
@@ -832,7 +1118,12 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private keyboardThrow(): void {
-    if (this.actionLocked || this.completed || this.dragging) {
+    if (
+      this.actionLocked ||
+      this.completed ||
+      this.dragging ||
+      (this.mode === 'practice' && this.practiceDrill === 'menu')
+    ) {
       return;
     }
 
@@ -877,11 +1168,16 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     const intercepted =
       this.mode === 'match' && this.phase === 'attack' && this.isReceiverMarked(receiverIndex);
-    const destination = intercepted
-      ? this.defenderPoint(receiverIndex)
-      : accurate
-        ? target
-        : missPoint;
+    const blockedPracticePass =
+      this.mode === 'practice' &&
+      this.practiceDrill === 'passing-drill' &&
+      this.isReceiverMarked(receiverIndex);
+    const destination =
+      intercepted || blockedPracticePass
+        ? this.defenderPoint(receiverIndex)
+        : accurate
+          ? target
+          : missPoint;
 
     this.tweens.add({
       targets: this.disc,
@@ -892,7 +1188,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       ease: 'Sine.Out',
       onComplete: () => {
         if (this.mode === 'practice') {
-          this.handlePracticeAttempt(accurate);
+          this.handlePracticeAttempt(accurate && !blockedPracticePass, receiverIndex);
         } else if (intercepted) {
           this.handleTurnover('intercepted');
         } else if (accurate) {
@@ -942,9 +1238,58 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.time.delayedCall(420, () => this.renderPossession());
   }
 
-  private handlePracticeAttempt(success: boolean): void {
+  private handlePracticeAttempt(success: boolean, receiverIndex: number): void {
+    if (this.practiceDrill === 'passing-drill') {
+      if (success) {
+        this.practiceScore += 1;
+        this.practiceStreak += 1;
+        this.bestPassingStreak = Math.max(this.bestPassingStreak, this.practiceStreak);
+        this.statusText?.setText('Clean pass! Keep the streak going.');
+        this.cameras.main.flash(90, 255, 239, 164, false);
+      } else {
+        this.practiceStreak = 0;
+        this.statusText?.setText('Marked or mistimed — reset and find the next open lane.');
+        this.cameras.main.shake(80, 0.0015);
+      }
+
+      this.practiceThrows += 1;
+      if (this.practiceThrows >= RAINBOW_DISC_PASSING_DRILL_ROUNDS) {
+        this.completed = true;
+        this.time.delayedCall(320, () => this.renderPossession());
+        return;
+      }
+      this.time.delayedCall(360, () => this.renderPossession());
+      return;
+    }
+
+    if (this.practiceDrill === 'rainbow-streak') {
+      const calledTarget = rainbowDiscStreakTarget(this.practiceThrows);
+      const hitCalledTarget = success && receiverIndex === calledTarget;
+      if (hitCalledTarget) {
+        this.practiceScore += 1;
+        this.practiceStreak += 1;
+        this.bestRainbowStreak = Math.max(this.bestRainbowStreak, this.practiceStreak);
+        this.statusText?.setText('Yes! Streak stays alive.');
+        this.cameras.main.flash(90, 255, 239, 164, false);
+      } else {
+        this.practiceStreak = 0;
+        this.statusText?.setText('Streak reset — watch the ★ target and go again.');
+        this.cameras.main.shake(80, 0.0015);
+      }
+
+      this.practiceThrows += 1;
+      if (this.practiceThrows >= RAINBOW_DISC_STREAK_THROWS) {
+        this.completed = true;
+        this.time.delayedCall(320, () => this.renderPossession());
+        return;
+      }
+      this.time.delayedCall(360, () => this.renderPossession());
+      return;
+    }
+
     if (success) {
-      this.practiceScore += PRACTICE_TARGETS[this.selectedReceiver]?.points ?? 1;
+      this.practiceScore += PRACTICE_TARGETS[receiverIndex]?.points ?? 1;
+      this.bestTargetRangeScore = Math.max(this.bestTargetRangeScore, this.practiceScore);
       this.statusText?.setText('Hit! Pick another target.');
       this.cameras.main.flash(90, 255, 239, 164, false);
     } else {
@@ -953,7 +1298,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     this.practiceThrows += 1;
-    if (this.practiceThrows >= PRACTICE_THROW_COUNT) {
+    if (this.practiceThrows >= RAINBOW_DISC_TARGET_RANGE_THROWS) {
       this.completed = true;
       this.time.delayedCall(320, () => this.renderPossession());
       return;
@@ -977,7 +1322,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   private throwOrigin(): Point {
     if (this.mode === 'practice') {
-      return { x: 245, y: 350 };
+      return { x: 245, y: this.practiceDrill === 'passing-drill' ? 370 : 350 };
     }
 
     return {
@@ -987,7 +1332,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private receiverPoint(index: number): Point {
-    if (this.mode === 'practice') {
+    if (this.mode === 'practice' && this.practiceDrill !== 'passing-drill') {
       const target = PRACTICE_TARGETS[index] ?? PRACTICE_TARGETS[1];
       return { x: target.x, y: target.y };
     }
@@ -1023,28 +1368,34 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private selectPreviousMatchLane(): void {
-    if (this.mode === 'practice') {
+    if (this.mode === 'practice' && this.practiceDrill !== 'passing-drill') {
       return;
     }
     this.selectPreviousReceiver();
   }
 
   private selectNextMatchLane(): void {
-    if (this.mode === 'practice') {
+    if (this.mode === 'practice' && this.practiceDrill !== 'passing-drill') {
       return;
     }
     this.selectNextReceiver();
   }
 
   private selectPreviousPracticeTarget(): void {
-    if (this.mode !== 'practice') {
+    if (
+      this.mode !== 'practice' ||
+      (this.practiceDrill !== 'target-range' && this.practiceDrill !== 'rainbow-streak')
+    ) {
       return;
     }
     this.selectPreviousReceiver();
   }
 
   private selectNextPracticeTarget(): void {
-    if (this.mode !== 'practice') {
+    if (
+      this.mode !== 'practice' ||
+      (this.practiceDrill !== 'target-range' && this.practiceDrill !== 'rainbow-streak')
+    ) {
       return;
     }
     this.selectNextReceiver();
@@ -1094,10 +1445,15 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     });
     this.updateTimingSuccessZone();
 
-    if (this.mode === 'practice' && this.statusText && !this.completed) {
+    if (
+      this.mode === 'practice' &&
+      this.practiceDrill === 'target-range' &&
+      this.statusText &&
+      !this.completed
+    ) {
       const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
       this.statusText.setText(
-        `Throw ${this.practiceThrows + 1} of ${PRACTICE_THROW_COUNT}: ${target.label} target — ${target.points} point${target.points === 1 ? '' : 's'}.`,
+        `Throw ${this.practiceThrows + 1} of ${RAINBOW_DISC_TARGET_RANGE_THROWS}: ${target.label} target — ${target.points} point${target.points === 1 ? '' : 's'}.`,
       );
     }
   }
@@ -1105,14 +1461,18 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private currentTimingProfile(): { tolerance: number; sweepSpeed: number; label: string } {
     const baseProfile =
       this.mode === 'practice'
-        ? (() => {
-            const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
-            return {
-              tolerance: target.tolerance,
-              sweepSpeed: target.sweepSpeed,
-              label: target.label,
-            };
-          })()
+        ? this.practiceDrill === 'passing-drill'
+          ? { tolerance: 0.22, sweepSpeed: 0.0042, label: 'Passing' }
+          : this.practiceDrill === 'rainbow-streak'
+            ? rainbowDiscStreakTiming(this.practiceThrows)
+            : (() => {
+                const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
+                return {
+                  tolerance: target.tolerance,
+                  sweepSpeed: target.sweepSpeed,
+                  label: target.label,
+                };
+              })()
         : { tolerance: 0.22, sweepSpeed: 0.0042, label: 'Match' };
 
     return applyRainbowDiscAssistance(baseProfile, this.assistance);
@@ -1140,7 +1500,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private isReceiverMarked(index: number): boolean {
-    const openLane = rainbowDiscOpenLane(this.attackSequence, this.possession);
+    const openLane =
+      this.mode === 'practice' && this.practiceDrill === 'passing-drill'
+        ? rainbowDiscOpenLane(this.practiceThrows, this.practiceThrows % 3)
+        : rainbowDiscOpenLane(this.attackSequence, this.possession);
     return index !== openLane;
   }
 
@@ -1201,6 +1564,34 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.time.delayedCall(520, () => this.renderPossession());
   }
 
+  private handlePracticeMenuKeyboard(event: KeyboardEvent): void {
+    if (this.mode !== 'practice' || this.practiceDrill !== 'menu') {
+      return;
+    }
+
+    if (event.key === '1') {
+      event.preventDefault();
+      this.startPracticeDrill('target-range');
+    } else if (event.key === '2') {
+      event.preventDefault();
+      this.startPracticeDrill('passing-drill');
+    } else if (event.key === '3') {
+      event.preventDefault();
+      this.startPracticeDrill('rainbow-streak');
+    }
+  }
+
+  private returnToPracticeMenu(): void {
+    this.completed = false;
+    this.practiceDrill = 'menu';
+    this.practiceThrows = 0;
+    this.practiceScore = 0;
+    this.practiceStreak = 0;
+    this.selectedReceiver = 1;
+    this.actionLocked = false;
+    this.renderPossession();
+  }
+
   private matchScoreLabel(): string {
     return `YOU ${this.playerScore}  •  ${this.oppositionScore} VILLAGE  ·  First to ${RAINBOW_DISC_GOALS_TO_WIN}`;
   }
@@ -1221,6 +1612,22 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private restartRun(): void {
+    if (this.mode === 'practice') {
+      if (this.practiceDrill === 'menu') {
+        this.renderPossession();
+        return;
+      }
+      this.practiceThrows = 0;
+      this.practiceScore = 0;
+      this.practiceStreak = 0;
+      this.selectedReceiver = 1;
+      this.completed = false;
+      this.actionLocked = false;
+      this.timingPhase = 0;
+      this.renderPossession();
+      return;
+    }
+
     this.possession = 0;
     this.playerScore = 0;
     this.oppositionScore = 0;
