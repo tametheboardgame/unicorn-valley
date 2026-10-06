@@ -76,7 +76,6 @@ export function rainbowDiscMissOffset(
   return timingValue < centre ? -150 : 150;
 }
 
-
 export const RAINBOW_DISC_GOALS_TO_WIN = 2;
 
 const RAINBOW_DISC_ATTACK_PATTERNS = [
