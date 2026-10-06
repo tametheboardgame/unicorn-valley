@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - pond-leap
 
 ## Current checkpoint
 
-**MG-WP7A-C are complete. MG-WP7D — Practice Pond and Ripple Rush implementation is complete and automated qualification is pending.**
+**MG-WP7A-D are complete. MG-WP7E — mode, replay and integration polish is implemented and automated qualification is pending.**
 
 Detailed design contract: `docs/minigames/POND-LEAP-EXPANSION-DESIGN.md`.
 
@@ -141,7 +141,7 @@ Acceptance:
 - a miss has an understandable consequence in each mode;
 - no mode writes adventure progression.
 
-**Status: implementation complete / automated qualification pending.**
+**Status: complete.**
 
 ### MG-WP7E — Mode, replay and integration polish
 
@@ -159,6 +159,8 @@ Acceptance:
 - one canonical `PondLeapActivityScene` serves all entries;
 - mode switching never requires returning to the Just Games catalogue;
 - return behaviour remains launch-context aware.
+
+**Status: implementation complete / automated qualification pending.**
 
 ### MG-WP7F — Responsive/accessibility qualification and human playtest
 
