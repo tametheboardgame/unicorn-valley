@@ -317,3 +317,29 @@ Accepted correction:
 - after a missed defensive read, the next opposition attack provides a fresh read cue.
 
 Automated browser coverage captures the intended lane during the brief cue, waits until the cue has disappeared, and only then makes the defensive choice.
+
+
+## MG-WP6F human-playtest follow-up — internal mode navigation and Practice fail rules
+
+Human review identified two navigation/clarity issues:
+
+1. Match and Practice could only exit through the source return action, which meant a Just Games launch required returning all the way to the Just Games catalogue just to switch Rainbow Disc mode.
+2. Rainbow Streak did not make a wrong target or missed throw feel like a failed streak; it merely reset the streak and continued.
+
+Accepted correction:
+
+- Rainbow Disc owns its own top-level **Modes** chooser;
+- Match and Practice both expose a persistent **Modes** action;
+- Modes switches between Match and Practice inside the same canonical `RainbowDiscActivityScene`;
+- the existing Back action remains the explicit exit to Meadow / Just Games;
+- switching internally updates the Rainbow Disc header and mode presentation without relaunching the mini-game.
+
+Practice fail semantics are now explicit:
+
+- **Target Range** — five-throw score challenge; misses consume a throw but do not end the run;
+- **Passing Drill** — six-pass training drill; mistakes reset the active streak but do not end the drill;
+- **Rainbow Streak** — sudden death; any wrong target or mistimed/missed throw ends the run immediately;
+- Rainbow Streak failure result explicitly distinguishes **Wrong target** from **Missed timing**;
+- the Practice hub labels Rainbow Streak as sudden death so the rule is visible before starting.
+
+Automated qualification covers active Match -> Modes -> Practice, active Practice -> Modes -> Match, and a deliberate wrong-target Rainbow Streak attempt producing an immediate `STREAK OVER` result without returning to Just Games.
