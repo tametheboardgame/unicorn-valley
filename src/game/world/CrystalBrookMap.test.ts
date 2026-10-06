@@ -7,11 +7,11 @@ import {
   CRYSTAL_BROOK_EAST_BRIDGE,
   CRYSTAL_BROOK_ICE_BRIDGES,
   CRYSTAL_BROOK_LAYOUT,
+  CRYSTAL_BROOK_LOCAL_TRAILS,
   CRYSTAL_BROOK_MAP,
   CRYSTAL_BROOK_MEADOW_GORGE,
   CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   CRYSTAL_BROOK_NORTH_BRIDGE,
-  CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPPER_POOL,
@@ -122,12 +122,14 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
 
-  it('uses one continuous west path renderer through the gorge and into Crystal Brook', () => {
-    const westSegment = CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0];
+  it('uses one continuous west-bank trail through the gorge and into Crystal Brook', () => {
+    const westTrail = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'meadow-south-bank');
+    expect(westTrail).toBeDefined();
+    if (!westTrail) throw new Error('Missing Meadow south-bank trail');
 
-    expect(westSegment[0].x).toBeLessThan(0);
-    expect(westSegment[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
-    expect(westSegment[2]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
+    expect(westTrail.points[0].x).toBeLessThan(0);
+    expect(westTrail.points[1]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.position);
+    expect(westTrail.points[2]).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.rainbowMeadow.approach);
     expect(CRYSTAL_BROOK_MEADOW_WATER_EXIT.y).toBeLessThan(
       CRYSTAL_BROOK_MEADOW_GORGE.pathOpening.y,
     );
@@ -190,20 +192,14 @@ describe('Crystal Brook map', () => {
 
   it('uses a northward crossing followed by an eastward glacial bridge crossing', () => {
     expect(CRYSTAL_BROOK_ICE_BRIDGES).toHaveLength(2);
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS).toHaveLength(3);
+    const meadowTrail = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'meadow-south-bank');
+    const bridgeLink = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'bridge-link');
+    const woodsPass = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'woods-pass');
 
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[0].at(-1)).toEqual(
-      CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
-    );
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1][0]).toEqual(
-      CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
-    );
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1].at(-1)).toEqual(
-      CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
-    );
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[2][0]).toEqual(
-      CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
-    );
+    expect(meadowTrail?.points.at(-1)).toEqual(CRYSTAL_BROOK_NORTH_BRIDGE.startLanding);
+    expect(bridgeLink?.points[0]).toEqual(CRYSTAL_BROOK_NORTH_BRIDGE.endLanding);
+    expect(bridgeLink?.points.at(-1)).toEqual(CRYSTAL_BROOK_EAST_BRIDGE.startLanding);
+    expect(woodsPass?.points[0]).toEqual(CRYSTAL_BROOK_EAST_BRIDGE.endLanding);
 
     expect(CRYSTAL_BROOK_NORTH_BRIDGE.endLanding.y).toBeLessThan(
       CRYSTAL_BROOK_NORTH_BRIDGE.startLanding.y - 200,
@@ -238,13 +234,30 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_WATERCOURSE[0].y).toBeLessThan(900);
   });
 
-  it('shares one authored path junction between the main trail and Crystal Cup spur', () => {
-    expect(CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS[1]).toContain(
-      CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
-    );
+  it('shares one authored path junction between the bridge link and Crystal Cup spur', () => {
+    const bridgeLink = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'bridge-link');
+    const crystalCup = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-cup');
+
+    expect(bridgeLink?.points).toContain(CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION);
+    expect(crystalCup?.points[0]).toEqual(CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION);
     expect(CRYSTAL_BROOK_LAYOUT.routes.crystalCupHub[0]).toEqual(
       CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
     );
+  });
+
+  it('integrates stepping stones and reserved activity pockets without painting a trail through the water', () => {
+    const west = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'stepping-stones-west');
+    const east = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'stepping-stones-east');
+    const crystalarium = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystalarium');
+    const checkers = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-checkers');
+
+    expect(west?.points.at(-1)).toEqual(CRYSTAL_BROOK_MAP.steppingStones[0]);
+    expect(east?.points[0]).toEqual(CRYSTAL_BROOK_MAP.steppingStones.at(-1));
+    expect(west?.points).not.toContain(CRYSTAL_BROOK_MAP.steppingStones[1]);
+    expect(east?.points).not.toContain(CRYSTAL_BROOK_MAP.steppingStones[1]);
+
+    expect(crystalarium?.points.at(-1)).toEqual(CRYSTAL_BROOK_ACTIVITY_POCKETS[0].approach);
+    expect(checkers?.points.at(-1)).toEqual(CRYSTAL_BROOK_ACTIVITY_POCKETS[1].approach);
   });
 
   it('keeps canonical route endpoints aligned with their structural destinations', () => {
