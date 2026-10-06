@@ -74,31 +74,9 @@ export class BootScene extends Phaser.Scene {
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
 
-    void import('../visual/CoreNpcProductionPresentationManager').then(
-      ({ getCoreNpcProductionPresentationManager }) => {
-        getCoreNpcProductionPresentationManager(this.sys.game);
-      },
-    );
-    void import('../population/AmbientPopulationWorldManager').then(
-      ({ getAmbientPopulationWorldManager }) => {
-        getAmbientPopulationWorldManager(this.sys.game);
-      },
-    );
-    void import('../settings/TitleSettingsEnhancementManager').then(
-      ({ getTitleSettingsEnhancementManager }) => {
-        getTitleSettingsEnhancementManager(this.sys.game);
-      },
-    );
-    void import('../visual/UiProductionPresentationManager').then(
-      ({ getUiProductionPresentationManager }) => {
-        getUiProductionPresentationManager(this.sys.game);
-      },
-    );
-    void import('../visual/CreatorDelightPresentationManager').then(
-      ({ getCreatorDelightPresentationManager }) => {
-        getCreatorDelightPresentationManager(this.sys.game);
-      },
-    );
+    void import('../runtime/BootDeferredManagers').then(({ startBootDeferredManagers }) => {
+      startBootDeferredManagers(this.sys.game);
+    });
 
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     const targetScene = (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene';
