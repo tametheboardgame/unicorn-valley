@@ -23,3 +23,17 @@ export function rainbowDiscStreakTiming(attempt: number): {
     label: `Streak ${step + 1}`,
   };
 }
+
+
+export type RainbowDiscStreakAttemptResult = 'hit' | 'wrong-target' | 'miss';
+
+export function resolveRainbowDiscStreakAttempt(
+  attempt: number,
+  receiverIndex: number,
+  accurate: boolean,
+): RainbowDiscStreakAttemptResult {
+  if (receiverIndex !== rainbowDiscStreakTarget(attempt)) {
+    return 'wrong-target';
+  }
+  return accurate ? 'hit' : 'miss';
+}
