@@ -53,8 +53,9 @@ const PLAYER_NAME = 'world-player-unicorn';
 const START_X = 1600;
 const START_Y = 900;
 const PERFORMANCE_SAMPLE_FRAMES = 12;
-const WALK_SPEED_MIN = 240;
-const GALLOP_SPEED_MIN = WALK_SPEED_MIN * 1.48;
+const WALK_SPEED_TARGET = 300;
+const GALLOP_SPEED_TARGET = WALK_SPEED_TARGET * 1.6;
+const SETTLED_SPEED_FRACTION = 0.95;
 
 async function seedIntroducedPip(page: Page): Promise<void> {
   await page.addInitScript(() => {
@@ -321,7 +322,8 @@ async function measureMovement(
     // Wait for the live Arcade body to reach a healthy movement speed, then release the touch
     // immediately. This validates the actual movement response without allowing a stalled CI runner
     // to keep the unicorn moving long enough to leave the scene.
-    const minimumSpeed = gallop ? GALLOP_SPEED_MIN : WALK_SPEED_MIN;
+    const targetSpeed = gallop ? GALLOP_SPEED_TARGET : WALK_SPEED_TARGET;
+    const minimumSpeed = targetSpeed * SETTLED_SPEED_FRACTION;
     await page.waitForFunction(
       ({ sceneKey, objectName, minimum }) => {
         const api = (
@@ -439,7 +441,10 @@ test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame ti
       const normalHealthAfter = await sceneHealth(page);
 
       expect(normalWalk.speed, `${profile.name} normal walk speed`).toBeGreaterThanOrEqual(
-        WALK_SPEED_MIN,
+        WALK_SPEED_TARGET * SETTLED_SPEED_FRACTION,
+      );
+      expect(normalWalk.speed, `${profile.name} normal walk speed`).toBeLessThanOrEqual(
+        WALK_SPEED_TARGET * 1.05,
       );
       expect(
         normalGallop.speed / normalWalk.speed,
@@ -465,7 +470,11 @@ test('R3.4 phone/tablet walking and Gallop stay consistent under slower frame ti
       expect(
         constrainedWalk.speed,
         `${profile.name} constrained walk speed`,
-      ).toBeGreaterThanOrEqual(WALK_SPEED_MIN);
+      ).toBeGreaterThanOrEqual(WALK_SPEED_TARGET * SETTLED_SPEED_FRACTION);
+      expect(
+        constrainedWalk.speed,
+        `${profile.name} constrained walk speed`,
+      ).toBeLessThanOrEqual(WALK_SPEED_TARGET * 1.05);
       expect(constrainedWalk.speed / normalWalk.speed).toBeGreaterThan(0.85);
       expect(constrainedWalk.speed / normalWalk.speed).toBeLessThan(1.15);
       expect(constrainedGallop.speed / normalGallop.speed).toBeGreaterThan(0.85);
