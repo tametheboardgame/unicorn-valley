@@ -21,8 +21,8 @@ import {
   getRainbowDiscAssistanceProfile,
   isRainbowDiscMatchComplete,
   isRainbowDiscReleaseAccurate,
+  rainbowDiscDefenceCueProfile,
   rainbowDiscDefenceLane,
-  rainbowDiscDefenceTelegraphAlpha,
   rainbowDiscMissOffset,
   rainbowDiscOpenLane,
   varyRainbowDiscTimingChallenge,
@@ -610,38 +610,60 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       .setDepth(30);
     this.playLayer?.add(this.disc);
 
-    const telegraphAlpha = rainbowDiscDefenceTelegraphAlpha(this.assistance);
-    const telegraphY = RECEIVER_Y[this.defenceAttackLane] ?? RECEIVER_Y[1];
-    const telegraph = this.add
+    const cue = rainbowDiscDefenceCueProfile(this.assistance);
+    const cueY = RECEIVER_Y[this.defenceAttackLane] ?? RECEIVER_Y[1];
+    const routeStartX = opponentThrowerX + 55;
+    const routeTargetX = opponentReceiverX - 72;
+    const routeEndX = Phaser.Math.Linear(routeStartX, routeTargetX, cue.routeReach);
+    const routeEndY = Phaser.Math.Linear(370, cueY, cue.routeReach);
+    const route = this.add
       .graphics()
-      .setName(`rainbow-disc-activity:defence-telegraph:${this.defenceAttackLane}`)
+      .setName(`rainbow-disc-activity:defence-read-cue:${this.defenceAttackLane}`)
       .setDepth(18);
-    telegraph.lineStyle(9, 0x88c9e8, telegraphAlpha);
-    telegraph.lineBetween(opponentThrowerX + 55, 370, opponentReceiverX - 72, telegraphY);
-    telegraph.fillStyle(0xbfe7f7, telegraphAlpha);
-    telegraph.fillTriangle(
-      opponentReceiverX - 72,
-      telegraphY,
-      opponentReceiverX - 96,
-      telegraphY - 13,
-      opponentReceiverX - 96,
-      telegraphY + 13,
-    );
-    this.playLayer?.add(telegraph);
-    this.tweens.add({
-      targets: telegraph,
-      alpha: { from: 0.62, to: 1 },
-      duration: 460,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+    route.lineStyle(8, 0x88c9e8, cue.routeAlpha);
+    route.lineBetween(routeStartX, 370, routeEndX, routeEndY);
+    this.playLayer?.add(route);
 
-    this.statusText?.setText(
-      'DEFEND: watch the blue route shimmer, then cover that lane. Tap it, or use ↑/↓ then Space.',
-    );
+    const intendedReceiver = this.receiverSprites[this.defenceAttackLane];
+    if (intendedReceiver) {
+      this.tweens.add({
+        targets: intendedReceiver,
+        x: intendedReceiver.x - cue.receiverCutPx,
+        duration: Math.max(120, Math.round(cue.durationMs * 0.38)),
+        yoyo: true,
+        ease: 'Sine.InOut',
+      });
+    }
+
+    if (cue.ringPulse) {
+      const intendedRing = this.receiverRings[this.defenceAttackLane];
+      if (intendedRing) {
+        this.tweens.add({
+          targets: intendedRing,
+          alpha: { from: 0.55, to: 1 },
+          duration: Math.max(140, Math.round(cue.durationMs * 0.32)),
+          yoyo: true,
+          repeat: 1,
+          ease: 'Sine.InOut',
+        });
+      }
+    }
+
+    this.actionLocked = true;
+    this.statusText?.setText('DEFEND: watch the receivers move — which lane are they setting up?');
     this.progressText?.setText(`${this.matchScoreLabel()} · Attack ${this.opponentAdvance + 1}/2`);
     this.refreshReceiverSelection();
+
+    this.time.delayedCall(cue.durationMs, () => {
+      route.destroy();
+      if (this.completed || this.phase !== 'defence') {
+        return;
+      }
+      this.actionLocked = false;
+      this.statusText?.setText(
+        'NOW: cover the lane you read. Tap a receiver, or use ↑/↓ then Space.',
+      );
+    });
   }
 
   private renderMatchSetup(): void {
@@ -1721,7 +1743,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
-    this.statusText?.setText('They advance. Read the next blue route and cover it.');
+    this.statusText?.setText('They advance. Watch the next receiver movement carefully.');
     this.defenceAttackLane = rainbowDiscDefenceLane(this.defenceSequence, this.opponentAdvance);
     this.selectedReceiver = 1;
     this.time.delayedCall(520, () => this.renderPossession());
