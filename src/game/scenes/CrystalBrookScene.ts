@@ -435,8 +435,8 @@ export class CrystalBrookScene extends Phaser.Scene {
       }
     };
 
-    // H6.5 owns Brook paths locally. Trails terminate at bridge decks, stepping stones,
-    // activity approaches and destination terrain instead of continuing underneath them.
+    // H6.5 owns Brook paths locally. Trails terminate at bridge decks, activity approaches
+    // and destination terrain instead of continuing underneath incompatible scenery.
     for (const trail of CRYSTAL_BROOK_LOCAL_TRAILS) {
       drawTrail(pathEdges, trail.points, trail.width + 18, 0xd7c18f);
     }
@@ -455,7 +455,6 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.createMeadowGorge();
     createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
-    this.createSteppingStones();
     this.createGrottoTrailCues();
     this.createBanks();
     this.createNpcVisitPoints();
@@ -945,18 +944,6 @@ export class CrystalBrookScene extends Phaser.Scene {
           .rectangle(0, -bridge.deckWidth * 0.12, bridge.length - 54, 4, 0xffffff, 0.34)
           .setAngle(-1),
       );
-    }
-  }
-
-  private createSteppingStones(): void {
-    for (const [index, point] of CRYSTAL_BROOK_MAP.steppingStones.entries()) {
-      this.add
-        .ellipse(point.x, point.y, 92, 50, index % 2 === 0 ? 0xa8a8a0 : 0xb8b4a7, 1)
-        .setStrokeStyle(4, 0x81877d, 0.8)
-        .setDepth(worldDepthForY(point.y, 0.1));
-      this.add
-        .circle(point.x - 20, point.y - 5, 7, 0xe7f0dc, 0.36)
-        .setDepth(worldDepthForY(point.y, 0.12));
     }
   }
 
