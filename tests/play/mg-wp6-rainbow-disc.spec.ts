@@ -119,7 +119,6 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     );
   });
 
-
   test('Match setup and Practice hub are keyboard navigable', async ({ page }) => {
     await openRainbowDiscFromJustGames(page, 'match');
 
@@ -155,7 +154,9 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     ).toBe(true);
   });
 
-  test('keeps the 16:9 activity canvas contained in a portrait tablet viewport', async ({ page }) => {
+  test('keeps the 16:9 activity canvas contained in a portrait tablet viewport', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await openRainbowDiscFromJustGames(page, 'practice');
 
