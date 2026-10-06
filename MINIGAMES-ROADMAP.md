@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP5 are complete and merged. MG-WP5 - Sunbeam Chess Academy is closed / human-approved. MG-WP6 - Rainbow Disc is the next existing-game refinement package. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
+**MG-WP0 through MG-WP5 are complete and merged. MG-WP6 - Rainbow Disc is active: MG-WP6A audit/design is complete and MG-WP6B unified throw + assistance foundation is in progress. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 applied that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
@@ -412,6 +412,10 @@ Before WP5C is accepted, the human preview must show:
 - Friendly Match checkmate/draw must show a prominent result card with **Play again** and Academy return actions.
 
 ### MG-WP6 - Rainbow Disc expansion
+
+Detailed package: `docs/work-packages/MG-WP6-RAINBOW-DISC.md`.
+
+Design contract: `docs/minigames/RAINBOW-DISC-EXPANSION-DESIGN.md`.
 
 Goal: turn Rainbow Disc from a promising activity into a replayable sport game with several distinct ways to play.
 
