@@ -723,9 +723,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   }
 
   private async renderStoryArchitecture(): Promise<void> {
-    const { renderCottageFuturePortalBay } = await import(
-      '../home/CottageStoryArchitectureRenderer'
-    );
+    const { renderCottageFuturePortalBay } = await import('../home/CottageDeferredPresentation');
     if (!this.scene.isActive()) {
       return;
     }
@@ -778,7 +776,7 @@ export class CottageInteriorScene extends Phaser.Scene {
   private async renderPlacedDecorations(homeView: CottageHomeView): Promise<void> {
     if (homeView.placements.length === 0) return;
 
-    const { renderCottageDecoration } = await import('../home/CottageDecorationPresentation');
+    const { renderCottageDecoration } = await import('../home/CottageDeferredPresentation');
     if (!this.scene.isActive()) return;
 
     const allSlots: readonly CottageDecorationSlot[] = [
