@@ -408,14 +408,8 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
     this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
-    const pathEdges = this.add
-      .graphics()
-      .setName('crystal-brook:main-path')
-      .setDepth(2.84);
-    const pathSurfaces = this.add
-      .graphics()
-      .setName('crystal-brook:path-surfaces')
-      .setDepth(2.86);
+    const pathEdges = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.84);
+    const pathSurfaces = this.add.graphics().setName('crystal-brook:path-surfaces').setDepth(2.86);
 
     const drawTrail = (
       graphics: Phaser.GameObjects.Graphics,
@@ -455,10 +449,7 @@ export class CrystalBrookScene extends Phaser.Scene {
         .setVisible(false);
     }
 
-    this.add
-      .zone(2490, 1060, 2, 2)
-      .setName('crystal-brook:crystal-cup-spur')
-      .setVisible(false);
+    this.add.zone(2490, 1060, 2, 2).setName('crystal-brook:crystal-cup-spur').setVisible(false);
 
     this.createWater();
     this.createMeadowGorge();
