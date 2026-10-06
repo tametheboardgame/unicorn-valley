@@ -72,5 +72,4 @@ describe('RainbowDiscRules', () => {
     );
     expect(rainbowDiscDefenceTelegraphAlpha('challenge')).toBeGreaterThan(0);
   });
-
 });
