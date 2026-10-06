@@ -131,51 +131,56 @@ export const CRYSTAL_BROOK_ICE_BRIDGES = [
   CRYSTAL_BROOK_EAST_BRIDGE,
 ] as const satisfies readonly CrystalBrookBridgeDefinition[];
 
-export const CRYSTAL_BROOK_MAIN_ROUTE = [
-  { x: 100, y: 1090 },
-  { x: 850, y: 1090 },
-  { x: 1510, y: 1260 },
-  { x: 1980, y: 1320 },
-  CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
-  CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
-  { x: 2510, y: 1060 },
-  CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
-  CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
-  { x: 3070, y: 1110 },
-  { x: 3125, y: 1270 },
-  CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
-  CRYSTAL_BROOK_WOODS_THRESHOLD.position,
-] as const;
-
 export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
 
-export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = [
-  [
-    { x: -90, y: 1090 },
-    CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
-    CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
-    { x: 620, y: 1160 },
-    { x: 900, y: 1220 },
-    { x: 1200, y: 1280 },
-    { x: 1510, y: 1340 },
-    { x: 1820, y: 1335 },
-    { x: 2070, y: 1350 },
-    CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
-  ],
-  [
-    CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
-    CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
-    CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
-  ],
-  [
-    CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
-    { x: 3060, y: 1090 },
-    { x: 3120, y: 1230 },
-    { x: 3150, y: 1370 },
-    CRYSTAL_BROOK_WOODS_THRESHOLD.approach,
-    CRYSTAL_BROOK_WOODS_THRESHOLD.position,
-  ],
-] as const satisfies readonly (readonly MapPoint[])[];
+export interface CrystalBrookLocalTrail {
+  id:
+    | 'meadow-south-bank'
+    | 'stepping-stones-west'
+    | 'stepping-stones-east'
+    | 'bridge-link'
+    | 'woods-pass'
+    | 'crystal-cup'
+    | 'crystal-grotto'
+    | 'crystalarium'
+    | 'crystal-checkers';
+  points: readonly MapPoint[];
+  width: number;
+}
+
+const CRYSTAL_BROOK_MEADOW_SOUTH_BANK_ROUTE = [
+  { x: -90, y: 1090 },
+  CRYSTAL_BROOK_MEADOW_THRESHOLD.position,
+  CRYSTAL_BROOK_MEADOW_THRESHOLD.approach,
+  { x: 620, y: 1160 },
+  { x: 820, y: 1240 },
+  { x: 980, y: 1320 },
+  { x: 1160, y: 1360 },
+  { x: 1450, y: 1390 },
+  { x: 1770, y: 1380 },
+  { x: 2070, y: 1380 },
+  CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
+] as const satisfies readonly MapPoint[];
+
+const CRYSTAL_BROOK_STEPPING_STONES_WEST_ROUTE = [
+  { x: 820, y: 1240 },
+  { x: 900, y: 1160 },
+  { x: 970, y: 1080 },
+  { x: 1010, y: 1010 },
+] as const satisfies readonly MapPoint[];
+
+const CRYSTAL_BROOK_STEPPING_STONES_EAST_ROUTE = [
+  { x: 1240, y: 1015 },
+  { x: 1290, y: 1090 },
+  { x: 1360, y: 1200 },
+  { x: 1450, y: 1390 },
+] as const satisfies readonly MapPoint[];
+
+const CRYSTAL_BROOK_BRIDGE_LINK_ROUTE = [
+  CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
+  CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+  CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
+] as const satisfies readonly MapPoint[];
 
 export const CRYSTAL_BROOK_WOODS_ROUTE = [
   CRYSTAL_BROOK_EAST_BRIDGE.endLanding,
@@ -199,12 +204,80 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE = [
 export const CRYSTAL_BROOK_CRYSTAL_CUP_PRESENTATION_ROUTE = CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE;
 
 export const CRYSTAL_BROOK_GROTTO_ROUTE = [
-  { x: 2340, y: 1510 },
-  { x: 2380, y: 1640 },
-  { x: 2420, y: 1770 },
+  { x: 2070, y: 1380 },
+  { x: 2040, y: 1510 },
+  { x: 2040, y: 1710 },
+  { x: 2200, y: 1810 },
   CRYSTAL_BROOK_GROTTO_THRESHOLD.approach,
   CRYSTAL_BROOK_GROTTO_THRESHOLD.position,
 ] as const;
+
+export const CRYSTAL_BROOK_MAIN_ROUTE = [
+  ...CRYSTAL_BROOK_MEADOW_SOUTH_BANK_ROUTE.slice(1),
+  CRYSTAL_BROOK_NORTH_BRIDGE.endLanding,
+  CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
+  CRYSTAL_BROOK_EAST_BRIDGE.startLanding,
+  ...CRYSTAL_BROOK_WOODS_ROUTE,
+] as const;
+
+export const CRYSTAL_BROOK_LOCAL_TRAILS = [
+  {
+    id: 'meadow-south-bank',
+    points: CRYSTAL_BROOK_MEADOW_SOUTH_BANK_ROUTE,
+    width: 108,
+  },
+  {
+    id: 'stepping-stones-west',
+    points: CRYSTAL_BROOK_STEPPING_STONES_WEST_ROUTE,
+    width: 64,
+  },
+  {
+    id: 'stepping-stones-east',
+    points: CRYSTAL_BROOK_STEPPING_STONES_EAST_ROUTE,
+    width: 64,
+  },
+  {
+    id: 'bridge-link',
+    points: CRYSTAL_BROOK_BRIDGE_LINK_ROUTE,
+    width: 86,
+  },
+  {
+    id: 'woods-pass',
+    points: CRYSTAL_BROOK_WOODS_ROUTE,
+    width: 82,
+  },
+  {
+    id: 'crystal-cup',
+    points: CRYSTAL_BROOK_CRYSTAL_CUP_ROUTE,
+    width: 72,
+  },
+  {
+    id: 'crystal-grotto',
+    points: CRYSTAL_BROOK_GROTTO_ROUTE,
+    width: 62,
+  },
+  {
+    id: 'crystalarium',
+    points: [
+      { x: 1450, y: 1390 },
+      { x: 1450, y: 1450 },
+    ],
+    width: 58,
+  },
+  {
+    id: 'crystal-checkers',
+    points: [
+      { x: 820, y: 1240 },
+      { x: 820, y: 1380 },
+    ],
+    width: 58,
+  },
+] as const satisfies readonly CrystalBrookLocalTrail[];
+
+// Compatibility view for tests and code that only need the trail geometry.
+export const CRYSTAL_BROOK_PATH_PRESENTATION_SEGMENTS = CRYSTAL_BROOK_LOCAL_TRAILS.map(
+  ({ points }) => points,
+);
 
 export const CRYSTAL_BROOK_UPPER_POOL = { x: 1370, y: 540 } as const;
 export const CRYSTAL_BROOK_LOWER_POOL = { x: 2740, y: 1280 } as const;
