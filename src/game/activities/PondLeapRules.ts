@@ -237,7 +237,6 @@ export function applyPondLeapModePressure(
   };
 }
 
-
 export function pondLeapModeTitle(mode: PondLeapMode): string {
   switch (mode) {
     case 'classic':
