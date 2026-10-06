@@ -16,9 +16,9 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP5 are complete / human-approved, with MG-WP5 - Sunbeam Chess Academy awaiting this final merge. MG-WP6 - Rainbow Disc is the next existing-game refinement package.**
+**MG-WP0 through MG-WP5 are complete and merged. MG-WP5 - Sunbeam Chess Academy is closed / human-approved. MG-WP6 - Rainbow Disc is the next existing-game refinement package.**
 
-The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 now applies that platform to a substantial child-first teaching and play redesign of the existing chess game.
+The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 applied that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
 This roadmap is intentionally independent of the main release roadmap. It is not an R6.5, WP19 or area-polish sub-stream. Mini-game platform work and mini-game improvement work may proceed in parallel with world, Story House and other content programmes when dependencies genuinely permit.
 
