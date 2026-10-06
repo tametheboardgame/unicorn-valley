@@ -130,6 +130,10 @@ test.describe('MG-WP7 Pond Leap', () => {
     }
 
     await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:completion');
+    for (const name of ['play-again', 'change-course', 'result-modes', 'back-to-meadow']) {
+      await waitForNamedObject(page, 'PondLeapActivityScene', `pond-leap:${name}`);
+    }
+
     snapshot = await getDiagnosticSnapshot(page);
     const scene = snapshot.scenes.find(({ key }) => key === 'PondLeapActivityScene');
     expect(
