@@ -145,10 +145,7 @@ export function isPondLeapTimingSuccessful(
   return Math.abs(timingValue - challenge.centre) <= challenge.tolerance;
 }
 
-export function isPondLeapCourseComplete(
-  hopIndex: number,
-  courseId: PondLeapCourseId,
-): boolean {
+export function isPondLeapCourseComplete(hopIndex: number, courseId: PondLeapCourseId): boolean {
   return hopIndex >= getPondLeapCourse(courseId).pads.length - 1;
 }
 
