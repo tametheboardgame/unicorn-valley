@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - pond-leap
 
 ## Current checkpoint
 
-**MG-WP7A-B are complete. MG-WP7C — Classic Crossing and course presentation is active.**
+**MG-WP7A-C are complete. MG-WP7D — Practice Pond and Ripple Rush is active; its deterministic mode/state foundation is implemented and UI wiring is next.**
 
 Detailed design contract: `docs/minigames/POND-LEAP-EXPANSION-DESIGN.md`.
 
@@ -124,7 +124,7 @@ Acceptance:
 - different courses produce genuinely different timing/route patterns;
 - world entry remains immediately playable.
 
-**Status: implementation complete / automated qualification pending.**
+**Status: complete.**
 
 ### MG-WP7D — Practice Pond and Ripple Rush
 
@@ -140,6 +140,8 @@ Acceptance:
 - Practice and Ripple Rush feel mechanically distinct from Classic Crossing;
 - a miss has an understandable consequence in each mode;
 - no mode writes adventure progression.
+
+**Status: active — deterministic mode/state rules complete; scene/UI integration next.**
 
 ### MG-WP7E — Mode, replay and integration polish
 
