@@ -683,10 +683,14 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         ? 'Choose a drill: target throwing, open-lane passing or a sudden-death Rainbow Streak.'
         : 'First to 2 goals. Build a three-catch chain, read the defenders and protect the disc.',
     );
-    this.fieldModeLabel?.setText(this.mode === 'practice' ? 'TARGET\nRANGE' : 'END\nZONE');
+    this.fieldModeLabel?.setText(this.mode === 'practice' ? 'PRACTICE' : 'END\nZONE');
   }
 
   private openModeMenu(): void {
+    if (this.actionLocked) {
+      return;
+    }
+
     this.modeMenu = true;
     this.completed = false;
     this.actionLocked = false;
@@ -895,7 +899,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.createButton(
       640,
       320,
-      520,
+      620,
       `1 · Target Range — 5 throws · Best ${this.bestTargetRangeScore}`,
       () => this.startPracticeDrill('target-range'),
       'practice-target-range',
@@ -904,7 +908,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.createButton(
       640,
       410,
-      520,
+      620,
       `2 · Passing Drill — 6 passes · Best ${this.bestPassingStreak}`,
       () => this.startPracticeDrill('passing-drill'),
       'practice-passing-drill',
@@ -913,7 +917,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.createButton(
       640,
       500,
-      520,
+      620,
       `3 · Rainbow Streak — sudden death · Best ${this.bestRainbowStreak}`,
       () => this.startPracticeDrill('rainbow-streak'),
       'practice-rainbow-streak',
