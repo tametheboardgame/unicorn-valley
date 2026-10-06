@@ -31,7 +31,6 @@ function rainbowDiscObject(
     ?.objects.find((object) => object.name === name);
 }
 
-
 test.describe('MG-WP6 Rainbow Disc integration', () => {
   test('Just Games Match opens assistance setup and returns to the catalogue', async ({ page }) => {
     await openRainbowDiscFromJustGames(page, 'match');
