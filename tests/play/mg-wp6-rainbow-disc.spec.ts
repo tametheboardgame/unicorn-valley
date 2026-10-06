@@ -3,6 +3,7 @@ import {
   clickNamedObject,
   getDiagnosticSnapshot,
   openDiagnostics,
+  primeRainbowDiscTiming,
   waitForNamedObject,
   waitForScene,
 } from '../support/browserDiagnostics';
@@ -153,6 +154,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     expect(firstZone?.effectiveVisible).toBe(true);
     if (!firstZone) throw new Error('First timing window is unavailable.');
 
+    await primeRainbowDiscTiming(page);
     await page.keyboard.press('Space');
 
     await expect
