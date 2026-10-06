@@ -79,9 +79,8 @@ describe('Crystal Brook map', () => {
     expect(findUnreachableTargets(CRYSTAL_BROOK_MAP, targets, 40, PLAYER_CLEARANCE)).toEqual([]);
   });
 
-  it('provides river treasures, a retained stepping-stone crossing, a secret route and NPC visit points', () => {
+  it('provides river treasures, a secret route and NPC visit points', () => {
     expect(CRYSTAL_BROOK_MAP.collectableSpots.length).toBeGreaterThanOrEqual(4);
-    expect(CRYSTAL_BROOK_MAP.steppingStones.length).toBeGreaterThanOrEqual(3);
     expect(CRYSTAL_BROOK_MAP.secretRoutes).toHaveLength(1);
     expect(CRYSTAL_BROOK_MAP.npcVisitPoints.length).toBeGreaterThanOrEqual(2);
     expect(
@@ -245,17 +244,11 @@ describe('Crystal Brook map', () => {
     );
   });
 
-  it('integrates stepping stones and reserved activity pockets without painting a trail through the water', () => {
-    const west = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'stepping-stones-west');
-    const east = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'stepping-stones-east');
+  it('keeps reserved activity pockets connected without adding water-crossing side paths', () => {
     const crystalarium = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystalarium');
     const checkers = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-checkers');
 
-    expect(west?.points.at(-1)).toEqual(CRYSTAL_BROOK_MAP.steppingStones[0]);
-    expect(east?.points[0]).toEqual(CRYSTAL_BROOK_MAP.steppingStones.at(-1));
-    expect(west?.points).not.toContain(CRYSTAL_BROOK_MAP.steppingStones[1]);
-    expect(east?.points).not.toContain(CRYSTAL_BROOK_MAP.steppingStones[1]);
-
+    expect(CRYSTAL_BROOK_LOCAL_TRAILS.some(({ id }) => id.includes('stepping-stones'))).toBe(false);
     expect(crystalarium?.points.at(-1)).toEqual(CRYSTAL_BROOK_ACTIVITY_POCKETS[0].approach);
     expect(checkers?.points.at(-1)).toEqual(CRYSTAL_BROOK_ACTIVITY_POCKETS[1].approach);
   });
