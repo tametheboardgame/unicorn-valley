@@ -83,7 +83,6 @@ async function waitForActiveScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
-
 async function currentOpenLane(page: Page): Promise<number> {
   const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
   for (let index = 0; index < 3; index += 1) {
