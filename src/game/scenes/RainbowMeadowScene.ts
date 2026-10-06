@@ -37,6 +37,7 @@ import { CoreNpcPresenceService } from '../world/CoreNpcPresenceService';
 import { createRainbowDiscMeadowPresentation } from '../world/RainbowDiscMeadowPresentation';
 import { resolveRainbowMeadowWalkThroughDestination } from '../world/RainbowMeadowTraversal';
 import { RAINBOW_RUN_HUB_LOCATION_ID } from '../world/RainbowRunHubMap';
+import { createRainbowMeadowTraversalPresentation } from '../world/RainbowMeadowTraversalPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'rainbow-meadow-collision-pixel';
@@ -484,13 +485,7 @@ export class RainbowMeadowScene extends Phaser.Scene {
         .setDepth(1);
     }
 
-    void import('../world/RainbowMeadowTraversalPresentation').then(
-      ({ createRainbowMeadowTraversalPresentation }) => {
-        if (this.scene.isActive()) {
-          createRainbowMeadowTraversalPresentation(this);
-        }
-      },
-    );
+    createRainbowMeadowTraversalPresentation(this);
     this.createPond();
     this.createGroves();
     this.createSunbeamVillageSign();
