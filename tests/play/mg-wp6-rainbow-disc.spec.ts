@@ -184,7 +184,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
       .toBe(true);
   });
 
-  test('Modes switches between active Match and Practice without returning to Just Games', async ({
+  test('Modes returns to the current branch before switching Match and Practice', async ({
     page,
   }) => {
     await openRainbowDiscFromJustGames(page, 'match');
@@ -200,6 +200,22 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     await waitForNamedObject(
       page,
       'RainbowDiscActivityScene',
+      'rainbow-disc-activity:match-setup-title',
+    );
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:mode-menu-title')?.visible ?? false,
+    ).toBe(false);
+
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:switch-mode-branch',
+    );
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
       'rainbow-disc-activity:mode-menu-title',
     );
 
@@ -210,7 +226,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
       'rainbow-disc-activity:practice-menu-title',
     );
 
-    let snapshot = await getDiagnosticSnapshot(page);
+    snapshot = await getDiagnosticSnapshot(page);
     expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:header-title')?.text).toBe(
       'Rainbow Disc Practice',
     );
@@ -223,6 +239,22 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     await waitForNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:disc');
 
     await clickNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:modes');
+    await waitForNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:practice-menu-title',
+    );
+
+    snapshot = await getDiagnosticSnapshot(page);
+    expect(
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:mode-menu-title')?.visible ?? false,
+    ).toBe(false);
+
+    await clickNamedObject(
+      page,
+      'RainbowDiscActivityScene',
+      'rainbow-disc-activity:switch-mode-branch',
+    );
     await waitForNamedObject(
       page,
       'RainbowDiscActivityScene',
