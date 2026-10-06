@@ -40,7 +40,6 @@ const FIELD_BOTTOM = 590;
 const RECEIVER_Y = [225, 360, 495] as const;
 const THROW_X = [220, 440, 680] as const;
 const TARGET_X = [535, 775, 1040] as const;
-const CATCH_RADIUS = 118;
 const PASS_COUNT = 3;
 const PRACTICE_THROW_COUNT = 5;
 const PRACTICE_TARGET_BASE_Y = 470;
@@ -361,6 +360,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.receiverRings = [];
     this.receiverSprites = [];
     this.dragging = false;
+    this.dragStartPoint = null;
     this.actionLocked = false;
     this.selectedReceiver = Phaser.Math.Clamp(this.selectedReceiver, 0, RECEIVER_Y.length - 1);
 
