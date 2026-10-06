@@ -39,8 +39,6 @@ export interface DiagnosticObjectSnapshot {
   bodyY: number | null;
   bodyWidth: number | null;
   bodyHeight: number | null;
-  bodyVelocityX: number | null;
-  bodyVelocityY: number | null;
 }
 
 export interface DiagnosticSceneState {
@@ -132,6 +130,7 @@ export interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   selectRaceCourse(courseId: string): void;
   primeRainbowDiscTiming(): void;
+  arcadeSpriteVelocity(sceneKey: string, objectName: string): { x: number; y: number };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -246,8 +245,6 @@ function snapshotObject(
     bodyY: arcadeBody ? arcadeBody.y : null,
     bodyWidth: arcadeBody ? arcadeBody.width : null,
     bodyHeight: arcadeBody ? arcadeBody.height : null,
-    bodyVelocityX: arcadeBody instanceof Phaser.Physics.Arcade.Body ? arcadeBody.velocity.x : null,
-    bodyVelocityY: arcadeBody instanceof Phaser.Physics.Arcade.Body ? arcadeBody.velocity.y : null,
   };
 }
 
@@ -589,6 +586,27 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         throw new Error('Rainbow Disc diagnostic timing is unavailable.');
       }
       scene.primeDiagnosticSuccessfulTiming();
+    },
+    arcadeSpriteVelocity: (sceneKey, objectName) => {
+      const scene = game.scene.getScene(sceneKey);
+      if (!scene?.scene.isActive()) {
+        throw new Error(
+          `Cannot inspect ${objectName}: diagnostic scene ${sceneKey} is not active.`,
+        );
+      }
+      const object = scene.children.getByName(objectName);
+      if (!(object instanceof Phaser.Physics.Arcade.Sprite)) {
+        throw new Error(
+          `Cannot inspect ${objectName}: expected an Arcade Sprite in ${sceneKey}.`,
+        );
+      }
+      const body = object.body;
+      if (!(body instanceof Phaser.Physics.Arcade.Body)) {
+        throw new Error(
+          `Cannot inspect ${objectName}: expected a dynamic Arcade body in ${sceneKey}.`,
+        );
+      }
+      return { x: body.velocity.x, y: body.velocity.y };
     },
     setArcadeSpritePosition: (sceneKey, objectName, x, y) => {
       const scene = game.scene.getScene(sceneKey);
