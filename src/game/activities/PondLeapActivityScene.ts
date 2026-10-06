@@ -155,7 +155,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
         align: 'center',
         wordWrap: { width: 850 },
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('pond-leap:status');
 
     this.progressText = this.add
       .text(110, 530, '', {
@@ -164,10 +165,14 @@ export class PondLeapActivityScene extends Phaser.Scene {
         fontSize: '15px',
         fontStyle: 'bold',
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setName('pond-leap:progress');
   }
 
   private createPondCourse(): void {
+    if (this.nextPadHighlight) {
+      this.tweens.killTweensOf(this.nextPadHighlight);
+    }
     this.courseLayer?.destroy(true);
     this.courseLayer = null;
     this.nextPadHighlight = null;
@@ -311,10 +316,12 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
     this.timingZone = this.add
       .rectangle(TIMING_LEFT, TIMING_Y, 100, 18, 0x7bcf8c, 0.88)
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('pond-leap:timing-zone');
     this.timingMarker = this.add
       .rectangle(TIMING_LEFT + TIMING_WIDTH / 2, TIMING_Y, 8, 38, 0x6b4d78, 1)
-      .setStrokeStyle(2, 0xffffff, 0.9);
+      .setStrokeStyle(2, 0xffffff, 0.9)
+      .setName('pond-leap:timing-marker');
 
     this.createRoundedButton(1040, 590, 180, 'LEAP!', () => this.tryLeap(), 'leap', true);
     this.createRoundedButton(1125, 80, 130, 'Back', () => this.leaveActivity(), 'back');
@@ -405,10 +412,10 @@ export class PondLeapActivityScene extends Phaser.Scene {
         375,
         perfect ? 'Not a single splash!' : `You made it across all ${totalHops} lily pads!`,
         {
-        color: UI_COLOURS.ink,
-        fontFamily: UI_FONT,
-        fontSize: '24px',
-        fontStyle: 'bold',
+          color: UI_COLOURS.ink,
+          fontFamily: UI_FONT,
+          fontSize: '24px',
+          fontStyle: 'bold',
           align: 'center',
         },
       )
