@@ -66,6 +66,26 @@ async function waitForActiveScene(page: Page, sceneKey: string): Promise<void> {
   }, sceneKey);
 }
 
+async function waitForGoodThrowTiming(page: Page): Promise<void> {
+  await expect
+    .poll(async () => {
+      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+      const marker = scene.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
+      );
+      const zone = scene.objects.find(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:timing-success-zone' && effectiveVisible,
+      );
+      if (!marker || !zone) return false;
+      const left = zone.x - zone.displayWidth / 2;
+      const right = zone.x + zone.displayWidth / 2;
+      return marker.x >= left && marker.x <= right;
+    })
+    .toBe(true);
+}
+
 async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
   const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
   const disc = scene.objects.find(
@@ -82,6 +102,7 @@ async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> 
   await page.mouse.move(disc.x, disc.y);
   await page.mouse.down();
   await page.mouse.move(receiver.x, receiver.y, { steps: 8 });
+  await waitForGoodThrowTiming(page);
   await page.mouse.up();
 }
 
@@ -315,6 +336,7 @@ test('H4.9B practice range launches a five-throw target challenge', async ({ pag
     await page.mouse.move(disc.x, disc.y);
     await page.mouse.down();
     await page.mouse.move(890, 325, { steps: 8 });
+    await waitForGoodThrowTiming(page);
     await page.mouse.up();
 
     if (throwIndex < 4) {
