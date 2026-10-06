@@ -3145,9 +3145,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
 
-    this.persistLearningRecord(
-      saveSunbeamChessCoachMatch(this.learningRecord, this.chess.pgn()),
-    );
+    this.persistLearningRecord(saveSunbeamChessCoachMatch(this.learningRecord, this.chess.pgn()));
   }
 
   private persistActiveFriendlyMatch(): void {
