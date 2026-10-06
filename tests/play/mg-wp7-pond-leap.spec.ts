@@ -22,6 +22,21 @@ async function openPondLeap(page: Page, data?: object): Promise<void> {
   await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:leap');
 }
 
+async function openPondLeapFromJustGames(
+  page: Page,
+  variant: 'classic' | 'practice' | 'ripple-rush',
+): Promise<void> {
+  await page.addInitScript(() => window.localStorage.clear());
+  await openDiagnostics(page);
+  await waitForNamedObject(page, 'TitleScene', 'title-menu-just-games');
+  await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
+  await waitForNamedObject(page, 'JustGamesScene', 'just-games-card:pond-leap');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:pond-leap');
+  await clickNamedObject(page, 'JustGamesScene', `just-games-variant:${variant}`);
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:leap');
+}
+
 test.describe('MG-WP7 Pond Leap', () => {
   test('defaults to Sunny Steps Standard and cycles course without leaving the scene', async ({
     page,
@@ -125,13 +140,40 @@ test.describe('MG-WP7 Pond Leap', () => {
     ).toBe(true);
   });
 
-  test('Mode control switches Classic to Practice without leaving Pond Leap', async ({ page }) => {
+  test('Modes opens in-scene and switches Classic to Practice without leaving Pond Leap', async ({
+    page,
+  }) => {
     await openPondLeap(page);
 
     await clickNamedObject(page, 'PondLeapActivityScene', 'pond-leap:mode');
+    await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:mode-menu-title');
+    await clickNamedObject(page, 'PondLeapActivityScene', 'pond-leap:mode-practice');
 
     const snapshot = await getDiagnosticSnapshot(page);
     expect(snapshot.activeScenes).toContain('PondLeapActivityScene');
+    expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain(
+      'Practice Pond · Sunny Steps · Relaxed',
+    );
+    expect(pondObject(snapshot, 'pond-leap:mode-menu')?.effectiveVisible ?? false).toBe(false);
+  });
+
+  test('Just Games launches each Pond Leap mode through the canonical scene', async ({ page }) => {
+    await openPondLeapFromJustGames(page, 'ripple-rush');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain(
+      'Ripple Rush · Sunny Steps · Quick',
+    );
+
+    await page.keyboard.press('Escape');
+    await waitForNamedObject(page, 'JustGamesScene', 'just-games-card:pond-leap');
+
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:pond-leap');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:practice');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:leap');
+
+    snapshot = await getDiagnosticSnapshot(page);
     expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain(
       'Practice Pond · Sunny Steps · Relaxed',
     );
