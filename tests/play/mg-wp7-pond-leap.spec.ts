@@ -3,6 +3,8 @@ import {
   clickNamedObject,
   getDiagnosticSnapshot,
   openDiagnostics,
+  primePondLeapMissTiming,
+  primePondLeapTiming,
   startScene,
   waitForNamedObject,
 } from '../support/browserDiagnostics';
@@ -40,7 +42,79 @@ test.describe('MG-WP7 Pond Leap Classic Crossing', () => {
     expect(pondObject(snapshot, 'pond-leap:course-accent:reeds')?.effectiveVisible).toBe(true);
     expect(pondObject(snapshot, 'pond-leap:frog')?.x).toBe(190);
     expect(pondObject(snapshot, 'pond-leap:frog')?.y).toBe(338);
+    test('Practice Pond runs ten safe attempts and tracks a visible streak', async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.clear());
+    await openDiagnostics(page);
+    await startScene(page, 'PondLeapActivityScene', { mode: 'practice' });
+    await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:leap');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain(
+      'Practice Pond · Sunny Steps · Relaxed · Attempt 1/10',
+    );
+
+    await primePondLeapTiming(page);
+    await page.keyboard.press('Space');
+
+    await expect
+      .poll(async () => {
+        const current = await getDiagnosticSnapshot(page);
+        return pondObject(current, 'pond-leap:progress')?.text ?? '';
+      })
+      .toContain('Attempt 2/10 · Streak 1 · Best 1');
+
+    snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:instructions')?.text).toContain('Practice 10 leaps');
   });
+
+  test('Ripple Rush uses Quick timing and ends on the third splash', async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.clear());
+    await openDiagnostics(page);
+    await startScene(page, 'PondLeapActivityScene', { mode: 'ripple-rush' });
+    await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:leap');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain(
+      'Ripple Rush · Sunny Steps · Quick · Hops 0/8 · Splashes 0/3',
+    );
+
+    for (let splash = 1; splash <= 3; splash += 1) {
+      await primePondLeapMissTiming(page);
+      await page.keyboard.press('Space');
+
+      if (splash < 3) {
+        await expect
+          .poll(async () => {
+            const current = await getDiagnosticSnapshot(page);
+            return pondObject(current, 'pond-leap:progress')?.text ?? '';
+          })
+          .toContain(`Splashes ${splash}/3`);
+      }
+    }
+
+    await waitForNamedObject(page, 'PondLeapActivityScene', 'pond-leap:completion');
+    snapshot = await getDiagnosticSnapshot(page);
+    const scene = snapshot.scenes.find(({ key }) => key === 'PondLeapActivityScene');
+    expect(
+      scene?.objects.some(
+        ({ text, effectiveVisible }) =>
+          effectiveVisible && text?.includes('RIPPLE RUSH OVER') === true,
+      ),
+    ).toBe(true);
+  });
+
+  test('Mode control switches Classic to Practice without leaving Pond Leap', async ({ page }) => {
+    await openPondLeap(page);
+
+    await clickNamedObject(page, 'PondLeapActivityScene', 'pond-leap:mode');
+
+    const snapshot = await getDiagnosticSnapshot(page);
+    expect(snapshot.activeScenes).toContain('PondLeapActivityScene');
+    expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain(
+      'Practice Pond · Sunny Steps · Relaxed',
+    );
+  });
+});
 
   test('cycles help through visible timing profiles', async ({ page }) => {
     await openPondLeap(page);
