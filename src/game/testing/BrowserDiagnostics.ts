@@ -130,6 +130,7 @@ export interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   selectRaceCourse(courseId: string): void;
   primeRainbowDiscTiming(): void;
+  primePondLeapTiming(): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -583,6 +584,14 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         InspectableSceneRuntime;
       if (!scene?.scene.isActive() || !scene.primeDiagnosticSuccessfulTiming) {
         throw new Error('Rainbow Disc diagnostic timing is unavailable.');
+      }
+      scene.primeDiagnosticSuccessfulTiming();
+    },
+    primePondLeapTiming: () => {
+      const scene = game.scene.getScene('PondLeapActivityScene') as Phaser.Scene &
+        InspectableSceneRuntime;
+      if (!scene?.scene.isActive() || !scene.primeDiagnosticSuccessfulTiming) {
+        throw new Error('Pond Leap diagnostic timing is unavailable.');
       }
       scene.primeDiagnosticSuccessfulTiming();
     },
