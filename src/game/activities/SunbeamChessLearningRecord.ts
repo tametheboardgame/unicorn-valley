@@ -14,6 +14,10 @@ export interface SunbeamChessFriendlyMatchSession {
   pgn: string;
 }
 
+export interface SunbeamChessCoachMatchSession {
+  pgn: string;
+}
+
 export interface SunbeamChessLearningRecord {
   version: 1;
   completedLessonIds: SunbeamChessLessonId[];
@@ -21,6 +25,7 @@ export interface SunbeamChessLearningRecord {
   puzzleSolveCounts: Partial<Record<SunbeamChessPuzzleId, number>>;
   preferredOpponent: SunbeamChessOpponentLevel;
   activeFriendlyMatch: SunbeamChessFriendlyMatchSession | null;
+  activeCoachMatch: SunbeamChessCoachMatchSession | null;
 }
 
 export interface SunbeamChessLearningStorage {
@@ -36,6 +41,7 @@ export function createDefaultSunbeamChessLearningRecord(): SunbeamChessLearningR
     puzzleSolveCounts: {},
     preferredOpponent: 'clover',
     activeFriendlyMatch: null,
+    activeCoachMatch: null,
   };
 }
 
@@ -88,6 +94,29 @@ function sanitiseFriendlyMatchSession(value: unknown): SunbeamChessFriendlyMatch
   };
 }
 
+function sanitiseCoachMatchSession(value: unknown): SunbeamChessCoachMatchSession | null {
+  if (!isRecord(value) || typeof value.pgn !== 'string') {
+    return null;
+  }
+
+  try {
+    const chess = new Chess();
+    if (value.pgn.trim().length > 0) {
+      chess.loadPgn(value.pgn);
+      if (chess.history().length === 0) {
+        return null;
+      }
+    }
+    if (chess.isGameOver()) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  return { pgn: value.pgn };
+}
+
 function sanitiseIds<T extends string>(
   value: unknown,
   predicate: (entry: unknown) => entry is T,
@@ -124,6 +153,7 @@ export function sanitiseSunbeamChessLearningRecord(value: unknown): SunbeamChess
       ? value.preferredOpponent
       : defaults.preferredOpponent,
     activeFriendlyMatch: sanitiseFriendlyMatchSession(value.activeFriendlyMatch),
+    activeCoachMatch: sanitiseCoachMatchSession(value.activeCoachMatch),
   };
 }
 
@@ -211,6 +241,25 @@ export function clearSunbeamChessFriendlyMatch(
   return {
     ...record,
     activeFriendlyMatch: null,
+  };
+}
+
+export function saveSunbeamChessCoachMatch(
+  record: SunbeamChessLearningRecord,
+  pgn: string,
+): SunbeamChessLearningRecord {
+  return {
+    ...record,
+    activeCoachMatch: { pgn },
+  };
+}
+
+export function clearSunbeamChessCoachMatch(
+  record: SunbeamChessLearningRecord,
+): SunbeamChessLearningRecord {
+  return {
+    ...record,
+    activeCoachMatch: null,
   };
 }
 
