@@ -39,12 +39,14 @@ import {
   type SunbeamChessOpponentLevel,
 } from './SunbeamChessOpponent';
 import {
+  clearSunbeamChessCoachMatch,
   clearSunbeamChessFriendlyMatch,
   completeSunbeamChessLesson,
   completeSunbeamChessPuzzle,
   createDefaultSunbeamChessLearningRecord,
   loadBrowserSunbeamChessLearningRecord,
   saveBrowserSunbeamChessLearningRecord,
+  saveSunbeamChessCoachMatch,
   saveSunbeamChessFriendlyMatch,
   setSunbeamChessPreferredOpponent,
   type SunbeamChessLearningRecord,
@@ -60,6 +62,7 @@ type ChessAcademyView =
   | 'lesson'
   | 'puzzle-list'
   | 'puzzle'
+  | 'coach-resume'
   | 'coach-match'
   | 'friendly-resume'
   | 'friendly-select'
@@ -396,7 +399,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
     if (modeId === 'coach-match') {
-      this.startCoachMatch();
+      if (this.learningRecord.activeCoachMatch) {
+        this.showCoachResumeChoice();
+      } else {
+        this.startCoachMatch();
+      }
       return;
     }
     if (modeId === 'friendly-match') {
@@ -948,7 +955,193 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.renderBoard();
   }
 
+  private showCoachResumeChoice(): void {
+    const activeMatch = this.learningRecord.activeCoachMatch;
+    if (!activeMatch) {
+      this.startCoachMatch();
+      return;
+    }
+
+    const preview = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        preview.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+      this.startCoachMatch();
+      return;
+    }
+
+    this.clearView();
+    this.view = 'coach-resume';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.selected = null;
+    this.hintMove = null;
+    this.opponentPending = false;
+
+    this.drawAcademyShell(
+      'Coach Match',
+      'You have a coached game in progress. Carry on where you left off, or begin again.',
+    );
+    this.drawTeacherPortrait(156, 178, 0.82);
+
+    this.add
+      .text(242, 154, 'Previous coached game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:coach-resume-title');
+
+    const moveCount = preview.history().length;
+    this.add
+      .text(
+        242,
+        190,
+        moveCount === 0
+          ? 'The coached game has started, but no moves have been played yet.'
+          : `${moveCount} move${moveCount === 1 ? '' : 's'} played so far.`,
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5);
+
+    const resumePanel = this.add.graphics();
+    resumePanel.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    resumePanel.fillRoundedRect(210, 286, 860, 116, 24);
+    resumePanel.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 1);
+    resumePanel.strokeRoundedRect(210, 286, 860, 116, 24);
+
+    this.add
+      .text(250, 320, '1.  Carry on previous coached game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 359, 'Restore the board and move history. The coach will pick up from there.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .rectangle(640, 344, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:coach-resume-carry-on')
+      .on('pointerdown', () => this.resumeCoachMatch());
+
+    const newPanel = this.add.graphics();
+    newPanel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
+    newPanel.fillRoundedRect(210, 430, 860, 116, 24);
+    newPanel.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 1);
+    newPanel.strokeRoundedRect(210, 430, 860, 116, 24);
+
+    this.add
+      .text(250, 464, '2.  Start a new coached game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 503, 'Replace the previous game and return to the starting position.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .rectangle(640, 488, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:coach-resume-new-game')
+      .on('pointerdown', () => {
+        this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+        this.startCoachMatch();
+      });
+
+    this.createRoundedButton(
+      1080,
+      638,
+      190,
+      '← Academy',
+      () => this.showAcademyHome(),
+      'sunbeam-chess:coach-resume-back',
+    );
+  }
+
+  private resumeCoachMatch(): void {
+    const activeMatch = this.learningRecord.activeCoachMatch;
+    if (!activeMatch) {
+      this.startCoachMatch();
+      return;
+    }
+
+    const restored = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        restored.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+      this.startCoachMatch();
+      return;
+    }
+
+    if (restored.isGameOver()) {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+      this.startCoachMatch();
+      return;
+    }
+
+    this.clearView();
+    this.view = 'coach-match';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.chess = restored;
+    this.selected = null;
+    this.hintMove = null;
+    this.coachPendingMove = null;
+    this.coachHintStage = 0;
+    this.keyboardSquare = restored.turn() === 'w' ? 'e2' : 'e7';
+    this.coachUndoPlies =
+      restored.turn() === 'w' && restored.history().length >= 2
+        ? 2
+        : restored.turn() === 'b'
+          ? 1
+          : 0;
+    this.coachHoldingFeedback = false;
+    this.coachLastPlayerFeedback = null;
+    this.moveHistoryStart = -1;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
+    this.clearCoachWarning();
+    this.opponentPending = restored.turn() === 'b';
+    this.createCoachMatchBackdrop();
+    this.lessonText?.setText('Welcome back. Your coached game is ready to continue.');
+    this.renderBoard();
+
+    if (this.opponentPending) {
+      this.time.delayedCall(520, () => this.makeOpponentMove());
+    }
+  }
+
   private startCoachMatch(): void {
+    this.persistLearningRecord(saveSunbeamChessCoachMatch(this.learningRecord, ''));
     this.clearView();
     this.view = 'coach-match';
     this.currentLesson = null;
@@ -2159,6 +2352,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.coachHoldingFeedback = !this.chess.isGameOver();
     this.moveHistoryStart = -1;
     this.lessonText?.setText(this.coachLastPlayerFeedback);
+    this.persistActiveCoachMatch();
 
     this.opponentPending = !this.chess.isGameOver();
     this.renderBoard();
@@ -2211,6 +2405,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.lessonText?.setText(
       'Undone. Try a different idea — there is no penalty for experimenting.',
     );
+    this.persistActiveCoachMatch();
     this.renderBoard();
   }
 
@@ -2345,6 +2540,8 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.moveHistoryStart = -1;
       if (this.view === 'friendly-match') {
         this.persistActiveFriendlyMatch();
+      } else if (this.view === 'coach-match') {
+        this.persistActiveCoachMatch();
       }
     }
 
@@ -2644,6 +2841,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     const isCoachMatch = this.view === 'coach-match';
 
     if (isCoachMatch) {
+      this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
       const message =
         result === 'win'
           ? 'Checkmate! You found the finish. Want to try another coached game?'
@@ -2880,6 +3078,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
 
+    if (this.view === 'coach-resume' && numericIndex >= 0) {
+      event.preventDefault();
+      if (numericIndex === 0) {
+        this.resumeCoachMatch();
+      } else if (numericIndex === 1) {
+        this.persistLearningRecord(clearSunbeamChessCoachMatch(this.learningRecord));
+        this.startCoachMatch();
+      }
+      return;
+    }
+
     if (this.view === 'friendly-resume' && numericIndex >= 0) {
       event.preventDefault();
       if (numericIndex === 0) {
@@ -2929,6 +3138,16 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     );
     this.keyboardSquare = `${FILES[nextFile]}${nextRank}` as Square;
     this.renderBoard();
+  }
+
+  private persistActiveCoachMatch(): void {
+    if (this.view !== 'coach-match' || this.chess.isGameOver()) {
+      return;
+    }
+
+    this.persistLearningRecord(
+      saveSunbeamChessCoachMatch(this.learningRecord, this.chess.pgn()),
+    );
   }
 
   private persistActiveFriendlyMatch(): void {
@@ -2987,6 +3206,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     if (
       this.view === 'lesson-list' ||
       this.view === 'puzzle-list' ||
+      this.view === 'coach-resume' ||
       this.view === 'coach-match' ||
       this.view === 'friendly-resume' ||
       this.view === 'friendly-select' ||
