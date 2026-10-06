@@ -139,8 +139,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
       'Challenge',
     );
     const challengeWidth =
-      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone')?.displayWidth ??
-      999;
+      rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone')?.displayWidth ?? 999;
 
     expect(challengeWidth).toBeLessThan(gentleWidth);
   });
@@ -314,8 +313,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     ).toBe(true);
     expect(
       activity?.objects.some(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:disc' && effectiveVisible,
+        ({ name, effectiveVisible }) => name === 'rainbow-disc-activity:disc' && effectiveVisible,
       ),
     ).toBe(false);
   });
