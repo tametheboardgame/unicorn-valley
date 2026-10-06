@@ -24,7 +24,6 @@ export function rainbowDiscStreakTiming(attempt: number): {
   };
 }
 
-
 export type RainbowDiscStreakAttemptResult = 'hit' | 'wrong-target' | 'miss';
 
 export function resolveRainbowDiscStreakAttempt(
