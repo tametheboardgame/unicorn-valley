@@ -8,6 +8,13 @@ import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
 import {
+  applyRainbowDiscAssistance,
+  getRainbowDiscAssistanceProfile,
+  isRainbowDiscReleaseAccurate,
+  rainbowDiscMissOffset,
+  type RainbowDiscAssistanceLevel,
+} from './RainbowDiscRules';
+import {
   createRainbowDiscRing,
   drawRainbowTarget,
   resolveRainbowDiscHornCatchPoint,
@@ -90,6 +97,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private completed = false;
   private timingPhase = 0;
   private timingValue = 0.5;
+  private assistance: RainbowDiscAssistanceLevel = 'standard';
+  private dragStartPoint: Point | null = null;
 
   private playLayer: Phaser.GameObjects.Container | null = null;
   private disc: Phaser.GameObjects.Graphics | null = null;
@@ -128,6 +137,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.completed = false;
     this.timingPhase = 0;
     this.timingValue = 0.5;
+    this.assistance = 'standard';
+    this.dragStartPoint = null;
 
     this.cameras.main.setBackgroundColor('#6ead72');
     this.createBackdrop();
@@ -171,6 +182,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       this.timingMarker = null;
       this.timingSuccessZone = null;
       this.timingDifficultyText = null;
+      this.dragStartPoint = null;
       this.receiverRings = [];
       this.receiverSprites = [];
     });
@@ -457,6 +469,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.disc.on('pointerdown', () => {
       if (!this.actionLocked) {
         this.dragging = true;
+        this.dragStartPoint = this.throwOrigin();
       }
     });
     this.playLayer.add(this.disc);
@@ -624,6 +637,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.disc.on('pointerdown', () => {
       if (!this.actionLocked) {
         this.dragging = true;
+        this.dragStartPoint = this.throwOrigin();
       }
     });
     this.playLayer?.add(this.disc);
@@ -750,16 +764,27 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       x: Phaser.Math.Clamp(pointer.x, FIELD_LEFT + 35, FIELD_RIGHT - 35),
       y: Phaser.Math.Clamp(pointer.y, FIELD_TOP + 30, FIELD_BOTTOM - 30),
     };
+    const dragStart = this.dragStartPoint ?? this.throwOrigin();
+    this.dragStartPoint = null;
+    const assistance = getRainbowDiscAssistanceProfile(this.assistance);
+    const dragDistance = Phaser.Math.Distance.Between(
+      dragStart.x,
+      dragStart.y,
+      release.x,
+      release.y,
+    );
+
+    if (dragDistance < assistance.minimumPointerDrag) {
+      this.disc.setPosition(dragStart.x, dragStart.y);
+      this.aimGraphics?.clear();
+      this.statusText?.setText('Drag towards a lane or target, then release the disc.');
+      return;
+    }
+
     const receiverIndex = this.nearestReceiverIndex(release);
     this.selectedReceiver = receiverIndex;
     this.refreshReceiverSelection();
-
-    const target = this.receiverPoint(receiverIndex);
-    const distance = Phaser.Math.Distance.Between(release.x, release.y, target.x, target.y);
-    const catchRadius =
-      this.mode === 'practice' ? (PRACTICE_TARGETS[receiverIndex]?.radius ?? 42) : CATCH_RADIUS;
-    const accurate = distance <= catchRadius;
-    this.resolveThrow(target, accurate, release, receiverIndex);
+    this.commitTimedThrow(receiverIndex);
   }
 
   private keyboardThrow(): void {
@@ -772,10 +797,18 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       return;
     }
 
+    this.commitTimedThrow(this.selectedReceiver);
+  }
+
+  private commitTimedThrow(receiverIndex: number): void {
+    this.selectedReceiver = Phaser.Math.Clamp(receiverIndex, 0, RECEIVER_Y.length - 1);
+    this.refreshReceiverSelection();
+
     const target = this.receiverPoint(this.selectedReceiver);
     const profile = this.currentTimingProfile();
-    const accurate = Math.abs(this.timingValue - 0.55) <= profile.tolerance;
-    const missOffset = this.timingValue < 0.55 ? -150 : 150;
+    const accurate = isRainbowDiscReleaseAccurate(this.timingValue, profile.tolerance);
+    const missOffset = rainbowDiscMissOffset(this.timingValue);
+
     this.resolveThrow(
       target,
       accurate,
@@ -1014,16 +1047,19 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private currentTimingProfile(): { tolerance: number; sweepSpeed: number; label: string } {
-    if (this.mode === 'practice') {
-      const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
-      return {
-        tolerance: target.tolerance,
-        sweepSpeed: target.sweepSpeed,
-        label: target.label,
-      };
-    }
+    const baseProfile =
+      this.mode === 'practice'
+        ? (() => {
+            const target = PRACTICE_TARGETS[this.selectedReceiver] ?? PRACTICE_TARGETS[1];
+            return {
+              tolerance: target.tolerance,
+              sweepSpeed: target.sweepSpeed,
+              label: target.label,
+            };
+          })()
+        : { tolerance: 0.22, sweepSpeed: 0.0042, label: 'Match' };
 
-    return { tolerance: 0.22, sweepSpeed: 0.0042, label: 'Match' };
+    return applyRainbowDiscAssistance(baseProfile, this.assistance);
   }
 
   private updateTimingSuccessZone(): void {
@@ -1039,10 +1075,11 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     const x = TIMING_TRACK_LEFT + ((start + end) / 2) * TIMING_TRACK_WIDTH;
 
     this.timingSuccessZone.setPosition(x, 660).setDisplaySize(Math.max(18, width), 14);
+    const assistance = getRainbowDiscAssistanceProfile(this.assistance);
     this.timingDifficultyText.setText(
       this.mode === 'practice'
-        ? `${profile.label} • ${profile.sweepSpeed.toFixed(4)} speed`
-        : 'Match timing',
+        ? `${profile.label} • ${assistance.title} • ${profile.sweepSpeed.toFixed(4)} speed`
+        : `${assistance.title} • Match timing`,
     );
   }
 
