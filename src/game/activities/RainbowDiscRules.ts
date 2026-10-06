@@ -6,6 +6,10 @@ export interface RainbowDiscTimingProfile {
   label: string;
 }
 
+export interface RainbowDiscTimingChallenge extends RainbowDiscTimingProfile {
+  centre: number;
+}
+
 export interface RainbowDiscAssistanceProfile {
   id: RainbowDiscAssistanceLevel;
   title: string;
@@ -58,6 +62,33 @@ export function applyRainbowDiscAssistance(
     ...profile,
     tolerance: Math.min(0.45, profile.tolerance * assistance.timingToleranceMultiplier),
     sweepSpeed: profile.sweepSpeed * assistance.timingSpeedMultiplier,
+  };
+}
+
+const RAINBOW_DISC_TIMING_CENTRES = [0.55, 0.36, 0.68, 0.46, 0.72, 0.31, 0.61, 0.43] as const;
+const RAINBOW_DISC_TIMING_WIDTH_SCALES = [1, 0.86, 1.08, 0.78, 0.94, 1.04, 0.82, 0.9] as const;
+
+export function varyRainbowDiscTimingChallenge(
+  profile: RainbowDiscTimingProfile,
+  throwIndex: number,
+): RainbowDiscTimingChallenge {
+  const index = Math.abs(Math.trunc(throwIndex));
+  const requestedCentre =
+    RAINBOW_DISC_TIMING_CENTRES[index % RAINBOW_DISC_TIMING_CENTRES.length] ??
+    RAINBOW_DISC_TIMING_CENTRE;
+  const widthScale =
+    RAINBOW_DISC_TIMING_WIDTH_SCALES[index % RAINBOW_DISC_TIMING_WIDTH_SCALES.length] ?? 1;
+  const tolerance = Math.max(0.07, Math.min(0.42, profile.tolerance * widthScale));
+  const edgePadding = 0.035;
+  const centre = Math.max(
+    tolerance + edgePadding,
+    Math.min(1 - tolerance - edgePadding, requestedCentre),
+  );
+
+  return {
+    ...profile,
+    tolerance,
+    centre,
   };
 }
 
