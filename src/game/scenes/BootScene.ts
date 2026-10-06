@@ -15,7 +15,9 @@ import { getLumiWoodsWorldManager } from '../story/LumiWoodsWorldManager';
 import { getPebbleCollectionWorldManager } from '../story/PebbleCollectionWorldManager';
 import { getPipEggWorldManager } from '../story/PipEggWorldManager';
 import { getSettingsAudioControlsManager } from '../ui/SettingsAudioControlsManager';
+import { getCreatorDelightPresentationManager } from '../visual/CreatorDelightPresentationManager';
 import { getEnvironmentProductionPresentationManager } from '../visual/EnvironmentProductionPresentationManager';
+import { getUiProductionPresentationManager } from '../visual/UiProductionPresentationManager';
 import { getVisualTighteningManager } from '../visual/VisualTighteningManager';
 import { getR5RegionGatewayManager } from '../world/R5RegionGatewayManager';
 import { getR65StarlightBeachGatewayManager } from '../world/R65StarlightBeachGatewayManager';
@@ -69,36 +71,16 @@ export class BootScene extends Phaser.Scene {
     getVisualTighteningManager(this.sys.game);
     getWorldTraversalPolishManager(this.sys.game);
     getEnvironmentProductionPresentationManager(this.sys.game);
+    getUiProductionPresentationManager(this.sys.game);
+    getCreatorDelightPresentationManager(this.sys.game);
     getR5RegionGatewayManager(this.sys.game);
     getR65StarlightBeachGatewayManager(this.sys.game);
     getRacePlayerControlManager(this.sys.game);
     getRacePlaytestRecoveryManager(this.sys.game);
 
-    void import('../visual/CoreNpcProductionPresentationManager').then(
-      ({ getCoreNpcProductionPresentationManager }) => {
-        getCoreNpcProductionPresentationManager(this.sys.game);
-      },
-    );
-    void import('../population/AmbientPopulationWorldManager').then(
-      ({ getAmbientPopulationWorldManager }) => {
-        getAmbientPopulationWorldManager(this.sys.game);
-      },
-    );
-    void import('../settings/TitleSettingsEnhancementManager').then(
-      ({ getTitleSettingsEnhancementManager }) => {
-        getTitleSettingsEnhancementManager(this.sys.game);
-      },
-    );
-    void import('../visual/UiProductionPresentationManager').then(
-      ({ getUiProductionPresentationManager }) => {
-        getUiProductionPresentationManager(this.sys.game);
-      },
-    );
-    void import('../visual/CreatorDelightPresentationManager').then(
-      ({ getCreatorDelightPresentationManager }) => {
-        getCreatorDelightPresentationManager(this.sys.game);
-      },
-    );
+    void import('../runtime/BootDeferredManagers').then(({ startBootDeferredManagers }) => {
+      startBootDeferredManagers(this.sys.game);
+    });
 
     const requestedScene = new URLSearchParams(globalThis.location.search).get('scene');
     const targetScene = (requestedScene && DIAGNOSTIC_SCENES[requestedScene]) || 'TitleScene';
