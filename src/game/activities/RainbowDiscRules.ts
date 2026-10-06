@@ -147,8 +147,46 @@ export function isRainbowDiscMatchComplete(
   return playerScore >= goalsToWin || oppositionScore >= goalsToWin;
 }
 
+export interface RainbowDiscDefenceCueProfile {
+  durationMs: number;
+  routeAlpha: number;
+  routeReach: number;
+  receiverCutPx: number;
+  ringPulse: boolean;
+}
+
+export function rainbowDiscDefenceCueProfile(
+  level: RainbowDiscAssistanceLevel,
+): RainbowDiscDefenceCueProfile {
+  if (level === 'gentle') {
+    return {
+      durationMs: 900,
+      routeAlpha: 0.82,
+      routeReach: 0.72,
+      receiverCutPx: 38,
+      ringPulse: true,
+    };
+  }
+
+  if (level === 'challenge') {
+    return {
+      durationMs: 380,
+      routeAlpha: 0.28,
+      routeReach: 0.42,
+      receiverCutPx: 24,
+      ringPulse: false,
+    };
+  }
+
+  return {
+    durationMs: 600,
+    routeAlpha: 0.52,
+    routeReach: 0.56,
+    receiverCutPx: 32,
+    ringPulse: false,
+  };
+}
+
 export function rainbowDiscDefenceTelegraphAlpha(level: RainbowDiscAssistanceLevel): number {
-  if (level === 'gentle') return 0.9;
-  if (level === 'challenge') return 0.42;
-  return 0.68;
+  return rainbowDiscDefenceCueProfile(level).routeAlpha;
 }
