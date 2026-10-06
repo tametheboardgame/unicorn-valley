@@ -480,3 +480,26 @@ Responsive/accessibility qualification for WP5F:
 Final automated qualification must cover the isolated learning namespace, completion restoration/display, keyboard-only play and portrait/tablet containment.
 
 Final human acceptance remains mandatory. The playtest should judge the complete Academy as a child experience: lesson clarity, Puzzle Garden comprehension, Coach Match helpfulness, Dandelion beatability without absurd play, Friendly Match replay flow, touch/keyboard usability, and whether the child wants to keep playing.
+
+
+## MG-WP5F human-playtest follow-up — Friendly Match continuity
+
+Human review found the overall WP5F preview strong, but the Friendly Match memory contract was not sufficient. Remembering only the last opponent does not make an unfinished chess game feel continuous.
+
+Accepted follow-up behaviour:
+
+- an unfinished Friendly Match is persisted inside the isolated Chess Academy learning namespace;
+- the saved session uses PGN so board state, legal-move context and move history restore together;
+- returning to Friendly Match with an unfinished game presents:
+  - **Carry on previous game**;
+  - **Start a new game**;
+- Carry on restores the same opponent, board position and move history;
+- if the saved position has Black to move, the opponent continues normally after restore;
+- Start a new game explicitly replaces the old unfinished game and returns to opponent selection;
+- Restart replaces the saved game with a fresh game against the same opponent;
+- a completed game is removed from the resumable-session slot;
+- the preferred/last-played opponent remains visibly identified on the opponent selector;
+- corrupt, illegal or completed stored PGN is discarded safely rather than blocking play;
+- the resumable game remains learning/practice data only and has no adventure progression coupling.
+
+Automated qualification must prove the session survives leaving Chess Academy back to Just Games and re-entering the chess scene before resuming.
