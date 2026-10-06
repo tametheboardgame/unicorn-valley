@@ -136,8 +136,6 @@ export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
 export interface CrystalBrookLocalTrail {
   id:
     | 'meadow-south-bank'
-    | 'stepping-stones-west'
-    | 'stepping-stones-east'
     | 'bridge-link'
     | 'woods-pass'
     | 'crystal-cup'
@@ -160,20 +158,6 @@ const CRYSTAL_BROOK_MEADOW_SOUTH_BANK_ROUTE = [
   { x: 1770, y: 1380 },
   { x: 2070, y: 1380 },
   CRYSTAL_BROOK_NORTH_BRIDGE.startLanding,
-] as const satisfies readonly MapPoint[];
-
-const CRYSTAL_BROOK_STEPPING_STONES_WEST_ROUTE = [
-  { x: 820, y: 1240 },
-  { x: 900, y: 1160 },
-  { x: 970, y: 1080 },
-  { x: 1010, y: 1010 },
-] as const satisfies readonly MapPoint[];
-
-const CRYSTAL_BROOK_STEPPING_STONES_EAST_ROUTE = [
-  { x: 1240, y: 1015 },
-  { x: 1290, y: 1090 },
-  { x: 1360, y: 1200 },
-  { x: 1450, y: 1390 },
 ] as const satisfies readonly MapPoint[];
 
 const CRYSTAL_BROOK_BRIDGE_LINK_ROUTE = [
@@ -234,16 +218,6 @@ export const CRYSTAL_BROOK_LOCAL_TRAILS = [
     id: 'meadow-south-bank',
     points: CRYSTAL_BROOK_MEADOW_SOUTH_BANK_ROUTE,
     width: 108,
-  },
-  {
-    id: 'stepping-stones-west',
-    points: CRYSTAL_BROOK_STEPPING_STONES_WEST_ROUTE,
-    width: 64,
-  },
-  {
-    id: 'stepping-stones-east',
-    points: CRYSTAL_BROOK_STEPPING_STONES_EAST_ROUTE,
-    width: 64,
   },
   {
     id: 'bridge-link',
@@ -405,7 +379,6 @@ export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2800, y: 1400 } as const;
 export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3320, y: 845 } as const;
 export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3320, y: 770 } as const;
 export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 2150, y: 1650 } as const;
-export const CRYSTAL_BROOK_STEPPING_CHIME = { x: 1125, y: 970 } as const;
 export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1110 } as const;
 export const CRYSTAL_BROOK_SINGING_CRYSTALS = { x: 2440, y: 1110 } as const;
 export const CRYSTAL_BROOK_SHELL_SPARKLE = { x: 1760, y: 980 } as const;
@@ -1228,7 +1201,6 @@ export const CRYSTAL_BROOK_LAYOUT = {
     waterfallMist: CRYSTAL_BROOK_WATERFALL_MIST,
     waterfallPresentation: CRYSTAL_BROOK_WATERFALL_PRESENTATION,
     reflectionPool: CRYSTAL_BROOK_REFLECTION_POOL,
-    steppingChime: CRYSTAL_BROOK_STEPPING_CHIME,
     shallowRipple: CRYSTAL_BROOK_SHALLOW_RIPPLE,
     singingCrystals: CRYSTAL_BROOK_SINGING_CRYSTALS,
     shellSparkle: CRYSTAL_BROOK_SHELL_SPARKLE,
@@ -1267,11 +1239,6 @@ export const CRYSTAL_BROOK_MAP = {
     width: 190,
     points: CRYSTAL_BROOK_WATERCOURSE,
   },
-  steppingStones: [
-    { x: 1010, y: 1010 },
-    { x: 1125, y: 970 },
-    { x: 1240, y: 1015 },
-  ] satisfies readonly MapPoint[],
   collectableSpots: [
     {
       id: 'crystal-north-bank',
