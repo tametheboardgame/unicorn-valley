@@ -1433,6 +1433,18 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         wordWrap: { width: 420 },
       })
       .setOrigin(0, 0.5);
+
+    if (level === this.learningRecord.preferredOpponent) {
+      this.add
+        .text(x + width / 2 - 24, y - 31, 'LAST PLAYED', {
+          color: CHESS_ACADEMY_PALETTE.ink,
+          fontFamily: UI_FONT,
+          fontSize: '11px',
+          fontStyle: 'bold',
+        })
+        .setOrigin(1, 0.5)
+        .setName(`sunbeam-chess:opponent-last-played:${level}`);
+    }
   }
 
   private startFriendlyMatch(level: SunbeamChessOpponentLevel = this.friendlyOpponentLevel): void {
