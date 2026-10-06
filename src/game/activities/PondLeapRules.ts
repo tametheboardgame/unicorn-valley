@@ -1,6 +1,18 @@
 export type PondLeapAssistanceLevel = 'relaxed' | 'standard' | 'quick';
 export type PondLeapCourseId = 'sunny-steps' | 'reed-weave' | 'twinkle-trail';
 
+export const POND_LEAP_ASSISTANCE_LEVELS: readonly PondLeapAssistanceLevel[] = [
+  'relaxed',
+  'standard',
+  'quick',
+];
+
+export const POND_LEAP_COURSE_IDS: readonly PondLeapCourseId[] = [
+  'sunny-steps',
+  'reed-weave',
+  'twinkle-trail',
+];
+
 export interface PondLeapPoint {
   x: number;
   y: number;
