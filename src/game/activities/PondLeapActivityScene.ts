@@ -362,11 +362,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     const course = getPondLeapCourse(this.courseId);
-    const challenge = getPondLeapTimingChallenge(
-      this.courseId,
-      this.hopIndex,
-      this.assistance,
-    );
+    const challenge = getPondLeapTimingChallenge(this.courseId, this.hopIndex, this.assistance);
     const success = isPondLeapTimingSuccessful(this.timingValue, challenge);
 
     this.actionLocked = true;
