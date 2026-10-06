@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - pond-leap
 
 ## Current checkpoint
 
-**MG-WP7A-D are complete. MG-WP7E — mode, replay and integration polish is implemented and automated qualification is pending.**
+**MG-WP7A-E are complete. MG-WP7F — responsive/accessibility qualification is implemented; automated qualification and the final human playtest gate remain.**
 
 Detailed design contract: `docs/minigames/POND-LEAP-EXPANSION-DESIGN.md`.
 
@@ -160,7 +160,7 @@ Acceptance:
 - mode switching never requires returning to the Just Games catalogue;
 - return behaviour remains launch-context aware.
 
-**Status: implementation complete / automated qualification pending.**
+**Status: complete.**
 
 ### MG-WP7F — Responsive/accessibility qualification and human playtest
 
@@ -183,6 +183,8 @@ Human gate:
 - different courses are noticeable;
 - misses recover quickly;
 - replay/navigation encourages another go.
+
+**Status: qualification implementation complete / automated qualification pending / human gate pending.**
 
 Do not merge final WP7 until the human gate is explicitly approved.
 
