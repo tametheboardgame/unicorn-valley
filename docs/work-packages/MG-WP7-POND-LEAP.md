@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - pond-leap
 
 ## Current checkpoint
 
-**MG-WP7A-C are complete. MG-WP7D — Practice Pond and Ripple Rush is active; its deterministic mode/state foundation is implemented and UI wiring is next.**
+**MG-WP7A-C are complete. MG-WP7D — Practice Pond and Ripple Rush implementation is complete and automated qualification is pending.**
 
 Detailed design contract: `docs/minigames/POND-LEAP-EXPANSION-DESIGN.md`.
 
@@ -141,7 +141,7 @@ Acceptance:
 - a miss has an understandable consequence in each mode;
 - no mode writes adventure progression.
 
-**Status: active — deterministic mode/state rules complete; scene/UI integration next.**
+**Status: implementation complete / automated qualification pending.**
 
 ### MG-WP7E — Mode, replay and integration polish
 
