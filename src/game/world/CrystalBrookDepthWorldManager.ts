@@ -256,9 +256,6 @@ export class CrystalBrookDepthWorldManager {
       case 'reflection-pool':
         this.activateReflectionPool(state);
         return;
-      case 'stepping-chime':
-        this.activateSteppingChime(state);
-        return;
       case 'shallow-ripple':
         state.scene.cameras.main.flash(70, 196, 241, 246, false);
         this.showFeedback(
