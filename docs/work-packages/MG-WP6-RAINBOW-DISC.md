@@ -1,7 +1,7 @@
 ---
 id: MG-WP6
 title: Rainbow Disc expansion
-status: in_progress
+status: complete
 autonomy: amber
 depends_on: [MG-WP5]
 parallel_safe: true
@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - rainbow-disc
 
 ## Current checkpoint
 
-**MG-WP6A — audit/design and MG-WP6B — unified throw/assistance are complete; WP6B is human-approved. MG-WP6C — real short-match loop, MG-WP6D — Practice hub/drills and MG-WP6E — integration/replay polish are implemented. MG-WP6F — responsive/accessibility qualification and human playtest is active.**
+**MG-WP6A-F are complete. The final responsive/accessibility and human-playtest gate was explicitly approved on 2026-10-06.**
 
 Detailed design contract: `docs/minigames/RAINBOW-DISC-EXPANSION-DESIGN.md`.
 
@@ -130,7 +130,7 @@ Acceptance:
 - defence can be read from a visible cue;
 - no hidden cheating/random catch override.
 
-**Status: implemented; automated/final human qualification pending.**
+**Status: complete.**
 
 ### MG-WP6D — Practice hub and drills
 
@@ -150,7 +150,7 @@ Acceptance:
 - modes reuse shared throw rules;
 - no adventure progression writes.
 
-**Status: implemented; automated/final human qualification pending.**
+**Status: complete.**
 
 ### MG-WP6E — Mode/integration and replay polish
 
@@ -170,7 +170,7 @@ Acceptance:
 - no world-only or Just-Games-only rules fork;
 - Back labels/return behaviour remain session-driven.
 
-**Status: implemented; automated/final human qualification pending.**
+**Status: complete.**
 
 ### MG-WP6F — Responsive/accessibility qualification and human playtest
 
@@ -257,7 +257,7 @@ Integration/replay polish now includes:
 - preservation of Rainbow Meadow Match and Practice entry points;
 - one canonical `RainbowDiscActivityScene` for every path.
 
-## MG-WP6F active qualification
+## MG-WP6F qualification
 
 Automated coverage now includes:
 
@@ -269,7 +269,7 @@ Automated coverage now includes:
 - keyboard-only setup/hub navigation;
 - representative portrait-tablet canvas containment.
 
-Final acceptance still requires the child-facing human playtest. Do not merge before that approval.
+The child-facing human playtest was explicitly approved on 2026-10-06 after the timing, defence-read, Practice fail-rule and branch-first Modes follow-ups. MG-WP6F is complete.
 
 
 ## MG-WP6F human-playtest follow-up — timing challenge behaviour
@@ -358,3 +358,18 @@ Accepted hierarchy:
 - Back remains the explicit exit to Meadow / Just Games.
 
 This makes Modes act as a one-level-back control within the current branch rather than an immediate cross-branch jump.
+
+
+## MG-WP6 final human approval
+
+**Approved: 2026-10-06.**
+
+Final human review accepted the completed Rainbow Disc package after the WP6F follow-ups:
+
+- per-throw timing windows vary position and width and remain inactive off-play;
+- defence uses a brief read-and-react cue rather than a persistent answer arrow;
+- Match and Practice have branch-first internal Modes navigation;
+- Rainbow Streak is explicit sudden death on a wrong target or missed timing;
+- Match, Practice and all three drills are considered ready to leave the WP6 human gate.
+
+MG-WP6 is complete and may merge. MG-WP7 — Pond Leap expansion is the next mini-game refinement package.
