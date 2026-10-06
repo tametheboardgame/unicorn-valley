@@ -51,9 +51,9 @@ async function waitForGoodTiming(page: Page): Promise<void> {
           };
         }
       ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = diagnostics?.snapshot().scenes.find(
-        ({ key }) => key === 'RainbowDiscActivityScene',
-      );
+      const scene = diagnostics
+        ?.snapshot()
+        .scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
       const marker = scene?.objects.find(
         ({ name }) => name === 'rainbow-disc-activity:timing-marker',
       );
