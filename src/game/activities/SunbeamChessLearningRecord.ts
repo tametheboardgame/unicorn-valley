@@ -1,3 +1,4 @@
+import { Chess } from 'chess.js';
 import { SUNBEAM_CHESS_LESSON_IDS, type SunbeamChessLessonId } from './SunbeamChessLessons';
 import { SUNBEAM_CHESS_PUZZLE_IDS, type SunbeamChessPuzzleId } from './SunbeamChessPuzzles';
 import {
@@ -8,12 +9,18 @@ import {
 export const SUNBEAM_CHESS_LEARNING_STORAGE_KEY = 'unicorn-valley.learning.sunbeam-chess.v1';
 export const SUNBEAM_CHESS_LEARNING_RECORD_VERSION = 1;
 
+export interface SunbeamChessFriendlyMatchSession {
+  opponent: SunbeamChessOpponentLevel;
+  pgn: string;
+}
+
 export interface SunbeamChessLearningRecord {
   version: 1;
   completedLessonIds: SunbeamChessLessonId[];
   completedPuzzleIds: SunbeamChessPuzzleId[];
   puzzleSolveCounts: Partial<Record<SunbeamChessPuzzleId, number>>;
   preferredOpponent: SunbeamChessOpponentLevel;
+  activeFriendlyMatch: SunbeamChessFriendlyMatchSession | null;
 }
 
 export interface SunbeamChessLearningStorage {
@@ -28,6 +35,7 @@ export function createDefaultSunbeamChessLearningRecord(): SunbeamChessLearningR
     completedPuzzleIds: [],
     puzzleSolveCounts: {},
     preferredOpponent: 'clover',
+    activeFriendlyMatch: null,
   };
 }
 
@@ -52,6 +60,29 @@ function isOpponentLevel(value: unknown): value is SunbeamChessOpponentLevel {
     typeof value === 'string' &&
     (SUNBEAM_CHESS_OPPONENT_LEVELS as readonly string[]).includes(value)
   );
+}
+
+function sanitiseFriendlyMatchSession(value: unknown): SunbeamChessFriendlyMatchSession | null {
+  if (!isRecord(value) || !isOpponentLevel(value.opponent) || typeof value.pgn !== 'string') {
+    return null;
+  }
+
+  try {
+    const chess = new Chess();
+    if (value.pgn.trim().length > 0) {
+      chess.loadPgn(value.pgn);
+    }
+    if (chess.isGameOver()) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  return {
+    opponent: value.opponent,
+    pgn: value.pgn,
+  };
 }
 
 function sanitiseIds<T extends string>(
@@ -89,6 +120,7 @@ export function sanitiseSunbeamChessLearningRecord(value: unknown): SunbeamChess
     preferredOpponent: isOpponentLevel(value.preferredOpponent)
       ? value.preferredOpponent
       : defaults.preferredOpponent,
+    activeFriendlyMatch: sanitiseFriendlyMatchSession(value.activeFriendlyMatch),
   };
 }
 
@@ -152,6 +184,30 @@ export function setSunbeamChessPreferredOpponent(
   return {
     ...record,
     preferredOpponent,
+  };
+}
+
+export function saveSunbeamChessFriendlyMatch(
+  record: SunbeamChessLearningRecord,
+  opponent: SunbeamChessOpponentLevel,
+  pgn: string,
+): SunbeamChessLearningRecord {
+  return {
+    ...record,
+    preferredOpponent: opponent,
+    activeFriendlyMatch: {
+      opponent,
+      pgn,
+    },
+  };
+}
+
+export function clearSunbeamChessFriendlyMatch(
+  record: SunbeamChessLearningRecord,
+): SunbeamChessLearningRecord {
+  return {
+    ...record,
+    activeFriendlyMatch: null,
   };
 }
 
