@@ -39,11 +39,13 @@ import {
   type SunbeamChessOpponentLevel,
 } from './SunbeamChessOpponent';
 import {
+  clearSunbeamChessFriendlyMatch,
   completeSunbeamChessLesson,
   completeSunbeamChessPuzzle,
   createDefaultSunbeamChessLearningRecord,
   loadBrowserSunbeamChessLearningRecord,
   saveBrowserSunbeamChessLearningRecord,
+  saveSunbeamChessFriendlyMatch,
   setSunbeamChessPreferredOpponent,
   type SunbeamChessLearningRecord,
 } from './SunbeamChessLearningRecord';
@@ -59,6 +61,7 @@ type ChessAcademyView =
   | 'puzzle-list'
   | 'puzzle'
   | 'coach-match'
+  | 'friendly-resume'
   | 'friendly-select'
   | 'friendly-match';
 
@@ -397,7 +400,11 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
     if (modeId === 'friendly-match') {
-      this.showFriendlyOpponentSelect();
+      if (this.learningRecord.activeFriendlyMatch) {
+        this.showFriendlyResumeChoice();
+      } else {
+        this.showFriendlyOpponentSelect();
+      }
       return;
     }
   }
@@ -1108,6 +1115,182 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     );
   }
 
+  private showFriendlyResumeChoice(): void {
+    const activeMatch = this.learningRecord.activeFriendlyMatch;
+    if (!activeMatch) {
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    const opponent = getSunbeamChessOpponent(activeMatch.opponent);
+    const preview = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        preview.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    this.clearView();
+    this.view = 'friendly-resume';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.selected = null;
+    this.hintMove = null;
+    this.opponentPending = false;
+
+    this.drawAcademyShell(
+      'Friendly Match',
+      'You have a game in progress. Carry on where you left off, or begin a new one.',
+    );
+    this.drawTeacherPortrait(156, 178, 0.82);
+
+    this.add
+      .text(242, 154, `Previous game · ${opponent.icon} ${opponent.title}`, {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '24px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5)
+      .setName('sunbeam-chess:resume-opponent');
+
+    const moveCount = preview.history().length;
+    this.add
+      .text(
+        242,
+        190,
+        moveCount === 0
+          ? 'The game has started, but no moves have been played yet.'
+          : `${moveCount} move${moveCount === 1 ? '' : 's'} played so far.`,
+        {
+          color: CHESS_ACADEMY_PALETTE.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '16px',
+        },
+      )
+      .setOrigin(0, 0.5);
+
+    const resumePanel = this.add.graphics();
+    resumePanel.fillStyle(CHESS_ACADEMY_PALETTE.mintSoft, 1);
+    resumePanel.fillRoundedRect(210, 286, 860, 116, 24);
+    resumePanel.lineStyle(3, CHESS_ACADEMY_PALETTE.turquoise, 1);
+    resumePanel.strokeRoundedRect(210, 286, 860, 116, 24);
+
+    this.add
+      .text(250, 320, '1.  Carry on previous game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 359, `Resume against ${opponent.title} with the board exactly as you left it.`, {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    const carryOn = this.add
+      .rectangle(640, 344, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:resume-carry-on');
+    carryOn.on('pointerdown', () => this.resumeFriendlyMatch());
+
+    const newPanel = this.add.graphics();
+    newPanel.fillStyle(CHESS_ACADEMY_PALETTE.lavenderSoft, 1);
+    newPanel.fillRoundedRect(210, 430, 860, 116, 24);
+    newPanel.lineStyle(3, CHESS_ACADEMY_PALETTE.lavender, 1);
+    newPanel.strokeRoundedRect(210, 430, 860, 116, 24);
+
+    this.add
+      .text(250, 464, '2.  Start a new game', {
+        color: CHESS_ACADEMY_PALETTE.ink,
+        fontFamily: UI_FONT,
+        fontSize: '22px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0, 0.5);
+
+    this.add
+      .text(250, 503, 'Choose Dandelion, Clover or Sunbeam and replace the previous game.', {
+        color: CHESS_ACADEMY_PALETTE.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0, 0.5);
+
+    const startNew = this.add
+      .rectangle(640, 488, 860, 116, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .setName('sunbeam-chess:resume-new-game');
+    startNew.on('pointerdown', () => {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+    });
+
+    this.createRoundedButton(
+      1080,
+      638,
+      190,
+      '← Academy',
+      () => this.showAcademyHome(),
+      'sunbeam-chess:resume-back',
+    );
+  }
+
+  private resumeFriendlyMatch(): void {
+    const activeMatch = this.learningRecord.activeFriendlyMatch;
+    if (!activeMatch) {
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    const restored = new Chess();
+    try {
+      if (activeMatch.pgn.trim().length > 0) {
+        restored.loadPgn(activeMatch.pgn);
+      }
+    } catch {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    if (restored.isGameOver()) {
+      this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+      this.showFriendlyOpponentSelect();
+      return;
+    }
+
+    this.friendlyOpponentLevel = activeMatch.opponent;
+    this.clearView();
+    this.view = 'friendly-match';
+    this.currentLesson = null;
+    this.currentPuzzle = null;
+    this.chess = restored;
+    this.selected = null;
+    this.hintMove = null;
+    this.keyboardSquare = restored.turn() === 'w' ? 'e2' : 'e7';
+    this.moveHistoryStart = -1;
+    this.friendlyResultShown = false;
+    this.clearCompletionCard();
+    this.opponentPending = restored.turn() === 'b';
+    this.createFriendlyBackdrop();
+    this.lessonText?.setText('Welcome back. Your previous Friendly Match is ready to continue.');
+    this.renderBoard();
+
+    if (this.opponentPending) {
+      this.time.delayedCall(520, () => this.makeOpponentMove());
+    }
+  }
+
   private showFriendlyOpponentSelect(): void {
     this.clearView();
     this.view = 'friendly-select';
@@ -1254,7 +1437,13 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
   private startFriendlyMatch(level: SunbeamChessOpponentLevel = this.friendlyOpponentLevel): void {
     this.friendlyOpponentLevel = level;
-    this.persistLearningRecord(setSunbeamChessPreferredOpponent(this.learningRecord, level));
+    this.persistLearningRecord(
+      saveSunbeamChessFriendlyMatch(
+        setSunbeamChessPreferredOpponent(this.learningRecord, level),
+        level,
+        '',
+      ),
+    );
     this.clearView();
     this.view = 'friendly-match';
     this.currentLesson = null;
@@ -2082,6 +2271,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.hintMove = null;
     this.moveHistoryStart = -1;
     this.lessonText?.setText(describeTeachingMove(applied));
+    this.persistActiveFriendlyMatch();
     this.renderBoard();
 
     if (!this.chess.isGameOver()) {
@@ -2141,6 +2331,9 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
         this.lessonText?.setText(villageFeedback);
       }
       this.moveHistoryStart = -1;
+      if (this.view === 'friendly-match') {
+        this.persistActiveFriendlyMatch();
+      }
     }
 
     if (this.view === 'coach-match') {
@@ -2458,6 +2651,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
 
+    this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
     const opponent = getSunbeamChessOpponent(this.friendlyOpponentLevel);
     const message =
       result === 'win'
@@ -2674,6 +2868,17 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       return;
     }
 
+    if (this.view === 'friendly-resume' && numericIndex >= 0) {
+      event.preventDefault();
+      if (numericIndex === 0) {
+        this.resumeFriendlyMatch();
+      } else if (numericIndex === 1) {
+        this.persistLearningRecord(clearSunbeamChessFriendlyMatch(this.learningRecord));
+        this.showFriendlyOpponentSelect();
+      }
+      return;
+    }
+
     if (this.view === 'friendly-select' && numericIndex >= 0) {
       const opponent = SUNBEAM_CHESS_OPPONENT_DEFINITIONS[numericIndex];
       if (opponent) {
@@ -2714,6 +2919,20 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.renderBoard();
   }
 
+  private persistActiveFriendlyMatch(): void {
+    if (this.view !== 'friendly-match' || this.chess.isGameOver()) {
+      return;
+    }
+
+    this.persistLearningRecord(
+      saveSunbeamChessFriendlyMatch(
+        this.learningRecord,
+        this.friendlyOpponentLevel,
+        this.chess.pgn(),
+      ),
+    );
+  }
+
   private persistLearningRecord(record: SunbeamChessLearningRecord): void {
     this.learningRecord = record;
     saveBrowserSunbeamChessLearningRecord(record);
@@ -2733,6 +2952,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
 
   private restartFriendlyMatch(): void {
     this.chess.reset();
+    this.persistActiveFriendlyMatch();
     this.selected = null;
     this.hintMove = null;
     this.opponentPending = false;
@@ -2756,6 +2976,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
       this.view === 'lesson-list' ||
       this.view === 'puzzle-list' ||
       this.view === 'coach-match' ||
+      this.view === 'friendly-resume' ||
       this.view === 'friendly-select' ||
       this.view === 'friendly-match'
     ) {
