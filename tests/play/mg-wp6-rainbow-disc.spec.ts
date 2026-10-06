@@ -240,9 +240,8 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     expect(rainbowDiscObject(snapshot, 'rainbow-disc-activity:header-title')?.text).toBe(
       'Rainbow Disc',
     );
-    expect(
-      snapshot.scenes.find(({ key }) => key === 'JustGamesScene')?.health?.lifecycleState,
-    ).not.toBe('active');
+    expect(snapshot.activeScenes).toContain('RainbowDiscActivityScene');
+    expect(snapshot.activeScenes).not.toContain('JustGamesScene');
   });
 
   test('Rainbow Streak ends immediately on a wrong target with an explicit reason', async ({
