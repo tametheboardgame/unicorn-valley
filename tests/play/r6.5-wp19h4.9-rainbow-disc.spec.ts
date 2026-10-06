@@ -101,9 +101,7 @@ async function waitForGoodThrowTiming(page: Page): Promise<void> {
           __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
         }
       ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = api?.snapshot().scenes.find(
-        ({ key }) => key === 'RainbowDiscActivityScene',
-      );
+      const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
       const marker = scene?.objects.find(
         ({ name, effectiveVisible }) =>
           name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
@@ -145,9 +143,7 @@ async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promis
             __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
           }
         ).__UNICORN_VALLEY_DIAGNOSTICS__;
-        const scene = api?.snapshot().scenes.find(
-          ({ key }) => key === 'RainbowDiscActivityScene',
-        );
+        const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
         const cue = scene?.objects.find(
           ({ name, effectiveVisible }) =>
             name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
@@ -177,9 +173,7 @@ async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promis
           __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
         }
       ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = api?.snapshot().scenes.find(
-        ({ key }) => key === 'RainbowDiscActivityScene',
-      );
+      const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
       return !scene?.objects.some(
         ({ name, effectiveVisible }) =>
           name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
