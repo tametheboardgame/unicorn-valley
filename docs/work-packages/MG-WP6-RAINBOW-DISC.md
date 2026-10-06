@@ -343,3 +343,18 @@ Practice fail semantics are now explicit:
 - the Practice hub labels Rainbow Streak as sudden death so the rule is visible before starting.
 
 Automated qualification covers active Match -> Modes -> Practice, active Practice -> Modes -> Match, and a deliberate wrong-target Rainbow Streak attempt producing an immediate `STREAK OVER` result without returning to Just Games.
+
+
+## MG-WP6F human-playtest follow-up — branch-first Modes navigation
+
+Human review found the first internal Modes implementation too abrupt: pressing **Modes** during Match or a Practice drill jumped immediately to the top-level Match/Practice chooser.
+
+Accepted hierarchy:
+
+- while actively playing **Match**, **Modes** returns first to the Match setup / throw-help screen;
+- while actively playing a **Practice drill**, **Modes** returns first to the Practice drill hub;
+- Match setup and the Practice hub each expose a separate **Match / Practice** action for switching branches;
+- the top-level Match/Practice chooser remains inside the same canonical Rainbow Disc scene;
+- Back remains the explicit exit to Meadow / Just Games.
+
+This makes Modes act as a one-level-back control within the current branch rather than an immediate cross-branch jump.
