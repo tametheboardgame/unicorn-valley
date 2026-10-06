@@ -161,6 +161,94 @@ test.describe('MG-WP7 Pond Leap', () => {
     expect(pondObject(snapshot, 'pond-leap:mode-menu')?.effectiveVisible ?? false).toBe(false);
   });
 
+  test('touch and keyboard use the same successful leap path', async ({ page }) => {
+    await openPondLeap(page);
+
+    await primePondLeapTiming(page);
+    await clickNamedObject(page, 'PondLeapActivityScene', 'pond-leap:leap');
+
+    await expect
+      .poll(async () => {
+        const current = await getDiagnosticSnapshot(page);
+        return pondObject(current, 'pond-leap:frog')?.x ?? 0;
+      })
+      .toBe(360);
+
+    await clickNamedObject(page, 'PondLeapActivityScene', 'pond-leap:restart');
+    await primePondLeapTiming(page);
+    await page.keyboard.press('Enter');
+
+    await expect
+      .poll(async () => {
+        const current = await getDiagnosticSnapshot(page);
+        return pondObject(current, 'pond-leap:frog')?.x ?? 0;
+      })
+      .toBe(360);
+  });
+
+  test('a splash keeps the frog on the same pad and quickly unlocks a retry', async ({ page }) => {
+    await openPondLeap(page);
+
+    await primePondLeapMissTiming(page);
+    await page.keyboard.press('Space');
+
+    let snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:frog')?.x).toBe(190);
+
+    await page.waitForTimeout(550);
+    await primePondLeapTiming(page);
+    await page.keyboard.press('Space');
+
+    await expect
+      .poll(async () => {
+        const current = await getDiagnosticSnapshot(page);
+        return pondObject(current, 'pond-leap:frog')?.x ?? 0;
+      })
+      .toBe(360);
+
+    snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:progress')?.text).toContain('Pad 2/5');
+  });
+
+  test('primary controls keep child-sized touch targets', async ({ page }) => {
+    await openPondLeap(page);
+
+    const snapshot = await getDiagnosticSnapshot(page);
+    for (const name of ['leap', 'restart', 'course', 'mode', 'help', 'back']) {
+      const control = pondObject(snapshot, `pond-leap:${name}`);
+      expect(control?.displayHeight ?? 0).toBeGreaterThanOrEqual(48);
+      expect(control?.displayWidth ?? 0).toBeGreaterThanOrEqual(48);
+    }
+
+    await clickNamedObject(page, 'PondLeapActivityScene', 'pond-leap:mode');
+    const menu = await getDiagnosticSnapshot(page);
+    for (const name of ['mode-classic', 'mode-practice', 'mode-ripple-rush', 'mode-menu-close']) {
+      expect(pondObject(menu, `pond-leap:${name}`)?.displayHeight ?? 0).toBeGreaterThanOrEqual(48);
+    }
+  });
+
+  test('keeps the 16:9 activity canvas contained in a portrait tablet viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await openPondLeap(page, { mode: 'practice' });
+
+    const box = await page.locator('canvas').boundingBox();
+    expect(box).not.toBeNull();
+    if (!box) throw new Error('Game canvas is unavailable.');
+
+    expect(box.width).toBeLessThanOrEqual(768);
+    expect(box.height).toBeLessThanOrEqual(1024);
+    expect(box.width / box.height).toBeCloseTo(16 / 9, 1);
+
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+
+    const snapshot = await getDiagnosticSnapshot(page);
+    expect(pondObject(snapshot, 'pond-leap:timing-zone')?.effectiveVisible).toBe(true);
+    expect(pondObject(snapshot, 'pond-leap:leap')?.effectiveVisible).toBe(true);
+  });
+
   test('Just Games launches each Pond Leap mode through the canonical scene', async ({ page }) => {
     await openPondLeapFromJustGames(page, 'ripple-rush');
 
