@@ -30,6 +30,7 @@ export interface BrowserDiagnosticSnapshot {
 interface BrowserDiagnosticsApi {
   snapshot(): BrowserDiagnosticSnapshot;
   startScene(sceneKey: string, data?: object): void;
+  primeRainbowDiscTiming(): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -172,6 +173,16 @@ export async function dragNamedObjectTo(
   await page.mouse.down();
   await page.mouse.move(endX, endY, { steps: 8 });
   await page.mouse.up();
+}
+
+export async function primeRainbowDiscTiming(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const diagnostics = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    diagnostics.primeRainbowDiscTiming();
+  });
 }
 
 export async function setArcadeSpritePosition(

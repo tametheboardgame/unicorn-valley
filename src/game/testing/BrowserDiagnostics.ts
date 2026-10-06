@@ -129,6 +129,7 @@ export interface BrowserDiagnosticsApi {
   clearEvents(): void;
   startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   selectRaceCourse(courseId: string): void;
+  primeRainbowDiscTiming(): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -157,6 +158,7 @@ type InspectableContainer = Phaser.GameObjects.GameObject & {
 
 interface InspectableSceneRuntime {
   raceStarted?: unknown;
+  primeDiagnosticSuccessfulTiming?: () => void;
   playerFinishPlace?: unknown;
   elapsedMs?: unknown;
   runState?: {
@@ -575,6 +577,14 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
     },
     selectRaceCourse: (courseId) => {
       selectRaceCourse(courseId);
+    },
+    primeRainbowDiscTiming: () => {
+      const scene = game.scene.getScene('RainbowDiscActivityScene') as Phaser.Scene &
+        InspectableSceneRuntime;
+      if (!scene?.scene.isActive() || !scene.primeDiagnosticSuccessfulTiming) {
+        throw new Error('Rainbow Disc diagnostic timing is unavailable.');
+      }
+      scene.primeDiagnosticSuccessfulTiming();
     },
     setArcadeSpritePosition: (sceneKey, objectName, x, y) => {
       const scene = game.scene.getScene(sceneKey);
