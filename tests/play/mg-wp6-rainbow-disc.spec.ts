@@ -32,17 +32,42 @@ function rainbowDiscObject(
 }
 
 async function waitForGoodTiming(page: Page): Promise<void> {
-  await expect
-    .poll(async () => {
-      const snapshot = await getDiagnosticSnapshot(page);
-      const marker = rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-marker');
-      const zone = rainbowDiscObject(snapshot, 'rainbow-disc-activity:timing-success-zone');
+  await page.waitForFunction(
+    () => {
+      const diagnostics = (
+        window as typeof window & {
+          __UNICORN_VALLEY_DIAGNOSTICS__?: {
+            snapshot(): {
+              scenes: Array<{
+                key: string;
+                objects: Array<{
+                  name: string;
+                  effectiveVisible: boolean;
+                  x: number;
+                  displayWidth: number;
+                }>;
+              }>;
+            };
+          };
+        }
+      ).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const scene = diagnostics?.snapshot().scenes.find(
+        ({ key }) => key === 'RainbowDiscActivityScene',
+      );
+      const marker = scene?.objects.find(
+        ({ name }) => name === 'rainbow-disc-activity:timing-marker',
+      );
+      const zone = scene?.objects.find(
+        ({ name }) => name === 'rainbow-disc-activity:timing-success-zone',
+      );
       if (!marker?.effectiveVisible || !zone?.effectiveVisible) return false;
       const left = zone.x - zone.displayWidth / 2;
       const right = zone.x + zone.displayWidth / 2;
       return marker.x >= left && marker.x <= right;
-    })
-    .toBe(true);
+    },
+    undefined,
+    { timeout: 6000 },
+  );
 }
 
 test.describe('MG-WP6 Rainbow Disc integration', () => {
