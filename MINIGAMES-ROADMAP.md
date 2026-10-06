@@ -16,7 +16,7 @@ Status: **approved direction / independent programme**
 
 ## Current stage
 
-**MG-WP0 through MG-WP5 are complete and merged. MG-WP6 - Rainbow Disc is active: WP6A-B are complete, WP6C-E are implemented, and WP6F responsive/accessibility qualification + human playtest is the active final gate. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
+**MG-WP0 through MG-WP6 are complete, with MG-WP6 — Rainbow Disc receiving final human approval on 2026-10-06. MG-WP7 — Pond Leap expansion is next. A later MG-WP14 second pass will return to Chess Academy for a much larger curriculum and local pass-and-play chess.**
 
 The shared catalogue/session/launcher/outcome foundation, existing-game migration, sandbox isolation, Just Games catalogue and future-authoring guardrails are the accepted baseline. MG-WP5 applied that platform to a substantial child-first teaching and play redesign of the existing chess game.
 
@@ -413,6 +413,8 @@ Before WP5C is accepted, the human preview must show:
 
 ### MG-WP6 - Rainbow Disc expansion
 
+**Status: complete / human-approved 2026-10-06.**
+
 Detailed package: `docs/work-packages/MG-WP6-RAINBOW-DISC.md`.
 
 Design contract: `docs/minigames/RAINBOW-DISC-EXPANSION-DESIGN.md`.
@@ -438,6 +440,8 @@ Review and expand:
 World integration remains Rainbow Meadow. The same variants/modes appear through Just Games where context permits.
 
 ### MG-WP7 - Pond Leap expansion
+
+**Status: next.**
 
 Goal: deepen the existing timing game without losing its immediate one-touch readability.
 
