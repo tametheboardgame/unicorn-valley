@@ -49,6 +49,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private completed = false;
   private timingPhase = 0;
   private timingValue = 0.5;
+  private diagnosticTimingPinned = false;
   private mode: PondLeapMode = 'classic';
   private assistance: PondLeapAssistanceLevel = 'standard';
   private courseId: PondLeapCourseId = 'sunny-steps';
@@ -121,8 +122,10 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     const challenge = this.currentTimingChallenge();
-    this.timingPhase += delta * challenge.sweepSpeed;
-    this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
+    if (!this.diagnosticTimingPinned) {
+      this.timingPhase += delta * challenge.sweepSpeed;
+      this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
+    }
     this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
   }
 
@@ -507,6 +510,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     const course = getPondLeapCourse(this.courseId);
     const challenge = this.currentTimingChallenge();
     const success = isPondLeapTimingSuccessful(this.timingValue, challenge);
+    this.diagnosticTimingPinned = false;
 
     this.actionLocked = true;
     if (!success) {
@@ -604,6 +608,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.completed = false;
     this.runFailed = false;
     this.modeState = createPondLeapModeRunState();
+    this.diagnosticTimingPinned = false;
     this.timingPhase = 0;
     this.timingValue = 0.5;
 
@@ -620,6 +625,19 @@ export class PondLeapActivityScene extends Phaser.Scene {
     const challenge = this.currentTimingChallenge();
     this.timingValue = challenge.centre;
     this.timingPhase = Math.asin(Phaser.Math.Clamp(challenge.centre * 2 - 1, -1, 1));
+    this.diagnosticTimingPinned = true;
+    this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
+  }
+
+  public primeDiagnosticFailedTiming(): void {
+    if (this.actionLocked || this.completed) {
+      throw new Error('Pond Leap timing is not active.');
+    }
+
+    const challenge = this.currentTimingChallenge();
+    this.timingValue = challenge.centre < 0.5 ? 1 : 0;
+    this.timingPhase = Math.asin(Phaser.Math.Clamp(this.timingValue * 2 - 1, -1, 1));
+    this.diagnosticTimingPinned = true;
     this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
   }
 
