@@ -40,9 +40,17 @@ function createDeferredStartupBridge(key: DeferredStartupSceneKey): SceneConstru
           return;
         }
 
+        const game = this.game;
+        const launchData = this.launchData;
         sceneManager.stop(key);
-        sceneManager.remove(key);
-        sceneManager.add(key, SceneClass, true, this.launchData);
+        game.events.once(Phaser.Core.Events.POST_STEP, () => {
+          sceneManager.remove(key);
+          game.events.once(Phaser.Core.Events.POST_STEP, () => {
+            if (!sceneManager.keys[key]) {
+              sceneManager.add(key, SceneClass, true, launchData);
+            }
+          });
+        });
       });
     }
   };
