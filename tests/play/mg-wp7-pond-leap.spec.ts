@@ -195,7 +195,16 @@ test.describe('MG-WP7 Pond Leap', () => {
     let snapshot = await getDiagnosticSnapshot(page);
     expect(pondObject(snapshot, 'pond-leap:frog')?.x).toBe(190);
 
-    await page.waitForTimeout(550);
+    await expect
+      .poll(
+        async () => {
+          const current = await getDiagnosticSnapshot(page);
+          return pondObject(current, 'pond-leap:status')?.text ?? '';
+        },
+        { timeout: 1_500 },
+      )
+      .not.toContain('Splash!');
+
     await primePondLeapTiming(page);
     await page.keyboard.press('Space');
 
