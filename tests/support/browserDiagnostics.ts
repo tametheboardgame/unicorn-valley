@@ -32,6 +32,7 @@ interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object): void;
   primeRainbowDiscTiming(): void;
   primePondLeapTiming(): void;
+  primePondLeapMissTiming(): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -193,6 +194,16 @@ export async function primePondLeapTiming(page: Page): Promise<void> {
       throw new Error('Browser diagnostics are unavailable.');
     }
     diagnostics.primePondLeapTiming();
+  });
+}
+
+export async function primePondLeapMissTiming(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const diagnostics = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!diagnostics) {
+      throw new Error('Browser diagnostics are unavailable.');
+    }
+    diagnostics.primePondLeapMissTiming();
   });
 }
 
