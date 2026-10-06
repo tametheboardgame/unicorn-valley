@@ -143,7 +143,11 @@ export const MINI_GAME_CATALOGUE = [
     description: 'Time each jump and help the pond frog cross the lily pads.',
     group: 'other',
     order: 60,
-    variants: [],
+    variants: [
+      { id: 'classic', title: 'Classic', justGamesVisible: true },
+      { id: 'practice', title: 'Practice Pond', justGamesVisible: true },
+      { id: 'ripple-rush', title: 'Ripple Rush', justGamesVisible: true },
+    ],
     justGames: { visible: true, availability: 'always' },
     world: { placement: 'placed' },
     sandbox: { sideEffects: 'none' },
