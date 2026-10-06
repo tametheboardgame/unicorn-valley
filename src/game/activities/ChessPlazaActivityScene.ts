@@ -188,12 +188,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.hintMove = null;
     this.currentLesson = null;
     this.lessonHintStage = 0;
-    this.keyboardSquare = lesson.pieceSquare;
     this.lessonComplete = false;
     this.lessonResetPending = false;
     this.currentPuzzle = null;
     this.puzzleHintStage = 0;
-    this.keyboardSquare = puzzle.from;
     this.puzzleComplete = false;
     this.puzzleResetPending = false;
     this.coachPendingMove = null;
@@ -527,6 +525,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.selected = null;
     this.hintMove = null;
     this.lessonHintStage = 0;
+    this.keyboardSquare = lesson.pieceSquare;
     this.lessonComplete = false;
     this.lessonResetPending = false;
     this.clearCompletionCard();
@@ -746,6 +745,7 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.selected = null;
     this.hintMove = null;
     this.puzzleHintStage = 0;
+    this.keyboardSquare = puzzle.from;
     this.puzzleComplete = false;
     this.puzzleResetPending = false;
     this.clearCompletionCard();
