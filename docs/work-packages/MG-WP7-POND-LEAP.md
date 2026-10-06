@@ -13,7 +13,7 @@ mini_game_platform_impact: changed - pond-leap
 
 ## Current checkpoint
 
-**MG-WP7A — audit and expansion design is complete. MG-WP7B — rules/course foundation is next.**
+**MG-WP7A-B are complete. MG-WP7C — Classic Crossing and course presentation is active.**
 
 Detailed design contract: `docs/minigames/POND-LEAP-EXPANSION-DESIGN.md`.
 
@@ -106,6 +106,8 @@ Acceptance:
 - the same course definition drives pad/timing progression;
 - assistance changes visible timing speed/window rather than silently converting failures to successes.
 
+**Status: complete.**
+
 ### MG-WP7C — Classic Crossing and course presentation
 
 Deliverables:
@@ -121,6 +123,8 @@ Acceptance:
 - a first-time player can still understand the game from the meter + LEAP action;
 - different courses produce genuinely different timing/route patterns;
 - world entry remains immediately playable.
+
+**Status: implementation complete / automated qualification pending.**
 
 ### MG-WP7D — Practice Pond and Ripple Rush
 
