@@ -152,6 +152,23 @@ async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promis
   await page.mouse.click(receiver.x, receiver.y);
 }
 
+async function startStandardMatch(page: Page): Promise<void> {
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    'rainbow-disc-activity:match-assistance-standard',
+  );
+  await expect
+    .poll(async () => {
+      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:thrower' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+}
+
 async function completeOpenLanePass(page: Page): Promise<void> {
   await dragDiscToReceiver(page, await currentOpenLane(page));
 }
@@ -288,6 +305,7 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
+  await startStandardMatch(page);
 
   await expect
     .poll(async () =>
@@ -485,6 +503,7 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
+  await startStandardMatch(page);
 
   const attack = await snapshotScene(page, 'RainbowDiscActivityScene');
   const attackDefenders = attack.objects.filter(
@@ -579,6 +598,7 @@ test('MG-WP6C defence telegraph can be read or missed and the opposition can sco
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
+  await startStandardMatch(page);
 
   const attack = await snapshotScene(page, 'RainbowDiscActivityScene');
   const markedLane = [0, 1, 2].find((index) =>
@@ -637,6 +657,7 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
+  await startStandardMatch(page);
 
   await clickNamedObject(
     page,
@@ -671,6 +692,7 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
+  await startStandardMatch(page);
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
