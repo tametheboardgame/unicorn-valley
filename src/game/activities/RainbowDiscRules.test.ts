@@ -5,6 +5,7 @@ import {
   getRainbowDiscAssistanceProfile,
   isRainbowDiscMatchComplete,
   isRainbowDiscReleaseAccurate,
+  rainbowDiscDefenceCueProfile,
   rainbowDiscDefenceLane,
   rainbowDiscDefenceTelegraphAlpha,
   rainbowDiscMissOffset,
@@ -72,6 +73,19 @@ describe('RainbowDiscRules', () => {
       rainbowDiscDefenceTelegraphAlpha('challenge'),
     );
     expect(rainbowDiscDefenceTelegraphAlpha('challenge')).toBeGreaterThan(0);
+  });
+
+  it('makes defence cues shorter and subtler as assistance decreases', () => {
+    const gentle = rainbowDiscDefenceCueProfile('gentle');
+    const standard = rainbowDiscDefenceCueProfile('standard');
+    const challenge = rainbowDiscDefenceCueProfile('challenge');
+
+    expect(gentle.durationMs).toBeGreaterThan(standard.durationMs);
+    expect(standard.durationMs).toBeGreaterThan(challenge.durationMs);
+    expect(gentle.routeReach).toBeGreaterThan(standard.routeReach);
+    expect(standard.routeReach).toBeGreaterThan(challenge.routeReach);
+    expect(gentle.ringPulse).toBe(true);
+    expect(standard.ringPulse).toBe(false);
   });
 
   it('moves and resizes the green timing window between throws deterministically', () => {
