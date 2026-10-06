@@ -657,7 +657,6 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
-  await startStandardMatch(page);
 
   await clickNamedObject(
     page,
@@ -692,7 +691,6 @@ test('MG-WP6D Practice hub exposes Passing Drill and Rainbow Streak as distinct 
 
   await page.keyboard.press('E');
   await waitForActiveScene(page, 'RainbowDiscActivityScene');
-  await startStandardMatch(page);
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
