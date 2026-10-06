@@ -65,6 +65,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private timingMarker: Phaser.GameObjects.Rectangle | null = null;
   private timingZone: Phaser.GameObjects.Rectangle | null = null;
   private completionLayer: Phaser.GameObjects.Container | null = null;
+  private modeMenuLayer: Phaser.GameObjects.Container | null = null;
 
   public constructor() {
     super('PondLeapActivityScene');
@@ -113,6 +114,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
       this.timingZone = null;
       this.completionLayer?.destroy(true);
       this.completionLayer = null;
+      this.modeMenuLayer?.destroy(true);
+      this.modeMenuLayer = null;
     });
   }
 
@@ -347,7 +350,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.createRoundedButton(1125, 80, 130, 'Back', () => this.leaveActivity(), 'back');
     this.createRoundedButton(205, 590, 170, 'Restart', () => this.restartRun(), 'restart');
     this.createRoundedButton(165, 645, 170, 'Course ↻', () => this.cycleCourse(), 'course');
-    this.createRoundedButton(365, 645, 170, 'Mode ↻', () => this.cycleMode(), 'mode');
+    this.createRoundedButton(365, 645, 170, 'Modes', () => this.openModeMenu(), 'mode');
     this.createRoundedButton(1090, 645, 180, 'Help ↻', () => this.cycleAssistance(), 'help');
 
     this.add
@@ -460,9 +463,9 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
     layer.add([panel, blocker, celebration, frog, headline, summary, padRow]);
     this.createRoundedButton(
-      505,
+      310,
       550,
-      220,
+      190,
       'Play Again',
       () => this.restartRun(),
       'play-again',
@@ -470,9 +473,29 @@ export class PondLeapActivityScene extends Phaser.Scene {
       layer,
     );
     this.createRoundedButton(
-      775,
+      525,
       550,
-      220,
+      190,
+      'Change Course',
+      () => this.changeCourseFromResult(),
+      'change-course',
+      false,
+      layer,
+    );
+    this.createRoundedButton(
+      740,
+      550,
+      170,
+      'Modes',
+      () => this.openModeMenu(),
+      'result-modes',
+      false,
+      layer,
+    );
+    this.createRoundedButton(
+      955,
+      550,
+      190,
       this.resultBackLabel(),
       () => this.leaveActivity(),
       'back-to-meadow',
@@ -672,11 +695,107 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.restartRun();
   }
 
-  private cycleMode(): void {
-    const currentIndex = POND_LEAP_MODES.indexOf(this.mode);
-    this.mode = POND_LEAP_MODES[(currentIndex + 1) % POND_LEAP_MODES.length] ?? 'classic';
-    this.assistance = defaultPondLeapAssistance(this.mode);
+  private openModeMenu(): void {
+    if (this.modeMenuLayer) {
+      return;
+    }
+
+    this.actionLocked = true;
+    const layer = this.add.container(0, 0).setName('pond-leap:mode-menu').setDepth(60);
+    const blocker = this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0.001)
+      .setInteractive()
+      .setName('pond-leap:mode-menu-blocker');
+
+    const panel = this.add.graphics().setName('pond-leap:mode-menu-panel');
+    panel.fillStyle(0xfff9e9, 1);
+    panel.fillRoundedRect(265, 165, 750, 390, 30);
+    panel.lineStyle(6, 0xc99cdb, 1);
+    panel.strokeRoundedRect(265, 165, 750, 390, 30);
+
+    const title = this.add
+      .text(640, 220, 'Choose a way to play', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('pond-leap:mode-menu-title');
+
+    const subtitle = this.add
+      .text(640, 260, 'You can switch modes without leaving Lily Pad Leap.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0.5);
+
+    layer.add([blocker, panel, title, subtitle]);
+
+    const modes: readonly [PondLeapMode, string, string][] = [
+      ['classic', 'Classic Crossing', 'Cross five pads. Splashing simply retries the same leap.'],
+      ['practice', 'Practice Pond', 'Ten safe practice leaps. Build your best streak.'],
+      ['ripple-rush', 'Ripple Rush', 'Land eight hops before the third splash.'],
+    ];
+
+    modes.forEach(([mode, label, description], index) => {
+      const y = 330 + index * 72;
+      this.createRoundedButton(
+        470,
+        y,
+        280,
+        label,
+        () => this.selectMode(mode),
+        `mode-${mode}`,
+        mode === this.mode,
+        layer,
+      );
+      const copy = this.add
+        .text(650, y, description, {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          wordWrap: { width: 300 },
+        })
+        .setOrigin(0, 0.5);
+      layer.add(copy);
+    });
+
+    this.createRoundedButton(
+      850,
+      510,
+      180,
+      'Keep Playing',
+      () => this.closeModeMenu(),
+      'mode-menu-close',
+      false,
+      layer,
+    );
+
+    this.modeMenuLayer = layer;
+  }
+
+  private closeModeMenu(): void {
+    this.modeMenuLayer?.destroy(true);
+    this.modeMenuLayer = null;
+    this.actionLocked = false;
+  }
+
+  private selectMode(mode: PondLeapMode): void {
+    this.mode = mode;
+    this.assistance = defaultPondLeapAssistance(mode);
+    this.modeMenuLayer?.destroy(true);
+    this.modeMenuLayer = null;
+    this.completionLayer?.destroy(true);
+    this.completionLayer = null;
     this.restartRun();
+  }
+
+  private changeCourseFromResult(): void {
+    this.completionLayer?.destroy(true);
+    this.completionLayer = null;
+    this.cycleCourse();
   }
 
   private cycleAssistance(): void {
