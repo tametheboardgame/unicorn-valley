@@ -246,11 +246,26 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     const profile = this.currentTimingProfile();
-    this.timingPhase += delta * profile.sweepSpeed;
-    this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
+    if (!this.diagnosticTimingPinned) {
+      this.timingPhase += delta * profile.sweepSpeed;
+      this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
+    }
     this.timingMarker?.setX(TIMING_TRACK_LEFT + this.timingValue * TIMING_TRACK_WIDTH);
     this.updateTimingSuccessZone();
     this.refreshTimingMeterVisibility();
+  }
+
+  public primeDiagnosticSuccessfulTiming(): void {
+    if (!this.isTimingActive()) {
+      throw new Error('Rainbow Disc timing is not active.');
+    }
+
+    const profile = this.currentTimingProfile();
+    this.timingValue = profile.centre;
+    this.timingPhase = Math.asin(Phaser.Math.Clamp(profile.centre * 2 - 1, -1, 1));
+    this.diagnosticTimingPinned = true;
+    this.timingMarker?.setX(TIMING_TRACK_LEFT + this.timingValue * TIMING_TRACK_WIDTH);
+    this.updateTimingSuccessZone();
   }
 
   private createBackdrop(): void {
@@ -1459,6 +1474,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       profile.centre,
     );
     const missOffset = rainbowDiscMissOffset(this.timingValue, profile.centre);
+    this.diagnosticTimingPinned = false;
 
     this.resolveThrow(
       target,
