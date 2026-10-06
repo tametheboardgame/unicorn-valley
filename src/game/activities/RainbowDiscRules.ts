@@ -75,3 +75,50 @@ export function rainbowDiscMissOffset(
 ): number {
   return timingValue < centre ? -150 : 150;
 }
+
+
+export const RAINBOW_DISC_GOALS_TO_WIN = 2;
+
+const RAINBOW_DISC_ATTACK_PATTERNS = [
+  [1, 2, 0],
+  [2, 0, 1],
+  [0, 1, 2],
+  [1, 0, 2],
+] as const;
+
+const RAINBOW_DISC_DEFENCE_PATTERNS = [
+  [1, 2],
+  [0, 1],
+  [2, 0],
+  [1, 0],
+] as const;
+
+export function rainbowDiscOpenLane(attackSequence: number, passIndex: number): number {
+  const pattern =
+    RAINBOW_DISC_ATTACK_PATTERNS[
+      Math.abs(Math.trunc(attackSequence)) % RAINBOW_DISC_ATTACK_PATTERNS.length
+    ] ?? RAINBOW_DISC_ATTACK_PATTERNS[0];
+  return pattern[Math.abs(Math.trunc(passIndex)) % pattern.length] ?? 1;
+}
+
+export function rainbowDiscDefenceLane(defenceSequence: number, advance: number): number {
+  const pattern =
+    RAINBOW_DISC_DEFENCE_PATTERNS[
+      Math.abs(Math.trunc(defenceSequence)) % RAINBOW_DISC_DEFENCE_PATTERNS.length
+    ] ?? RAINBOW_DISC_DEFENCE_PATTERNS[0];
+  return pattern[Math.abs(Math.trunc(advance)) % pattern.length] ?? 1;
+}
+
+export function isRainbowDiscMatchComplete(
+  playerScore: number,
+  oppositionScore: number,
+  goalsToWin = RAINBOW_DISC_GOALS_TO_WIN,
+): boolean {
+  return playerScore >= goalsToWin || oppositionScore >= goalsToWin;
+}
+
+export function rainbowDiscDefenceTelegraphAlpha(level: RainbowDiscAssistanceLevel): number {
+  if (level === 'gentle') return 0.9;
+  if (level === 'challenge') return 0.42;
+  return 0.68;
+}
