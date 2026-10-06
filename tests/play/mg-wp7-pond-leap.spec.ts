@@ -227,7 +227,9 @@ test.describe('MG-WP7 Pond Leap', () => {
     }
   });
 
-  test('keeps the 16:9 activity canvas contained in a portrait tablet viewport', async ({ page }) => {
+  test('keeps the 16:9 activity canvas contained in a portrait tablet viewport', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await openPondLeap(page, { mode: 'practice' });
 
