@@ -9,11 +9,13 @@ import {
   POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT,
   applyPondLeapModePressure,
   createPondLeapModeRunState,
+  defaultPondLeapAssistance,
   getPondLeapTimingChallenge,
   isPondLeapCourseComplete,
   isPondLeapModeFinished,
   isPondLeapRippleRushFailed,
   isPondLeapTimingSuccessful,
+  pondLeapModeTitle,
   recordPondLeapModeAttempt,
 } from './PondLeapRules';
 
@@ -22,6 +24,15 @@ describe('PondLeapRules', () => {
     expect(POND_LEAP_COURSE_IDS).toEqual(['sunny-steps', 'reed-weave', 'twinkle-trail']);
     expect(POND_LEAP_ASSISTANCE_LEVELS).toEqual(['relaxed', 'standard', 'quick']);
     expect(POND_LEAP_MODES).toEqual(['classic', 'practice', 'ripple-rush']);
+  });
+
+  it('gives each mode a readable title and sensible default help', () => {
+    expect(pondLeapModeTitle('classic')).toBe('Classic Crossing');
+    expect(pondLeapModeTitle('practice')).toBe('Practice Pond');
+    expect(pondLeapModeTitle('ripple-rush')).toBe('Ripple Rush');
+    expect(defaultPondLeapAssistance('classic')).toBe('standard');
+    expect(defaultPondLeapAssistance('practice')).toBe('relaxed');
+    expect(defaultPondLeapAssistance('ripple-rush')).toBe('quick');
   });
 
   it('keeps Relaxed slower and wider while Quick is faster and tighter', () => {
