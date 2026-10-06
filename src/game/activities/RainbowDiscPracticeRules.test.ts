@@ -5,6 +5,7 @@ import {
   RAINBOW_DISC_TARGET_RANGE_THROWS,
   rainbowDiscStreakTarget,
   rainbowDiscStreakTiming,
+  resolveRainbowDiscStreakAttempt,
 } from './RainbowDiscPracticeRules';
 
 describe('RainbowDiscPracticeRules', () => {
@@ -30,5 +31,11 @@ describe('RainbowDiscPracticeRules', () => {
     expect(last.tolerance).toBeLessThan(middle.tolerance);
     expect(middle.sweepSpeed).toBeGreaterThan(first.sweepSpeed);
     expect(last.sweepSpeed).toBeGreaterThan(middle.sweepSpeed);
+  });
+
+  it('ends Rainbow Streak on a wrong target or mistimed called target', () => {
+    expect(resolveRainbowDiscStreakAttempt(0, 1, true)).toBe('hit');
+    expect(resolveRainbowDiscStreakAttempt(0, 0, true)).toBe('wrong-target');
+    expect(resolveRainbowDiscStreakAttempt(0, 1, false)).toBe('miss');
   });
 });
