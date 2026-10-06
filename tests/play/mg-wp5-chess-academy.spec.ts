@@ -248,6 +248,13 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
 
     await page.keyboard.press('Escape');
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:teacher');
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'JustGamesScene');
+
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:sunbeam-chess');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForScene(page, 'ChessPlazaActivityScene');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:teacher');
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:friendly-match');
 
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:resume-carry-on');
