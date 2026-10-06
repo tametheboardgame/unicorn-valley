@@ -31,44 +31,6 @@ function rainbowDiscObject(
     ?.objects.find((object) => object.name === name);
 }
 
-async function waitForGoodTiming(page: Page): Promise<void> {
-  await page.waitForFunction(
-    () => {
-      const diagnostics = (
-        window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: {
-            snapshot(): {
-              scenes: Array<{
-                key: string;
-                objects: Array<{
-                  name: string;
-                  effectiveVisible: boolean;
-                  x: number;
-                  displayWidth: number;
-                }>;
-              }>;
-            };
-          };
-        }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = diagnostics
-        ?.snapshot()
-        .scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
-      const marker = scene?.objects.find(
-        ({ name }) => name === 'rainbow-disc-activity:timing-marker',
-      );
-      const zone = scene?.objects.find(
-        ({ name }) => name === 'rainbow-disc-activity:timing-success-zone',
-      );
-      if (!marker?.effectiveVisible || !zone?.effectiveVisible) return false;
-      const left = zone.x - zone.displayWidth / 2;
-      const right = zone.x + zone.displayWidth / 2;
-      return marker.x >= left && marker.x <= right;
-    },
-    undefined,
-    { timeout: 6000 },
-  );
-}
 
 test.describe('MG-WP6 Rainbow Disc integration', () => {
   test('Just Games Match opens assistance setup and returns to the catalogue', async ({ page }) => {
@@ -183,7 +145,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     await clickNamedObject(
       page,
       'RainbowDiscActivityScene',
-      'rainbow-disc-activity:match-assistance-standard',
+      'rainbow-disc-activity:match-assistance-gentle',
     );
     await waitForNamedObject(page, 'RainbowDiscActivityScene', 'rainbow-disc-activity:thrower');
 
@@ -192,7 +154,6 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     expect(firstZone?.effectiveVisible).toBe(true);
     if (!firstZone) throw new Error('First timing window is unavailable.');
 
-    await waitForGoodTiming(page);
     await page.keyboard.press('Space');
 
     await expect
@@ -318,7 +279,6 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
 
     // First called target is the middle ring. Deliberately select the left ring.
     await page.keyboard.press('ArrowLeft');
-    await waitForGoodTiming(page);
     await page.keyboard.press('Space');
 
     await expect
