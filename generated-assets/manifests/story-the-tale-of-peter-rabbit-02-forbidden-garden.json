@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1DMn0MlouAwG1PQuzawBIaXNeMGHdARAo"
+  },
+  "expectedSourceName": "peter-rabbit-02-forbidden-garden.png",
+  "destination": "public/stories/the-tale-of-peter-rabbit/illustrations/generated/peter-rabbit-02-forbidden-garden.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
