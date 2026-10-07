@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1XkMuaDNeaRnltgjMS5Kax_YSwy2f9QP8"
+  },
+  "expectedSourceName": "peter-rabbit-08-lost-garden.png",
+  "destination": "public/stories/the-tale-of-peter-rabbit/illustrations/generated/peter-rabbit-08-lost-garden.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
