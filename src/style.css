@@ -1666,7 +1666,8 @@ canvas {
 }
 
 .story-library-book[data-story-id="alices-adventures-in-wonderland"]
-  .story-library-cover[data-cover-style="modern"] img {
+  .story-library-cover[data-cover-style="modern"]
+  img {
   object-position: 78% center;
 }
 
