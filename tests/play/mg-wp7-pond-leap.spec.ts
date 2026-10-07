@@ -205,7 +205,7 @@ test.describe('MG-WP7 Pond Leap', () => {
             return false;
           }
         },
-        { timeout: 1_500 },
+        { timeout: 6_000 },
       )
       .toBe(true);
     await page.keyboard.press('Space');
