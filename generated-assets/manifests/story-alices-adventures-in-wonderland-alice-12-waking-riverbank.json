@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1IgDA5jjZwUg0Yho5O5KRs7dxBFyr3C2V"
+  },
+  "expectedSourceName": "alice-12-waking-riverbank.png",
+  "destination": "public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-12-waking-riverbank.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
