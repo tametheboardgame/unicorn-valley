@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1JOCfWD-DwKgnuocqIkGNaLVxfmxR-daP"
+  },
+  "expectedSourceName": "peter-rabbit-05-chase.png",
+  "destination": "public/stories/the-tale-of-peter-rabbit/illustrations/generated/peter-rabbit-05-chase.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
