@@ -208,7 +208,31 @@ Before bulk reader generation, approve these five anchors:
 5. **Woodland/shed anchor** — wide clearing concept locking stump, shed exterior/interior
    relationship, woodland path and recurring vegetation.
 
-Human approval of all five anchors is required before SH1.6.3B begins.
+**SH1.6.3A human-approved 8 October 2026.** All five continuity anchors are locked: Jemima, the
+fox, Kep, the farm/cart-road environment and the woodland clearing/feather shed.
+
+The final fox anchor is the naturalistic no-clothing version with the newspaper physically grounded
+as a prop. Earlier fox attempts with human clothing or awkwardly unsupported newspaper placement
+are rejected and must not be reused.
+
+## SH1.6.3B approved image inventory — Chapters 1–2
+
+Human-approved and locked on 8 October 2026. All four approved sources are 1536 × 1024 RGB
+landscape images.
+
+| # | Scene | Block ID | Stable generated destination | Status |
+| --- | --- | --- | --- | --- |
+| 1 | The Farmyard Problem | `a-farmyard-problem` | `illustrations/generated/jemima-01-farmyard-problem.webp` | APPROVED / LOCKED |
+| 2 | Off to the Secret Wood | `a-quiet-nest` | `illustrations/generated/jemima-02-secret-wood.webp` | APPROVED / LOCKED |
+| 3 | The Sandy-whiskered Gentleman | `the-sandy-whiskered-gentleman` | `illustrations/generated/jemima-03-sandy-whiskered-gentleman.webp` | APPROVED / LOCKED |
+| 4 | The Feather Shed | `the-feather-shed` | `illustrations/generated/jemima-04-feather-shed.webp` | APPROVED / LOCKED |
+
+Image 3 is specifically the replacement composition with the newspaper resting naturally on the
+mossy stump between Jemima and the fox. The earlier version with the newspaper awkwardly held/
+floating near the fox is rejected.
+
+Do not regenerate these four images unless David explicitly reopens one during final book review.
+Materialisation and `book.json` wiring remain part of the later integration flow.
 
 ## Visual progression
 
@@ -220,9 +244,9 @@ The story should become tense through composition and lighting, not through horr
 
 ## Bounded delivery sequence
 
-- **SH1.6.3A — Audit + visual bible + five-anchor continuity gate**
-- **SH1.6.3B — Chapters 1–2:** images 1–4
-- **SH1.6.3C — Chapters 3–4:** images 5–8
+- **SH1.6.3A — Audit + visual bible + five-anchor continuity gate — COMPLETE / HUMAN-APPROVED**
+- **SH1.6.3B — Chapters 1–2: images 1–4 — COMPLETE / HUMAN-APPROVED / LOCKED**
+- **SH1.6.3C — Chapters 3–4: images 5–8 — NEXT**
 - **SH1.6.3D — Chapter 5:** images 9–11
 - **SH1.6.3E — Integration + modern-cover selection + closeout**
 
