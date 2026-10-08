@@ -1,5 +1,22 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-08 Story House modern cover convention locked
+
+The Story House modern-cover rule is now canonical: **reuse an already approved modern reader
+illustration as the modern catalogue cover**. Do not generate a second cover-only image, duplicate
+the reader asset, or bake the book title into the artwork. The Story House library supplies the
+shared title overlay automatically.
+
+`book.json` should point the `modern` entry in `coverSets` directly at the selected reader WebP.
+The normal catalogue presentation uses `object-fit: cover` with a centred crop. Add a minimal
+story-specific `object-position` adjustment only when human preview shows that the focal subject
+needs repositioning.
+
+The canonical operational instructions live in
+`docs/story-house/GENERATED-ASSET-PIPELINE.md` and
+`docs/story-house/GENERATED-ASSET-RUNBOOK.md`. Alice and Peter Rabbit are the reference
+implementations.
+
 ## 2026-10-06 R6.5-WP19SH1.6 dual-edition illustration sequence advanced
 
 **SH1.6.1 - Alice's Adventures in Wonderland is complete, human-approved and merged via PR #291.**

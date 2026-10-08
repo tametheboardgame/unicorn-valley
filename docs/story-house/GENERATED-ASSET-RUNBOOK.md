@@ -86,6 +86,28 @@ Run:
 
 and the focused Story Library tests when the manifest/catalogue changes.
 
+## 6A. Select the modern cover from the approved reader art
+
+Do this **after** the modern reader illustrations are approved.
+
+1. Choose the existing modern reader illustration that makes the clearest catalogue cover.
+2. Add or update the story's `coverSets` so:
+   - `classic` continues to point at the historic/existing classic cover;
+   - `modern` points directly at the chosen reader WebP under
+     `illustrations/generated/`.
+3. Do not generate a separate cover image and do not make a second copy of the selected reader
+   illustration.
+4. Do not add the title to the image. `StoryReaderOverlay` supplies the standard modern-cover
+   title overlay in the Story House library.
+5. Let the shared `object-fit: cover` crop centre normally first. If the important subject is
+   badly framed in the catalogue card, use a narrow story-specific CSS `object-position`
+   adjustment and verify it in Cloudflare.
+6. Run `npm run story:catalogue` so the catalogue receives the updated cover-set path.
+
+**Cover anti-patterns:** a new title-bearing PNG/WebP, a cover-only Drive upload, a cover-only
+generated-asset manifest, or a duplicate cropped asset when the approved reader illustration
+already works. Remove such accidental assets before merge.
+
 ## 7. Review the Cloudflare preview
 
 Check:
