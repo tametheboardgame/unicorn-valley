@@ -7,10 +7,13 @@ The finished Story House edition now has 36 approved modern illustrations, indep
 Modern illustration selection and the approved White Rabbit modern cover treatment while preserving
 the historic/classic material.
 
-**Next: SH1.6.2 - The Tale of Peter Rabbit.** Work starts with the five-chapter Story House audit and
-visual bible, then bounded Chapters 1-2 and Chapters 3-5 generation batches, followed by integration,
-modern-cover closeout and human preview. The 10-page Full Classic Text and all 26 historic Beatrix
-Potter illustrations are preservation requirements and must not be altered.
+**SH1.6.2 - The Tale of Peter Rabbit is active at SH1.6.2A.** The five-chapter audit has produced an
+agreed 11-image modern reader plan and a four-anchor continuity gate: Peter, rabbit family,
+Mr McGregor and the garden environment. No bulk book illustration generation begins until those
+anchors are human-approved. Chapters 1-2 and Chapters 3-5 then proceed as bounded generation batches,
+followed by integration, modern-cover closeout and human preview. The 10-page Full Classic Text and
+all 26 historic Beatrix Potter illustrations are preservation requirements and must not be altered.
+The full image-by-image plan is recorded in the authoritative SH1 work package.
 
 After Peter Rabbit, **SH1.6.3 - The Tale of Jemima Puddle-Duck** remains next, preserving its 25
 historic Full Classic illustrations.

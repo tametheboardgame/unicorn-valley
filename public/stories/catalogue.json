@@ -691,6 +691,12 @@
           "label": "Classic Covers",
           "coverPath": "/stories/the-tale-of-peter-rabbit/covers/cover.webp",
           "coverAlt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
+        },
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-tale-of-peter-rabbit/illustrations/generated/peter-rabbit-03-under-the-gate.webp",
+          "coverAlt": "Peter Rabbit squeezes beneath the weathered gate into Mr McGregor's bright vegetable garden."
         }
       ],
       "series": null,

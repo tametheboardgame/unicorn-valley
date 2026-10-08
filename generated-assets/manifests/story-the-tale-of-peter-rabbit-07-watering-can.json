@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1F1ys_pOpjsqQSdiWhPRtl8OBtyi6VdB3"
+  },
+  "expectedSourceName": "peter-rabbit-07-watering-can.png",
+  "destination": "public/stories/the-tale-of-peter-rabbit/illustrations/generated/peter-rabbit-07-watering-can.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 2
+}
