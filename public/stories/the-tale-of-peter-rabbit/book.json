@@ -9,27 +9,14 @@
     "alt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
   },
   "series": null,
-  "tags": [
-    "classic-retelling",
-    "rabbit",
-    "garden",
-    "mischief",
-    "illustrated"
-  ],
+  "tags": ["classic-retelling", "rabbit", "garden", "mischief", "illustrated"],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": [
-      "Adventure",
-      "Classics"
-    ],
-    "audiences": [
-      "Read Together",
-      "Early Reader",
-      "Independent Reader"
-    ],
+    "genres": ["Adventure", "Classics"],
+    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",
