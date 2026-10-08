@@ -1,5 +1,24 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-08 R6.5-WP19SH1.6.3B Chapters 1–2 locked
+
+**SH1.6.3A is complete and human-approved.** The five continuity anchors for Jemima, the
+sandy-whiskered fox, Kep, the farm/cart road and the woodland clearing/feather shed are locked.
+
+**SH1.6.3B is also complete and human-approved.** The first four modern reader illustrations are
+locked at 1536 × 1024:
+
+1. The Farmyard Problem — `a-farmyard-problem`
+2. Off to the Secret Wood — `a-quiet-nest`
+3. The Sandy-whiskered Gentleman — `the-sandy-whiskered-gentleman`
+4. The Feather Shed — `the-feather-shed`
+
+The final Gentleman composition uses the newspaper resting naturally on the mossy stump; earlier
+awkward newspaper versions are rejected. These four images must not be regenerated unless David
+explicitly reopens them.
+
+**Next: SH1.6.3C — Chapters 3–4, images 5–8.**
+
 ## 2026-10-08 R6.5-WP19SH1.6.3 Jemima Puddle-Duck started
 
 **SH1.6.2 - The Tale of Peter Rabbit is complete, human-approved and merged via PR #295.**
