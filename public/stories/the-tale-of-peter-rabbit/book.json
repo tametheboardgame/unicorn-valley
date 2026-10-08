@@ -9,14 +9,27 @@
     "alt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
   },
   "series": null,
-  "tags": ["classic-retelling", "rabbit", "garden", "mischief", "illustrated"],
+  "tags": [
+    "classic-retelling",
+    "rabbit",
+    "garden",
+    "mischief",
+    "illustrated"
+  ],
   "publication": {
     "status": "published"
   },
   "discovery": {
     "format": "Picture Book",
-    "genres": ["Adventure", "Classics"],
-    "audiences": ["Read Together", "Early Reader", "Independent Reader"],
+    "genres": [
+      "Adventure",
+      "Classics"
+    ],
+    "audiences": [
+      "Read Together",
+      "Early Reader",
+      "Independent Reader"
+    ],
     "length": "Quick Read"
   },
   "defaultEditionId": "story-house",
@@ -44,42 +57,18 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1902,
-        "curatorNotes": "A short classic split into five scene-sized reader sections, retaining Potter's original visual identity."
+        "curatorNotes": "A short classic split into five scene-sized reader sections. R6.5-WP19SH1.6.2 adds a separately selectable generated Modern Illustrations set while preserving the original Beatrix Potter artwork as Classic Illustrations."
       },
       "chapters": [
         {
           "id": "mrs-rabbits-warning",
           "title": "Mrs Rabbit's Warning",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "potter-rabbit-family",
-              "blockId": "four-little-rabbits",
-              "path": "illustrations/rabbit-family.webp",
-              "alt": "Beatrix Potter's illustration of Peter Rabbit with his family.",
-              "placement": "full-width",
-              "width": 469,
-              "height": 511,
-              "caption": "Illustration by Beatrix Potter, 1902."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "into-the-garden",
           "title": "Into the Garden",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "potter-garden",
-              "blockId": "among-the-vegetables",
-              "path": "illustrations/garden.webp",
-              "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
-              "placement": "full-width",
-              "width": 431,
-              "height": 528,
-              "caption": "Illustration by Beatrix Potter, 1902."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "mr-mcgregor",
@@ -89,34 +78,231 @@
         {
           "id": "lost-and-found",
           "title": "Lost and Found",
-          "path": "chapters/04.md",
-          "illustrations": [
-            {
-              "id": "potter-escape",
-              "blockId": "finding-the-gate",
-              "path": "illustrations/escape.webp",
-              "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
-              "placement": "full-width",
-              "width": 408,
-              "height": 530,
-              "caption": "Illustration by Beatrix Potter, 1902."
-            }
-          ]
+          "path": "chapters/04.md"
         },
         {
           "id": "home-again",
           "title": "Home Again",
-          "path": "chapters/05.md",
-          "illustrations": [
+          "path": "chapters/05.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original 1902 illustrations by Beatrix Potter",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Peter_Rabbit",
+            "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
             {
-              "id": "potter-home",
-              "blockId": "back-in-the-burrow",
-              "path": "illustrations/home.webp",
-              "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
-              "placement": "full-width",
-              "width": 446,
-              "height": 505,
-              "caption": "Illustration by Beatrix Potter, 1902."
+              "chapterId": "mrs-rabbits-warning",
+              "illustrations": [
+                {
+                  "id": "potter-rabbit-family",
+                  "blockId": "four-little-rabbits",
+                  "path": "illustrations/rabbit-family.webp",
+                  "alt": "Beatrix Potter's illustration of Peter Rabbit with his family.",
+                  "placement": "full-width",
+                  "width": 469,
+                  "height": 511,
+                  "caption": "Illustration by Beatrix Potter, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "into-the-garden",
+              "illustrations": [
+                {
+                  "id": "potter-garden",
+                  "blockId": "among-the-vegetables",
+                  "path": "illustrations/garden.webp",
+                  "alt": "An original Beatrix Potter illustration from The Tale of Peter Rabbit.",
+                  "placement": "full-width",
+                  "width": 431,
+                  "height": 528,
+                  "caption": "Illustration by Beatrix Potter, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "lost-and-found",
+              "illustrations": [
+                {
+                  "id": "potter-escape",
+                  "blockId": "finding-the-gate",
+                  "path": "illustrations/escape.webp",
+                  "alt": "An original Beatrix Potter illustration from Peter Rabbit's escape.",
+                  "placement": "full-width",
+                  "width": 408,
+                  "height": 530,
+                  "caption": "Illustration by Beatrix Potter, 1902."
+                }
+              ]
+            },
+            {
+              "chapterId": "home-again",
+              "illustrations": [
+                {
+                  "id": "potter-home",
+                  "blockId": "back-in-the-burrow",
+                  "path": "illustrations/home.webp",
+                  "alt": "Beatrix Potter's illustration of Mrs Rabbit and the rabbit family.",
+                  "placement": "full-width",
+                  "width": 446,
+                  "height": 505,
+                  "caption": "Illustration by Beatrix Potter, 1902."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.6.2 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "mrs-rabbits-warning",
+              "illustrations": [
+                {
+                  "id": "modern-rabbit-family",
+                  "blockId": "four-little-rabbits",
+                  "path": "illustrations/generated/peter-rabbit-01-rabbit-family.webp",
+                  "alt": "Mrs Rabbit stands with Peter, Flopsy, Mopsy and Cotton-tail outside their warm fir-root burrow.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-forbidden-garden",
+                  "blockId": "why-the-garden-was-forbidden",
+                  "path": "illustrations/generated/peter-rabbit-02-forbidden-garden.webp",
+                  "alt": "Peter lingers by the hedge and looks towards Mr McGregor's tempting garden while his sisters head down the lane.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "into-the-garden",
+              "illustrations": [
+                {
+                  "id": "modern-under-the-gate",
+                  "blockId": "under-the-gate",
+                  "path": "illustrations/generated/peter-rabbit-03-under-the-gate.webp",
+                  "alt": "Peter squeezes beneath the weathered garden gate into rows of vegetables with the greenhouse and shed beyond.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-feast-mcgregor",
+                  "blockId": "among-the-vegetables",
+                  "path": "illustrations/generated/peter-rabbit-04-feast-mcgregor.webp",
+                  "alt": "Peter sits among lettuces and radishes as Mr McGregor spots him at the far end of the vegetable row.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "mr-mcgregor",
+              "illustrations": [
+                {
+                  "id": "modern-chase",
+                  "blockId": "the-chase",
+                  "path": "illustrations/generated/peter-rabbit-05-chase.webp",
+                  "alt": "Peter races through the vegetable rows as Mr McGregor pursues him and one of Peter's shoes flies loose.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-gooseberry-net",
+                  "blockId": "the-gooseberry-net",
+                  "path": "illustrations/generated/peter-rabbit-06-gooseberry-net.webp",
+                  "alt": "Peter twists free from the gooseberry net while his blue jacket remains snagged behind him.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-watering-can",
+                  "blockId": "the-watering-can",
+                  "path": "illustrations/generated/peter-rabbit-07-watering-can.webp",
+                  "alt": "Soaked and shivering, Peter hides inside a large watering can in Mr McGregor's tool shed.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "lost-and-found",
+              "illustrations": [
+                {
+                  "id": "modern-lost-garden",
+                  "blockId": "through-the-tools",
+                  "path": "illustrations/generated/peter-rabbit-08-lost-garden.webp",
+                  "alt": "Peter picks his way beneath oversized pots and garden tools while a watchful cat sits near the pond.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-sparrows",
+                  "blockId": "asking-the-sparrows",
+                  "path": "illustrations/generated/peter-rabbit-09-sparrows.webp",
+                  "alt": "Peter follows a flight of sparrows towards the gate visible beyond the currant bushes.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-final-escape",
+                  "blockId": "finding-the-gate",
+                  "path": "illustrations/generated/peter-rabbit-10-final-escape.webp",
+                  "alt": "Peter dives beneath the garden gate towards the bright field while Mr McGregor closes in behind him.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "home-again",
+              "illustrations": [
+                {
+                  "id": "modern-safe-at-home",
+                  "blockId": "a-quiet-evening",
+                  "path": "illustrations/generated/peter-rabbit-11-safe-at-home.webp",
+                  "alt": "Coatless and shoeless Peter rests warmly in bed with camomile tea while Mrs Rabbit tends him and his sisters eat supper nearby.",
+                  "placement": "full-width",
+                  "width": 1448,
+                  "height": 1086,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
