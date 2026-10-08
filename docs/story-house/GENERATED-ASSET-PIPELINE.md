@@ -77,6 +77,33 @@ licensed or other source artwork remains separate, making provenance obvious in 
 The materialiser rejects absolute paths, path traversal and destinations outside the configured
 roots/patterns.
 
+## Modern Story House cover convention
+
+Modern Story House covers normally **reuse an already approved modern reader illustration**. A
+cover is a presentation of an existing illustration, not a separate generated-art deliverable.
+
+Canonical rule:
+
+1. Finish and approve the title's modern reader illustration set first.
+2. Select the strongest existing reader illustration for the catalogue cover.
+3. In `book.json`, point `coverSets[].id = "modern"` directly at that existing generated WebP.
+   Do not copy, crop, rename or rematerialise the image just to make a cover.
+4. The Story House library adds the book title itself with the shared
+   `story-library-cover-title` treatment. **Do not bake title text into the image.**
+5. Modern catalogue covers use the existing shared `object-fit: cover` presentation. Start with
+   the normal centred crop. If human preview shows that the focal subject is poorly framed, add
+   only the smallest story-specific `object-position` rule needed to centre the important subject.
+6. Regenerate `public/stories/catalogue.json` from the story manifest after changing
+   `coverSets`.
+
+Do **not** create a new Drive staging file, generated-asset manifest or duplicate WebP solely for a
+modern cover. If one is created accidentally, remove the redundant manifest/output/staged source
+before merge.
+
+A dedicated modern cover asset is an exception, not the normal pipeline. Use one only when the
+existing approved reader set genuinely cannot produce an acceptable catalogue crop and the
+exception has been explicitly human-approved.
+
 ## Source and output validation
 
 Current materialisation rules include:
