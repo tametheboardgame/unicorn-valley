@@ -178,8 +178,8 @@
                   "path": "illustrations/generated/peter-rabbit-01-rabbit-family.webp",
                   "alt": "Mrs Rabbit stands with Peter, Flopsy, Mopsy and Cotton-tail outside their warm fir-root burrow.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -188,8 +188,8 @@
                   "path": "illustrations/generated/peter-rabbit-02-forbidden-garden.webp",
                   "alt": "Peter lingers by the hedge and looks towards Mr McGregor's tempting garden while his sisters head down the lane.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -203,8 +203,8 @@
                   "path": "illustrations/generated/peter-rabbit-03-under-the-gate.webp",
                   "alt": "Peter squeezes beneath the weathered garden gate into rows of vegetables with the greenhouse and shed beyond.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -213,8 +213,8 @@
                   "path": "illustrations/generated/peter-rabbit-04-feast-mcgregor.webp",
                   "alt": "Peter sits among lettuces and radishes as Mr McGregor spots him at the far end of the vegetable row.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -228,8 +228,8 @@
                   "path": "illustrations/generated/peter-rabbit-05-chase.webp",
                   "alt": "Peter races through the vegetable rows as Mr McGregor pursues him and one of Peter's shoes flies loose.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -238,8 +238,8 @@
                   "path": "illustrations/generated/peter-rabbit-06-gooseberry-net.webp",
                   "alt": "Peter twists free from the gooseberry net while his blue jacket remains snagged behind him.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -248,8 +248,8 @@
                   "path": "illustrations/generated/peter-rabbit-07-watering-can.webp",
                   "alt": "Soaked and shivering, Peter hides inside a large watering can in Mr McGregor's tool shed.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -263,8 +263,8 @@
                   "path": "illustrations/generated/peter-rabbit-08-lost-garden.webp",
                   "alt": "Peter picks his way beneath oversized pots and garden tools while a watchful cat sits near the pond.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -273,8 +273,8 @@
                   "path": "illustrations/generated/peter-rabbit-09-sparrows.webp",
                   "alt": "Peter follows a flight of sparrows towards the gate visible beyond the currant bushes.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 },
                 {
@@ -283,8 +283,8 @@
                   "path": "illustrations/generated/peter-rabbit-10-final-escape.webp",
                   "alt": "Peter dives beneath the garden gate towards the bright field while Mr McGregor closes in behind him.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -298,8 +298,8 @@
                   "path": "illustrations/generated/peter-rabbit-11-safe-at-home.webp",
                   "alt": "Coatless and shoeless Peter rests warmly in bed with camomile tea while Mrs Rabbit tends him and his sisters eat supper nearby.",
                   "placement": "full-width",
-                  "width": 1448,
-                  "height": 1086,
+                  "width": 1536,
+                  "height": 1024,
                   "caption": "Modern Story House illustration."
                 }
               ]
@@ -666,6 +666,35 @@
           ]
         }
       ]
+    }
+  ],
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Beatrix Potter's original 1902 cover illustration for The Tale of Peter Rabbit."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Original 1902 illustrations by Beatrix Potter",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Peter_Rabbit",
+        "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/peter-rabbit-03-under-the-gate.webp",
+        "alt": "Peter Rabbit squeezes beneath the weathered gate into Mr McGregor's bright vegetable garden."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Reuses the approved Under the Gate illustration from R6.5-WP19SH1.6.2; the Story House library supplies the cover title overlay."
+      }
     }
   ]
 }
