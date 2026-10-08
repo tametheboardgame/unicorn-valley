@@ -1,5 +1,29 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-08 R6.5-WP19SH1.6.3 Jemima Puddle-Duck started
+
+**SH1.6.2 - The Tale of Peter Rabbit is complete, human-approved and merged via PR #295.**
+The finished Story House edition has 11 approved modern reader illustrations, independent Classic /
+Modern illustration selection and a modern cover that reuses the approved Under the Gate reader
+image. The 10-page Full Classic Text and all 26 historic Potter illustrations remain intact.
+
+**SH1.6.3 - The Tale of Jemima Puddle-Duck is now active at SH1.6.3A.** The source audit confirms a
+five-chapter Story House retelling with 11 stable content blocks and four existing Potter
+illustrations, plus a separate 10-page Full Classic Text containing all 25 historic Potter narrative
+illustrations. The modern plan is 11 reader images, one per stable Story House block.
+
+Before bulk generation, five continuity anchors must be human-approved: Jemima, the
+sandy-whiskered fox, Kep, the farm/cart-road environment and the woodland clearing/feather shed.
+Generation then proceeds in bounded batches: Chapters 1–2 (images 1–4), Chapters 3–4 (images 5–8),
+Chapter 5 (images 9–11), followed by integration, modern-cover selection from approved reader art,
+Cloudflare review and closeout.
+
+Detailed plan:
+`docs/story-house/visual-bibles/the-tale-of-jemima-puddle-duck.md`.
+
+Authoritative programme detail:
+`docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`.
+
 ## 2026-10-08 Story House modern cover convention locked
 
 The Story House modern-cover rule is now canonical: **reuse an already approved modern reader
@@ -24,15 +48,12 @@ The finished Story House edition now has 36 approved modern illustrations, indep
 Modern illustration selection and the approved White Rabbit modern cover treatment while preserving
 the historic/classic material.
 
-**SH1.6.2 - The Tale of Peter Rabbit is active at SH1.6.2A.** The five-chapter audit has produced an
-agreed 11-image modern reader plan and a four-anchor continuity gate: Peter, rabbit family,
-Mr McGregor and the garden environment. No bulk book illustration generation begins until those
-anchors are human-approved. Chapters 1-2 and Chapters 3-5 then proceed as bounded generation batches,
-followed by integration, modern-cover closeout and human preview. The 10-page Full Classic Text and
-all 26 historic Beatrix Potter illustrations are preservation requirements and must not be altered.
-The full image-by-image plan is recorded in the authoritative SH1 work package.
+**SH1.6.2 - The Tale of Peter Rabbit was then active at SH1.6.2A.** Its five-chapter audit produced
+the 11-image reader plan and continuity gate that were subsequently completed and merged on
+8 October 2026. The 10-page Full Classic Text and all 26 historic Beatrix Potter illustrations were
+preserved.
 
-After Peter Rabbit, **SH1.6.3 - The Tale of Jemima Puddle-Duck** remains next, preserving its 25
+The next title in the sequence was **SH1.6.3 - The Tale of Jemima Puddle-Duck**, preserving its 25
 historic Full Classic illustrations.
 
 Authoritative detail:
