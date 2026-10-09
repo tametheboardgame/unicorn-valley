@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1H33MSMLXov3cCak8WlIKZYCQjABEyEMf"
+  },
+  "expectedSourceName": "jemima-01-farmyard-problem.png",
+  "destination": "public/stories/the-tale-of-jemima-puddle-duck/illustrations/generated/jemima-01-farmyard-problem.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

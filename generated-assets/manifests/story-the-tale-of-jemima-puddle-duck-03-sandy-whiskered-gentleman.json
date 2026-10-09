@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1j1J0r-nLa5SbLidwEcii-aVBTrlSUNOr"
+  },
+  "expectedSourceName": "jemima-03-sandy-whiskered-gentleman.png",
+  "destination": "public/stories/the-tale-of-jemima-puddle-duck/illustrations/generated/jemima-03-sandy-whiskered-gentleman.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
