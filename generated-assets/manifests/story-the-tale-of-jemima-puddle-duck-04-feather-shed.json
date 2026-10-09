@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1H93ZS0LZx-W_78jliFFp5_KZiPglV_A6"
+  },
+  "expectedSourceName": "jemima-04-feather-shed.png",
+  "destination": "public/stories/the-tale-of-jemima-puddle-duck/illustrations/generated/jemima-04-feather-shed.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

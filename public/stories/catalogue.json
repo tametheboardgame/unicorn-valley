@@ -626,14 +626,20 @@
       "coverPath": "/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp",
       "coverAlt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck.",
       "coverSets": [
-        {
-          "id": "classic",
-          "label": "Classic Covers",
-          "coverPath": "/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp",
-          "coverAlt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck."
-        }
-      ],
-      "series": null,
+      {
+        "id": "classic",
+        "label": "Classic Covers",
+        "coverPath": "/stories/the-tale-of-jemima-puddle-duck/covers/cover.webp",
+        "coverAlt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck."
+      },
+      {
+        "id": "modern",
+        "label": "Modern Covers",
+        "coverPath": "/stories/the-tale-of-jemima-puddle-duck/illustrations/generated/jemima-11-four-ducklings.webp",
+        "coverAlt": "Jemima Puddle-Duck rests beside four ducklings near the farm while Kep watches over them."
+      }
+    ],
+    "series": null,
       "tags": [
         "classic-retelling",
         "duck",

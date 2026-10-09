@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1Ir_Su1fV-3WMy2jnVCRb2Ot9swBtW3d1"
+  },
+  "expectedSourceName": "jemima-11-four-ducklings.png",
+  "destination": "public/stories/the-tale-of-jemima-puddle-duck/illustrations/generated/jemima-11-four-ducklings.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
