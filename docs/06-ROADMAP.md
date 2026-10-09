@@ -1,5 +1,23 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-09 R6.5-WP19SH1.8 The Lantern at the Edge of the Woods started
+
+**SH1.6.3 - The Tale of Jemima Puddle-Duck is complete, human-approved and merged via PR #297**
+as `03ca6a9866424ba575de56b6c6e526fac001a755`.
+
+The next Story House title is **SH1.8 - The Lantern at the Edge of the Woods**, original Valley
+fiction by Quill. Source audit: 4 chapters, 12 stable blocks, no existing cover and no existing
+illustrations. It remains a single original Story House edition; no artificial Classic illustration
+experience will be created.
+
+SH1.8A is active. The five continuity gates are Rowan, game-accurate Quill, the hill village and edge
+lantern, the moving woodland path/glowmoths, and the quiet clearing/mirror lantern. After approval,
+reader generation proceeds in four three-image chapter batches. Final cover selection will reuse the
+strongest approved reader image under the canonical cover rule.
+
+Detailed plan:
+`docs/story-house/visual-bibles/the-lantern-at-the-edge-of-the-woods.md`.
+
 ## 2026-10-09 R6.5-WP19SH1.6.3 full Jemima image set integrated
 
 The complete 11-image modern reader set for **The Tale of Jemima Puddle-Duck** is human-approved,
