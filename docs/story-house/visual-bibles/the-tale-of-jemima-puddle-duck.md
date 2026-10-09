@@ -234,6 +234,38 @@ floating near the fox is rejected.
 Do not regenerate these four images unless David explicitly reopens one during final book review.
 Materialisation and `book.json` wiring remain part of the later integration flow.
 
+## SH1.6.3C approved image inventory — Chapters 3–4
+
+Human-approved and locked. All approved sources are 1536 × 1024 RGB landscape images.
+
+| # | Scene | Block ID | Stable generated destination | Status |
+| --- | --- | --- | --- | --- |
+| 5 | Nine Eggs | `nine-eggs` | `illustrations/generated/jemima-05-nine-eggs.webp` | APPROVED / LOCKED |
+| 6 | The Dinner Invitation | `a-dinner-invitation` | `illustrations/generated/jemima-06-dinner-invitation.webp` | APPROVED / LOCKED |
+| 7 | Kep Notices | `kep-notices` | `illustrations/generated/jemima-07-kep-notices.webp` | APPROVED / LOCKED |
+| 8 | The Whole Story | `the-whole-story` | `illustrations/generated/jemima-08-the-whole-story.webp` | APPROVED / LOCKED |
+
+Image 5 is the corrected version with exactly nine visible eggs. Image 6 is the naturalistic
+no-human-hand version with no premature herb/onion props. Image 7 establishes the physical basket
+containing herbs and exactly two onions.
+
+## SH1.6.3D approved image inventory — Chapter 5
+
+Human-approved and locked. All approved sources are 1536 × 1024 RGB landscape images.
+
+| # | Scene | Block ID | Stable generated destination | Status |
+| --- | --- | --- | --- | --- |
+| 9 | Something Is Wrong | `something-is-wrong` | `illustrations/generated/jemima-09-something-is-wrong.webp` | APPROVED / LOCKED |
+| 10 | Kep to the Rescue | `back-to-safety` | `illustrations/generated/jemima-10-kep-to-the-rescue.webp` | APPROVED / LOCKED |
+| 11 | Four Ducklings | `a-second-chance` | `illustrations/generated/jemima-11-four-ducklings.webp` | APPROVED / LOCKED |
+
+Image 9 retains the established herb/onion basket. Image 10 contains Kep plus exactly two supporting
+farm dogs, with the fox retreating rather than an explicit attack. Image 11 contains exactly four
+ducklings and is the approved modern-cover source.
+
+**Full 11-image modern reader set is human-approved and locked.** Do not regenerate any approved
+image unless David explicitly reopens it during final book review.
+
 ## Visual progression
 
 Warm busy farm → airy independent journey → charming sun-dappled woodland → increasingly suspicious
@@ -246,9 +278,9 @@ The story should become tense through composition and lighting, not through horr
 
 - **SH1.6.3A — Audit + visual bible + five-anchor continuity gate — COMPLETE / HUMAN-APPROVED**
 - **SH1.6.3B — Chapters 1–2: images 1–4 — COMPLETE / HUMAN-APPROVED / LOCKED**
-- **SH1.6.3C — Chapters 3–4: images 5–8 — NEXT**
-- **SH1.6.3D — Chapter 5:** images 9–11
-- **SH1.6.3E — Integration + modern-cover selection + closeout**
+- **SH1.6.3C — Chapters 3–4: images 5–8 — COMPLETE / HUMAN-APPROVED / LOCKED**
+- **SH1.6.3D — Chapter 5: images 9–11 — COMPLETE / HUMAN-APPROVED / LOCKED**
+- **SH1.6.3E — Integration + modern-cover selection + closeout — ACTIVE**
 
 Integration must preserve the four existing Story House Potter images as Classic Illustrations,
 add the approved 11-image Modern Illustrations set, leave the Full Classic Text and all 25 historic

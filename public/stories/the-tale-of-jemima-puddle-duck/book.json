@@ -44,59 +44,23 @@
           "source": "Unicorn Valley Story House edition"
         },
         "originalPublicationYear": 1908,
-        "curatorNotes": "Split into five short reader sections, preserving the cautionary shape of Potter's story while softening the harsher ending for the target reader."
+        "curatorNotes": "Split into five short reader sections, preserving the cautionary shape of Potter's story while softening the harsher ending for the target reader. The Story House edition now offers independently selectable Classic and Modern illustration sets."
       },
       "chapters": [
         {
           "id": "jemimas-plan",
           "title": "Jemima's Plan",
-          "path": "chapters/01.md",
-          "illustrations": [
-            {
-              "id": "potter-jemima",
-              "blockId": "a-quiet-nest",
-              "path": "illustrations/jemima.webp",
-              "alt": "Beatrix Potter's original illustration of Jemima Puddle-Duck.",
-              "placement": "full-width",
-              "width": 1012,
-              "height": 1200,
-              "caption": "Illustration by Beatrix Potter, 1908."
-            }
-          ]
+          "path": "chapters/01.md"
         },
         {
           "id": "the-gentleman-in-the-wood",
           "title": "The Gentleman in the Wood",
-          "path": "chapters/02.md",
-          "illustrations": [
-            {
-              "id": "potter-fox",
-              "blockId": "the-sandy-whiskered-gentleman",
-              "path": "illustrations/gentleman.webp",
-              "alt": "An original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
-              "placement": "full-width",
-              "width": 347,
-              "height": 400,
-              "caption": "Illustration by Beatrix Potter, 1908."
-            }
-          ]
+          "path": "chapters/02.md"
         },
         {
           "id": "nine-eggs",
           "title": "Nine Eggs",
-          "path": "chapters/03.md",
-          "illustrations": [
-            {
-              "id": "potter-woodland",
-              "blockId": "nine-eggs",
-              "path": "illustrations/woodland.webp",
-              "alt": "An original Beatrix Potter illustration from Jemima's woodland nesting adventure.",
-              "placement": "full-width",
-              "width": 904,
-              "height": 844,
-              "caption": "Illustration by Beatrix Potter, 1908."
-            }
-          ]
+          "path": "chapters/03.md"
         },
         {
           "id": "kep-asks-questions",
@@ -106,17 +70,226 @@
         {
           "id": "home-to-the-farm",
           "title": "Home to the Farm",
-          "path": "chapters/05.md",
-          "illustrations": [
+          "path": "chapters/05.md"
+        }
+      ],
+      "defaultIllustrationSetId": "modern",
+      "illustrationSets": [
+        {
+          "id": "classic",
+          "label": "Classic Illustrations",
+          "rights": {
+            "status": "public-domain",
+            "source": "Original 1908 illustrations by Beatrix Potter",
+            "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Jemima_Puddle-Duck",
+            "notes": "The selected original Potter illustration files are identified as public domain on Wikimedia Commons."
+          },
+          "chapters": [
             {
-              "id": "potter-rescue",
-              "blockId": "back-to-safety",
-              "path": "illustrations/rescue.webp",
-              "alt": "An original Beatrix Potter illustration from the end of The Tale of Jemima Puddle-Duck.",
-              "placement": "full-width",
-              "width": 400,
-              "height": 380,
-              "caption": "Illustration by Beatrix Potter, 1908."
+              "chapterId": "jemimas-plan",
+              "illustrations": [
+                {
+                  "id": "potter-jemima",
+                  "blockId": "a-quiet-nest",
+                  "path": "illustrations/jemima.webp",
+                  "alt": "Beatrix Potter's original illustration of Jemima Puddle-Duck.",
+                  "placement": "full-width",
+                  "width": 1012,
+                  "height": 1200,
+                  "caption": "Illustration by Beatrix Potter, 1908."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-gentleman-in-the-wood",
+              "illustrations": [
+                {
+                  "id": "potter-fox",
+                  "blockId": "the-sandy-whiskered-gentleman",
+                  "path": "illustrations/gentleman.webp",
+                  "alt": "An original Beatrix Potter illustration from The Tale of Jemima Puddle-Duck.",
+                  "placement": "full-width",
+                  "width": 347,
+                  "height": 400,
+                  "caption": "Illustration by Beatrix Potter, 1908."
+                }
+              ]
+            },
+            {
+              "chapterId": "nine-eggs",
+              "illustrations": [
+                {
+                  "id": "potter-woodland",
+                  "blockId": "nine-eggs",
+                  "path": "illustrations/woodland.webp",
+                  "alt": "An original Beatrix Potter illustration from Jemima's woodland nesting adventure.",
+                  "placement": "full-width",
+                  "width": 904,
+                  "height": 844,
+                  "caption": "Illustration by Beatrix Potter, 1908."
+                }
+              ]
+            },
+            {
+              "chapterId": "home-to-the-farm",
+              "illustrations": [
+                {
+                  "id": "potter-rescue",
+                  "blockId": "back-to-safety",
+                  "path": "illustrations/rescue.webp",
+                  "alt": "An original Beatrix Potter illustration from the end of The Tale of Jemima Puddle-Duck.",
+                  "placement": "full-width",
+                  "width": 400,
+                  "height": 380,
+                  "caption": "Illustration by Beatrix Potter, 1908."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern",
+          "label": "Modern Illustrations",
+          "rights": {
+            "status": "original",
+            "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+            "notes": "Generated for R6.5-WP19SH1.6.3 and materialised through the approved Google Drive → WIF → GitHub Actions pipeline."
+          },
+          "chapters": [
+            {
+              "chapterId": "jemimas-plan",
+              "illustrations": [
+                {
+                  "id": "modern-farmyard-problem",
+                  "blockId": "a-farmyard-problem",
+                  "path": "illustrations/generated/jemima-01-farmyard-problem.webp",
+                  "alt": "Jemima stands beside a discovered farm nest while the farmer's wife tends the eggs in the sunny farmyard.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-secret-wood",
+                  "blockId": "a-quiet-nest",
+                  "path": "illustrations/generated/jemima-02-secret-wood.webp",
+                  "alt": "Jemima flies from the farm hill towards the distant woodland, her blue bonnet and patterned shawl streaming behind her.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "the-gentleman-in-the-wood",
+              "illustrations": [
+                {
+                  "id": "modern-sandy-whiskered-gentleman",
+                  "blockId": "the-sandy-whiskered-gentleman",
+                  "path": "illustrations/generated/jemima-03-sandy-whiskered-gentleman.webp",
+                  "alt": "Jemima meets the sandy-whiskered fox beside a mossy stump, with his newspaper resting naturally on the stump.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-feather-shed",
+                  "blockId": "the-feather-shed",
+                  "path": "illustrations/generated/jemima-04-feather-shed.webp",
+                  "alt": "The fox shows Jemima a tumble-down woodland shed filled with straw and loose feathers.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "nine-eggs",
+              "illustrations": [
+                {
+                  "id": "modern-nine-eggs",
+                  "blockId": "nine-eggs",
+                  "path": "illustrations/generated/jemima-05-nine-eggs.webp",
+                  "alt": "Jemima proudly stands beside exactly nine pale eggs in the feather-lined nest while the fox watches from the doorway.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-dinner-invitation",
+                  "blockId": "a-dinner-invitation",
+                  "path": "illustrations/generated/jemima-06-dinner-invitation.webp",
+                  "alt": "Jemima listens as the fox makes his suspicious dinner invitation outside the feather shed.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "kep-asks-questions",
+              "illustrations": [
+                {
+                  "id": "modern-kep-notices",
+                  "blockId": "kep-notices",
+                  "path": "illustrations/generated/jemima-07-kep-notices.webp",
+                  "alt": "Jemima carries a basket of herbs and two onions across the farm lane as Kep notices her unusual errand.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-the-whole-story",
+                  "blockId": "the-whole-story",
+                  "path": "illustrations/generated/jemima-08-the-whole-story.webp",
+                  "alt": "Jemima explains her secret nest and the fox to Kep on the farm lane, with the road towards the wood behind them.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
+            },
+            {
+              "chapterId": "home-to-the-farm",
+              "illustrations": [
+                {
+                  "id": "modern-something-is-wrong",
+                  "blockId": "something-is-wrong",
+                  "path": "illustrations/generated/jemima-09-something-is-wrong.webp",
+                  "alt": "Jemima steps back cautiously with her basket as the fox waits impatiently outside the feather shed.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-kep-to-the-rescue",
+                  "blockId": "back-to-safety",
+                  "path": "illustrations/generated/jemima-10-kep-to-the-rescue.webp",
+                  "alt": "Jemima and Kep stand safely by the shed while two other farm dogs chase the fox away through the woodland.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                },
+                {
+                  "id": "modern-four-ducklings",
+                  "blockId": "a-second-chance",
+                  "path": "illustrations/generated/jemima-11-four-ducklings.webp",
+                  "alt": "Jemima rests proudly beside four ducklings near the farm while Kep watches over them.",
+                  "placement": "full-width",
+                  "width": 1536,
+                  "height": 1024,
+                  "caption": "Modern Story House illustration."
+                }
+              ]
             }
           ]
         }
@@ -470,6 +643,35 @@
           ]
         }
       ]
+    }
+  ],
+  "coverSets": [
+    {
+      "id": "classic",
+      "label": "Classic Covers",
+      "cover": {
+        "path": "covers/cover.webp",
+        "alt": "Beatrix Potter's original cover for The Tale of Jemima Puddle-Duck."
+      },
+      "rights": {
+        "status": "public-domain",
+        "source": "Original 1908 illustrations by Beatrix Potter",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/Category:The_Tale_of_Jemima_Puddle-Duck",
+        "notes": "The original Potter cover is retained as the Classic Covers option."
+      }
+    },
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/jemima-11-four-ducklings.webp",
+        "alt": "Jemima Puddle-Duck rests beside four ducklings near the farm while Kep watches over them."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House modern illustration set",
+        "notes": "Reuses the approved Four Ducklings reader illustration from R6.5-WP19SH1.6.3; the Story House library supplies the cover title overlay."
+      }
     }
   ]
 }

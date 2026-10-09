@@ -1,5 +1,22 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-09 R6.5-WP19SH1.6.3 full Jemima image set integrated
+
+The complete 11-image modern reader set for **The Tale of Jemima Puddle-Duck** is human-approved,
+locked and materialised through the R4 Drive → WIF → GitHub Actions pipeline.
+
+SH1.6.3B, C and D are complete. SH1.6.3E is active with the book integration now wired:
+
+- the four existing Story House Potter images are preserved as **Classic Illustrations**;
+- the 11 approved generated images are the default **Modern Illustrations** set;
+- the separate 10-page Full Classic Text and all 25 historic Potter illustrations are untouched;
+- **Four Ducklings** is reused directly as the Modern cover;
+- the Story House UI supplies the title overlay;
+- the normal centred 3:4 catalogue crop is acceptable, so no special cover-position CSS is needed.
+
+Next gate: focused CI/Cloudflare preview and final human review before PR #297 is taken out of draft
+and merged.
+
 ## 2026-10-08 R6.5-WP19SH1.6.3B Chapters 1–2 locked
 
 **SH1.6.3A is complete and human-approved.** The five continuity anchors for Jemima, the
