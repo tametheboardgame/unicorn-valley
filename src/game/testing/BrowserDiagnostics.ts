@@ -130,6 +130,8 @@ export interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   selectRaceCourse(courseId: string): void;
   primeRainbowDiscTiming(): void;
+  primePondLeapTiming(): void;
+  primePondLeapMissTiming(): void;
   arcadeSpriteVelocity(sceneKey: string, objectName: string): { x: number; y: number };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
@@ -160,6 +162,7 @@ type InspectableContainer = Phaser.GameObjects.GameObject & {
 interface InspectableSceneRuntime {
   raceStarted?: unknown;
   primeDiagnosticSuccessfulTiming?: () => void;
+  primeDiagnosticFailedTiming?: () => void;
   playerFinishPlace?: unknown;
   elapsedMs?: unknown;
   runState?: {
@@ -586,6 +589,22 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         throw new Error('Rainbow Disc diagnostic timing is unavailable.');
       }
       scene.primeDiagnosticSuccessfulTiming();
+    },
+    primePondLeapTiming: () => {
+      const scene = game.scene.getScene('PondLeapActivityScene') as Phaser.Scene &
+        InspectableSceneRuntime;
+      if (!scene?.scene.isActive() || !scene.primeDiagnosticSuccessfulTiming) {
+        throw new Error('Pond Leap diagnostic timing is unavailable.');
+      }
+      scene.primeDiagnosticSuccessfulTiming();
+    },
+    primePondLeapMissTiming: () => {
+      const scene = game.scene.getScene('PondLeapActivityScene') as Phaser.Scene &
+        InspectableSceneRuntime;
+      if (!scene?.scene.isActive() || !scene.primeDiagnosticFailedTiming) {
+        throw new Error('Pond Leap diagnostic miss timing is unavailable.');
+      }
+      scene.primeDiagnosticFailedTiming();
     },
     arcadeSpriteVelocity: (sceneKey, objectName) => {
       const scene = game.scene.getScene(sceneKey);

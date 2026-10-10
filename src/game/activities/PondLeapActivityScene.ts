@@ -1,30 +1,39 @@
 import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { UI_COLOURS, UI_FONT } from '../ui/uiTheme';
+import {
+  POND_LEAP_ASSISTANCE_LEVELS,
+  POND_LEAP_COURSE_IDS,
+  POND_LEAP_PRACTICE_ATTEMPTS,
+  POND_LEAP_RIPPLE_RUSH_HOPS,
+  POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT,
+  applyPondLeapModePressure,
+  createPondLeapModeRunState,
+  defaultPondLeapAssistance,
+  getPondLeapAssistanceProfile,
+  getPondLeapCourse,
+  getPondLeapTimingChallenge,
+  isPondLeapCourseComplete,
+  isPondLeapModeFinished,
+  isPondLeapTimingSuccessful,
+  pondLeapModeTitle,
+  recordPondLeapModeAttempt,
+  type PondLeapAssistanceLevel,
+  type PondLeapCourseId,
+  type PondLeapMode,
+  type PondLeapModeRunState,
+} from './PondLeapRules';
 import { returnFromMiniGame } from '../minigames/MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../minigames/MiniGameSession';
 
 interface PondLeapActivitySceneData {
   returnScene?: string;
   discoveredReflection?: boolean;
+  mode?: PondLeapMode;
+  assistance?: PondLeapAssistanceLevel;
+  courseId?: PondLeapCourseId;
 }
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-const PADS: readonly Point[] = [
-  { x: 190, y: 395 },
-  { x: 360, y: 300 },
-  { x: 545, y: 410 },
-  { x: 725, y: 285 },
-  { x: 910, y: 390 },
-  { x: 1080, y: 295 },
-];
-
-const TARGET_CENTRES = [0.34, 0.62, 0.48, 0.7, 0.42] as const;
-const TARGET_TOLERANCES = [0.18, 0.16, 0.14, 0.13, 0.12] as const;
 const TIMING_LEFT = 355;
 const TIMING_WIDTH = 570;
 const TIMING_Y = 590;
@@ -39,12 +48,23 @@ export class PondLeapActivityScene extends Phaser.Scene {
   private completed = false;
   private timingPhase = 0;
   private timingValue = 0.5;
+  private diagnosticTimingPinned = false;
+  private mode: PondLeapMode = 'classic';
+  private assistance: PondLeapAssistanceLevel = 'standard';
+  private courseId: PondLeapCourseId = 'sunny-steps';
+  private modeState: PondLeapModeRunState = createPondLeapModeRunState();
+  private bestVisitStreak = 0;
+  private runFailed = false;
+  private courseLayer: Phaser.GameObjects.Container | null = null;
+  private nextPadHighlight: Phaser.GameObjects.Ellipse | null = null;
   private frog: Phaser.GameObjects.Container | null = null;
+  private instructionText: Phaser.GameObjects.Text | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private progressText: Phaser.GameObjects.Text | null = null;
   private timingMarker: Phaser.GameObjects.Rectangle | null = null;
   private timingZone: Phaser.GameObjects.Rectangle | null = null;
   private completionLayer: Phaser.GameObjects.Container | null = null;
+  private modeMenuLayer: Phaser.GameObjects.Container | null = null;
 
   public constructor() {
     super('PondLeapActivityScene');
@@ -55,6 +75,17 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.returnScene =
       this.miniGameSession?.returnTarget.sceneKey ?? data.returnScene ?? 'RainbowMeadowScene';
     this.discoveredReflection = data.discoveredReflection === true;
+    this.mode =
+      this.miniGameSession?.variantId === 'practice'
+        ? 'practice'
+        : this.miniGameSession?.variantId === 'ripple-rush'
+          ? 'ripple-rush'
+          : this.miniGameSession?.variantId === 'classic'
+            ? 'classic'
+            : (data.mode ?? 'classic');
+    this.assistance = data.assistance ?? defaultPondLeapAssistance(this.mode);
+    this.courseId = data.courseId ?? 'sunny-steps';
+    this.bestVisitStreak = 0;
     this.restartRun();
 
     this.cameras.main.setBackgroundColor('#5d8f76');
@@ -71,14 +102,19 @@ export class PondLeapActivityScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-SPACE', this.tryLeap, this);
       this.input.keyboard?.off('keydown-ENTER', this.tryLeap, this);
       this.input.keyboard?.off('keydown-ESC', this.leaveActivity, this);
-      this.frog?.destroy(true);
+      this.courseLayer?.destroy(true);
+      this.courseLayer = null;
+      this.nextPadHighlight = null;
       this.frog = null;
+      this.instructionText = null;
       this.statusText = null;
       this.progressText = null;
       this.timingMarker = null;
       this.timingZone = null;
       this.completionLayer?.destroy(true);
       this.completionLayer = null;
+      this.modeMenuLayer?.destroy(true);
+      this.modeMenuLayer = null;
     });
   }
 
@@ -87,8 +123,11 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    this.timingPhase += delta * (0.0042 + this.hopIndex * 0.00035);
-    this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
+    const challenge = this.currentTimingChallenge();
+    if (!this.diagnosticTimingPinned) {
+      this.timingPhase += delta * challenge.sweepSpeed;
+      this.timingValue = (Math.sin(this.timingPhase) + 1) / 2;
+    }
     this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
   }
 
@@ -109,19 +148,15 @@ export class PondLeapActivityScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.add
-      .text(
-        GAME_WIDTH / 2,
-        105,
-        'Help the pond frog cross five lily pads. Leap while the marker is inside the green water!',
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '16px',
-          align: 'center',
-        },
-      )
-      .setOrigin(0.5);
+    this.instructionText = this.add
+      .text(GAME_WIDTH / 2, 105, '', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '16px',
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setName('pond-leap:instructions');
 
     const pond = this.add.graphics();
     pond.fillStyle(0x75cade, 1);
@@ -149,7 +184,8 @@ export class PondLeapActivityScene extends Phaser.Scene {
         align: 'center',
         wordWrap: { width: 850 },
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('pond-leap:status');
 
     this.progressText = this.add
       .text(110, 530, '', {
@@ -158,28 +194,123 @@ export class PondLeapActivityScene extends Phaser.Scene {
         fontSize: '15px',
         fontStyle: 'bold',
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0, 0.5)
+      .setName('pond-leap:progress');
   }
 
   private createPondCourse(): void {
-    PADS.forEach((pad, index) => {
+    if (this.nextPadHighlight) {
+      this.tweens.killTweensOf(this.nextPadHighlight);
+    }
+    this.courseLayer?.destroy(true);
+    this.courseLayer = null;
+    this.nextPadHighlight = null;
+    this.frog = null;
+
+    const course = getPondLeapCourse(this.courseId);
+    const layer = this.add.container(0, 0).setName('pond-leap:course-layer');
+
+    const route = this.add.graphics().setName(`pond-leap:course-route:${course.id}`);
+    route.lineStyle(5, course.accent, 0.28);
+    for (let index = 0; index < course.pads.length - 1; index += 1) {
+      const from = course.pads[index];
+      const to = course.pads[index + 1];
+      if (from && to) {
+        route.lineBetween(from.x, from.y, to.x, to.y);
+      }
+    }
+    layer.add(route);
+
+    this.createCourseAccent(layer);
+
+    this.nextPadHighlight = this.add
+      .ellipse(0, 0, 132, 66, course.accent, 0.08)
+      .setStrokeStyle(5, course.accent, 0.95)
+      .setName('pond-leap:next-pad');
+    layer.add(this.nextPadHighlight);
+    this.tweens.add({
+      targets: this.nextPadHighlight,
+      alpha: { from: 0.45, to: 1 },
+      scaleX: { from: 0.96, to: 1.05 },
+      scaleY: { from: 0.96, to: 1.05 },
+      duration: 520,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
+    course.pads.forEach((pad, index) => {
       const scale = 1 - index * 0.035;
       const lily = this.add
         .ellipse(pad.x, pad.y, 112 * scale, 52 * scale, 0x659b61, 1)
         .setStrokeStyle(3, 0x4f7d50, 0.8)
         .setName(`pond-leap:pad:${index}`);
-      this.add.ellipse(pad.x - 12, pad.y - 7, 65 * scale, 24 * scale, 0x7fb476, 0.72);
+      const inner = this.add.ellipse(pad.x - 12, pad.y - 7, 65 * scale, 24 * scale, 0x7fb476, 0.72);
+      layer.add([lily, inner]);
 
       if (index % 2 === 1) {
-        this.add
+        const flower = this.add
           .circle(pad.x + 18, pad.y - 10, 9 * scale, index % 4 === 1 ? 0xffd0e8 : 0xffed9d, 1)
           .setStrokeStyle(2, 0xffffff, 0.45);
+        layer.add(flower);
       }
-
-      lily.setDepth(4);
     });
 
-    this.frog = this.createFrog(PADS[0]?.x ?? 190, (PADS[0]?.y ?? 395) - 22);
+    const start = course.pads[0] ?? { x: 190, y: 395 };
+    this.frog = this.createFrog(start.x, start.y - 22);
+    layer.add(this.frog);
+    this.courseLayer = layer;
+    this.refreshNextPadHighlight();
+  }
+
+  private createCourseAccent(layer: Phaser.GameObjects.Container): void {
+    const course = getPondLeapCourse(this.courseId);
+
+    if (course.id === 'reed-weave') {
+      const reeds = this.add.graphics().setName('pond-leap:course-accent:reeds');
+      reeds.lineStyle(4, 0x4f8b65, 0.5);
+      for (const x of [126, 152, 178, 1100, 1126, 1152]) {
+        const baseY = x < 640 ? 446 : 438;
+        reeds.lineBetween(x, baseY, x + 4, baseY - 56);
+        reeds.lineBetween(x + 8, baseY, x + 10, baseY - 42);
+      }
+      layer.add(reeds);
+      return;
+    }
+
+    if (course.id === 'twinkle-trail') {
+      const sparkles = [
+        [275, 245],
+        [605, 438],
+        [820, 230],
+        [1015, 435],
+      ] as const;
+      for (const [x, y] of sparkles) {
+        const sparkle = this.add
+          .text(x, y, '✦', {
+            color: '#fff2a8',
+            fontFamily: UI_FONT,
+            fontSize: '24px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5)
+          .setName('pond-leap:course-accent:twinkle');
+        layer.add(sparkle);
+      }
+      return;
+    }
+
+    for (const [x, y] of [
+      [270, 440],
+      [660, 220],
+      [1000, 445],
+    ] as const) {
+      const glint = this.add
+        .circle(x, y, 8, course.accent, 0.55)
+        .setStrokeStyle(2, 0xffffff, 0.45)
+        .setName('pond-leap:course-accent:sunny');
+      layer.add(glint);
+    }
   }
 
   private createFrog(x: number, y: number): Phaser.GameObjects.Container {
@@ -207,17 +338,22 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
     this.timingZone = this.add
       .rectangle(TIMING_LEFT, TIMING_Y, 100, 18, 0x7bcf8c, 0.88)
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setName('pond-leap:timing-zone');
     this.timingMarker = this.add
       .rectangle(TIMING_LEFT + TIMING_WIDTH / 2, TIMING_Y, 8, 38, 0x6b4d78, 1)
-      .setStrokeStyle(2, 0xffffff, 0.9);
+      .setStrokeStyle(2, 0xffffff, 0.9)
+      .setName('pond-leap:timing-marker');
 
     this.createRoundedButton(1040, 590, 180, 'LEAP!', () => this.tryLeap(), 'leap', true);
-    this.createRoundedButton(1060, 80, 130, 'Back', () => this.leaveActivity(), 'back');
+    this.createRoundedButton(1125, 80, 130, 'Back', () => this.leaveActivity(), 'back');
     this.createRoundedButton(205, 590, 170, 'Restart', () => this.restartRun(), 'restart');
+    this.createRoundedButton(165, 645, 170, 'Course ↻', () => this.cycleCourse(), 'course');
+    this.createRoundedButton(365, 645, 170, 'Modes', () => this.openModeMenu(), 'mode');
+    this.createRoundedButton(1090, 645, 180, 'Help ↻', () => this.cycleAssistance(), 'help');
 
     this.add
-      .text(640, 635, 'SPACE / ENTER or tap LEAP!', {
+      .text(640, 638, 'SPACE / ENTER or tap LEAP!', {
         color: UI_COLOURS.softInk,
         fontFamily: UI_FONT,
         fontSize: '14px',
@@ -227,16 +363,18 @@ export class PondLeapActivityScene extends Phaser.Scene {
   }
 
   private syncRunPresentation(): void {
-    const targetCentre = TARGET_CENTRES[this.hopIndex] ?? 0.5;
-    const tolerance = TARGET_TOLERANCES[this.hopIndex] ?? 0.12;
-    const zoneWidth = TIMING_WIDTH * tolerance * 2;
+    const course = getPondLeapCourse(this.courseId);
+    const challenge = this.currentTimingChallenge();
+    const zoneWidth = TIMING_WIDTH * challenge.tolerance * 2;
     this.timingZone
-      ?.setPosition(TIMING_LEFT + targetCentre * TIMING_WIDTH, TIMING_Y)
+      ?.setPosition(TIMING_LEFT + challenge.centre * TIMING_WIDTH, TIMING_Y)
       .setDisplaySize(zoneWidth, 18);
 
-    this.progressText?.setText(
-      this.completed ? '5 / 5 pads crossed' : `Pad ${this.hopIndex + 1} of 5`,
-    );
+    const totalHops = Math.max(1, course.pads.length - 1);
+    const assistance = getPondLeapAssistanceProfile(this.assistance);
+    this.instructionText?.setText(this.modeInstruction());
+    this.progressText?.setText(this.modeProgressLabel(course.title, assistance.title, totalHops));
+    this.refreshNextPadHighlight();
 
     if (this.completed) {
       this.statusText?.setText('');
@@ -245,9 +383,13 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     this.statusText?.setText(
-      this.discoveredReflection && this.hopIndex === 0
+      this.discoveredReflection && this.hopIndex === 0 && this.mode === 'classic'
         ? 'A rainbow reflection shimmers between the pads. Time the first leap!'
-        : 'Watch the marker and leap when it reaches the green water.',
+        : this.mode === 'practice'
+          ? 'Build your streak. A splash resets the streak, but practice keeps going.'
+          : this.mode === 'ripple-rush'
+            ? 'Keep the streak alive. Three splashes end the rush.'
+            : 'Watch the marker and leap when it reaches the green water.',
     );
   }
 
@@ -257,6 +399,9 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     const perfect = this.misses === 0;
+    const course = getPondLeapCourse(this.courseId);
+    const totalHops = Math.max(1, course.pads.length - 1);
+    const result = this.resultPresentation(totalHops, perfect);
     const layer = this.add.container(0, 0).setName('pond-leap:completion').setDepth(40);
 
     const panel = this.add.graphics().setName('pond-leap:completion-panel');
@@ -271,7 +416,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setInteractive();
 
     const celebration = this.add
-      .text(640, 225, perfect ? '✨  PERFECT CROSSING!  ✨' : '🌟  POND CROSSED!  🌟', {
+      .text(640, 225, result.celebration, {
         color: '#65446f',
         fontFamily: UI_FONT,
         fontSize: '30px',
@@ -287,7 +432,7 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const headline = this.add
-      .text(640, 375, perfect ? 'Not a single splash!' : 'You made it across all five lily pads!', {
+      .text(640, 375, result.headline, {
         color: UI_COLOURS.ink,
         fontFamily: UI_FONT,
         fontSize: '24px',
@@ -297,24 +442,17 @@ export class PondLeapActivityScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const summary = this.add
-      .text(
-        640,
-        420,
-        perfect
-          ? 'Five leaps. Five clean landings. The pond frogs are impressed.'
-          : `${this.misses} splash${this.misses === 1 ? '' : 'es'}, five successful leaps, and one very determined frog.`,
-        {
-          color: UI_COLOURS.softInk,
-          fontFamily: UI_FONT,
-          fontSize: '17px',
-          align: 'center',
-          wordWrap: { width: 760 },
-        },
-      )
+      .text(640, 420, result.summary, {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '17px',
+        align: 'center',
+        wordWrap: { width: 760 },
+      })
       .setOrigin(0.5);
 
     const padRow = this.add
-      .text(640, 468, '●   ●   ●   ●   ●', {
+      .text(640, 468, Array.from({ length: result.dots }, () => '●').join('   '), {
         color: '#6fa76c',
         fontFamily: UI_FONT,
         fontSize: '24px',
@@ -324,9 +462,9 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
     layer.add([panel, blocker, celebration, frog, headline, summary, padRow]);
     this.createRoundedButton(
-      505,
+      310,
       550,
-      220,
+      190,
       'Play Again',
       () => this.restartRun(),
       'play-again',
@@ -334,9 +472,29 @@ export class PondLeapActivityScene extends Phaser.Scene {
       layer,
     );
     this.createRoundedButton(
-      775,
+      525,
       550,
-      220,
+      190,
+      'Change Course',
+      () => this.changeCourseFromResult(),
+      'change-course',
+      false,
+      layer,
+    );
+    this.createRoundedButton(
+      740,
+      550,
+      170,
+      'Modes',
+      () => this.openModeMenu(),
+      'result-modes',
+      false,
+      layer,
+    );
+    this.createRoundedButton(
+      955,
+      550,
+      190,
       this.resultBackLabel(),
       () => this.leaveActivity(),
       'back-to-meadow',
@@ -361,9 +519,10 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    const targetCentre = TARGET_CENTRES[this.hopIndex] ?? 0.5;
-    const tolerance = TARGET_TOLERANCES[this.hopIndex] ?? 0.12;
-    const success = Math.abs(this.timingValue - targetCentre) <= tolerance;
+    const course = getPondLeapCourse(this.courseId);
+    const challenge = this.currentTimingChallenge();
+    const success = isPondLeapTimingSuccessful(this.timingValue, challenge);
+    this.diagnosticTimingPinned = false;
 
     this.actionLocked = true;
     if (!success) {
@@ -371,8 +530,13 @@ export class PondLeapActivityScene extends Phaser.Scene {
       return;
     }
 
-    const from = PADS[this.hopIndex];
-    const to = PADS[this.hopIndex + 1];
+    if (this.mode !== 'classic') {
+      this.modeState = recordPondLeapModeAttempt(this.modeState, true);
+      this.bestVisitStreak = Math.max(this.bestVisitStreak, this.modeState.bestStreak);
+    }
+
+    const from = course.pads[this.hopIndex];
+    const to = course.pads[this.hopIndex + 1];
     if (!from || !to) {
       this.actionLocked = false;
       return;
@@ -396,10 +560,19 @@ export class PondLeapActivityScene extends Phaser.Scene {
       onComplete: () => {
         this.hopIndex += 1;
         this.actionLocked = false;
-        if (this.hopIndex >= PADS.length - 1) {
+
+        if (this.mode === 'classic') {
+          if (isPondLeapCourseComplete(this.hopIndex, this.courseId)) {
+            this.completed = true;
+            this.cameras.main.flash(120, 225, 255, 208, false);
+          }
+        } else if (isPondLeapModeFinished(this.mode, this.modeState)) {
           this.completed = true;
           this.cameras.main.flash(120, 225, 255, 208, false);
+        } else if (isPondLeapCourseComplete(this.hopIndex, this.courseId)) {
+          this.loopCourseToStart();
         }
+
         this.syncRunPresentation();
       },
     });
@@ -407,7 +580,12 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
   private handleMiss(): void {
     this.misses += 1;
-    const next = PADS[this.hopIndex + 1] ?? PADS[this.hopIndex] ?? { x: 640, y: 350 };
+    if (this.mode !== 'classic') {
+      this.modeState = recordPondLeapModeAttempt(this.modeState, false);
+      this.bestVisitStreak = Math.max(this.bestVisitStreak, this.modeState.bestStreak);
+    }
+    const course = getPondLeapCourse(this.courseId);
+    const next = course.pads[this.hopIndex + 1] ?? course.pads[this.hopIndex] ?? { x: 640, y: 350 };
     const splash = this.add.graphics().setPosition(next.x, next.y).setDepth(7);
     splash.lineStyle(4, 0xe0fbff, 0.9);
     splash.strokeEllipse(0, 8, 38, 14);
@@ -425,6 +603,10 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.cameras.main.shake(80, 0.0015);
     this.time.delayedCall(430, () => {
       this.actionLocked = false;
+      if (this.mode !== 'classic' && isPondLeapModeFinished(this.mode, this.modeState)) {
+        this.runFailed = this.mode === 'ripple-rush';
+        this.completed = true;
+      }
       this.syncRunPresentation();
     });
   }
@@ -436,12 +618,262 @@ export class PondLeapActivityScene extends Phaser.Scene {
     this.misses = 0;
     this.actionLocked = false;
     this.completed = false;
+    this.runFailed = false;
+    this.modeState = createPondLeapModeRunState();
+    this.diagnosticTimingPinned = false;
     this.timingPhase = 0;
     this.timingValue = 0.5;
 
-    const start = PADS[0] ?? { x: 190, y: 395 };
+    const start = getPondLeapCourse(this.courseId).pads[0] ?? { x: 190, y: 395 };
     this.frog?.setPosition(start.x, start.y - 22);
     this.syncRunPresentation();
+  }
+
+  public primeDiagnosticSuccessfulTiming(): void {
+    if (this.actionLocked || this.completed) {
+      throw new Error('Pond Leap timing is not active.');
+    }
+
+    const challenge = this.currentTimingChallenge();
+    this.timingValue = challenge.centre;
+    this.timingPhase = Math.asin(Phaser.Math.Clamp(challenge.centre * 2 - 1, -1, 1));
+    this.diagnosticTimingPinned = true;
+    this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
+  }
+
+  public primeDiagnosticFailedTiming(): void {
+    if (this.actionLocked || this.completed) {
+      throw new Error('Pond Leap timing is not active.');
+    }
+
+    const challenge = this.currentTimingChallenge();
+    this.timingValue = challenge.centre < 0.5 ? 1 : 0;
+    this.timingPhase = Math.asin(Phaser.Math.Clamp(this.timingValue * 2 - 1, -1, 1));
+    this.diagnosticTimingPinned = true;
+    this.timingMarker?.setX(TIMING_LEFT + this.timingValue * TIMING_WIDTH);
+  }
+
+  private currentTimingChallenge() {
+    return applyPondLeapModePressure(
+      getPondLeapTimingChallenge(this.courseId, this.hopIndex, this.assistance),
+      this.mode,
+      this.modeState.successes,
+    );
+  }
+
+  private refreshNextPadHighlight(): void {
+    if (!this.nextPadHighlight) {
+      return;
+    }
+
+    if (this.completed) {
+      this.nextPadHighlight.setVisible(false);
+      return;
+    }
+
+    const next = getPondLeapCourse(this.courseId).pads[this.hopIndex + 1];
+    if (!next) {
+      this.nextPadHighlight.setVisible(false);
+      return;
+    }
+
+    this.nextPadHighlight.setPosition(next.x, next.y).setVisible(true);
+  }
+
+  private loopCourseToStart(): void {
+    this.hopIndex = 0;
+    const start = getPondLeapCourse(this.courseId).pads[0] ?? { x: 190, y: 395 };
+    this.frog?.setPosition(start.x, start.y - 22);
+  }
+
+  private cycleCourse(): void {
+    const currentIndex = POND_LEAP_COURSE_IDS.indexOf(this.courseId);
+    this.courseId =
+      POND_LEAP_COURSE_IDS[(currentIndex + 1) % POND_LEAP_COURSE_IDS.length] ?? 'sunny-steps';
+    this.createPondCourse();
+    this.restartRun();
+  }
+
+  private openModeMenu(): void {
+    if (this.modeMenuLayer) {
+      return;
+    }
+
+    this.actionLocked = true;
+    const layer = this.add.container(0, 0).setName('pond-leap:mode-menu').setDepth(60);
+    const blocker = this.add
+      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0.001)
+      .setInteractive()
+      .setName('pond-leap:mode-menu-blocker');
+
+    const panel = this.add.graphics().setName('pond-leap:mode-menu-panel');
+    panel.fillStyle(0xfff9e9, 1);
+    panel.fillRoundedRect(265, 165, 750, 390, 30);
+    panel.lineStyle(6, 0xc99cdb, 1);
+    panel.strokeRoundedRect(265, 165, 750, 390, 30);
+
+    const title = this.add
+      .text(640, 220, 'Choose a way to play', {
+        color: UI_COLOURS.ink,
+        fontFamily: UI_FONT,
+        fontSize: '28px',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setName('pond-leap:mode-menu-title');
+
+    const subtitle = this.add
+      .text(640, 260, 'You can switch modes without leaving Lily Pad Leap.', {
+        color: UI_COLOURS.softInk,
+        fontFamily: UI_FONT,
+        fontSize: '15px',
+      })
+      .setOrigin(0.5);
+
+    layer.add([blocker, panel, title, subtitle]);
+
+    const modes: readonly [PondLeapMode, string, string][] = [
+      ['classic', 'Classic Crossing', 'Cross five pads. Splashing simply retries the same leap.'],
+      ['practice', 'Practice Pond', 'Ten safe practice leaps. Build your best streak.'],
+      ['ripple-rush', 'Ripple Rush', 'Land eight hops before the third splash.'],
+    ];
+
+    modes.forEach(([mode, label, description], index) => {
+      const y = 330 + index * 72;
+      this.createRoundedButton(
+        470,
+        y,
+        280,
+        label,
+        () => this.selectMode(mode),
+        `mode-${mode}`,
+        mode === this.mode,
+        layer,
+      );
+      const copy = this.add
+        .text(650, y, description, {
+          color: UI_COLOURS.softInk,
+          fontFamily: UI_FONT,
+          fontSize: '14px',
+          wordWrap: { width: 300 },
+        })
+        .setOrigin(0, 0.5);
+      layer.add(copy);
+    });
+
+    this.createRoundedButton(
+      850,
+      510,
+      180,
+      'Keep Playing',
+      () => this.closeModeMenu(),
+      'mode-menu-close',
+      false,
+      layer,
+    );
+
+    this.modeMenuLayer = layer;
+  }
+
+  private closeModeMenu(): void {
+    this.modeMenuLayer?.destroy(true);
+    this.modeMenuLayer = null;
+    this.actionLocked = false;
+  }
+
+  private selectMode(mode: PondLeapMode): void {
+    this.mode = mode;
+    this.assistance = defaultPondLeapAssistance(mode);
+    this.modeMenuLayer?.destroy(true);
+    this.modeMenuLayer = null;
+    this.completionLayer?.destroy(true);
+    this.completionLayer = null;
+    this.restartRun();
+  }
+
+  private changeCourseFromResult(): void {
+    this.completionLayer?.destroy(true);
+    this.completionLayer = null;
+    this.cycleCourse();
+  }
+
+  private cycleAssistance(): void {
+    const currentIndex = POND_LEAP_ASSISTANCE_LEVELS.indexOf(this.assistance);
+    this.assistance =
+      POND_LEAP_ASSISTANCE_LEVELS[(currentIndex + 1) % POND_LEAP_ASSISTANCE_LEVELS.length] ??
+      'standard';
+    this.timingPhase = 0;
+    this.timingValue = 0.5;
+    this.syncRunPresentation();
+  }
+
+  private modeInstruction(): string {
+    if (this.mode === 'practice') {
+      return 'Practice 10 leaps. Landings build a streak; splashes reset it but never fail the run.';
+    }
+    if (this.mode === 'ripple-rush') {
+      return 'Land 8 leaps before 3 splashes. The visible timing window tightens as you progress.';
+    }
+    return 'Cross five lily pads. Splashing simply retries the same pad.';
+  }
+
+  private modeProgressLabel(
+    courseTitle: string,
+    assistanceTitle: string,
+    totalHops: number,
+  ): string {
+    const modeTitle = pondLeapModeTitle(this.mode);
+    if (this.mode === 'practice') {
+      const shownAttempt = this.completed
+        ? this.modeState.attempts
+        : Math.min(POND_LEAP_PRACTICE_ATTEMPTS, this.modeState.attempts + 1);
+      return `${modeTitle} · ${courseTitle} · ${assistanceTitle} · Attempt ${shownAttempt}/${POND_LEAP_PRACTICE_ATTEMPTS} · Streak ${this.modeState.streak} · Best ${this.bestVisitStreak}`;
+    }
+    if (this.mode === 'ripple-rush') {
+      return `${modeTitle} · ${courseTitle} · ${assistanceTitle} · Hops ${this.modeState.successes}/${POND_LEAP_RIPPLE_RUSH_HOPS} · Splashes ${this.modeState.splashes}/${POND_LEAP_RIPPLE_RUSH_SPLASH_LIMIT}`;
+    }
+    return this.completed
+      ? `${modeTitle} · ${courseTitle} · ${assistanceTitle} · ${totalHops}/${totalHops}`
+      : `${modeTitle} · ${courseTitle} · ${assistanceTitle} · Pad ${this.hopIndex + 1}/${totalHops}`;
+  }
+
+  private resultPresentation(
+    totalHops: number,
+    perfect: boolean,
+  ): { celebration: string; headline: string; summary: string; dots: number } {
+    if (this.mode === 'practice') {
+      return {
+        celebration: '🌱  PRACTICE COMPLETE!  🌱',
+        headline: `Best streak: ${this.bestVisitStreak}`,
+        summary: `${this.modeState.successes} clean landing${this.modeState.successes === 1 ? '' : 's'} from ${this.modeState.attempts} practice leaps. Splashes are part of learning.`,
+        dots: POND_LEAP_PRACTICE_ATTEMPTS,
+      };
+    }
+
+    if (this.mode === 'ripple-rush') {
+      return this.runFailed
+        ? {
+            celebration: '💦  RIPPLE RUSH OVER  💦',
+            headline: `${this.modeState.successes} of ${POND_LEAP_RIPPLE_RUSH_HOPS} hops landed`,
+            summary: `Three splashes ended this rush. Best streak this visit: ${this.bestVisitStreak}. Try again when you are ready.`,
+            dots: POND_LEAP_RIPPLE_RUSH_HOPS,
+          }
+        : {
+            celebration: '⚡  RIPPLE RUSH CLEARED!  ⚡',
+            headline: `All ${POND_LEAP_RIPPLE_RUSH_HOPS} hops landed!`,
+            summary: `${this.modeState.splashes} splash${this.modeState.splashes === 1 ? '' : 'es'} and a best streak of ${this.bestVisitStreak}.`,
+            dots: POND_LEAP_RIPPLE_RUSH_HOPS,
+          };
+    }
+
+    return {
+      celebration: perfect ? '✨  PERFECT CROSSING!  ✨' : '🌟  POND CROSSED!  🌟',
+      headline: perfect ? 'Not a single splash!' : `You made it across all ${totalHops} lily pads!`,
+      summary: perfect
+        ? `${totalHops} leaps. ${totalHops} clean landings. The pond frogs are impressed.`
+        : `${this.misses} splash${this.misses === 1 ? '' : 'es'}, ${totalHops} successful leaps, and one very determined frog.`,
+      dots: totalHops,
+    };
   }
 
   private resultBackLabel(): string {
