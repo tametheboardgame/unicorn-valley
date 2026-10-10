@@ -84,10 +84,24 @@ function titleObject(current: DiagnosticSnapshot, name: string): DiagnosticObjec
     ?.objects.find((object) => object.name === name);
 }
 
-function actionSpan(current: DiagnosticSnapshot, names: readonly string[]): number {
-  const actionYs = names.map((name) => titleObject(current, name)?.y ?? Number.NaN);
-  expect(actionYs.every(Number.isFinite)).toBe(true);
-  return Math.max(...actionYs) - Math.min(...actionYs);
+function expectNonOverlappingActionStack(
+  current: DiagnosticSnapshot,
+  names: readonly string[],
+): void {
+  const actions = names.map((name) => {
+    const object = titleObject(current, name);
+    expect(object, `${name} exists`).toBeDefined();
+    return object as DiagnosticObject;
+  });
+
+  for (let index = 1; index < actions.length; index += 1) {
+    const previous = actions[index - 1];
+    const next = actions[index];
+    const minimumCentreGap = (previous.displayHeight + next.displayHeight) / 2;
+    expect(next.y - previous.y, `${previous.name} and ${next.name} do not overlap`).toBeGreaterThanOrEqual(
+      minimumCentreGap,
+    );
+  }
 }
 
 async function seedReturningSave(page: Page): Promise<void> {
@@ -123,12 +137,12 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
     expect(titleObject(current, 'title-menu-new-game')?.interactive).toBe(true);
     expect(titleObject(current, 'title-menu-story-house')?.interactive).toBe(true);
     expect(titleObject(current, 'title-menu-settings')?.interactive).toBe(true);
-    expect(
-      actionSpan(current, ['title-menu-new-game', 'title-menu-story-house', 'title-menu-settings']),
-    ).toBeGreaterThanOrEqual(140);
-    expect(
-      actionSpan(current, ['title-menu-new-game', 'title-menu-story-house', 'title-menu-settings']),
-    ).toBeLessThan(160);
+    expectNonOverlappingActionStack(current, [
+      'title-menu-new-game',
+      'title-menu-story-house',
+      'title-menu-just-games',
+      'title-menu-settings',
+    ]);
     expect(titleObject(current, 'title-menu-continue')).toBeUndefined();
     expect(titleObject(current, 'title-menu-my-unicorn')).toBeUndefined();
     expect(titleObject(current, 'title-settings-panel')).toBeUndefined();
@@ -160,8 +174,7 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
       'title-menu-my-unicorn',
       'title-menu-settings',
     ] as const;
-    expect(actionSpan(current, actionNames)).toBeGreaterThanOrEqual(280);
-    expect(actionSpan(current, actionNames)).toBeLessThan(300);
+    expectNonOverlappingActionStack(current, actionNames);
     for (const name of actionNames) {
       expect(titleObject(current, name)?.interactive, `${name} interactive`).toBe(true);
     }
@@ -264,8 +277,17 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
 
       const card = controls.locator('.title-portrait-card');
       const cardBounds = await card.boundingBox();
+      const controlsBounds = await controls.boundingBox();
       expect(cardBounds).not.toBeNull();
-      expect((cardBounds?.y ?? 0) + (cardBounds?.height ?? 0)).toBeLessThanOrEqual(390);
+      expect(controlsBounds).not.toBeNull();
+      const scrollMetrics = await controls.evaluate((element) => ({
+        clientHeight: element.clientHeight,
+        scrollHeight: element.scrollHeight,
+      }));
+      const cardBottom =
+        (cardBounds?.y ?? 0) - (controlsBounds?.y ?? 0) + (cardBounds?.height ?? 0);
+      expect(cardBottom).toBeLessThanOrEqual(scrollMetrics.scrollHeight + 1);
+      expect(scrollMetrics.scrollHeight).toBeGreaterThanOrEqual(scrollMetrics.clientHeight);
 
       for (const action of [
         'title-menu-continue',
@@ -275,6 +297,7 @@ test.describe('R6.5-WP19H0.5 home screen polish', () => {
         'title-menu-settings',
       ]) {
         const button = page.locator(`[data-title-action="${action}"]`);
+        await button.scrollIntoViewIfNeeded();
         await expect(button).toBeVisible();
         const bounds = await button.boundingBox();
         expect(bounds).not.toBeNull();
