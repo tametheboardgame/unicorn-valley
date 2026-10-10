@@ -172,11 +172,17 @@ Current replacement owners are H4.10/H4.11 for Meadow composition/traversal, H4.
 
 Active. Modernise the 26 useful but stale browser contracts in bounded families. Preserve the behavioural requirement while replacing outdated save fixtures, coordinates, object identities, fixed layout dimensions and pre-refinement mini-game assumptions.
 
-First bounded family:
+First bounded family (complete and focused CI green on `10916c463ba225cba51dacd28280df32a664d116`):
 
 - profile-redesign save fixture drift;
 - title/home responsive layout contracts;
 - cottage decorating presentation readiness.
+
+Second bounded family (in progress, focused qualification required):
+
+- current Nova placement at Rainbow Run Race Hub and conditional Picnic Hill presence;
+- Willow, Marigold and Nova dialogue activation from current locations;
+- picnic transition and scene-session presence checks.
 
 ## Operating rules during this package
 
@@ -192,4 +198,4 @@ First bounded family:
 
 ## Next action
 
-Execute the first bounded **ENG-WP1.4** stale-contract family, qualify only those changed browser files, then continue through the remaining stale families.
+Qualify the second bounded **ENG-WP1.4** NPC/dialogue/picnic browser family against the current presence and interaction system. Inspect any surviving failure before making a runtime change.

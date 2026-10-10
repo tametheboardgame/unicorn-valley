@@ -66,7 +66,7 @@ ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the
 
 ## Next work
 
-Modernise the first bounded ENG-WP1.4 family: profile save-fixture drift, title/home responsive layout contracts and cottage decorating readiness, then run only those changed browser contracts.
+The first ENG-WP1.4 family is green. Qualify the second bounded family (NPC presence, migrated dialogues and picnic transitions), then address only confirmed current-contract failures before advancing to contextual feedback.
 
 ## Operating reminders
 

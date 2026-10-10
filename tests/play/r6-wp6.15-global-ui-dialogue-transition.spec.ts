@@ -4,7 +4,7 @@ const PLAYER_NAME = 'world-player-unicorn';
 const PIP_APPROACH = { x: 1110, y: 825 } as const;
 const WILLOW_APPROACH = { x: 620, y: 1345 } as const;
 const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
-const NOVA_APPROACH = { x: 2370, y: 930 } as const;
+const NOVA_RACE_HUB_APPROACH = { x: 430, y: 800 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
   'MarigoldPicnicScene',
@@ -221,7 +221,7 @@ async function openPipConversation(page: Page): Promise<void> {
 
 async function assertMigratedConversationStarts(
   page: Page,
-  sceneKey: 'SunbeamVillageScene' | 'RainbowMeadowScene',
+  sceneKey: 'SunbeamVillageScene' | 'RainbowRunEntryScene',
   speaker: 'Willow' | 'Marigold' | 'Nova',
   position: { x: number; y: number },
 ): Promise<void> {
@@ -356,7 +356,7 @@ test('supporting resident uses the shared dialogue family with production portra
   });
 });
 
-test('Willow, Marigold and Nova migrated conversations activate from the shared Talk action', async ({
+test('Willow, Marigold and Nova conversations activate from their current shared Talk actions', async ({
   page,
 }) => {
   test.setTimeout(90_000);
@@ -365,7 +365,7 @@ test('Willow, Marigold and Nova migrated conversations activate from the shared 
   const cases = [
     ['SunbeamVillageScene', 'Willow', WILLOW_APPROACH],
     ['SunbeamVillageScene', 'Marigold', MARIGOLD_APPROACH],
-    ['RainbowMeadowScene', 'Nova', NOVA_APPROACH],
+    ['RainbowRunEntryScene', 'Nova', NOVA_RACE_HUB_APPROACH],
   ] as const;
 
   for (const [sceneKey, speaker, position] of cases) {

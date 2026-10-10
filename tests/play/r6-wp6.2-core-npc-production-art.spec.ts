@@ -78,7 +78,7 @@ async function expectWorldIdentity(
   sceneKey: string,
   id: 'pip' | 'willow' | 'marigold' | 'pebble' | 'nova' | 'lumi',
 ): Promise<void> {
-  const objectName = `core-npc:${id}:world`;
+  const objectName = id === 'nova' ? 'core-npc:nova:race-hub' : `core-npc:${id}:world`;
   await expect
     .poll(async () => (await findObject(page, sceneKey, objectName))?.visible ?? false, {
       timeout: 6_000,
@@ -91,17 +91,19 @@ async function expectWorldIdentity(
   expect(npc?.active).toBe(true);
   expect(npc?.textureKey).toMatch(
     new RegExp(
-      id === 'willow' || id === 'marigold' || id === 'pebble'
-        ? `^village-core-resident:${id}:`
-        : `^core-npc-production:${id}:`,
+      id === 'nova'
+        ? '^nova-modern:'
+        : id === 'willow' || id === 'marigold' || id === 'pebble'
+          ? `^village-core-resident:${id}:`
+          : `^core-npc-production:${id}:`,
     ),
   );
   expect(npc?.displayWidth ?? 0).toBeGreaterThan(70);
   expect(npc?.displayHeight ?? 0).toBeGreaterThan(55);
 }
 
-async function seedRevealedStarwell(page: Page): Promise<void> {
-  await page.addInitScript(() => {
+async function seedRevealedStarwell(page: Page, picnicReady = false): Promise<void> {
+  await page.addInitScript(({ picnicReady }) => {
     const timestamp = new Date().toISOString();
     const save = {
       schemaVersion: 2,
@@ -120,9 +122,25 @@ async function seedRevealedStarwell(page: Page): Promise<void> {
         specialItemIds: [],
       },
       relationships: { byCharacterId: {} },
-      quests: { byQuestId: {} },
+      quests: {
+        byQuestId: picnicReady
+          ? {
+              'quest:maple-wobbly-cake-plan': {
+                status: 'completed',
+                currentStepId: null,
+                completedAt: timestamp,
+              },
+            }
+          : {},
+      },
       world: {
         flags: {
+          ...(picnicReady
+            ? {
+                'flag:marigold-picnic-ready': true,
+                'flag:marigold-picnic-theme-sunshine': true,
+              }
+            : {}),
           'flag:r5-woods-starwell-revealed': true,
           'flag:pip-intro-appeared': true,
           'flag:pip-welcome-complete': true,
@@ -148,7 +166,7 @@ async function seedRevealedStarwell(page: Page): Promise<void> {
     const serialisedSave = JSON.stringify(save);
     window.localStorage.setItem('unicorn-valley.save', serialisedSave);
     window.localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
-  });
+  }, { picnicReady });
 }
 
 async function seedUnintroducedPip(page: Page): Promise<void> {
@@ -264,8 +282,12 @@ test.describe('R6-WP6.2 core NPC production art', () => {
     await expectWorldIdentity(page, 'SunbeamVillageScene', 'marigold');
     await expectWorldIdentity(page, 'SunbeamVillageScene', 'pebble');
 
+    await startScene(page, 'RainbowRunEntryScene');
+    await expectWorldIdentity(page, 'RainbowRunEntryScene', 'nova');
+
     await startScene(page, 'RainbowMeadowScene');
-    await expectWorldIdentity(page, 'RainbowMeadowScene', 'nova');
+    expect(await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:world')).toBeNull();
+    expect(await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic')).toBeNull();
 
     await startScene(page, 'WhisperingWoodsScene');
     await expectWorldIdentity(page, 'WhisperingWoodsScene', 'lumi');
@@ -289,12 +311,40 @@ test.describe('R6-WP6.2 core NPC production art', () => {
       expect(npc?.displayWidth ?? 0).toBeGreaterThan(90);
     }
 
-    await startScene(page, 'RainbowMeadowScene');
-    await page.waitForTimeout(350);
-    const nova = await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:world');
-    const legacyNova = await findObject(page, 'RainbowMeadowScene', 'nova-canonical-world');
+    await startScene(page, 'RainbowRunEntryScene');
+    const nova = await findObject(page, 'RainbowRunEntryScene', 'core-npc:nova:race-hub');
     expect(nova?.visible).toBe(true);
-    expect(nova?.textureKey).toBe('core-npc-production:nova:neutral');
-    expect(legacyNova?.visible ?? false).toBe(false);
+    expect(nova?.textureKey).toBe('nova-modern:idle');
+
+    await startScene(page, 'RainbowMeadowScene');
+    expect(await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:world')).toBeNull();
+    expect(await findObject(page, 'RainbowMeadowScene', 'nova-canonical-world')).toBeNull();
+  });
+
+  test('Nova and Marigold use their canonical picnic identities after the picnic unlock', async ({
+    page,
+  }) => {
+    await seedRevealedStarwell(page, true);
+    await page.goto('/?scene=meadow&diagnostics=1');
+    await waitForScene(page, 'RainbowMeadowScene');
+
+    await expect
+      .poll(async () =>
+        (await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic'))?.visible ?? false,
+      )
+      .toBe(true);
+    await expect
+      .poll(async () =>
+        (await findObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic'))?.visible ?? false,
+      )
+      .toBe(true);
+    const nova = await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
+    const marigold = await findObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic');
+    expect(nova?.textureKey).toBe('nova-modern:idle');
+    expect(marigold?.textureKey).toMatch(/^village-core-resident:marigold:/);
+    expect(await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:world')).toBeNull();
+
+    await startScene(page, 'RainbowRunEntryScene');
+    expect(await findObject(page, 'RainbowRunEntryScene', 'core-npc:nova:race-hub')).toBeNull();
   });
 });
