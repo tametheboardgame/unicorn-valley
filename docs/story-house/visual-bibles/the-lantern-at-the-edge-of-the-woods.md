@@ -39,13 +39,13 @@ because the final modern catalogue cover will reuse one approved reader image.
 
 ## Character continuity
 
-### Rowan — new canonical design to approve
+### Rowan — canonical design — LOCKED
 
 Rowan has no existing game implementation, so SH1.8A establishes him.
 
 - young unicorn; visibly juvenile proportions, smaller than adult village residents;
-- warm chestnut/russet body with a softly lighter muzzle;
-- moss-green eyes;
+- **uniform warm cream body** with no pinto/brown body patches;
+- warm amber/green-brown eyes;
 - short, slightly tousled deep-auburn mane;
 - matching auburn tail with a natural soft plume;
 - small pale-gold horn;
@@ -223,12 +223,33 @@ used directly.
 
 ## Bounded delivery checkpoints
 
-1. **SH1.8A — Audit + visual bible + five-anchor continuity gate — ACTIVE**
-2. **SH1.8B — Chapter 1, images 1–3**
-3. **SH1.8C — Chapter 2, images 4–6**
-4. **SH1.8D — Chapter 3, images 7–9**
-5. **SH1.8E — Chapter 4, images 10–12**
+1. **SH1.8A — Audit + visual bible + five-anchor continuity gate — COMPLETE / HUMAN-APPROVED**
+2. **SH1.8B — Chapter 1, images 1–3 — COMPLETE / HUMAN-APPROVED / LOCKED**
+3. **SH1.8C — Chapter 2, images 4–6 — COMPLETE / HUMAN-APPROVED / LOCKED**
+4. **SH1.8D — Chapter 3, images 7–9 — COMPLETE / HUMAN-APPROVED / LOCKED**
+5. **SH1.8E — Chapter 4, images 10–12 — ACTIVE**
 6. **SH1.8F — Integration + cover selection + closeout**
+
+## Approved image locks through SH1.8D
+
+Human-approved and locked on 10 October 2026:
+
+1. **The Village Lanterns** — `lantern-row`
+2. **A Question for Quill** — `question-for-quill`
+3. **The First Glimmer** — `first-glimmer`
+4. **The Path That Moved** — `moving-path`
+5. **Chasing the Light** — `chasing-light`
+6. **Walking at Their Pace** — `shared-pace`
+7. **The Quiet Clearing** — `quiet-clearing`
+8. **Reflected Light** — `reflected-light`
+9. **One Light Is Not Enough** — `one-light-not-enough`
+
+Rowan continuity is now explicitly locked as **uniform cream body + auburn mane/tail**. Any generated
+variant with brown/pinto body patches is rejected. Quill remains the game-canonical sky-blue unicorn,
+not an owl. The clearing lantern design locked in images 7–9 is the small moss-covered hinged-door
+mirror lantern, distinct from the taller village-edge lantern.
+
+Do not regenerate images 1–9 unless David explicitly reopens one during final review.
 
 ## Integration contract
 
