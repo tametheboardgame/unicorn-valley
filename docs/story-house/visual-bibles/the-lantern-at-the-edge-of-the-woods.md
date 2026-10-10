@@ -227,8 +227,8 @@ used directly.
 2. **SH1.8B — Chapter 1, images 1–3 — COMPLETE / HUMAN-APPROVED / LOCKED**
 3. **SH1.8C — Chapter 2, images 4–6 — COMPLETE / HUMAN-APPROVED / LOCKED**
 4. **SH1.8D — Chapter 3, images 7–9 — COMPLETE / HUMAN-APPROVED / LOCKED**
-5. **SH1.8E — Chapter 4, images 10–12 — ACTIVE (10–11 LOCKED; 12 NEXT)**
-6. **SH1.8F — Integration + cover selection + closeout**
+5. **SH1.8E — Chapter 4, images 10–12 — COMPLETE / HUMAN-APPROVED / LOCKED**
+6. **SH1.8F — Integration + cover selection + closeout — NEXT**
 
 ## Approved image locks through SH1.8E
 
@@ -255,7 +255,60 @@ mirror lantern, distinct from the taller village-edge lantern.
 Image 11 is the corrected Lantern Chain composition with the lit path visibly chaining from the
 clearing back toward the village.
 
-Do not regenerate images 1–11 unless David explicitly reopens one during final review.
+12. **The Shared Path** — `shared-path` — HUMAN-APPROVED / LOCKED
+
+Do not regenerate images 1–12 unless David explicitly reopens one during final review.
+
+## Full approved 12-image inventory
+
+Human-approved and locked on 10 October 2026. Every canonical source is a 1536 × 1024 RGB landscape
+PNG. The filenames below are the stable names to use when staging to Google Drive; rejected
+generations must not be uploaded or materialised.
+
+| # | Chapter | Scene / block | Canonical staging PNG | Stable generated WebP | Status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | The Last Lantern | The Village Lanterns — `lantern-row` | `lantern-01-village-lanterns.png` | `illustrations/generated/lantern-01-village-lanterns.webp` | LOCKED |
+| 2 | The Last Lantern | A Question for Quill — `question-for-quill` | `lantern-02-question-for-quill.png` | `illustrations/generated/lantern-02-question-for-quill.webp` | LOCKED |
+| 3 | The Last Lantern | The First Glimmer — `first-glimmer` | `lantern-03-first-glimmer.png` | `illustrations/generated/lantern-03-first-glimmer.webp` | LOCKED |
+| 4 | The Path That Moved | The Path That Moved — `moving-path` | `lantern-04-path-that-moved.png` | `illustrations/generated/lantern-04-path-that-moved.webp` | LOCKED |
+| 5 | The Path That Moved | Chasing the Light — `chasing-light` | `lantern-05-chasing-the-light.png` | `illustrations/generated/lantern-05-chasing-the-light.webp` | LOCKED |
+| 6 | The Path That Moved | Walking at Their Pace — `shared-pace` | `lantern-06-walking-at-their-pace.png` | `illustrations/generated/lantern-06-walking-at-their-pace.webp` | LOCKED |
+| 7 | The Quiet Clearing | The Quiet Clearing — `quiet-clearing` | `lantern-07-quiet-clearing.png` | `illustrations/generated/lantern-07-quiet-clearing.webp` | LOCKED |
+| 8 | The Quiet Clearing | Reflected Light — `reflected-light` | `lantern-08-reflected-light.png` | `illustrations/generated/lantern-08-reflected-light.webp` | LOCKED |
+| 9 | The Quiet Clearing | One Light Is Not Enough — `one-light-not-enough` | `lantern-09-one-light-is-not-enough.png` | `illustrations/generated/lantern-09-one-light-is-not-enough.webp` | LOCKED |
+| 10 | The Light That Came Home | Returning With Friends — `return-with-friends` | `lantern-10-returning-with-friends.png` | `illustrations/generated/lantern-10-returning-with-friends.webp` | LOCKED |
+| 11 | The Light That Came Home | The Lantern Chain — `lantern-chain` | `lantern-11-lantern-chain.png` | `illustrations/generated/lantern-11-lantern-chain.webp` | LOCKED |
+| 12 | The Light That Came Home | The Shared Path — `shared-path` | `lantern-12-shared-path.png` | `illustrations/generated/lantern-12-shared-path.webp` | LOCKED |
+
+### Final continuity notes
+
+- Rowan is uniform warm cream with auburn mane/tail; any pinto/brown-body variants are rejected.
+- Quill is the game-canonical sky-blue unicorn with green eyes, swept midnight mane, lilac tail,
+  moon-style horn and star marking; all owl variants are rejected.
+- Images 1 and 3 use the tall village-edge lantern.
+- Images 7–11 use the smaller moss-covered clearing lantern with hinged door and mirror.
+- Images 7–9 preserve the intended progression: discover the dim mirror lantern → reflected light
+  starts it glowing → the single-light solution remains incomplete.
+- Image 10 contains Rowan, Quill, baker, gardener and exactly two racing foals with distinct light
+  sources.
+- Image 11 is the corrected composition where the visible chain of lanterns runs from the clearing
+  back toward the village.
+- Image 12 returns to the village-edge lantern for a quiet two-character epilogue and contains no
+  baked-in signage or text.
+
+### Cover shortlist
+
+No dedicated cover asset will be generated.
+
+- **Primary recommendation: Image 3 — The First Glimmer.** Its standard centred 3:4 crop retains
+  Rowan, a glowmoth, the edge lantern and the woods cleanly and directly represents the title's
+  central mystery.
+- **Secondary candidate: Image 11 — The Lantern Chain.** Stronger spectacle, but the normal centred
+  3:4 crop trims more of the ensemble while preserving Rowan, the clearing lantern and the visible
+  chain.
+- Image 1 also crops cleanly but is less specific to the title's lantern mystery.
+
+Final cover selection remains an SH1.8F integration decision, with Image 3 currently preferred.
 
 ## Integration contract
 

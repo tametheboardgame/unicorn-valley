@@ -1,5 +1,15 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-10 SH1.8 Lantern reader-art inventory complete
+
+All 12 reader illustrations for **The Lantern at the Edge of the Woods** are human-approved and
+locked. Canonical 1536 × 1024 RGB source filenames and stable generated WebP destinations are
+recorded in the title visual bible. SH1.8E is complete and SH1.8F integration/cover/closeout is next.
+
+Cover shortlist after centred 3:4 crop review: **Image 3 — The First Glimmer** is preferred; Image
+11 — The Lantern Chain remains the spectacle alternative. No separate cover-only asset will be
+generated.
+
 ## 2026-10-09 R6.5-WP19SH1.8 The Lantern at the Edge of the Woods started
 
 **SH1.6.3 - The Tale of Jemima Puddle-Duck is complete, human-approved and merged via PR #297**
