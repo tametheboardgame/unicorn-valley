@@ -98,9 +98,10 @@ function expectNonOverlappingActionStack(
     const previous = actions[index - 1];
     const next = actions[index];
     const minimumCentreGap = (previous.displayHeight + next.displayHeight) / 2;
-    expect(next.y - previous.y, `${previous.name} and ${next.name} do not overlap`).toBeGreaterThanOrEqual(
-      minimumCentreGap,
-    );
+    expect(
+      next.y - previous.y,
+      `${previous.name} and ${next.name} do not overlap`,
+    ).toBeGreaterThanOrEqual(minimumCentreGap);
   }
 }
 
