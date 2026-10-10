@@ -141,6 +141,33 @@ After closeout:
 - refresh/rebase the paused MG-WP7 branch;
 - resume Crystal Brook at H6.6 and MG at WP7 under the hardened process.
 
+## Progress
+
+### ENG-WP1.1
+
+Complete. Dedicated hardening branch/package, truthful status/state pointers and draft PR #299 are established.
+
+### ENG-WP1.2
+
+Complete. Four current-contract candidates were reproduced on the current branch. Firefly Lantern return, Story House illustration-set switching and normal Race -> Rainbow Run Hub return were confirmed healthy. Just Games -> Rainbow Run exposed one genuine Escape-return defect in RaceScene; that was fixed with event-driven Escape handling plus a one-shot exit guard, then all four focused reproduction contracts passed on commit `4a74df03faf00a70d5a8fdc249448a1a9c5c803e`.
+
+### ENG-WP1.3
+
+Active. The 14 failures classified as obsolete historical contracts have now been retired without removing current replacement coverage:
+
+- removed the obsolete Rainbow Meadow cases from R3 visual-tightening and traversal-polish parameter sets;
+- removed the two pre-H4 Nova exact-position / in-world race-choice tests;
+- removed the legacy R5 Meadow optional-content branch cue;
+- removed the pre-H6 Crystal Brook gateway-art assertion;
+- removed two superseded R6.18G Meadow/gateway compatibility assertions;
+- deleted the R6.18IJ direct Brook path / direct Crystal Cascade race-gate file;
+- removed Rainbow Meadow from the legacy environment-production region loop;
+- removed the unused future cottage portal placeholder test;
+- deleted the superseded H4.2 exact Meadow layout contract;
+- deleted the superseded H4.3 Meadow path-network contract.
+
+Current replacement owners are H4.10/H4.11 for Meadow composition/traversal, H4.7 for Rainbow Run Hub extraction/reachability, the surviving gateway-art coverage for accepted Meadow/Woods presentation, and H6-era tests for current Crystal Brook topology. The H6.3 harness defect remains intentionally deferred to ENG-WP1.5 rather than being mixed into this retirement checkpoint.
+
 ## Operating rules during this package
 
 - Work one checkpoint at a time.
@@ -155,4 +182,4 @@ After closeout:
 
 ## Next action
 
-Execute **ENG-WP1.2** only: reproduce and classify the four current-contract candidate failures before broad browser-suite editing.
+Qualify the ENG-WP1.3 replacement-owner slice. If the surviving current contracts are green, record ENG-WP1.3 complete and move to **ENG-WP1.4 - modernise stale browser contracts**.

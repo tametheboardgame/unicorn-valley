@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+// ENG-WP1.3 keeps only current Meadow-basin and Woods-threshold gateway art here; Brook H6 owns current Brook topology.
+
 interface DiagnosticObject {
   name: string;
   x: number;

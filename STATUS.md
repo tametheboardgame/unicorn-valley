@@ -6,7 +6,7 @@ Last updated: 2026-10-10
 
 The active package is **ENG-WP1 - CI and Development Process Hardening**.
 
-Current checkpoint: **ENG-WP1.1 - State reset and maintenance package**
+Current checkpoint: **ENG-WP1.3 - Retire obsolete browser contracts**
 
 Branch: `agent/eng-wp1-ci-process-hardening`
 
@@ -58,16 +58,15 @@ Detailed package: `docs/work-packages/ENG-WP1-CI-DEVELOPMENT-PROCESS-HARDENING.m
 
 Do not begin H6.6 or advance MG-WP7 while ENG-WP1 is active. Existing historical/draft PRs may remain open until the hardening closeout cleanup checkpoint.
 
+## Current hardening result
+
+ENG-WP1.2 is complete: all four focused current contracts are now green, including the repaired Just Games -> Rainbow Run Escape return.
+
+ENG-WP1.3 has retired the 14 failures classified as obsolete historical contracts. Current Meadow/H4 and race-hub replacement owners are being qualified now; the known H6.3 harness defect remains sequenced for ENG-WP1.5.
+
 ## Next work
 
-Complete **ENG-WP1.1**, then execute **ENG-WP1.2 only**: reproduce the four current-contract candidates:
-
-1. Just Games -> Rainbow Run launch/return;
-2. Just Games -> Firefly Lantern launch/return;
-3. Story House Classic/Modern illustration-set switching;
-4. Race -> Rainbow Run Hub return.
-
-Do not begin broad browser-suite remediation until those four candidates have been classified against current behaviour.
+Finish the focused ENG-WP1.3 replacement-owner qualification. If green, record ENG-WP1.3 complete and begin **ENG-WP1.4 - Modernise stale browser contracts**.
 
 ## Operating reminders
 
