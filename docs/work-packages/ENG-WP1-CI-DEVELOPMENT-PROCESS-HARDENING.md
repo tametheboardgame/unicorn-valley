@@ -178,11 +178,15 @@ First bounded family (complete and focused CI green on `10916c463ba225cba51dacd2
 - title/home responsive layout contracts;
 - cottage decorating presentation readiness.
 
-Second bounded family (in progress, focused qualification required):
+Second bounded family (runtime repair committed; focused browser qualification pending):
 
 - current Nova placement at Rainbow Run Race Hub and conditional Picnic Hill presence;
 - Willow, Marigold and Nova dialogue activation from current locations;
-- picnic transition and scene-session presence checks.
+- picnic transition and scene-session presence checks;
+- confirmed WP19D interaction-registry migration regression: the shared Rainbow Meadow registry omitted both Marigold and Nova Talk targets at Picnic Hill; restored both using the canonical NPC presence authority;
+- replaced the migrated-conversation test's diagnostic scene-switch navigation with normal Boot/Preload entry routes to avoid deactivating the Race Hub during its startup.
+
+The earlier NPC production-identity subfamily passed targeted browser checks on `846ff7c59b3ec87e2347dfe6b538561277e4b2f3`. The combined dialogue/picnic run `38080724124` confirmed two real blockers (inactive hub after diagnostic transition, missing Marigold Talk). Both are addressed in this repair checkpoint but remain unqualified until CI returns.
 
 ## Operating rules during this package
 
@@ -198,4 +202,4 @@ Second bounded family (in progress, focused qualification required):
 
 ## Next action
 
-Qualify the second bounded **ENG-WP1.4** NPC/dialogue/picnic browser family against the current presence and interaction system. Inspect any surviving failure before making a runtime change.
+Qualify the corrected **ENG-WP1.4** dialogue/picnic browser family. Only after it passes, advance to contextual-feedback browser contracts.

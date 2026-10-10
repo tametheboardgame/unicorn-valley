@@ -228,7 +228,7 @@ async function assertMigratedConversationStarts(
   speaker: 'Willow' | 'Marigold' | 'Nova',
   position: { x: number; y: number },
 ): Promise<void> {
-  await startScene(page, sceneKey);
+  await waitForScene(page, sceneKey);
   await positionPlayer(page, sceneKey, position.x, position.y);
   await waitForTalkTarget(page, sceneKey, speaker);
   await page.keyboard.press('KeyE');
@@ -375,7 +375,10 @@ test('Willow, Marigold and Nova conversations activate from their current shared
     // Fully unload Phaser between cases. Re-navigating directly from a live
     // dialogue scene can leave the prior document servicing the next wait.
     await page.goto('about:blank');
-    await page.goto('/?diagnostics=1');
+    // Load the authored entry scene through Boot/Preload, not a diagnostic scene switch.
+    // The latter can race with the initial scene lifecycle and leave the hub inactive.
+    const route = sceneKey === 'RainbowRunEntryScene' ? 'race-hub' : 'village';
+    await page.goto(`/?scene=${route}&diagnostics=1`);
     await waitForDiagnostics(page);
     await assertMigratedConversationStarts(page, sceneKey, speaker, position);
   }
