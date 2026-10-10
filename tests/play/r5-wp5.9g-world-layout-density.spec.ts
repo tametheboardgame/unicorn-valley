@@ -77,7 +77,6 @@ function sceneFrom(value: DiagnosticSnapshot, sceneKey: string): DiagnosticScene
 
 const branchCues = [
   ['glade', 'MoonflowerGladeScene', 'region-branch-cue:moonflower-field'],
-  ['meadow', 'RainbowMeadowScene', 'region-branch-cue:rainbow-run'],
   ['brook', 'CrystalBrookScene', 'region-branch-cue:prism-grotto'],
   ['woods', 'WhisperingWoodsScene', 'region-branch-cue:lantern-clearing'],
 ] as const;
