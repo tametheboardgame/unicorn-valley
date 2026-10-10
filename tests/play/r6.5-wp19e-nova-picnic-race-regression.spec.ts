@@ -163,7 +163,10 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
         (object) => object.name === 'exploration-interaction-prompt' && object.visible,
       );
       const promptLabelVisible = scene.objects.some(
-        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+        (object) =>
+          object.name === 'exploration-interaction-prompt-label' &&
+          object.visible &&
+          object.text === 'Talk',
       );
       const targetHintVisible = scene.objects.some(
         (object) => object.name === 'exploration-tablet-hint-panel' && object.visible,

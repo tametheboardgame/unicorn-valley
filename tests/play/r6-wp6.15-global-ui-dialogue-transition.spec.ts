@@ -201,7 +201,10 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
       const hasTalkAction = scene.objects.some(
-        (object) => object.visible && object.text === 'Talk',
+        (object) =>
+          object.visible &&
+          object.name === 'exploration-interaction-prompt-label' &&
+          object.text === 'Talk',
       );
       const hasTargetLabel = scene.objects.some(
         (object) => object.visible && object.text === label,
