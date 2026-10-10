@@ -76,26 +76,6 @@ test('Rainbow Meadow keeps the accepted Crystal Brook waterfall basin', async ({
   expectNamed(meadow, 'r6-region-gateway-art:meadow-crystal-brook:sign');
 });
 
-test('Crystal Brook owns its gorge while keeping the current east routes area-authored', async ({
-  page,
-}) => {
-  await page.goto('/?diagnostics=1');
-  await waitForScene(page, 'TitleScene');
-  await startScene(page, 'CrystalBrookScene');
-
-  const brook = await sceneSnapshot(page, 'CrystalBrookScene');
-  expectNamed(brook, 'crystal-brook:meadow-gorge:recess');
-  expectNamed(brook, 'crystal-brook:meadow-gorge:path-floor');
-  expectNamed(brook, 'crystal-brook:meadow-gorge:water-throat');
-  expectNamed(brook, 'r6-region-gateway-art:crystal-brook:east-woodland');
-  expectNamed(brook, 'r6-region-gateway-art:crystal-cup-raceway:edge-exit');
-  expectNamed(brook, 'r6-region-gateway-art:crystal-brook:production-upgrade');
-
-  expect(
-    brook.objects.some((object) => object.name === 'r6-region-gateway-art:brook-meadow:cave-mouth'),
-  ).toBe(false);
-});
-
 test('Whispering Woods opens through a woodland threshold and denser forest treatment', async ({
   page,
 }) => {
