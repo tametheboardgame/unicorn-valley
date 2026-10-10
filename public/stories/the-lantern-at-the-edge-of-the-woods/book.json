@@ -6,17 +6,32 @@
   "catalogueBlurb": "A young unicorn follows a mysterious lantern into the dusk with a friend.",
   "author": "Quill",
   "readingMode": "flowing",
-  "cover": null,
+  "cover": {
+    "path": "illustrations/generated/lantern-03-first-glimmer.webp",
+    "alt": "Rowan stands at the edge of the woods as a green-gold glowmoth appears beside the old unlit lantern."
+  },
   "series": {
     "id": "quills-valley-tales",
     "title": "Quill's Valley Tales",
     "order": 1
   },
-  "tags": ["valley-tale", "woods", "lanterns", "friendship", "adventure"],
+  "tags": [
+    "valley-tale",
+    "woods",
+    "lanterns",
+    "friendship",
+    "adventure"
+  ],
   "discovery": {
     "format": "Chapter Book",
-    "genres": ["Fantasy", "Adventure"],
-    "audiences": ["Independent Reader", "Read Together"],
+    "genres": [
+      "Fantasy",
+      "Adventure"
+    ],
+    "audiences": [
+      "Independent Reader",
+      "Read Together"
+    ],
     "length": "Longer Read"
   },
   "rights": {
@@ -24,12 +39,17 @@
       "status": "original",
       "source": "Unicorn Valley Story House original"
     },
-    "illustrations": null,
+    "illustrations": {
+      "status": "original",
+      "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House edition",
+      "notes": "Twelve approved reader illustrations generated for R6.5-WP19SH1.8 and materialised through the approved Google Drive → Workload Identity Federation → GitHub Actions pipeline."
+    },
     "edition": {
       "status": "original",
       "source": "Unicorn Valley Story House edition"
     },
-    "originalPublicationYear": 2026
+    "originalPublicationYear": 2026,
+    "curatorNotes": "SH1.8 original Valley fiction with twelve generated reader illustrations attached to stable semantic block anchors. The modern cover reuses the approved reader image The First Glimmer; no dedicated cover-only asset exists."
   },
   "publication": {
     "status": "published"
@@ -38,22 +58,165 @@
     {
       "id": "the-last-lantern",
       "title": "The Last Lantern",
-      "path": "chapters/01.md"
+      "path": "chapters/01.md",
+      "illustrations": [
+        {
+          "id": "generated-village-lanterns",
+          "blockId": "lantern-row",
+          "path": "illustrations/generated/lantern-01-village-lanterns.webp",
+          "alt": "Rowan watches the warm hill-village lanterns come alive while the final lantern beside the woods remains dark.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-question-for-quill",
+          "blockId": "question-for-quill",
+          "path": "illustrations/generated/lantern-02-question-for-quill.webp",
+          "alt": "Rowan asks Quill about the dark lantern inside the warmly lit Story House library.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-first-glimmer",
+          "blockId": "first-glimmer",
+          "path": "illustrations/generated/lantern-03-first-glimmer.webp",
+          "alt": "Rowan stands beside the edge lantern as a green-gold glowmoth appears and the lantern gives a faint silver glimmer.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        }
+      ]
     },
     {
       "id": "the-path-that-moved",
       "title": "The Path That Moved",
-      "path": "chapters/02.md"
+      "path": "chapters/02.md",
+      "illustrations": [
+        {
+          "id": "generated-path-that-moved",
+          "blockId": "moving-path",
+          "path": "illustrations/generated/lantern-04-path-that-moved.webp",
+          "alt": "Rowan looks back along the pale woodland path as the route seems to have changed and the village is gone.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-chasing-the-light",
+          "blockId": "chasing-light",
+          "path": "illustrations/generated/lantern-05-chasing-the-light.webp",
+          "alt": "Scratched and tired from rushing, Rowan stops as the brightest glowmoth stops in front of them.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-walking-at-their-pace",
+          "blockId": "shared-pace",
+          "path": "illustrations/generated/lantern-06-walking-at-their-pace.webp",
+          "alt": "Rowan walks calmly beside the glowmoths as they illuminate the pale stones and guide the way towards a clearing.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        }
+      ]
     },
     {
       "id": "the-quiet-clearing",
       "title": "The Quiet Clearing",
-      "path": "chapters/03.md"
+      "path": "chapters/03.md",
+      "illustrations": [
+        {
+          "id": "generated-quiet-clearing",
+          "blockId": "quiet-clearing",
+          "path": "illustrations/generated/lantern-07-quiet-clearing.webp",
+          "alt": "Rowan opens the small door of an ancient moss-covered lantern in the quiet clearing and discovers a dull mirror inside.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-reflected-light",
+          "blockId": "reflected-light",
+          "path": "illustrations/generated/lantern-08-reflected-light.webp",
+          "alt": "Rowan, the glowmoths and distant village lights appear together in the mirror as the old lantern begins to glow.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-one-light-is-not-enough",
+          "blockId": "one-light-not-enough",
+          "path": "illustrations/generated/lantern-09-one-light-is-not-enough.webp",
+          "alt": "Rowan sits thoughtfully beside the still-dim mirror lantern while glowmoths gather around it.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        }
+      ]
     },
     {
       "id": "the-light-that-came-home",
       "title": "The Light That Came Home",
-      "path": "chapters/04.md"
+      "path": "chapters/04.md",
+      "illustrations": [
+        {
+          "id": "generated-returning-with-friends",
+          "blockId": "return-with-friends",
+          "path": "illustrations/generated/lantern-10-returning-with-friends.webp",
+          "alt": "Rowan leads Quill, the baker, gardener and two racing foals through the woods carrying their different lanterns.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-lantern-chain",
+          "blockId": "lantern-chain",
+          "path": "illustrations/generated/lantern-11-lantern-chain.webp",
+          "alt": "The friends' coloured lights awaken the clearing lantern and a chain of lanterns shines along the path back towards the village.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        },
+        {
+          "id": "generated-shared-path",
+          "blockId": "shared-path",
+          "path": "illustrations/generated/lantern-12-shared-path.webp",
+          "alt": "At the warmly lit edge lantern, Rowan walks beside a hesitant young villager towards the friendly woodland path.",
+          "placement": "full-width",
+          "width": 1536,
+          "height": 1024,
+          "caption": "Generated for Unicorn Valley Story House."
+        }
+      ]
+    }
+  ],
+  "coverSets": [
+    {
+      "id": "modern",
+      "label": "Modern Covers",
+      "cover": {
+        "path": "illustrations/generated/lantern-03-first-glimmer.webp",
+        "alt": "Rowan stands at the edge of the woods as a green-gold glowmoth appears beside the old unlit lantern."
+      },
+      "rights": {
+        "status": "original",
+        "source": "ChatGPT-generated artwork created for the Unicorn Valley Story House edition",
+        "notes": "Reuses the approved reader illustration The First Glimmer from SH1.8; the Story House UI supplies the title overlay."
+      }
     }
   ]
 }
