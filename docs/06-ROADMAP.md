@@ -1,5 +1,12 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-10 SH1.8 Lantern human-approved for merge
+
+**The Lantern at the Edge of the Woods** is complete and human-approved. All 12 generated reader
+illustrations are materialised and wired to the four-chapter Story House book. Image 3,
+**The First Glimmer**, is reused directly as the catalogue cover. The final Cloudflare preview was
+approved; PR #298 is authorised for merge once qualification is green.
+
 ## 2026-10-10 SH1.8 Lantern reader-art inventory complete
 
 All 12 reader illustrations for **The Lantern at the Edge of the Woods** are human-approved and

@@ -228,7 +228,7 @@ used directly.
 3. **SH1.8C — Chapter 2, images 4–6 — COMPLETE / HUMAN-APPROVED / LOCKED**
 4. **SH1.8D — Chapter 3, images 7–9 — COMPLETE / HUMAN-APPROVED / LOCKED**
 5. **SH1.8E — Chapter 4, images 10–12 — COMPLETE / HUMAN-APPROVED / LOCKED**
-6. **SH1.8F — Integration + cover selection + closeout — NEXT**
+6. **SH1.8F — Integration + cover selection + closeout — COMPLETE / HUMAN-APPROVED / MERGE AUTHORIZED**
 
 ## Approved image locks through SH1.8E
 
@@ -308,7 +308,7 @@ No dedicated cover asset will be generated.
   chain.
 - Image 1 also crops cleanly but is less specific to the title's lantern mystery.
 
-Final cover selection remains an SH1.8F integration decision, with Image 3 currently preferred.
+Final cover selection is **Image 3 — The First Glimmer**, reused directly as the catalogue cover with no dedicated cover-only asset.
 
 ## Integration contract
 
