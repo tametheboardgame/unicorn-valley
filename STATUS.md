@@ -10,6 +10,8 @@ Current checkpoint: **ENG-WP1.1 - State reset and maintenance package**
 
 Branch: `agent/eng-wp1-ci-process-hardening`
 
+Draft PR: **#299**
+
 Normal feature development is temporarily paused while ENG-WP1 establishes a trustworthy mainline CI and merge baseline.
 
 ## Accepted product baseline
