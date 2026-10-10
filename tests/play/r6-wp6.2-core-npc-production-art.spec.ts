@@ -103,70 +103,73 @@ async function expectWorldIdentity(
 }
 
 async function seedRevealedStarwell(page: Page, picnicReady = false): Promise<void> {
-  await page.addInitScript(({ picnicReady }) => {
-    const timestamp = new Date().toISOString();
-    const save = {
-      schemaVersion: 2,
-      createdAt: timestamp,
-      lastSavedAt: timestamp,
-      profile: {
-        name: null,
-        appearance: {},
-        currentLocationId: 'location:moonflower-glade',
-        unlockedAbilityIds: [],
-      },
-      inventory: {
-        itemQuantities: {},
-        ownedCosmeticIds: [],
-        ownedDecorationIds: [],
-        specialItemIds: [],
-      },
-      relationships: { byCharacterId: {} },
-      quests: {
-        byQuestId: picnicReady
-          ? {
-              'quest:maple-wobbly-cake-plan': {
-                status: 'completed',
-                currentStepId: null,
-                completedAt: timestamp,
-              },
-            }
-          : {},
-      },
-      world: {
-        flags: {
-          ...(picnicReady
-            ? {
-                'flag:marigold-picnic-ready': true,
-                'flag:marigold-picnic-theme-sunshine': true,
-              }
-            : {}),
-          'flag:r5-woods-starwell-revealed': true,
-          'flag:pip-intro-appeared': true,
-          'flag:pip-welcome-complete': true,
+  await page.addInitScript(
+    ({ picnicReady }) => {
+      const timestamp = new Date().toISOString();
+      const save = {
+        schemaVersion: 2,
+        createdAt: timestamp,
+        lastSavedAt: timestamp,
+        profile: {
+          name: null,
+          appearance: {},
+          currentLocationId: 'location:moonflower-glade',
+          unlockedAbilityIds: [],
         },
-        discoveredZoneIds: [],
-        changedObjectIds: [],
-        uniqueDiscoveryIds: [],
-      },
-      home: {
-        ownedFurnitureIds: [],
-        furnitureBySlot: {},
-        gardenFlags: {},
-      },
-      activities: {
-        racesById: {},
-        miniGameRecords: {},
-      },
-      collections: {
-        discoveryIds: [],
-        memoryIds: [],
-      },
-    };
-    const serialisedSave = JSON.stringify(save);
-    window.localStorage.setItem('unicorn-valley.save', serialisedSave);
-    window.localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
-  }, { picnicReady });
+        inventory: {
+          itemQuantities: {},
+          ownedCosmeticIds: [],
+          ownedDecorationIds: [],
+          specialItemIds: [],
+        },
+        relationships: { byCharacterId: {} },
+        quests: {
+          byQuestId: picnicReady
+            ? {
+                'quest:maple-wobbly-cake-plan': {
+                  status: 'completed',
+                  currentStepId: null,
+                  completedAt: timestamp,
+                },
+              }
+            : {},
+        },
+        world: {
+          flags: {
+            ...(picnicReady
+              ? {
+                  'flag:marigold-picnic-ready': true,
+                  'flag:marigold-picnic-theme-sunshine': true,
+                }
+              : {}),
+            'flag:r5-woods-starwell-revealed': true,
+            'flag:pip-intro-appeared': true,
+            'flag:pip-welcome-complete': true,
+          },
+          discoveredZoneIds: [],
+          changedObjectIds: [],
+          uniqueDiscoveryIds: [],
+        },
+        home: {
+          ownedFurnitureIds: [],
+          furnitureBySlot: {},
+          gardenFlags: {},
+        },
+        activities: {
+          racesById: {},
+          miniGameRecords: {},
+        },
+        collections: {
+          discoveryIds: [],
+          memoryIds: [],
+        },
+      };
+      const serialisedSave = JSON.stringify(save);
+      window.localStorage.setItem('unicorn-valley.save', serialisedSave);
+      window.localStorage.setItem('unicorn-valley.save.schema.2', serialisedSave);
+    },
+    { picnicReady },
+  );
 }
 
 async function seedUnintroducedPip(page: Page): Promise<void> {
@@ -329,13 +332,15 @@ test.describe('R6-WP6.2 core NPC production art', () => {
     await waitForScene(page, 'RainbowMeadowScene');
 
     await expect
-      .poll(async () =>
-        (await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic'))?.visible ?? false,
+      .poll(
+        async () =>
+          (await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic'))?.visible ?? false,
       )
       .toBe(true);
     await expect
-      .poll(async () =>
-        (await findObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic'))?.visible ?? false,
+      .poll(
+        async () =>
+          (await findObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic'))?.visible ?? false,
       )
       .toBe(true);
     const nova = await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
