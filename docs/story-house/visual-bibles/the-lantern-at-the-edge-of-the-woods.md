@@ -227,10 +227,10 @@ used directly.
 2. **SH1.8B — Chapter 1, images 1–3 — COMPLETE / HUMAN-APPROVED / LOCKED**
 3. **SH1.8C — Chapter 2, images 4–6 — COMPLETE / HUMAN-APPROVED / LOCKED**
 4. **SH1.8D — Chapter 3, images 7–9 — COMPLETE / HUMAN-APPROVED / LOCKED**
-5. **SH1.8E — Chapter 4, images 10–12 — ACTIVE**
+5. **SH1.8E — Chapter 4, images 10–12 — ACTIVE (10–11 LOCKED; 12 NEXT)**
 6. **SH1.8F — Integration + cover selection + closeout**
 
-## Approved image locks through SH1.8D
+## Approved image locks through SH1.8E
 
 Human-approved and locked on 10 October 2026:
 
@@ -249,7 +249,13 @@ variant with brown/pinto body patches is rejected. Quill remains the game-canoni
 not an owl. The clearing lantern design locked in images 7–9 is the small moss-covered hinged-door
 mirror lantern, distinct from the taller village-edge lantern.
 
-Do not regenerate images 1–9 unless David explicitly reopens one during final review.
+10. **Returning With Friends** — `return-with-friends` — HUMAN-APPROVED / LOCKED
+11. **The Lantern Chain** — `lantern-chain` — HUMAN-APPROVED / LOCKED
+
+Image 11 is the corrected Lantern Chain composition with the lit path visibly chaining from the
+clearing back toward the village.
+
+Do not regenerate images 1–11 unless David explicitly reopens one during final review.
 
 ## Integration contract
 
