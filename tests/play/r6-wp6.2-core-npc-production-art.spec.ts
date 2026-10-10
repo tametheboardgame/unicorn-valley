@@ -340,7 +340,8 @@ test.describe('R6-WP6.2 core NPC production art', () => {
     await expect
       .poll(
         async () =>
-          (await findObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic'))?.visible ?? false,
+          (await findObject(page, 'RainbowMeadowScene', 'core-npc:marigold:picnic'))?.visible ??
+          false,
       )
       .toBe(true);
     const nova = await findObject(page, 'RainbowMeadowScene', 'core-npc:nova:picnic');
