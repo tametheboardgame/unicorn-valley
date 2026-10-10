@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1sRjXiSNIGjx7AjHRm7aqiYI_c8s1y_nB"
+  },
+  "expectedSourceName": "lantern-11-lantern-chain.png",
+  "destination": "public/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-11-lantern-chain.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

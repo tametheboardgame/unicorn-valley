@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1l7M4gMMlYcnFoZYJtLIZFdiPZR3bZjXu"
+  },
+  "expectedSourceName": "lantern-10-returning-with-friends.png",
+  "destination": "public/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-10-returning-with-friends.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

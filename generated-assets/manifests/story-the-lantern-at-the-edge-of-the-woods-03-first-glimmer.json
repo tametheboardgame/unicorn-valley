@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1YUH6EFgpAXxQBr6pQrVoeUVgudEG8JS7"
+  },
+  "expectedSourceName": "lantern-03-first-glimmer.png",
+  "destination": "public/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-03-first-glimmer.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}

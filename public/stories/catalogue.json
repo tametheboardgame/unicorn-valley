@@ -388,9 +388,16 @@
       "catalogueBlurb": "A young unicorn follows a mysterious lantern into the dusk with a friend.",
       "author": "Quill",
       "readingMode": "flowing",
-      "coverPath": null,
-      "coverAlt": null,
-      "coverSets": [],
+      "coverPath": "/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-03-first-glimmer.webp",
+      "coverAlt": "Rowan stands at the edge of the woods as a green-gold glowmoth appears beside the old unlit lantern.",
+      "coverSets": [
+        {
+          "id": "modern",
+          "label": "Modern Covers",
+          "coverPath": "/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-03-first-glimmer.webp",
+          "coverAlt": "Rowan stands at the edge of the woods as a green-gold glowmoth appears beside the old unlit lantern."
+        }
+      ],
       "series": {
         "id": "quills-valley-tales",
         "title": "Quill's Valley Tales",
@@ -417,7 +424,7 @@
       },
       "rightsSummary": {
         "text": "original",
-        "illustrations": null,
+        "illustrations": "original",
         "edition": "original",
         "originalPublicationYear": 2026
       },

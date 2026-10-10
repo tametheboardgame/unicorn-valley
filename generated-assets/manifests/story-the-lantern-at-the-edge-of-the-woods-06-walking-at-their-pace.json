@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1siRr_bkm1nidnMWb5dT0ymYWQsdQ2Pyq"
+  },
+  "expectedSourceName": "lantern-06-walking-at-their-pace.png",
+  "destination": "public/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-06-walking-at-their-pace.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
