@@ -119,6 +119,7 @@ function createRichSave(appearance: Record<string, string> = {}): Record<string,
       preferences: {
         fontSize: 20,
         lineHeight: 1.7,
+        coverStyle: 'modern',
         illustrationSetByStoryEditionKey: {},
       },
       byStoryId: {},
