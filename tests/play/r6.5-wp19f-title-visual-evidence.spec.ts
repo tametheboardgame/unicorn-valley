@@ -157,8 +157,7 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
       clientHeight: element.clientHeight,
       scrollHeight: element.scrollHeight,
     }));
-    const cardBottom =
-      (cardBounds?.y ?? 0) - (controlsBounds?.y ?? 0) + (cardBounds?.height ?? 0);
+    const cardBottom = (cardBounds?.y ?? 0) - (controlsBounds?.y ?? 0) + (cardBounds?.height ?? 0);
     expect(cardBottom).toBeLessThanOrEqual(scrollMetrics.scrollHeight + 1);
     expect(scrollMetrics.scrollHeight).toBeGreaterThanOrEqual(scrollMetrics.clientHeight);
 
