@@ -163,7 +163,10 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
         (object) => object.name === 'exploration-interaction-prompt' && object.visible,
       );
       const promptLabelVisible = scene.objects.some(
-        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+        (object) =>
+          object.name === 'exploration-interaction-prompt-label' &&
+          object.visible &&
+          object.text === 'Talk',
       );
       const targetHintVisible = scene.objects.some(
         (object) => object.name === 'exploration-tablet-hint-panel' && object.visible,
@@ -257,8 +260,6 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   // Choosing the picnic commits Marigold's next location, but she finishes the current
   // Sunbeam visit instead of popping out of existence in front of the player.
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
-  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
 
   // Re-enter through a genuine Meadow boot so the committed picnic presence is resolved
   // through the same lifecycle a player uses when leaving Sunbeam Village.

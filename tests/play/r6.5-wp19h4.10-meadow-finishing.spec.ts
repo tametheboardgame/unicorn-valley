@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+// ENG-WP1.3 replacement owner: current Meadow authored boundary/opening coverage.
+
 interface DiagnosticObject {
   name: string;
   effectiveVisible: boolean;

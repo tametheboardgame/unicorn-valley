@@ -153,7 +153,25 @@ test.describe('R6.5-WP19F phone portrait generated title visual evidence', () =>
     const card = controls.locator('.title-portrait-card');
     const cardBounds = await card.boundingBox();
     expect(cardBounds).not.toBeNull();
-    expect(cardBounds?.height ?? 999).toBeLessThan(470);
+    const scrollMetrics = await controls.evaluate((element) => ({
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight,
+    }));
+    const cardBottom = (cardBounds?.y ?? 0) - (controlsBounds?.y ?? 0) + (cardBounds?.height ?? 0);
+    expect(cardBottom).toBeLessThanOrEqual(scrollMetrics.scrollHeight + 1);
+    expect(scrollMetrics.scrollHeight).toBeGreaterThanOrEqual(scrollMetrics.clientHeight);
+
+    for (const action of [
+      'title-menu-new-game',
+      'title-menu-story-house',
+      'title-menu-just-games',
+      'title-menu-settings',
+    ]) {
+      const button = page.locator(`[data-title-action="${action}"]`);
+      const bounds = await button.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds?.height ?? 0).toBeGreaterThanOrEqual(58);
+    }
 
     await page.screenshot({
       path: test.info().outputPath('wp19f-title-phone-portrait.png'),

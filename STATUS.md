@@ -1,211 +1,79 @@
 # Project Status
 
-Last updated: 2026-10-03
+Last updated: 2026-10-10
 
 ## Current work
 
-The active world-area package is **R6.5-WP19H6 - Crystal Brook Final Area Pass**.
+The active package is **ENG-WP1 - CI and Development Process Hardening**.
 
-Current bounded checkpoint: **H6.3D - Rainbow Meadow gorge path/overhang correction**
+Current checkpoint: **ENG-WP1.4 - Modernise stale browser contracts**
 
-Branch: `agent/r6.5-wp19h6.2-continuous-brook`
+Branch: `agent/eng-wp1-ci-process-hardening`
 
-Draft PR: **#268**
+Draft PR: **#299**
 
-H6.0 and H6.1 are complete, human-approved and merged. H6.1 merged as `fd006355ce5292a2b7fdcfc66b6f787ff31753bb`.
+Normal feature development is temporarily paused while ENG-WP1 establishes a trustworthy mainline CI and merge baseline.
 
-MG-WP3 has also completed and merged to `main` at `206bc19ecf8d1f92dca851ed1171b8a328f0b25d`. H6.2 is being reconciled onto that mainline; MG-WP3 does not overlap the Brook implementation.
+## Accepted product baseline
 
-### H6.2 checkpoint
+- **Story House:** complete through SH1.8. Alice, Peter Rabbit, Jemima Puddle-Duck and The Lantern at the Edge of the Woods are human-approved and merged.
+- **Crystal Brook:** H6.0-H6.5 are complete and human-approved. **H6.6 - Crystal Cup Race Hub maturity and access review** is the next world checkpoint after ENG-WP1.
+- **Mini-games:** MG-WP0-MG-WP6 are complete. **MG-WP7 - Pond Leap expansion** remains a paused draft stream and must not advance during ENG-WP1.
+- **Rainbow Run:** its final area/racing review remains deliberately deferred to the later coherent racing pass.
 
-Implemented:
+## CI baseline at ENG-WP1 start
 
-- one canonical variable-width Brook from the eastern upstream cascade through the lower basin, central crossings, upper basin and westward through the Rainbow Meadow threshold;
-- filled outer/inner/deep water geometry rather than a thick stroked polyline;
-- Reflection Pool connected as a real side basin;
-- upstream cascade presentation moved into Crystal Brook ownership;
-- duplicate Brook water producers retired from final-graphics, depth and R6 gateway compatibility layers;
-- broad pool blockers replaced with smaller deep-water collision zones so shallows remain intentionally wadeable;
-- water interaction anchors realigned to the rebuilt geography;
-- regression coverage for the one-owner hydrology contract.
+Baseline `main`: `31b9ac22067458990f5833f69137123dc282f7c8`.
 
-### H6.2 visual refinement
+Main CI run `38071510363` completed with:
 
-The first visual review found that the continuous Brook had become too dominant and visually buried the walking path. H6.2B narrowed/softened the Brook and restored the path.
+- Verification plan: passed;
+- Tier 0 static and architecture: passed;
+- Tier 1 unit contracts: passed;
+- build/static smoke/performance: passed;
+- Tier 4 Chromium/Firefox/WebKit compatibility: passed;
+- Tier 3 full Chromium shard 1: failed;
+- Tier 3 full Chromium shard 2: failed;
+- Tier 3 full Chromium shard 3: failed.
 
-The second visual review found two remaining composition issues: the Brook still exited through the cave mouth instead of above it, and the H6.2B path treatment did not match the established world-path styling.
+The three Chromium shards contain **47 browser-test failures**. Current evidence shows a mixture of obsolete historical contracts, stale tests, brittle/test-harness defects and a small number of current-contract candidates requiring reproduction. Do not treat the raw count as 47 assumed production regressions.
 
-H6.2C therefore:
+## ENG-WP1 scope
 
-- keeps the reduced Brook widths and softer water bands from H6.2B;
-- separates the player gateway from the water exit: the walking path reaches the Rainbow Meadow cave mouth at the canonical threshold, while the Brook bends above/behind the cave and exits at a higher water-specific anchor;
-- uses the same rounded two-layer path treatment as the established world paths (`0xd7c18f` outer / `0xf0dfb2` inner, 128/108 widths);
-- removes the older generic `ExplorationPathPolishManager` Crystal Brook overlay so only one main Brook path presentation remains;
-- keeps the canonical traversal/gateway route unchanged, leaving any structural route redesign to H6.5;
-- preserves the continuous-water model and all H6.2 progression/collision semantics.
+The package will:
 
-### H6.2D race-side crossing refinement
+- reproduce the current-contract failure candidates before changing production behaviour;
+- retire obsolete browser contracts and modernise useful stale coverage;
+- repair brittle timing/test-harness patterns;
+- rebuild the distinction between fast development checks and authoritative qualification;
+- aggregate cheap deterministic CI feedback where practical;
+- cancel superseded PR runs;
+- enforce exact-head final qualification and a single merge gate;
+- reconcile `AGENTS.md`, `TESTING.md` and `ACCEPTANCE.md` with the implemented process;
+- finish with one meaningful green full baseline before feature development resumes.
 
-The next visual review found that the race-side junction still tangled the Brook, the main path and the race spur together, while the Reflection Pool connection read as an unnatural second river.
+Detailed package: `docs/work-packages/ENG-WP1-CI-DEVELOPMENT-PROCESS-HARDENING.md`.
 
-H6.2D therefore:
+## Paused feature streams
 
-- reroutes the presentation path so it approaches the Brook from the south bank and crosses once, approximately perpendicular to the watercourse;
-- adds a dedicated bridge at that crossing;
-- removes the redundant Brook-Woods compatibility redraw because the area-owned main path already serves that route;
-- gives the Crystal Cup/race spur a narrower established-style presentation route starting from the far bank;
-- replaces the wide straight Reflection Pool inlet with a narrow curved feeder channel;
-- keeps functional race/Woods/Grotto gateways and traversal coordinates unchanged.
+Do not begin H6.6 or advance MG-WP7 while ENG-WP1 is active. Existing historical/draft PRs may remain open until the hardening closeout cleanup checkpoint.
 
-### H6.2E bridge correction
+## Current hardening result
 
-The next visual review showed that H6.2D had over-corrected: the bridge was too vertical, too dominant and materially wrong for Crystal Brook.
+ENG-WP1.2 is complete: all four focused current contracts are now green, including the repaired Just Games -> Rainbow Run Escape return.
 
-H6.2E therefore:
-
-- moved the bridge west so its western landing sat around the player position shown in the review screenshot;
-- rotated it to cross west-to-east with only a slight northward rise;
-- replaced the timber construction with an initial crystal/rock treatment.
-
-### H6.2F east-side topology cleanup
-
-The following visual review showed that the wider race-side topology itself was the remaining problem, so the minimum necessary part of the later Crystal Cup gateway work has been deliberately pulled forward.
-
-H6.2F now:
-
-- replaces the single improvised bridge arrangement with **two glacial-crystal bridge crossings**;
-- splits the main beige path into three land-only segments so it stops at each bridge and resumes on the far bank instead of running underneath the Brook;
-- retains only the separate western stepping-stone crossing;
-- moves the Brook-side Whispering Woods threshold down to the lower east edge and gives it the second bridge approach;
-- moves the Crystal Cup entrance to the north edge and labels it **"The Crystal Cup Raceway"**;
-- gives the Crystal Cup route a clean northbound path spur after the first bridge;
-- removes the old Brook cleanup-manager race-path redraw and tap-forward target;
-- adds an on-demand provisional `CrystalCupEntryScene` / `CrystalCupHubMap` shell;
-- changes Brook → Crystal Cup from direct `RaceScene` launch to Brook → Crystal Cup hub → Crystal Cascade race;
-- returns Crystal Cascade to the Crystal Cup hub first, with the hub owning the return to Crystal Brook;
-- leaves proper Crystal Cup hub design/maturity for H6.6 rather than attempting the final race-hub experience now.
-
-### H6.2G meander, crystal spans and woodland edge
-
-The H6.2F preview still read as too engineered: the Brook retained visible angularity, the bridges were too slab-like, the Grotto competed with the east-side routes, and the Woods entrance still felt like a destination structure rather than a natural continuation.
-
-H6.2G therefore:
-
-- reshapes the eastern Brook into a denser S-shaped meander and samples it through Catmull-Rom interpolation before rendering so the actual water ribbon is smooth rather than merely using more straight segments;
-- smooths the authored path segments as curves while still keeping hard bridge gaps between land sections;
-- keeps the path on the south bank until a **northward** first crossing;
-- carries the path on the north side to a genuine near-vertical Brook bend and crosses it **eastward** on the second bridge;
-- rebuilds both bridges as lighter translucent crystalline spans with faceted ice-like decks, luminous crystal posts and lattice rails, closer to the supplied reference vibe;
-- moves Prism Grotto to the south at approximately x2440 / y2070 with a southbound approach/trail;
-- pushes the Woods exit further east/lower and curves the path down towards it after the second bridge;
-- removes the Brook-side woodland portal presentation and replaces it with a simple path-off-map exit framed by trees;
-- adds progressively denser trees along the east edge and lets the Brook continue off-map through the woodland;
-- retains the north-edge Crystal Cup Raceway gateway and provisional hub topology from H6.2F.
-
-
-### H6.2H path-junction and woodland-edge cleanup
-
-The H6.2G preview was substantially improved but still exposed three small residues: the Crystal Cup spur painted as a separate path layer at its junction, an obsolete Crystal Cascade flag landmark remained in the world, and the east woodland still read as a regular row of trees too far inside the map.
-
-H6.2H therefore:
-
-- introduces one canonical Crystal Cup path junction shared by the main trail and race-hub spur;
-- renders the main route and Crystal Cup spur in a single outer-pass/inner-pass path network so the branch joins cleanly without a darker outer band cutting across the main path;
-- removes the obsolete `cascade-memory` / Crystal Cascade overlook interaction and its chequered flag marker, together with the dead race-progress signature it used;
-- rebuilds the east woodland with denser, staggered and overlapping tree clusters, greater scale/position variation and most tree centres on or beyond the east map edge;
-- leaves only a semantic Woods exit zone: visually the exit is now trail + enclosing woodland, with no portal or extra threshold shape.
-## Mini-game dependency state
-
-MG-WP0 through **MG-WP5B are merged to main**. The shared mini-game platform remains the accepted baseline for H6.
-
-The H6.8 mini-game platform readiness dependency is therefore satisfied; H6.9/H6.10 still remain sequenced behind the earlier H6 environment/path slices rather than starting during H6.2.
-
-## Validation state
-
-H6.2 received human visual approval on the exact-head preview after H6.2H.
-
-The final pre-approval CI red was formatting-only in three files; those formatter changes have now been applied. Exact-head repository validation is being rerun before merge.
-
-## Human gate
-
-**H6.2 is human-approved.**
-
-The accepted H6.2 composition includes the continuous/meandering Brook, crystalline bridge sequence, relocated Grotto, north-edge Crystal Cup Raceway gateway/hub topology, joined east-side path network and naturalised Woods edge.
-
-
-## H6.3A implementation
-
-Started **H6.3 - Rainbow Meadow cave/gorge entrance** from merged H6.2 main.
-
-This first bounded checkpoint establishes the west-side ownership and traversal contract before further visual refinement:
-
-- adds canonical Brook-side gorge geometry to `CrystalBrookMap`;
-- keeps the Brook water opening at `120,920` and the walking threshold at `120,1090`, so water and path pass through the same gorge alongside one another without overlapping;
-- adds a Brook-owned irregular rock/recess presentation in `CrystalBrookScene`;
-- removes the superseded generic `brook-meadow` cave-mouth presentation from `R6RegionGatewayArtManager`;
-- preserves the accepted Rainbow Meadow waterfall/pool implementation unchanged;
-- keeps existing Meadow ↔ Brook destination IDs, arrival positions and facing behaviour;
-- locks both arrival positions outside the 130px walk-through trigger radius;
-- adds browser coverage for Meadow → Brook → Meadow traversal and the no-bounce behaviour.
-
-## H6.3A gate
-
-H6.3A established the ownership/traversal contract and exposed one formatter-only failure, now fixed.
-
-## H6.3B visual refinement
-
-The Brook-side west edge has now been refined so it reads as the rear side of the accepted Rainbow Meadow waterfall/gorge system rather than a generic doorway:
-
-- replaces the simple oval recess with an irregular dark gorge throat;
-- extends the established two-layer walking path visibly off-map through the lower gorge opening;
-- keeps the Brook in a separate upper water throat, with foam/mist where the stream disappears into the gorge;
-- adds an irregular inner rock divider/overhang between the water and path passages;
-- retains the accepted H4 Rainbow Meadow pool/waterfall presentation unchanged;
-- keeps the Brook-side gorge scene-owned and the old generic `brook-meadow:cave-mouth` retired;
-- updates older gateway-art browser coverage so it validates the current H6 ownership model instead of obsolete pre-H6.2 route overlays.
-
-## H6.3C gorge polish
-
-The H6.3B visual review was accepted directionally, with three small west-edge issues remaining.
-
-H6.3C therefore:
-
-- reduces and lowers the south gorge shoulder that was crowding the walking path;
-- removes the duplicate rounded west path read by making the gorge path-floor own the route from off-map through the threshold to the canonical Brook approach, while the normal Brook path now starts exactly at that approach;
-- adds a scene-owned **RAINBOW MEADOW** waymarker beside the gorge route, styled as an irregular carved stone slab with crystal accents rather than a wooden sign;
-- keeps the upper water throat, mist, accepted Meadow-side waterfall/pool and two-way traversal contract unchanged.
-
-
-## H6.3D path, sign and overhang correction
-
-The H6.3C preview still showed three presentation problems:
-
-- a rounded path-end artefact remained at the west handoff;
-- the Rainbow Meadow wording was not convincingly contained on its rock marker;
-- the upper gorge edge did not read strongly enough as an overhang the player passes beneath.
-
-H6.3D therefore:
-
-- removes the separate gorge path renderer entirely;
-- extends the normal Crystal Brook path itself off-map through the west gorge so only one path object can exist there;
-- adds a dedicated foreground rock overhang above the path entrance so the player visually passes under the gorge lip;
-- shifts/shrinks the lower shoulder further away from the route;
-- rebuilds the Rainbow Meadow marker as a larger carved-rock sign with high-contrast inset lettering and an explicit left-pointing arrow;
-- keeps the upper water throat, accepted Meadow waterfall/pool, gateway positions and traversal behaviour unchanged.
-## H6.3 human gate
-
-H6.3D is now the visual review checkpoint. Do not begin H6.4 until David approves the single west path, foreground gorge overhang and carved Rainbow Meadow arrow marker, and two-way traversal remains green.
-
+ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the surviving replacement-owner slice is green on `4c7ffde8e57d4e40e12a669f4bdc1578063ce0c7`. ENG-WP1.4 is now modernising the 26 useful but stale browser contracts. The known H6.3 harness defect remains sequenced for ENG-WP1.5.
 
 ## Next work
 
-Validate and visually review **H6.3C - Rainbow Meadow gorge polish**. Do not begin H6.4.
+The first ENG-WP1.4 family and the NPC production-identity checks are green. The second family's full browser run exposed an inactive Race Hub diagnostic transition and the genuine missing Marigold/Nova Picnic Hill Talk registrations. Both have been repaired on the branch and await targeted browser qualification before advancing to contextual feedback.
 
 ## Operating reminders
 
-- Keep Brook hydrology area-owned.
-- Do not reintroduce water through generic compatibility managers.
-- Preserve accepted Ripple/Echo/Grotto progression and Meadow/Woods traversal.
-- Preserve MG-WP1-MG-WP4 shared mini-game/session/catalogue/authoring behaviour.
-- If GitHub access fails, reconnect immediately.
+- One bounded checkpoint at a time.
+- Run focused checks during remediation, not the full Chromium matrix after every edit.
+- Inspect all available failure evidence before making a correction.
+- Do not change accepted production behaviour to satisfy an obsolete test.
+- Run formatting before pushing changed source/content.
+- Reconnect GitHub immediately after an access failure.
 - Do not sit in repeated CI/deployment polling loops.

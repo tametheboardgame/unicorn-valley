@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+// ENG-WP1.3 replacement owner: current Meadow traversal presentation and compatibility-owner retirement.
+
 interface DiagnosticObject {
   name: string;
   text: string | null;
