@@ -153,7 +153,7 @@ Complete. Four current-contract candidates were reproduced on the current branch
 
 ### ENG-WP1.3
 
-Active. The 14 failures classified as obsolete historical contracts have now been retired without removing current replacement coverage:
+Complete. The 14 failures classified as obsolete historical contracts were retired without removing current replacement coverage:
 
 - removed the obsolete Rainbow Meadow cases from R3 visual-tightening and traversal-polish parameter sets;
 - removed the two pre-H4 Nova exact-position / in-world race-choice tests;
@@ -166,7 +166,17 @@ Active. The 14 failures classified as obsolete historical contracts have now bee
 - deleted the superseded H4.2 exact Meadow layout contract;
 - deleted the superseded H4.3 Meadow path-network contract.
 
-Current replacement owners are H4.10/H4.11 for Meadow composition/traversal, H4.7 for Rainbow Run Hub extraction/reachability, the surviving gateway-art coverage for accepted Meadow/Woods presentation, and H6-era tests for current Crystal Brook topology. The H6.3 harness defect remains intentionally deferred to ENG-WP1.5 rather than being mixed into this retirement checkpoint.
+Current replacement owners are H4.10/H4.11 for Meadow composition/traversal, H4.7 for Rainbow Run Hub extraction/reachability, the surviving gateway-art coverage for accepted Meadow/Woods presentation, and H6-era tests for current Crystal Brook topology. The replacement-owner qualification passed on commit `4c7ffde8e57d4e40e12a669f4bdc1578063ce0c7`. The H6.3 harness defect remains intentionally deferred to ENG-WP1.5 rather than being mixed into this retirement checkpoint.
+
+### ENG-WP1.4
+
+Active. Modernise the 26 useful but stale browser contracts in bounded families. Preserve the behavioural requirement while replacing outdated save fixtures, coordinates, object identities, fixed layout dimensions and pre-refinement mini-game assumptions.
+
+First bounded family:
+
+- profile-redesign save fixture drift;
+- title/home responsive layout contracts;
+- cottage decorating presentation readiness.
 
 ## Operating rules during this package
 
@@ -182,4 +192,4 @@ Current replacement owners are H4.10/H4.11 for Meadow composition/traversal, H4.
 
 ## Next action
 
-Qualify the ENG-WP1.3 replacement-owner slice. If the surviving current contracts are green, record ENG-WP1.3 complete and move to **ENG-WP1.4 - modernise stale browser contracts**.
+Execute the first bounded **ENG-WP1.4** stale-contract family, qualify only those changed browser files, then continue through the remaining stale families.
