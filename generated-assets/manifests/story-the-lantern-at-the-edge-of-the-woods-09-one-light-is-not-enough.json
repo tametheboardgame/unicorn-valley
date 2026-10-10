@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "provider": "google-drive",
+    "fileId": "1yPHW7Kr3K7HBHll8P5b2PH75nfzmlJLb"
+  },
+  "expectedSourceName": "lantern-09-one-light-is-not-enough.png",
+  "destination": "public/stories/the-lantern-at-the-edge-of-the-woods/illustrations/generated/lantern-09-one-light-is-not-enough.webp",
+  "transform": {
+    "maxWidth": 1600,
+    "maxHeight": 1600,
+    "quality": 88
+  },
+  "revision": 1
+}
