@@ -34,7 +34,7 @@ async function launchJustGamesVariant(
 }
 
 test.describe('ENG-WP1.2 current-contract reproduction', () => {
-  test('Just Games Rainbow Run launches sandboxed and returns after the race is ready', async ({
+  test('Just Games Rainbow Run launches sandboxed and Escape returns to Just Games', async ({
     page,
   }) => {
     test.setTimeout(60_000);
