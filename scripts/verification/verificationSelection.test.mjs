@@ -147,7 +147,10 @@ test('WP2.1 detects missing references, unowned additions and stale exceptions',
     'STALE_UNOWNED_BASELINE',
     'NEW_UNOWNED_BROWSER',
   ]) {
-    assert.ok(report.errors.some((issue) => issue.code === code), code);
+    assert.ok(
+      report.errors.some((issue) => issue.code === code),
+      code,
+    );
   }
 });
 
