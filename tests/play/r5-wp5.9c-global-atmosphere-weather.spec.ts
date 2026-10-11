@@ -130,11 +130,21 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
   });
 
   test('sparkle weather is a world-space field rather than camera glass', async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.clear());
     await page.goto('/?scene=woods&diagnostics=1');
     await waitForScene(page, 'WhisperingWoodsScene');
-    await page.keyboard.press('y');
-    await page.keyboard.press('y');
-    await page.keyboard.press('y');
+
+    // Y is edge-triggered by Phaser. Confirm each mode is actually selected
+    // before pressing again, rather than losing rapid presses between frames.
+    for (const label of ['🌤️ Clear', '🌧️ Gentle Rain', '✨ Sparkle Shower']) {
+      await page.keyboard.press('y');
+      await expect
+        .poll(async () => {
+          const woods = sceneFrom(await snapshot(page), 'WhisperingWoodsScene');
+          return woods.objects.find(({ name }) => name === 'magical-weather-control')?.text;
+        })
+        .toBe(label);
+    }
     await waitForObject(page, 'WhisperingWoodsScene', 'magical-weather-sparkle-world');
 
     const woods = sceneFrom(await snapshot(page), 'WhisperingWoodsScene');

@@ -45,6 +45,7 @@ interface RainbowDiscMatchState {
   actionLocked: boolean;
   timingActive: boolean;
   defenceCueLane: number | null;
+  defenceCueRenderedLane: number | null;
   practiceThrows: number;
 }
 
@@ -130,7 +131,14 @@ async function throwToPracticeTarget(page: Page, receiverIndex: number): Promise
     'RainbowDiscActivityScene',
     `rainbow-disc-activity:receiver-ring:${receiverIndex}`,
   );
-  await primeSuccessfulTiming(page);
+  // Readiness was already checked above. Avoid a second full-scene snapshot
+  // for each throw in this five-round journey.
+  await page.evaluate(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) throw new Error('Browser diagnostics unavailable.');
+    api.primeRainbowDiscTiming();
+  });
   const previousThrows = (await matchState(page)).practiceThrows;
   await page.keyboard.press('Space');
   await expect.poll(async () => (await matchState(page)).practiceThrows).toBe(previousThrows + 1);
@@ -168,14 +176,14 @@ async function currentOpenLane(page: Page): Promise<number> {
 }
 
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
-  // Read the same short-lived cue that is drawn for the player, but query only
-  // the scene-owned scalar rather than serialising every Phaser object at 60 fps.
+  // The scene records the lane only after drawing the player-facing cue.
+  // Read that turn-scoped evidence even if the short-lived cue has expired.
   const readLane = await page.waitForFunction(
     () => {
       const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
         .__UNICORN_VALLEY_DIAGNOSTICS__;
       // Playwright waitForFunction requires a truthy result; lane 0 is valid.
-      return (api?.rainbowDiscMatchState().defenceCueLane ?? -1) + 1;
+      return (api?.rainbowDiscMatchState().defenceCueRenderedLane ?? -1) + 1;
     },
     undefined,
     { timeout: 6_000, polling: 75 },
@@ -481,6 +489,8 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
 });
 
 test('H4.9B practice range launches a five-throw target challenge', async ({ page }) => {
+  // Five real throws and their animated returns take longer under sharded CI.
+  test.setTimeout(75_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=meadow&diagnostics=1');

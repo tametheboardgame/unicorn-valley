@@ -94,3 +94,9 @@ PR #299 is **draft and unmerged**. Final authoritative full Chromium qualificati
 - ENG-WP1.6 smoke passed 9/9 and Tier 4 compatibility passed 49/49 in CI `38130437400`. The full Chromium rerun is awaiting a completely green Rainbow Disc family.
 - The first read-only Rainbow Disc diagnostic run stopped on a single Biome formatting difference; the correction and explicit authoritative build-policy check are in the current checkpoint.
 - Protect `main` and require Merge Gate at GitHub repository-settings level after the full qualification; in-repository checks alone are advisory while the branch is unprotected.
+
+## ENG-WP1 five-contract Chromium repair checkpoint (2026-10-11)
+
+- Authoritative CI `38148791260` on `7f50adf6` passed verification planning, Tier 0, unit, build, whole-game smoke and compatibility, but failed shard 1 (Pond Leap return and sparkle-weather mode selection) and shard 3 (Rainbow Disc target-range and two defence cue contracts); shard 2 was cancelled and the Merge Gate correctly failed.
+- Pending validation: Pond Leap Escape propagation is contained to the active scene; the weather test verifies each player-facing mode before advancing; Rainbow Disc defence diagnostics retain the lane of the cue actually rendered for the current turn; practice target-range avoids duplicate scene snapshots and has a bounded evidence-based 75-second end-to-end budget.
+- PR #299 is back in draft for focused qualification. Do not claim these repairs passed, move the PR to Ready for Review, merge, or resume ENG-WP2 until targeted verification and subsequent exact-head full qualification succeed.

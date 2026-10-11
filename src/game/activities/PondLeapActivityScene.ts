@@ -65,12 +65,12 @@ export class PondLeapActivityScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown-SPACE', this.tryLeap, this);
     this.input.keyboard?.on('keydown-ENTER', this.tryLeap, this);
-    this.input.keyboard?.on('keydown-ESC', this.leaveActivity, this);
+    this.input.keyboard?.on('keydown-ESC', this.handleEscape, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.input.keyboard?.off('keydown-SPACE', this.tryLeap, this);
       this.input.keyboard?.off('keydown-ENTER', this.tryLeap, this);
-      this.input.keyboard?.off('keydown-ESC', this.leaveActivity, this);
+      this.input.keyboard?.off('keydown-ESC', this.handleEscape, this);
       this.frog?.destroy(true);
       this.frog = null;
       this.statusText = null;
@@ -492,6 +492,12 @@ export class PondLeapActivityScene extends Phaser.Scene {
     }
 
     parent?.add([visual, hit, label]);
+  }
+
+  private handleEscape(event: KeyboardEvent): void {
+    // The resumed Just Games menu must not receive the same Escape keydown.
+    event.stopImmediatePropagation();
+    this.leaveActivity();
   }
 
   private leaveActivity(): void {

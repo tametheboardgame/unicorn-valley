@@ -117,6 +117,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private opponentAdvance = 0;
   private defenceAttackLane = 1;
   private defenceCueRoute: Phaser.GameObjects.Graphics | null = null;
+  private lastRenderedDefenceCueLane: number | null = null;
   private selectedReceiver = 1;
   private dragging = false;
   private actionLocked = false;
@@ -176,6 +177,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.phase = 'attack';
     this.opponentAdvance = 0;
     this.defenceAttackLane = 1;
+    this.lastRenderedDefenceCueLane = null;
     this.selectedReceiver = 1;
     this.dragging = false;
     this.actionLocked = false;
@@ -270,6 +272,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     actionLocked: boolean;
     timingActive: boolean;
     defenceCueLane: number | null;
+    defenceCueRenderedLane: number | null;
     practiceThrows: number;
   } {
     return {
@@ -290,6 +293,10 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
         this.phase === 'defence' && this.defenceCueRoute?.active && this.defenceCueRoute.visible
           ? this.defenceAttackLane
           : null,
+      // Record which player-visible cue was actually drawn for this defence turn.
+      // The 600ms graphic can expire before Playwright resumes after the throw.
+      defenceCueRenderedLane:
+        this.phase === 'defence' ? this.lastRenderedDefenceCueLane : null,
       practiceThrows: this.practiceThrows,
     };
   }
@@ -689,6 +696,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     route.lineBetween(routeStartX, 370, routeEndX, routeEndY);
     this.playLayer?.add(route);
     this.defenceCueRoute = route;
+    this.lastRenderedDefenceCueLane = this.defenceAttackLane;
 
     const intendedReceiver = this.receiverSprites[this.defenceAttackLane];
     if (intendedReceiver) {
@@ -1944,6 +1952,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.selectedReceiver = index;
     this.refreshReceiverSelection();
     this.actionLocked = true;
+    this.lastRenderedDefenceCueLane = null;
 
     const correct = index === this.defenceAttackLane;
     if (correct) {
@@ -2082,6 +2091,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private beginDefence(): void {
+    this.lastRenderedDefenceCueLane = null;
     this.phase = 'defence';
     this.opponentAdvance = 0;
     this.possession = 0;
@@ -2090,6 +2100,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   }
 
   private resetMatchState(): void {
+    this.lastRenderedDefenceCueLane = null;
     this.possession = 0;
     this.playerScore = 0;
     this.oppositionScore = 0;
