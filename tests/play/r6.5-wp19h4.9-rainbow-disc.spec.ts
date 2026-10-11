@@ -90,9 +90,7 @@ async function waitForTimingReady(page: Page): Promise<void> {
   } catch (error) {
     const state = await matchState(page);
     const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-    const marker = scene.objects.find(
-      ({ name }) => name === 'rainbow-disc-activity:timing-marker',
-    );
+    const marker = scene.objects.find(({ name }) => name === 'rainbow-disc-activity:timing-marker');
     throw new Error(
       `Rainbow Disc timing readiness stalled: ${JSON.stringify({
         state,

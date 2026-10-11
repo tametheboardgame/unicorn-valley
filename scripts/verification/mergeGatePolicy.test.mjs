@@ -51,6 +51,16 @@ test('full qualification cannot pass with one failed Chromium shard', () => {
   assert.match(result.failures.join(' '), /tier3/);
 });
 
+test('authoritative qualification cannot omit production build', () => {
+  const result = evaluateMergeGate({
+    ...full,
+    required: { ...full.required, build: false },
+    outcomes: { ...full.outcomes, build: 'skipped' },
+  });
+  assert.equal(result.passed, false);
+  assert.match(result.failures.join(' '), /Authoritative qualification must include/);
+});
+
 test('ready-for-review refuses selective PR verification even if selected jobs are green', () => {
   const result = evaluateMergeGate({
     ...full,

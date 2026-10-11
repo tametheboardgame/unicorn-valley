@@ -28,9 +28,9 @@ export function evaluateMergeGate({
 
   if (
     requireAuthoritative &&
-    (!required.tier3 || !required.tier4 || !required.tier1 || !required.smoke)
+    (!required.tier3 || !required.tier4 || !required.tier1 || !required.smoke || !required.build)
   ) {
-    failures.push('Authoritative qualification must include unit, Chromium and compatibility.');
+    failures.push('Authoritative qualification must include unit, build, smoke, Chromium and compatibility.');
   }
 
   return {

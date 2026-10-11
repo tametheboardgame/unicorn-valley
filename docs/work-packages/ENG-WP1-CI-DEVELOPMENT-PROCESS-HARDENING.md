@@ -218,7 +218,7 @@ Sixth bounded family (active; focused qualification pending):
 - test possession turnover by selecting a currently defended receiver rather than assuming a fixed marked lane;
 - preserve match scoring, practice results, defender read cues and Just Games behaviour without changing game mechanics.
 
-The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green. The focused suite has ranged from 3/6 to 5/6 passing while isolating unstable input sequences. The latest run `38127304194` passed four of six; match scoring and defended-lane tests failed when sprite clicks/drags did not deterministically commit the intended lane. The new checkpoint `6ba5398e0025d4641b523c87ceea6686bba060ba` selects lanes using actual keyboard Up/Down commands, followed by Space, and preserves deterministic timing, scoring and possession assertions. Targeted browser qualification `38127868904` is pending. Do not close this family until 6/6 passes.
+The family has reached 5/6 passing. Maple and Rainbow Disc checks passed 8/9 in targeted CI `38132074158` after transient defence-cue order and time-budget repairs. The sole failing Practice helper was corrected, with five of six Rainbow Disc cases passing in `38132744580` and `38133450956`. The remaining full-match case showed a game-state/timing-readiness delay at the first catch, not just a test deadline. `20354916cd072a54117cdfe1d6af01522ebed4a1` replaces repeated full-scene diagnostic snapshots with cheap read-only timingActive state and still asserts visible timing controls. Its initial CI `38134662137` reached Tier 0 only, where Biome flagged a single line-wrap discrepancy. The exact formatter correction is now included; **6/6 browser qualification remains pending**. Preserve both-goal scoring and defence requirements.
 
 Seventh bounded family (complete; focused qualification green):
 
@@ -240,11 +240,11 @@ Ninth bounded family (complete; focused qualification green):
 - retain Meadow player-production-body evidence, and capture Nova beside the player at the current Hub using its authored layout coordinates.
 - all five R6.5-WP18F world visual-evidence contracts passed on `183a8bfa54a78d98dc6a7ce12856cac862231796` (CI `38127429300`, 5/5).
 
-Tenth bounded family (active; focused qualification pending):
+Tenth bounded family (complete; focused qualification green):
 
 - modernise the surviving R5 optional-content discovery contract in Crystal Brook to assert the H6 Crystal Grotto threshold instead of a retired Prism Grotto branch plaque;
 - retain world-space visibility/active checks and the no-duplicate-object revisit invariant;
-- correction `194fc7fde49a99d401787bbdf7c79fc76d5d398f` awaits focused browser qualification (CI `38128027531`).
+- all six selected Grotto/discovery regressions passed on `194fc7fde49a99d401787bbdf7c79fc76d5d398f` (CI `38128027531`, 6/6).
 
 ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 
@@ -253,18 +253,22 @@ ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 - bidirectional traversal with no arrival bounce-back passed on `8d7d0ac94819c24bc9cc8338d335661c85660d90` (CI `38126714606`, 1/1).
 
 
-ENG-WP1.6 current whole-game smoke (CI qualification pending):
+ENG-WP1.6 current whole-game smoke (implemented and browser-qualified; final gate pending):
 
 - `playwright.smoke.config.ts` selects nine accepted current contracts across title/Just Games, Story House, Nova/picnic, Race Hub and Meadow–Brook transition;
 - authoritative runs require a separate `Current whole-game smoke` job, distinct from ownership-selected Tier 2 and broad Tier 3 regression;
-- the exact-head Merge Gate rejects a skipped or failed required smoke.
+- the exact-head Merge Gate rejects a skipped or failed required smoke;
+- the current smoke passed **9/9** and Tier 4 passed **49/49** on full qualification attempt `38130437400`. Tier 3 remained red on historical contracts and that run is not merge-authoritative.
 
-ENG-WP1.7–1.10 pipeline implementation (CI qualification pending):
+ENG-WP1.7–1.10 pipeline implementation (implemented and selectively validated; final gate pending):
 
 - `291232e7a84321cfba6388f3477adfe1c3e01662`: PR concurrency cancellation and Ready-for-Review triggers.
 - `e2b5eba9fb5b63eaeec21376fd080a4fba282c1e`: Tier 0 aggregates deterministic errors across formatter, lint, architecture and policy checks; precise formatting remediation remains available as an artifact.
 - `64903d833cc6dd443740717369c32878fcf74c5a`: Merge Gate compares the current GitHub PR head to the verified SHA, enforces required job conclusions and distinguishes provisional draft checks from authoritative ready-for-review qualification. Pure policy tests cover stale head, failed Chromium, incomplete selection and draft checks.
+- Tier 0, selective browser and build checks have passed repeatedly; the Merge Gate has correctly rejected failed required tests. The authoritative full run, branch protection and mainline closeout are still outstanding.
+- The Merge Gate now explicitly requires **build** as well as unit, smoke, Chromium and compatibility during authoritative runs.
 - Agent/testing/acceptance operating docs are aligned with the implementation here; final acceptance depends on passing CI and the package's full baseline.
+- Main is currently reported **unprotected** by GitHub. A repository administrator must set Merge Gate as a required check for platform-level merge enforcement; the connected integration cannot write that configuration.
 
 ## Operating rules during this package
 
@@ -280,4 +284,4 @@ ENG-WP1.7–1.10 pipeline implementation (CI qualification pending):
 
 ## Next action
 
-Qualify the remaining sixth **ENG-WP1.4** Rainbow Disc and tenth current-H6 optional-content families on targeted browser CI. Audit the surviving useful contracts against the initial full Chromium baseline. Then complete ENG-WP1.5 harness hardening, final workflow guardrails, and one meaningful full baseline before merging. Do not poll CI or run the full Chromium matrix repeatedly.
+Qualify the **sixth ENG-WP1.4 Rainbow Disc** family (6/6) after the lightweight timing-readiness and formatter corrections. The Grotto, Maple baking and Just Games return families are green. Once focused CI is green, mark PR #299 Ready for Review to trigger the authoritative exact-head unit/build/smoke/three-shard Chromium/compatibility run. Verify the live-head Merge Gate before merge. Do not run repeated full qualification cycles or poll while jobs are pending; record the mainline result once after an approved merge.

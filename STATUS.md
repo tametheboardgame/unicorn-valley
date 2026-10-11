@@ -60,13 +60,22 @@ Do not begin H6.6 or advance MG-WP7 while ENG-WP1 is active. Existing historical
 
 ## Current hardening result
 
-ENG-WP1.2 is complete: all four focused current contracts are now green, including the repaired Just Games -> Rainbow Run Escape return.
+ENG-WP1.1–WP1.3 are complete. Four current contracts were reproduced, a genuine Just Games race Escape defect was corrected, and fourteen obsolete browser contracts were retired with replacement coverage retained.
 
-ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the surviving replacement-owner slice is green on `4c7ffde8e57d4e40e12a669f4bdc1578063ce0c7`. ENG-WP1.4 is now modernising the 26 useful but stale browser contracts. The known H6.3 harness defect remains sequenced for ENG-WP1.5.
+ENG-WP1.4 has nine qualified modernisation families plus the Crystal Grotto family. Mobile racing passed 33/33 selected tests (CI `38125054158`); Race Hub 3/3 (`38125477510`); H6.3 Meadow/Brook traversal 1/1 (`38126714606`); H6.4 rock perimeter 2/2 (`38126837711`); Story House illustration switching 5/5 (`38127180622`); Nova visual evidence 5/5 (`38127429300`); Grotto/discovery 6/6 (`38128027531`); and the corrected MG-WP4 Just Games return contract 7/7 (`38131620384`). Maple baking and beachcombing passed all three targeted tests in `38132074158`.
+
+The last remaining H4.9 Rainbow Disc full-match regression has reached 5/6 passing (`38133450956`). The trace showed the first catch's delayed readiness transition had not completed while the test repeatedly serialised full Phaser scene snapshots. A lighter read-only timingActive probe is implemented on `20354916cd072a54117cdfe1d6af01522ebed4a1`, preserving the visible-control and two-goal assertions. First CI `38134662137` was stopped at Tier 0 by one Biome line-wrap error, now corrected. **Rainbow Disc is not yet qualified**.
+
+ENG-WP1.5 harness fixes, WP1.6 nine-test whole-game smoke, WP1.7 Tier 0 aggregation, WP1.8 superseded-PR cancellation/profile validation, WP1.9 exact-head Merge Gate and WP1.10 repository rule reconciliation are implemented. The current smoke suite passed 9/9 and Tier 4 compatibility passed 49/49 in CI `38130437400`, but the authoritative full baseline remained red on historical Chromium cases.
+
+PR #299 is **draft and unmerged**. Final authoritative full Chromium qualification and a green exact-head Merge Gate remain required. GitHub reports `main` as **unprotected**; repository administration must require the Merge Gate for automatic merge enforcement.
 
 ## Next work
 
-Eight ENG-WP1.4 families are qualified: profile/title/home, NPC/picnic, Crystal Brook contextual-feedback and responsive evidence, mobile racing (33/33 on `a5726db43782b7293d02c0f88edb0d35769ce91e`), Race Hub traversal (3/3 on `ae7c897043d6099a479e2476490803992c7dace7`), H6.4 rock perimeter (2/2 on `3b90541a63fe2b46b7688039ef2140d934e23b1c`), Story House illustration switching (5/5 on `85f38ec54e3c92163190b503d1a1c4bc11d4ac66`), and R6.5-WP18F visual evidence for current Nova Race Hub presence (5/5 on `183a8bfa54a78d98dc6a7ce12856cac862231796`). Rainbow Disc match and defender input tests remain unresolved (4/6 on `e9bb17ddd15c089c08c924ff36bcfa6d777e2b5b`); latest real-keyboard repair at `6ba5398e0025d4641b523c87ceea6686bba060ba` awaits CI `38127868904`. R5 optional Brook Grotto discovery test is modernised at `194fc7fde49a99d401787bbdf7c79fc76d5d398f`, with CI `38128027531` pending. The isolated ENG-WP1.5 H6.3 diagnostic scope/startup defect passed 1/1 on `8d7d0ac94819c24bc9cc8338d335661c85660d90`. Full Chromium baseline and merge qualification remain outstanding.
+1. Obtain a green focused Rainbow Disc run with the lightweight timing probe and corrected formatting.
+2. Keep the roadmap and project state aligned with actual check outcomes.
+3. Move PR #299 to Ready for Review and let the exact-head authoritative run complete once.
+4. Verify all required checks, address actual remaining failures if any, then merge and verify main. No deployment or feature-work restart before qualification.
 
 ## Operating reminders
 
@@ -80,10 +89,8 @@ Eight ENG-WP1.4 families are qualified: profile/title/home, NPC/picnic, Crystal 
 
 ## ENG-WP1 CI machinery checkpoint (2026-10-11)
 
-- PR #299 remains **draft**; no merge or deployment is authorised yet.
-- `291232e7a84321cfba6388f3477adfe1c3e01662` adds PR concurrency cancellation and Ready-for-Review full-run triggering.
-- `e2b5eba9fb5b63eaeec21376fd080a4fba282c1e` aggregates formatter, lint, architecture and policy failures in Tier 0; the formatter still uploads an exact remediation patch.
-- `64903d833cc6dd443740717369c32878fcf74c5a` implements an exact-live-PR-head Merge Gate, selected-job enforcement and tests for stale/partial qualification; CI validation is pending.
-- Rainbow Disc has read-only lane/match-state diagnostics at `1b399c6d8993e8d323685abca770c3ac7fec0e9a`. The latest test assertions have been formatted at `a5099493129e67eb59bedba4e7972ca8cbde16b0`; browser qualification is still needed.
-- The H6 Crystal Grotto branch and revisit contract passed 6/6 on `194fc7fde49a99d401787bbdf7c79fc76d5d398f` (CI `38128027531`).
-- Next: finish the Rainbow Disc investigation, qualify the revised Merge Gate and Tier 0 machinery, define the lean whole-game browser owner gate (ENG-WP1.6), then run one exact-head authoritative baseline. Do not merge until it is meaningful and green.
+- Focused checks are bounded and PR concurrency cancels superseded commits. Tier 0 now reports formatter, lint, architecture and policy failures together, with a remediation artifact.
+- The exact-head Merge Gate refuses a stale SHA, red selected tests or incomplete authoritative unit/build/smoke/Chromium/compatibility qualification. Draft checks are provisional.
+- ENG-WP1.6 smoke passed 9/9 and Tier 4 compatibility passed 49/49 in CI `38130437400`. The full Chromium rerun is awaiting a completely green Rainbow Disc family.
+- The first read-only Rainbow Disc diagnostic run stopped on a single Biome formatting difference; the correction and explicit authoritative build-policy check are in the current checkpoint.
+- Protect `main` and require Merge Gate at GitHub repository-settings level after the full qualification; in-repository checks alone are advisory while the branch is unprotected.
