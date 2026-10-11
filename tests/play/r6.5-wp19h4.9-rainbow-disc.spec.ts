@@ -170,20 +170,28 @@ async function currentOpenLane(page: Page): Promise<number> {
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
   // Read the same short-lived cue that is drawn for the player, but query only
   // the scene-owned scalar rather than serialising every Phaser object at 60 fps.
-  const readLane = await page.waitForFunction(() => {
-    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-      .__UNICORN_VALLEY_DIAGNOSTICS__;
-    // Playwright waitForFunction requires a truthy result; lane 0 is valid.
-    return (api?.rainbowDiscMatchState().defenceCueLane ?? -1) + 1;
-  }, undefined, { timeout: 6_000, polling: 75 });
+  const readLane = await page.waitForFunction(
+    () => {
+      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+        .__UNICORN_VALLEY_DIAGNOSTICS__;
+      // Playwright waitForFunction requires a truthy result; lane 0 is valid.
+      return (api?.rainbowDiscMatchState().defenceCueLane ?? -1) + 1;
+    },
+    undefined,
+    { timeout: 6_000, polling: 75 },
+  );
   const telegraphedLane = (await readLane.jsonValue()) - 1;
 
-  await page.waitForFunction(() => {
-    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-      .__UNICORN_VALLEY_DIAGNOSTICS__;
-    const state = api?.rainbowDiscMatchState();
-    return state?.phase === 'defence' && !state.actionLocked && state.defenceCueLane === null;
-  }, undefined, { timeout: 6_000, polling: 100 });
+  await page.waitForFunction(
+    () => {
+      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+        .__UNICORN_VALLEY_DIAGNOSTICS__;
+      const state = api?.rainbowDiscMatchState();
+      return state?.phase === 'defence' && !state.actionLocked && state.defenceCueLane === null;
+    },
+    undefined,
+    { timeout: 6_000, polling: 100 },
+  );
 
   const choiceScene = await snapshotScene(page, 'RainbowDiscActivityScene');
   const chosenLane = chooseCorrectly ? telegraphedLane : (telegraphedLane + 1) % 3;
