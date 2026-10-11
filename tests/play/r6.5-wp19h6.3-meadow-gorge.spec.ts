@@ -16,7 +16,6 @@ interface DiagnosticSnapshot {
 
 interface DiagnosticsApi {
   snapshot(): DiagnosticSnapshot;
-  startScene(sceneKey: string, data?: object): void;
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
 
@@ -37,19 +36,6 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
     .toBe(true);
 }
 
-async function startScene(page: Page, sceneKey: string): Promise<void> {
-  await page.evaluate((key) => {
-    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-      .__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    api.startScene(key);
-  }, sceneKey);
-  await waitForScene(page, sceneKey);
-  await page.waitForTimeout(220);
-}
-
 async function setPlayerPosition(
   page: Page,
   sceneKey: string,
@@ -57,15 +43,15 @@ async function setPlayerPosition(
   y: number,
 ): Promise<void> {
   await page.evaluate(
-    ({ key, targetX, targetY }) => {
+    ({ key, playerName, targetX, targetY }) => {
       const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
         .__UNICORN_VALLEY_DIAGNOSTICS__;
       if (!api) {
         throw new Error('Browser diagnostics are unavailable.');
       }
-      api.setArcadeSpritePosition(key, PLAYER_NAME, targetX, targetY);
+      api.setArcadeSpritePosition(key, playerName, targetX, targetY);
     },
-    { key: sceneKey, targetX: x, targetY: y },
+    { key: sceneKey, playerName: PLAYER_NAME, targetX: x, targetY: y },
   );
 }
 
@@ -81,9 +67,10 @@ async function playerPosition(page: Page, sceneKey: string): Promise<{ x: number
 test('Rainbow Meadow and Crystal Brook share one gorge transition without arrival bounce-back', async ({
   page,
 }) => {
-  await page.goto('/?diagnostics=1');
-  await waitForScene(page, 'TitleScene');
-  await startScene(page, 'RainbowMeadowScene');
+  // Enter through Boot/Preload; diagnostics must not restart an active
+  // world scene and bypass its shared gateway/interaction owners.
+  await page.goto('/?scene=meadow&diagnostics=1');
+  await waitForScene(page, 'RainbowMeadowScene');
 
   const meadow = (await snapshot(page)).scenes.find((scene) => scene.key === 'RainbowMeadowScene');
   expect(
