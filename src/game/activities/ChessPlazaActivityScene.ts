@@ -3192,7 +3192,10 @@ export class ChessPlazaActivityScene extends Phaser.Scene {
     this.renderBoard();
   }
 
-  private handleEscape(): void {
+  private handleEscape(event: KeyboardEvent): void {
+    // Escape belongs to the active Academy. Do not let this keydown reach
+    // the suspended Just Games menu when the Academy returns to it.
+    event.stopImmediatePropagation();
     if (this.view === 'lesson') {
       this.showLessonList();
       return;

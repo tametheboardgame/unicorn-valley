@@ -61,41 +61,9 @@ async function logicalClick(page: Page, logicalX: number, logicalY: number): Pro
   );
 }
 
-function sceneSnapshot(
-  snapshot: BrowserDiagnosticSnapshot,
-  sceneKey: string,
-): DiagnosticSceneSnapshot {
-  const scene = snapshot.scenes.find((candidate) => candidate.key === sceneKey);
-  if (!scene) {
-    throw new Error(`Missing diagnostic scene ${sceneKey}.`);
-  }
-  return scene;
-}
-
-test('Rainbow Meadow now enters the standalone Rainbow Run Race Hub', async ({ page }) => {
-  test.setTimeout(45_000);
-  await page.goto('/?scene=meadow&diagnostics=1');
-  await waitForScene(page, 'RainbowMeadowScene');
-
-  await page.evaluate(() => {
-    const diagnostics = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: {
-          setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
-        };
-      }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    diagnostics?.setArcadeSpritePosition('RainbowMeadowScene', 'world-player-unicorn', 2950, 390);
-  });
-  await page.waitForTimeout(120);
-  await page.keyboard.press('KeyE');
-  await waitForScene(page, 'RainbowRunEntryScene');
-
-  const snapshot = await getSnapshot(page);
-  const hub = sceneSnapshot(snapshot, 'RainbowRunEntryScene');
-  expect(hub.objects.some((object) => object.name === 'rainbow-run-hub:race-gate')).toBe(true);
-  expect(snapshot.activeScenes).not.toContain('RainbowMeadowScene');
-});
+// The current Meadow-to-Hub gateway and return route are covered by
+// r6.5-wp19h4.4a-race-hub-extraction.spec.ts. The retired R3 KeyE/coordinate
+// contract described a superseded approach, not the accepted walk-through.
 
 test('Sunrise Sprint finish controls remain clickable after the result panel appears', async ({
   page,
