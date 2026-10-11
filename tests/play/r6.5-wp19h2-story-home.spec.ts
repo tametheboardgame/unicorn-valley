@@ -175,7 +175,9 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
   await expect
     .poll(async () => {
       const hatch = (await snapshot(page)).scenes.find(({ key }) => key === 'PipEggHatchScene');
-      return hatch?.objects.some(({ text, visible }) => text === 'Hello, Luma!' && visible) ?? false;
+      return (
+        hatch?.objects.some(({ text, visible }) => text === 'Hello, Luma!' && visible) ?? false
+      );
     })
     .toBe(true);
 
