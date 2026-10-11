@@ -344,6 +344,15 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
 
   await page.keyboard.press('Escape');
   await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
+  // Picnic Hill has several neighbouring conversation targets. After the
+  // dialogue closes the contextual prompt can legitimately select Maple.
+  // Re-enter Nova's own interaction zone before checking she is still talkable.
+  await positionPlayer(
+    page,
+    'RainbowMeadowScene',
+    picnicNova?.x ?? NOVA_PICNIC_POSITION.x,
+    picnicNova?.y ?? NOVA_PICNIC_POSITION.y,
+  );
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
 
   await page.goto('/?scene=village&diagnostics=1');
