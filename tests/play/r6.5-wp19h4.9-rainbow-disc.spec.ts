@@ -247,9 +247,7 @@ async function completeOpenLanePass(page: Page, previousReceiver: number): Promi
   if (steps > 0) {
     await page.keyboard.press(steps === 1 ? 'ArrowDown' : 'ArrowUp');
   }
-  await expect
-    .poll(async () => (await matchState(page)).selectedReceiver)
-    .toBe(receiverIndex);
+  await expect.poll(async () => (await matchState(page)).selectedReceiver).toBe(receiverIndex);
   await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
   return receiverIndex;
@@ -660,9 +658,7 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   // currently defended lanes with the actual Up/Down control and throw with Space.
   expect([0, 2]).toContain(markedLane);
   await page.keyboard.press(markedLane === 0 ? 'ArrowUp' : 'ArrowDown');
-  await expect
-    .poll(async () => (await matchState(page)).selectedReceiver)
-    .toBe(markedLane);
+  await expect.poll(async () => (await matchState(page)).selectedReceiver).toBe(markedLane);
   await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
 
