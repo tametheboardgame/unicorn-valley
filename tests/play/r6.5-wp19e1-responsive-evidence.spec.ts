@@ -1,6 +1,7 @@
 import { expect, type Page, test, type TestInfo } from '@playwright/test';
 import {
   CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  CRYSTAL_BROOK_MAP,
   CRYSTAL_BROOK_SHALLOW_RIPPLE,
 } from '../../src/game/world/CrystalBrookMap';
 
@@ -211,7 +212,14 @@ test.describe('R6.5-WP19E1 semantic distinction evidence', () => {
   test('captures dedicated Wonderbook discovery feedback without the legacy top duplicate', async ({
     page,
   }, testInfo) => {
-    await openCrystalBrook(page, 920, 590);
+    // Track the authored River Crystal location rather than a historical fixed position.
+    const northBankCrystal = CRYSTAL_BROOK_MAP.collectableSpots.find(
+      (spot) => spot.id === 'crystal-north-bank',
+    );
+    if (!northBankCrystal) {
+      throw new Error('Missing canonical north-bank River Crystal collectable.');
+    }
+    await openCrystalBrook(page, northBankCrystal.position);
 
     await expect
       .poll(async () => {
