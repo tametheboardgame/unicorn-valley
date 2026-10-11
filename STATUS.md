@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-10-10
+Last updated: 2026-10-11
 
 ## Current work
 
@@ -66,7 +66,7 @@ ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the
 
 ## Next work
 
-Seven ENG-WP1.4 families are qualified: profile/title/home, NPC/picnic, Crystal Brook contextual-feedback and responsive evidence, mobile racing (33/33 on `a5726db43782b7293d02c0f88edb0d35769ce91e`), Race Hub traversal (3/3 on `ae7c897043d6099a479e2476490803992c7dace7`), H6.4 rock perimeter (2/2 on `3b90541a63fe2b46b7688039ef2140d934e23b1c`), and Story House illustration-set switching (5/5 on `85f38ec54e3c92163190b503d1a1c4bc11d4ac66`). Rainbow Disc improved to 5/6; the corrected full-match case is now in browser qualification on `e9bb17ddd15c089c08c924ff36bcfa6d777e2b5b` (CI `38127304194`). Updated Nova visual-evidence tests await browser qualification on `183a8bfa54a78d98dc6a7ce12856cac862231796` (CI `38127429300`). The isolated ENG-WP1.5 H6.3 diagnostic scope/startup defect was fixed and verified 1/1 on `8d7d0ac94819c24bc9cc8338d335661c85660d90`. Full Chromium baseline and merge qualification remain outstanding.
+Eight ENG-WP1.4 families are qualified: profile/title/home, NPC/picnic, Crystal Brook contextual-feedback and responsive evidence, mobile racing (33/33 on `a5726db43782b7293d02c0f88edb0d35769ce91e`), Race Hub traversal (3/3 on `ae7c897043d6099a479e2476490803992c7dace7`), H6.4 rock perimeter (2/2 on `3b90541a63fe2b46b7688039ef2140d934e23b1c`), Story House illustration switching (5/5 on `85f38ec54e3c92163190b503d1a1c4bc11d4ac66`), and R6.5-WP18F visual evidence for current Nova Race Hub presence (5/5 on `183a8bfa54a78d98dc6a7ce12856cac862231796`). Rainbow Disc match and defender input tests remain unresolved (4/6 on `e9bb17ddd15c089c08c924ff36bcfa6d777e2b5b`); latest real-keyboard repair at `6ba5398e0025d4641b523c87ceea6686bba060ba` awaits CI `38127868904`. R5 optional Brook Grotto discovery test is modernised at `194fc7fde49a99d401787bbdf7c79fc76d5d398f`, with CI `38128027531` pending. The isolated ENG-WP1.5 H6.3 diagnostic scope/startup defect passed 1/1 on `8d7d0ac94819c24bc9cc8338d335661c85660d90`. Full Chromium baseline and merge qualification remain outstanding.
 
 ## Operating reminders
 

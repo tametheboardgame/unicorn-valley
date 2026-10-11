@@ -218,7 +218,7 @@ Sixth bounded family (active; focused qualification pending):
 - test possession turnover by selecting a currently defended receiver rather than assuming a fixed marked lane;
 - preserve match scoring, practice results, defender read cues and Just Games behaviour without changing game mechanics.
 
-The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green. Fixes to transient timing-meter visibility and test round-readiness have brought the focused suite from 3/6 to 5/6 passing. The final match-flow test now throws through the same verified physical drag path as the MG-WP6 controls, rather than relying on a click-and-keyboard sequence. That latest correction is committed on `e9bb17ddd15c089c08c924ff36bcfa6d777e2b5b` and awaits browser qualification (CI `38127304194`).
+The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green. The focused suite has ranged from 3/6 to 5/6 passing while isolating unstable input sequences. The latest run `38127304194` passed four of six; match scoring and defended-lane tests failed when sprite clicks/drags did not deterministically commit the intended lane. The new checkpoint `6ba5398e0025d4641b523c87ceea6686bba060ba` selects lanes using actual keyboard Up/Down commands, followed by Space, and preserves deterministic timing, scoring and possession assertions. Targeted browser qualification `38127868904` is pending. Do not close this family until 6/6 passes.
 
 Seventh bounded family (complete; focused qualification green):
 
@@ -234,11 +234,17 @@ Eighth bounded family (complete; focused qualification green):
 - retain the distinct single-illustration-set behaviour of another book.
 - all five Story House/Village Interior contracts passed on `85f38ec54e3c92163190b503d1a1c4bc11d4ac66` (CI `38127180622`, 5/5).
 
-Ninth bounded family (active; focused qualification pending):
+Ninth bounded family (complete; focused qualification green):
 
 - modernise R6.5-WP18F visual evidence for the accepted placement of Nova at Rainbow Run Race Hub instead of the old permanent Meadow position;
 - retain Meadow player-production-body evidence, and capture Nova beside the player at the current Hub using its authored layout coordinates.
-- correction `183a8bfa54a78d98dc6a7ce12856cac862231796` awaits targeted browser qualification (CI `38127429300`).
+- all five R6.5-WP18F world visual-evidence contracts passed on `183a8bfa54a78d98dc6a7ce12856cac862231796` (CI `38127429300`, 5/5).
+
+Tenth bounded family (active; focused qualification pending):
+
+- modernise the surviving R5 optional-content discovery contract in Crystal Brook to assert the H6 Crystal Grotto threshold instead of a retired Prism Grotto branch plaque;
+- retain world-space visibility/active checks and the no-duplicate-object revisit invariant;
+- correction `194fc7fde49a99d401787bbdf7c79fc76d5d398f` awaits focused browser qualification (CI `38128027531`).
 
 ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 
@@ -261,4 +267,4 @@ ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 
 ## Next action
 
-Qualify the remaining sixth **ENG-WP1.4** Rainbow Disc and ninth Nova visual-evidence families on targeted browser CI. Audit any remaining useful stale and retired contracts against the initial full Chromium baseline. Then complete ENG-WP1.5 harness hardening, final workflow guardrails, and one meaningful full baseline before merging. Do not poll CI or run the full Chromium matrix repeatedly.
+Qualify the remaining sixth **ENG-WP1.4** Rainbow Disc and tenth current-H6 optional-content families on targeted browser CI. Audit the surviving useful contracts against the initial full Chromium baseline. Then complete ENG-WP1.5 harness hardening, final workflow guardrails, and one meaningful full baseline before merging. Do not poll CI or run the full Chromium matrix repeatedly.
