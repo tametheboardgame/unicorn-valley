@@ -4,7 +4,7 @@ import { evaluateMergeGate } from './mergeGatePolicy.mjs';
 const flag = (name) => process.env[name] === 'true';
 const event = process.env.GITHUB_EVENT_NAME ?? '';
 const plannedHead = process.env.PLAN_HEAD ?? '';
-const isPR = event === 'pull_request' || Boolean(process.env.PR_NUMBER);
+const isPR = event === 'pull_request' || Number(process.env.PR_NUMBER) > 0;
 
 async function getCurrentHead() {
   if (!isPR) return plannedHead;
