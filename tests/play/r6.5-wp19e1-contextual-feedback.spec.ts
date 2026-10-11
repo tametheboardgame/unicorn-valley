@@ -142,12 +142,7 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
   test('closed Prism Grotto uses lower non-modal guidance without covering the top HUD', async ({
     page,
   }) => {
-    await positionPlayer(
-      page,
-      'CrystalBrookScene',
-      GROTTO_APPROACH.x,
-      GROTTO_APPROACH.y,
-    );
+    await positionPlayer(page, 'CrystalBrookScene', GROTTO_APPROACH.x, GROTTO_APPROACH.y);
     await waitForInteraction(page, 'CrystalBrookScene', 'Crystal Grotto');
     await page.keyboard.press('KeyE');
 
