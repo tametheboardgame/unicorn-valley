@@ -1,7 +1,7 @@
 ---
 id: ENG-WP1
 title: CI and Development Process Hardening
-status: in_progress
+status: complete
 autonomy: green
 depends_on: []
 parallel_safe: false
@@ -282,6 +282,8 @@ ENG-WP1.7–1.10 pipeline implementation (implemented and selectively validated;
 - Do not poll CI continuously. A pending external run is a valid hand-off state.
 - If GitHub access fails, immediately attempt reconnection before reporting a blocker.
 
-## Next action
+## Final qualified closeout — 2026-10-11
 
-Qualify the **sixth ENG-WP1.4 Rainbow Disc** family (6/6) after the lightweight timing-readiness and formatter corrections. The Grotto, Maple baking and Just Games return families are green. Once focused CI is green, mark PR #299 Ready for Review to trigger the authoritative exact-head unit/build/smoke/three-shard Chromium/compatibility run. Verify the live-head Merge Gate before merge. Do not run repeated full qualification cycles or poll while jobs are pending; record the mainline result once after an approved merge.
+ENG-WP1 was fully qualified and merged. Exact-head [CI #38160902089](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38160902089) passed all required static/architecture, unit, build/static/performance, whole-game smoke, **all three full Chromium shards**, cross-browser compatibility, and **Merge Gate** on PR head `13c52cc990ee3ff885550c1924f8f0be4ad28f73`.
+
+[PR #299](https://github.com/tametheboardgame/unicorn-valley/pull/299) merged into `main` as `0231c1d8b68c90c5f62519419d73853f297a92c9`. Subsequent six-shard optimisation is a separately reversible [ENG-WP1.11](ENG-WP1.11-CHROMIUM-SIX-SHARD-QUALIFICATION.md) trial, followed by ENG-WP2 test-governance work. GitHub `main` branch protection must still require Merge Gate at the platform level; that administrative setting remains outside this work package.

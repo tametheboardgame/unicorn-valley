@@ -97,7 +97,7 @@ Do not merge until the **Merge Gate** is green for the current live PR head. It 
 - Tier 0: formatting, linting, architecture rules, verification-policy tests, performance-policy tests, conditional type-check and durable project-contract validation.
 - Tier 1: full or ownership-selected unit contracts.
 - Tier 2: targeted Chromium browser smoke for mapped feature changes.
-- Tier 3: full Chromium playtest suite, sharded 1/3, 2/3 and 3/3.
+- Tier 3: full Chromium playtest suite, sharded 1/6 through 6/6 (six parallel GitHub Actions jobs, one required aggregate Tier 3 result).
 - Tier 4: Chromium/Firefox/WebKit compatibility matrix.
 - Build/performance: production manifest build, static smoke and player-visible performance budgets.
 
