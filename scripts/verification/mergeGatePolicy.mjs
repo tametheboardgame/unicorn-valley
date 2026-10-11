@@ -26,7 +26,10 @@ export function evaluateMergeGate({
     }
   }
 
-  if (requireAuthoritative && (!required.tier3 || !required.tier4 || !required.tier1 || !required.smoke)) {
+  if (
+    requireAuthoritative &&
+    (!required.tier3 || !required.tier4 || !required.tier1 || !required.smoke)
+  ) {
     failures.push('Authoritative qualification must include unit, Chromium and compatibility.');
   }
 

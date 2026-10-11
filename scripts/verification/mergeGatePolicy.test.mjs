@@ -8,7 +8,15 @@ const full = {
   plannedHead: 'head-1',
   currentHead: 'head-1',
   requireAuthoritative: true,
-  required: { tier0: true, tier1: true, build: true, tier2: false, smoke: true, tier3: true, tier4: true },
+  required: {
+    tier0: true,
+    tier1: true,
+    build: true,
+    tier2: false,
+    smoke: true,
+    tier3: true,
+    tier4: true,
+  },
   outcomes: {
     tier0: 'success',
     tier1: 'success',
@@ -47,7 +55,14 @@ test('ready-for-review refuses selective PR verification even if selected jobs a
   const result = evaluateMergeGate({
     ...full,
     changeClass: 'bounded-feature',
-    required: { ...full.required, tier1: false, tier2: true, smoke: false, tier3: false, tier4: false },
+    required: {
+      ...full.required,
+      tier1: false,
+      tier2: true,
+      smoke: false,
+      tier3: false,
+      tier4: false,
+    },
     outcomes: {
       ...full.outcomes,
       tier1: 'skipped',
@@ -66,7 +81,14 @@ test('draft PR has meaningful provisional targeted checks without claiming autho
     ...full,
     changeClass: 'bounded-feature',
     requireAuthoritative: false,
-    required: { ...full.required, tier1: false, tier2: true, smoke: false, tier3: false, tier4: false },
+    required: {
+      ...full.required,
+      tier1: false,
+      tier2: true,
+      smoke: false,
+      tier3: false,
+      tier4: false,
+    },
     outcomes: {
       ...full.outcomes,
       tier1: 'skipped',
