@@ -1,5 +1,6 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
+import { RAINBOW_RUN_HUB_LAYOUT } from '../../src/game/world/RainbowRunHubMap';
 
 interface DiagnosticObject {
   name: string;
@@ -98,17 +99,33 @@ test.beforeAll(async () => {
 });
 
 test.describe('R6.5-WP18F visual evidence', () => {
-  test('player and Nova use production bodies in Rainbow Meadow', async ({ page }) => {
+  test('player retains production body in Meadow and Nova is correctly presented at Race Hub', async ({
+    page,
+  }) => {
     await page.goto('/?scene=meadow&diagnostics=1');
     await waitForDiagnostics(page);
     await waitForScene(page, 'RainbowMeadowScene');
     await expectObjects(page, 'RainbowMeadowScene', [
       'world-player-unicorn',
       'world-player-mane-coverage',
-      'core-npc:nova:world',
     ]);
-    await movePlayer(page, 'RainbowMeadowScene', 2380, 900);
-    await page.screenshot({ path: `${ARTIFACT_DIR}/rainbow-meadow-nova-and-player.png` });
+    expect(await sceneObjectNames(page, 'RainbowMeadowScene')).not.toContain('core-npc:nova:world');
+
+    // Nova's canonical pre-picnic home moved to the standalone Rainbow Run hub.
+    await page.goto('/?scene=race-hub&diagnostics=1');
+    await waitForDiagnostics(page);
+    await waitForScene(page, 'RainbowRunEntryScene');
+    await expectObjects(page, 'RainbowRunEntryScene', [
+      'world-player-unicorn',
+      'core-npc:nova:race-hub',
+    ]);
+    await movePlayer(
+      page,
+      'RainbowRunEntryScene',
+      RAINBOW_RUN_HUB_LAYOUT.nova.x + 160,
+      RAINBOW_RUN_HUB_LAYOUT.nova.y,
+    );
+    await page.screenshot({ path: `${ARTIFACT_DIR}/rainbow-run-hub-nova-and-player.png` });
   });
 
   test('Shell Cove reads as an enclosed cove and includes the unicorn sandcastle', async ({
