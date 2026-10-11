@@ -29,6 +29,15 @@ npm run validate
 
 Browser tests are intentionally separate because CI selects their scope from changed-file ownership.
 
+Before each source/content push, run:
+
+```sh
+npm run format
+npm run format:check
+```
+
+CI's Tier 0 checks continue through lint, architecture, policy and conditional type-check even if Biome formatting fails, then consolidate the failures into one job. Review the uploaded `formatter-remediation` patch rather than making speculative follow-up edits.
+
 ## Focused commands
 
 ```sh
@@ -71,7 +80,7 @@ For pull-request updates, CI uses the incremental `synchronize` delta since the 
 
 ### At a human-approved section boundary
 
-Before merging an approved substantive slice to `main`, run one **authoritative full qualification on the exact approved head** using the manual full-CI dispatch. That is the point for:
+Before merging an approved substantive slice to `main`, mark the draft PR **Ready for review**. This triggers **authoritative full qualification on that exact head**. A subsequent push while non-draft automatically invalidates the previous result and runs full qualification again. Manual full-CI dispatch remains a supported fallback. The full gate includes:
 
 - full unit qualification;
 - production build/static smoke/performance;
@@ -79,7 +88,7 @@ Before merging an approved substantive slice to `main`, run one **authoritative 
 - Chromium/Firefox/WebKit compatibility;
 - any package-specific final/deployment smoke.
 
-Do not merge the section to production until this exact-head full gate is green. A later full run on `main` is post-merge confirmation rather than the first time the whole game is qualified.
+Do not merge until the **Merge Gate** is green for the current live PR head. It verifies required job results, including all Chromium shards and compatibility profiles, and re-reads the latest head from GitHub to reject stale qualification. A green draft-PR focused check is provisional, never the final merge authority. A later full run on `main` is post-merge confirmation, not initial qualification.
 
 ## Verification tiers
 
@@ -92,7 +101,7 @@ Do not merge the section to production until this exact-head full gate is green.
 - Tier 4: Chromium/Firefox/WebKit compatibility matrix.
 - Build/performance: production manifest build, static smoke and player-visible performance budgets.
 
-Small mapped changes use focused tiers. A high-risk current delta or unmapped runtime/test path can still fail safe to full qualification, but a previous high-risk change elsewhere in the same long-lived PR must not make every later tiny edit repeat Tier 3/4. Final human-approved section heads always receive one explicit authoritative full qualification before merge.
+Small mapped draft changes use focused tiers. A high-risk current delta or unmapped runtime/test path can still fail safe to full qualification, but a previous high-risk change elsewhere in the same long-lived PR must not make every later tiny edit repeat Tier 3/4. PR concurrency cancels superseded heads; main and manual full runs are not cancelled by PR updates. Ready-for-review heads and subsequent non-draft updates must run full qualification and pass the exact-head Merge Gate.
 
 The ownership map is `scripts/verification/verificationOwnership.mjs`. Update that map when adding a genuinely new subsystem or test ownership path.
 
@@ -129,6 +138,8 @@ For final release qualification, `.github/workflows/deployment-smoke.yml` exerci
 - Preserve save compatibility and migration coverage when persistence changes.
 - Treat touch/mobile behaviour as a first-class validation surface.
 - Prefer stable semantic selectors/diagnostics contracts in Playwright tests.
+- Await an observable ready state or frame/progression evidence instead of using fixed wall-clock waits for asynchronous game actions; never lower gameplay thresholds merely to silence a slow CI renderer.
+- When a browser contract asserts a retired scene, coordinate, object or control, identify its current canonical owner and migrate coverage before removing the obsolete assertion.
 - Do not suppress lint/type/test failures merely to make CI green.
 
 ## Package completion

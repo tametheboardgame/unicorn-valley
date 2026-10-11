@@ -253,6 +253,13 @@ ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 - bidirectional traversal with no arrival bounce-back passed on `8d7d0ac94819c24bc9cc8338d335661c85660d90` (CI `38126714606`, 1/1).
 
 
+ENG-WP1.7–1.10 pipeline implementation (CI qualification pending):
+
+- `291232e7a84321cfba6388f3477adfe1c3e01662`: PR concurrency cancellation and Ready-for-Review triggers.
+- `e2b5eba9fb5b63eaeec21376fd080a4fba282c1e`: Tier 0 aggregates deterministic errors across formatter, lint, architecture and policy checks; precise formatting remediation remains available as an artifact.
+- `64903d833cc6dd443740717369c32878fcf74c5a`: Merge Gate compares the current GitHub PR head to the verified SHA, enforces required job conclusions and distinguishes provisional draft checks from authoritative ready-for-review qualification. Pure policy tests cover stale head, failed Chromium, incomplete selection and draft checks.
+- Agent/testing/acceptance operating docs are aligned with the implementation here; final acceptance depends on passing CI and the package's full baseline.
+
 ## Operating rules during this package
 
 - Work one checkpoint at a time.

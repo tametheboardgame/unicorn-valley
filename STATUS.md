@@ -6,7 +6,7 @@ Last updated: 2026-10-11
 
 The active package is **ENG-WP1 - CI and Development Process Hardening**.
 
-Current checkpoint: **ENG-WP1.4 - Modernise stale browser contracts**
+Current checkpoint: **ENG-WP1.4 residual contract qualification and ENG-WP1.7–1.10 CI hardening**
 
 Branch: `agent/eng-wp1-ci-process-hardening`
 
@@ -77,3 +77,13 @@ Eight ENG-WP1.4 families are qualified: profile/title/home, NPC/picnic, Crystal 
 - Run formatting before pushing changed source/content.
 - Reconnect GitHub immediately after an access failure.
 - Do not sit in repeated CI/deployment polling loops.
+
+## ENG-WP1 CI machinery checkpoint (2026-10-11)
+
+- PR #299 remains **draft**; no merge or deployment is authorised yet.
+- `291232e7a84321cfba6388f3477adfe1c3e01662` adds PR concurrency cancellation and Ready-for-Review full-run triggering.
+- `e2b5eba9fb5b63eaeec21376fd080a4fba282c1e` aggregates formatter, lint, architecture and policy failures in Tier 0; the formatter still uploads an exact remediation patch.
+- `64903d833cc6dd443740717369c32878fcf74c5a` implements an exact-live-PR-head Merge Gate, selected-job enforcement and tests for stale/partial qualification; CI validation is pending.
+- Rainbow Disc has read-only lane/match-state diagnostics at `1b399c6d8993e8d323685abca770c3ac7fec0e9a`. The latest test assertions have been formatted at `a5099493129e67eb59bedba4e7972ca8cbde16b0`; browser qualification is still needed.
+- The H6 Crystal Grotto branch and revisit contract passed 6/6 on `194fc7fde49a99d401787bbdf7c79fc76d5d398f` (CI `38128027531`).
+- Next: finish the Rainbow Disc investigation, qualify the revised Merge Gate and Tier 0 machinery, define the lean whole-game browser owner gate (ENG-WP1.6), then run one exact-head authoritative baseline. Do not merge until it is meaningful and green.
