@@ -316,6 +316,17 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Install Chromium, Firefox and WebKit
         run: npx playwright install --with-deps chromium firefox webkit
+      - name: Confirm required browser profiles are selected
+        run: |
+          set -euo pipefail
+          npx playwright test --config=playwright.compat.config.ts --list > browser-profiles.txt
+          for profile in chromium-desktop firefox-desktop webkit-desktop chromium-tablet-touch webkit-tablet-touch chromium-mobile-touch webkit-mobile-touch; do
+            if ! grep -Fq "[$profile]" browser-profiles.txt; then
+              echo "::error::Missing required browser profile $profile from compatibility selection."
+              exit 1
+            fi
+          done
+          echo "All seven required compatibility profiles have selected tests."
       - name: Run compatibility matrix
         run: npm run test:browser-compat
       - name: Upload compatibility evidence
