@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { classifyVerification } from './verificationPolicy.mjs';
 
@@ -50,4 +51,25 @@ test('manual/full-WP qualification overrides a bounded change', () => {
   });
   assert.equal(plan.changeClass, 'full-qualification');
   assert.deepEqual(plan.tiers, ['0', '1', '3', '4']);
+});
+
+test('six-shard Chromium matrix preserves the required aggregate merge gate', () => {
+  const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8');
+  const tier3 = workflow.split('\n  tier3:\n')[1]?.split('\n  tier4:\n')[0];
+  assert.ok(tier3, 'Tier 3 workflow block must exist');
+  const shardRef = '${{ matrix.shard }}';
+  const expected = [1, 2, 3, 4, 5, 6];
+  const matrixLine = tier3.match(/^\s+shard: \[([^\]]+)\]$/m)?.[1];
+  assert.ok(matrixLine, 'Tier 3 shard matrix must be defined');
+  const shards = matrixLine.split(',').map((number) => Number(number.trim()));
+  assert.deepEqual(shards, expected, 'Every Chromium shard must be selected exactly once');
+  assert.ok(tier3.includes(`name: Tier 3 - full Chromium (${shardRef}/6)`));
+  assert.ok(tier3.includes(`run: npm run test:play -- --shard=${shardRef}/6`));
+  assert.ok(tier3.includes(`name: tier3-chromium-${shardRef}-of-6`));
+  assert.ok(tier3.includes('fail-fast: false'));
+  assert.ok(tier3.includes('timeout-minutes: 45'));
+  const gate = workflow.split('\n  merge-gate:\n')[1];
+  assert.ok(gate, 'Merge Gate must remain present');
+  assert.match(gate, /^\s+needs: \[.*\btier3\b.*\]$/m);
+  assert.ok(gate.includes('RESULT_TIER3: ${{ needs.tier3.result }}'));
 });

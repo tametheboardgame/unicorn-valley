@@ -269,17 +269,18 @@ jobs:
           retention-days: 14
 
   tier3:
-    name: Tier 3 - full Chromium (${{ matrix.shard }}/3)
+    name: Tier 3 - full Chromium (${{ matrix.shard }}/6)
     needs: [plan, tier0, tier1]
     if: needs.plan.outputs.run_tier3 == 'true'
     runs-on: ubuntu-latest
     # Shard 2 exceeded the former 25m limit after 84 passing browser cases.
     # Keep an explicit safety limit without prematurely cancelling qualification.
     timeout-minutes: 45
+    # Matrix is one required Tier 3 aggregate: any shard failure blocks Merge Gate.
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -290,7 +291,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run full Chromium playtest shard
-        run: npm run test:play -- --shard=${{ matrix.shard }}/3
+        run: npm run test:play -- --shard=${{ matrix.shard }}/6
       - name: Summarise automated findings
         if: always()
         run: node scripts/summarisePlaytest.mjs
@@ -298,7 +299,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tier3-chromium-${{ matrix.shard }}-of-3
+          name: tier3-chromium-${{ matrix.shard }}-of-6
           path: playtest-artifacts
           if-no-files-found: warn
           retention-days: 14
