@@ -176,19 +176,50 @@ async function currentOpenLane(page: Page): Promise<number> {
 }
 
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
-  // The scene records the lane only after drawing the player-facing cue.
-  // Read that turn-scoped evidence even if the short-lived cue has expired.
-  const readLane = await page.waitForFunction(
-    () => {
-      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-        .__UNICORN_VALLEY_DIAGNOSTICS__;
-      // Playwright waitForFunction requires a truthy result; lane 0 is valid.
-      return (api?.rainbowDiscMatchState().defenceCueRenderedLane ?? -1) + 1;
-    },
-    undefined,
-    { timeout: 6_000, polling: 75 },
-  );
-  const telegraphedLane = (await readLane.jsonValue()) - 1;
+  // The cached diagnostic survives the brief cue; the actual rendered route
+  // provides independent, player-visible evidence when that cache is unavailable.
+  // Never infer a lane from the hidden opposition attack state.
+  let telegraphedLane: number;
+  try {
+    const readLane = await page.waitForFunction(
+      () => {
+        const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+          .__UNICORN_VALLEY_DIAGNOSTICS__;
+        if (!api) return false;
+        const state = api.rainbowDiscMatchState();
+        if (state.phase !== 'defence') return false;
+
+        let lane = state.defenceCueRenderedLane;
+        if (lane === null || lane === undefined) {
+          const cuePrefix = 'rainbow-disc-activity:defence-read-cue:';
+          const activity = api
+            .snapshot()
+            .scenes.find((scene) => scene.key === 'RainbowDiscActivityScene');
+          const visibleCue = activity?.objects.find(
+            ({ name, effectiveVisible }) => effectiveVisible && name.startsWith(cuePrefix),
+          );
+          if (!visibleCue) return false;
+          lane = Number(visibleCue.name.slice(cuePrefix.length));
+        }
+
+        // Playwright requires a truthy result; lane zero is valid.
+        return Number.isInteger(lane) && lane >= 0 && lane < 3 ? lane + 1 : false;
+      },
+      undefined,
+      { timeout: 12_000, polling: 150 },
+    );
+    telegraphedLane = (await readLane.jsonValue()) - 1;
+  } catch (error) {
+    const state = await matchState(page);
+    const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+    const visibleCues = activity.objects
+      .filter(({ name }) => name.startsWith('rainbow-disc-activity:defence-read-cue:'))
+      .map(({ name, effectiveVisible }) => ({ name, effectiveVisible }));
+    throw new Error(
+      `Rainbow Disc cue observation stalled: ${JSON.stringify({ state, visibleCues })}`,
+      { cause: error },
+    );
+  }
 
   await page.waitForFunction(
     () => {
