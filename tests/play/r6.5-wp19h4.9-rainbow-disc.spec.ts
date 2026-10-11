@@ -173,10 +173,10 @@ async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promis
   const readLane = await page.waitForFunction(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
-    return api?.rainbowDiscMatchState().defenceCueLane ?? null;
+    // Playwright waitForFunction requires a truthy result; lane 0 is valid.
+    return (api?.rainbowDiscMatchState().defenceCueLane ?? -1) + 1;
   }, undefined, { timeout: 6_000, polling: 75 });
-  const telegraphedLane = await readLane.jsonValue();
-  if (telegraphedLane === null) throw new Error('Rainbow Disc defence cue not observed.');
+  const telegraphedLane = (await readLane.jsonValue()) - 1;
 
   await page.waitForFunction(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
