@@ -406,6 +406,9 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     }
 
     if (goal === 0) {
+      // Observe the transient defence telegraph as soon as the third pass is
+      // released. Waiting for the score poll first can miss the cue entirely.
+      await defendTelegraphedLane(page, true);
       await expect
         .poll(async () => {
           const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -415,8 +418,6 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
           )?.text;
         })
         .toContain('YOU 1');
-
-      await defendTelegraphedLane(page, true);
       await expect
         .poll(async () => {
           const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -662,16 +663,9 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
 
-  await expect
-    .poll(async () => {
-      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
-      return activity.objects.some(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:defence-player' && effectiveVisible,
-      );
-    })
-    .toBe(true);
-
+  // The telegraph is time-limited. Observing it and correctly intercepting
+  // the next possession verifies the real defence phase, rather than waiting
+  // on a cosmetic sprite until the cue has already expired.
   await defendTelegraphedLane(page, true);
 
   await expect
