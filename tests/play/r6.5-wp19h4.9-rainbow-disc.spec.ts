@@ -280,6 +280,9 @@ async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> 
 test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly after a score', async ({
   page,
 }) => {
+  // Complete two-goal match, defence and return uses several real animation
+  // sequences and browser interactions; retain all assertions on slow CI runners.
+  test.setTimeout(120_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=meadow&diagnostics=1');
