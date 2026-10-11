@@ -69,16 +69,37 @@ async function snapshotScene(page: Page, key: string): Promise<DiagnosticScene> 
 }
 
 async function waitForTimingReady(page: Page): Promise<void> {
-  // A valid new throw requires an unlocked round, not an animation in flight.
-  await expect
-    .poll(async () => {
-      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-      return scene.objects.some(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
-      );
-    })
-    .toBe(true);
+  // The timing marker should return after each tween/re-render. Keep this a
+  // real product-readiness check, but report the runtime state if it stalls.
+  try {
+    await expect
+      .poll(async () => {
+        const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+        return scene.objects.some(
+          ({ name, effectiveVisible }) =>
+            name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
+        );
+      })
+      .toBe(true);
+  } catch (error) {
+    const state = await matchState(page);
+    const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+    const marker = scene.objects.find(
+      ({ name }) => name === 'rainbow-disc-activity:timing-marker',
+    );
+    const status = scene.objects.find(
+      ({ name }) => name === 'rainbow-disc-activity:status',
+    );
+    throw new Error(
+      `Rainbow Disc timing readiness stalled: ${JSON.stringify({
+        state,
+        markerVisible: marker?.visible,
+        markerEffectiveVisible: marker?.effectiveVisible,
+        status: status?.text,
+      })}`,
+      { cause: error },
+    );
+  }
 }
 
 async function primeSuccessfulTiming(page: Page): Promise<void> {
