@@ -295,8 +295,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
           : null,
       // Record which player-visible cue was actually drawn for this defence turn.
       // The 600ms graphic can expire before Playwright resumes after the throw.
-      defenceCueRenderedLane:
-        this.phase === 'defence' ? this.lastRenderedDefenceCueLane : null,
+      defenceCueRenderedLane: this.phase === 'defence' ? this.lastRenderedDefenceCueLane : null,
       practiceThrows: this.practiceThrows,
     };
   }
