@@ -273,7 +273,9 @@ jobs:
     needs: [plan, tier0, tier1]
     if: needs.plan.outputs.run_tier3 == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # Shard 2 exceeded the former 25m limit after 84 passing browser cases.
+    # Keep an explicit safety limit without prematurely cancelling qualification.
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
