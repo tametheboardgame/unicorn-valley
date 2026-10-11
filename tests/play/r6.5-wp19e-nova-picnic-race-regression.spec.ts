@@ -312,7 +312,13 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   );
   expect(picnicNova).toBeTruthy();
 
-  await positionPlayer(page, 'RainbowMeadowScene', (picnicNova?.x ?? 0) - 110, picnicNova?.y ?? 0);
+  // Approach from Nova's east side, away from Maple's moving picnic route.
+  await positionPlayer(
+    page,
+    'RainbowMeadowScene',
+    (picnicNova?.x ?? NOVA_PICNIC_POSITION.x) + 100,
+    (picnicNova?.y ?? NOVA_PICNIC_POSITION.y) - 70,
+  );
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
@@ -350,8 +356,8 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await positionPlayer(
     page,
     'RainbowMeadowScene',
-    picnicNova?.x ?? NOVA_PICNIC_POSITION.x,
-    picnicNova?.y ?? NOVA_PICNIC_POSITION.y,
+    (picnicNova?.x ?? NOVA_PICNIC_POSITION.x) + 100,
+    (picnicNova?.y ?? NOVA_PICNIC_POSITION.y) - 70,
   );
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
 

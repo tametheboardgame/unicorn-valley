@@ -116,6 +116,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
   private phase: 'attack' | 'defence' = 'attack';
   private opponentAdvance = 0;
   private defenceAttackLane = 1;
+  private defenceCueRoute: Phaser.GameObjects.Graphics | null = null;
   private selectedReceiver = 1;
   private dragging = false;
   private actionLocked = false;
@@ -268,6 +269,8 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     oppositionScore: number;
     actionLocked: boolean;
     timingActive: boolean;
+    defenceCueLane: number | null;
+    practiceThrows: number;
   } {
     return {
       mode: this.mode,
@@ -282,6 +285,12 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       oppositionScore: this.oppositionScore,
       actionLocked: this.actionLocked,
       timingActive: this.isTimingActive(),
+      // Expose the actual live, visible cue without scanning every Phaser object.
+      defenceCueLane:
+        this.phase === 'defence' && this.defenceCueRoute?.active && this.defenceCueRoute.visible
+          ? this.defenceAttackLane
+          : null,
+      practiceThrows: this.practiceThrows,
     };
   }
 
@@ -450,6 +459,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
   private renderPossession(): void {
     this.playLayer?.destroy(true);
+    this.defenceCueRoute = null;
     this.playLayer = this.add.container(0, 0).setDepth(10);
     this.receiverRings = [];
     this.receiverSprites = [];
@@ -678,6 +688,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     route.lineStyle(8, 0x88c9e8, cue.routeAlpha);
     route.lineBetween(routeStartX, 370, routeEndX, routeEndY);
     this.playLayer?.add(route);
+    this.defenceCueRoute = route;
 
     const intendedReceiver = this.receiverSprites[this.defenceAttackLane];
     if (intendedReceiver) {
@@ -711,6 +722,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
 
     this.time.delayedCall(cue.durationMs, () => {
       route.destroy();
+      if (this.defenceCueRoute === route) this.defenceCueRoute = null;
       if (this.completed || this.phase !== 'defence') {
         return;
       }

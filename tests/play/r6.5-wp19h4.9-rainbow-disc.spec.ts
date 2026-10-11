@@ -44,6 +44,8 @@ interface RainbowDiscMatchState {
   oppositionScore: number;
   actionLocked: boolean;
   timingActive: boolean;
+  defenceCueLane: number | null;
+  practiceThrows: number;
 }
 
 async function matchState(page: Page): Promise<RainbowDiscMatchState> {
@@ -129,7 +131,9 @@ async function throwToPracticeTarget(page: Page, receiverIndex: number): Promise
     `rainbow-disc-activity:receiver-ring:${receiverIndex}`,
   );
   await primeSuccessfulTiming(page);
+  const previousThrows = (await matchState(page)).practiceThrows;
   await page.keyboard.press('Space');
+  await expect.poll(async () => (await matchState(page)).practiceThrows).toBe(previousThrows + 1);
 }
 async function setMeadowPlayerPosition(page: Page, x: number, y: number): Promise<void> {
   await page.evaluate(
@@ -164,58 +168,25 @@ async function currentOpenLane(page: Page): Promise<number> {
 }
 
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
-  const readLane = await page.evaluate(async () => {
-    const timeoutAt = performance.now() + 6000;
+  // Read the same short-lived cue that is drawn for the player, but query only
+  // the scene-owned scalar rather than serialising every Phaser object at 60 fps.
+  const readLane = await page.waitForFunction(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    return api?.rainbowDiscMatchState().defenceCueLane ?? null;
+  }, undefined, { timeout: 6_000, polling: 75 });
+  const telegraphedLane = await readLane.jsonValue();
+  if (telegraphedLane === null) throw new Error('Rainbow Disc defence cue not observed.');
 
-    return new Promise<number>((resolve, reject) => {
-      const inspect = (): void => {
-        const api = (
-          window as typeof window & {
-            __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
-          }
-        ).__UNICORN_VALLEY_DIAGNOSTICS__;
-        const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
-        const cue = scene?.objects.find(
-          ({ name, effectiveVisible }) =>
-            name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
-        );
-
-        if (cue) {
-          resolve(Number(cue.name.split(':').at(-1)));
-          return;
-        }
-
-        if (performance.now() >= timeoutAt) {
-          reject(new Error('Rainbow Disc defence read cue was not observed.'));
-          return;
-        }
-
-        requestAnimationFrame(inspect);
-      };
-
-      inspect();
-    });
-  });
-
-  await page.waitForFunction(
-    () => {
-      const api = (
-        window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
-        }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
-      return !scene?.objects.some(
-        ({ name, effectiveVisible }) =>
-          name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
-      );
-    },
-    undefined,
-    { timeout: 6000 },
-  );
+  await page.waitForFunction(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    const state = api?.rainbowDiscMatchState();
+    return state?.phase === 'defence' && !state.actionLocked && state.defenceCueLane === null;
+  }, undefined, { timeout: 6_000, polling: 100 });
 
   const choiceScene = await snapshotScene(page, 'RainbowDiscActivityScene');
-  const chosenLane = chooseCorrectly ? readLane : (readLane + 1) % 3;
+  const chosenLane = chooseCorrectly ? telegraphedLane : (telegraphedLane + 1) % 3;
   const receiver = choiceScene.objects.find(
     ({ name, effectiveVisible }) =>
       name === `rainbow-disc-activity:opponent-receiver:${chosenLane}` && effectiveVisible,
@@ -275,7 +246,13 @@ async function completeOpenLanePass(page: Page, previousReceiver = 1): Promise<n
   }
   await expect.poll(async () => (await matchState(page)).selectedReceiver).toBe(receiverIndex);
   await primeSuccessfulTiming(page);
+  const previousThrows = (await matchState(page)).practiceThrows;
   await page.keyboard.press('Space');
+  if (state.mode === 'practice') {
+    // A completed attempt is the contract, not merely an on-screen disc that
+    // can remain visible while the throw animation is still in flight.
+    await expect.poll(async () => (await matchState(page)).practiceThrows).toBe(previousThrows + 1);
+  }
   return receiverIndex;
 }
 
