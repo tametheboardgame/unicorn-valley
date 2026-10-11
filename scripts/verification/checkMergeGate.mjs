@@ -32,8 +32,7 @@ try {
     changeClass: process.env.PLAN_CLASS,
     plannedHead,
     currentHead: await getCurrentHead(),
-    requireAuthoritative:
-      event !== 'pull_request' || process.env.PR_DRAFT === 'false',
+    requireAuthoritative: event !== 'pull_request' || process.env.PR_DRAFT === 'false',
     required: {
       tier0: true,
       tier1: flag('RUN_UNIT'),
