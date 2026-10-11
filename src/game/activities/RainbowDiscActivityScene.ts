@@ -256,6 +256,33 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     this.refreshTimingMeterVisibility();
   }
 
+  // Read-only diagnostics for proving lane choice, timing and score transitions
+  // without bypassing the player's normal controls or mutating game state.
+  public getDiagnosticMatchState(): {
+    mode: string;
+    phase: string;
+    selectedReceiver: number;
+    openLane: number | null;
+    possession: number;
+    playerScore: number;
+    oppositionScore: number;
+    actionLocked: boolean;
+  } {
+    return {
+      mode: this.mode,
+      phase: this.phase,
+      selectedReceiver: this.selectedReceiver,
+      openLane:
+        this.mode === 'match' && this.phase === 'attack'
+          ? rainbowDiscOpenLane(this.attackSequence, this.possession)
+          : null,
+      possession: this.possession,
+      playerScore: this.playerScore,
+      oppositionScore: this.oppositionScore,
+      actionLocked: this.actionLocked,
+    };
+  }
+
   public primeDiagnosticSuccessfulTiming(): void {
     if (!this.isTimingActive()) {
       throw new Error('Rainbow Disc timing is not active.');

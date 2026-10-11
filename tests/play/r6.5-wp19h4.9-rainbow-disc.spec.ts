@@ -31,6 +31,27 @@ interface DiagnosticsApi {
   };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
   primeRainbowDiscTiming(): void;
+  rainbowDiscMatchState(): RainbowDiscMatchState;
+}
+
+interface RainbowDiscMatchState {
+  mode: string;
+  phase: string;
+  selectedReceiver: number;
+  openLane: number | null;
+  possession: number;
+  playerScore: number;
+  oppositionScore: number;
+  actionLocked: boolean;
+}
+
+async function matchState(page: Page): Promise<RainbowDiscMatchState> {
+  return page.evaluate(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) throw new Error('Browser diagnostics unavailable.');
+    return api.rainbowDiscMatchState();
+  });
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -219,12 +240,16 @@ async function startGentleMatch(page: Page): Promise<void> {
 async function completeOpenLanePass(page: Page, previousReceiver: number): Promise<number> {
   await waitForTimingReady(page);
   const receiverIndex = await currentOpenLane(page);
+  expect((await matchState(page)).openLane).toBe(receiverIndex);
   // Use the supported lane-choice keys: clicking the art sprite is not a
   // deterministic way of changing receiver on software-rendered Chromium.
   const steps = (receiverIndex - previousReceiver + 3) % 3;
   if (steps > 0) {
     await page.keyboard.press(steps === 1 ? 'ArrowDown' : 'ArrowUp');
   }
+  await expect
+    .poll(async () => (await matchState(page)).selectedReceiver)
+    .toBe(receiverIndex);
   await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
   return receiverIndex;
@@ -635,6 +660,9 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   // currently defended lanes with the actual Up/Down control and throw with Space.
   expect([0, 2]).toContain(markedLane);
   await page.keyboard.press(markedLane === 0 ? 'ArrowUp' : 'ArrowDown');
+  await expect
+    .poll(async () => (await matchState(page)).selectedReceiver)
+    .toBe(markedLane);
   await primeSuccessfulTiming(page);
   await page.keyboard.press('Space');
 
