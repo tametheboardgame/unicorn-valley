@@ -218,7 +218,7 @@ Sixth bounded family (active; focused qualification pending):
 - test possession turnover by selecting a currently defended receiver rather than assuming a fixed marked lane;
 - preserve match scoring, practice results, defender read cues and Just Games behaviour without changing game mechanics.
 
-The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green. Fixes to transient timing-meter visibility and test round-readiness have brought the focused suite from 3/6 passing to 4/6 passing; corrected match sequencing is committed on `c47fce01af926a7211a25dbfb0e2a24643f9c0ec` and awaits browser qualification (CI `38127014376`).
+The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green. Fixes to transient timing-meter visibility and test round-readiness have brought the focused suite from 3/6 to 5/6 passing. The final match-flow test now throws through the same verified physical drag path as the MG-WP6 controls, rather than relying on a click-and-keyboard sequence. That latest correction is committed on `e9bb17ddd15c089c08c924ff36bcfa6d777e2b5b` and awaits browser qualification (CI `38127304194`).
 
 Seventh bounded family (complete; focused qualification green):
 
@@ -227,12 +227,18 @@ Seventh bounded family (complete; focused qualification green):
 - hold player movement until the intended travelled distance is observed instead of assuming a fixed software-renderer frame rate.
 - both H6.4 browser contracts passed on `3b90541a63fe2b46b7688039ef2140d934e23b1c` (CI `38126837711`, 2/2).
 
-Eighth bounded family (active; focused qualification pending):
+Eighth bounded family (complete; focused qualification green):
 
 - modernise SH1.2A Story House independent illustration sets and persistence test for the current compact Modern/Classic switch;
 - verify modern and classic image sources genuinely differ without coupling to obsolete file names;
 - retain the distinct single-illustration-set behaviour of another book.
-- test checkpoint `85f38ec54e3c92163190b503d1a1c4bc11d4ac66` awaiting browser qualification (CI `38127180622`).
+- all five Story House/Village Interior contracts passed on `85f38ec54e3c92163190b503d1a1c4bc11d4ac66` (CI `38127180622`, 5/5).
+
+Ninth bounded family (active; focused qualification pending):
+
+- modernise R6.5-WP18F visual evidence for the accepted placement of Nova at Rainbow Run Race Hub instead of the old permanent Meadow position;
+- retain Meadow player-production-body evidence, and capture Nova beside the player at the current Hub using its authored layout coordinates.
+- correction `183a8bfa54a78d98dc6a7ce12856cac862231796` awaits targeted browser qualification (CI `38127429300`).
 
 ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 
@@ -255,4 +261,4 @@ ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 
 ## Next action
 
-Qualify the corrected sixth **ENG-WP1.4** Rainbow Disc and eighth Story House illustration family on targeted browser CI. Audit remaining relevant stale and retired contracts against the initial full Chromium baseline. Then complete ENG-WP1.5 harness hardening, final workflow guardrails, and one meaningful full baseline before merging. Do not poll CI or run the full Chromium matrix repeatedly.
+Qualify the remaining sixth **ENG-WP1.4** Rainbow Disc and ninth Nova visual-evidence families on targeted browser CI. Audit any remaining useful stale and retired contracts against the initial full Chromium baseline. Then complete ENG-WP1.5 harness hardening, final workflow guardrails, and one meaningful full baseline before merging. Do not poll CI or run the full Chromium matrix repeatedly.
