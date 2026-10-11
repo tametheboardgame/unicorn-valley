@@ -236,7 +236,7 @@ test.describe('portrait mobile race controls', () => {
     await setRunHeld(page, STANDARD_RACE_SCENE, false);
 
     await leave.tap();
-    await waitForScene(page, 'RainbowMeadowScene');
+    await waitForScene(page, 'RainbowRunEntryScene');
     await expect(page.locator('[data-race-mobile-controls="true"]')).toBeHidden();
   });
 
@@ -258,7 +258,7 @@ test.describe('portrait mobile race controls', () => {
     await setRunHeld(page, TUTORIAL_RACE_SCENE, false);
 
     await page.locator('[data-race-action="leave"]').tap();
-    await waitForScene(page, 'RainbowMeadowScene');
+    await waitForScene(page, 'RainbowRunEntryScene');
     await expect(page.locator('[data-race-mobile-controls="true"]')).toBeHidden();
   });
 });

@@ -188,14 +188,22 @@ Second bounded family (complete; focused browser qualification green):
 
 The NPC production-identity subfamily passed on `846ff7c59b3ec87e2347dfe6b538561277e4b2f3`. The dialogue and shared interaction regression tests passed (15/15) on `4da9cdd883ad6da7e1b0a4b5de9729fe84a50577`. The dedicated complete Marigold/Nova Picnic Hill conversation and return regression passed on `a3ead042252f567fc137d7aaaec810958223bb0c` (CI run `38123716309`). No further NPC/picnic remediation is pending.
 
-Third bounded family (active; focused qualification pending):
+Third bounded family (complete; focused qualification green):
 
 - modernise Crystal Brook contextual feedback and responsive-evidence tests to the accepted H6 map topology;
 - use the canonical Crystal Grotto and Shallow Brook landmark coordinates rather than stale test-only positions;
 - enter via the normal Brook Boot/Preload path and remove arbitrary initial/reaction timing waits;
 - preserve the guidance/reaction distinction, safe positioning, semantic prompt and portrait touch evidence requirements.
 
-The historical Chromium baseline recorded seven contextual-feedback failures across these two files. All seven failed before the expected guidance or reaction was reachable at obsolete coordinates. The updated contracts must still pass in real browser qualification.
+The historical Chromium baseline recorded seven contextual-feedback failures across these two files. All seven failed before the expected guidance or reaction was reachable at obsolete coordinates. The modernised core tests passed 2/2 on `f4c4f7744974660937a3f65ad9bf8c3887b8e27c` (run `38124156235`), and all six responsive/discovery tests passed on `b3ac1e68660e4305b6f8f0035e9c4b917613fd5a` (run `38124423134`).
+
+Fourth bounded family (active; focused qualification pending):
+
+- align mobile racing contracts with the touch RUN/JUMP/Leave deck and retired canvas Exit control;
+- the first focused run `38124659945` passed landscape and hybrid touch cases, but the two portrait cases exposed a real defect: the mobile Leave button attempted to emit pointerdown on the retired canvas Exit object, doing nothing;
+- route mobile Leave through the scene's canonical exit method (including checkpoint handling), and assert return to the current Rainbow Run Race Hub rather than the obsolete direct Rainbow Meadow destination;
+- preserve tests for real movement, jumping, disabled duplicate controls, both portrait race types and landscape/hybrid layout.
+
 
 ## Operating rules during this package
 
@@ -211,4 +219,4 @@ The historical Chromium baseline recorded seven contextual-feedback failures acr
 
 ## Next action
 
-Qualify the third **ENG-WP1.4** contextual-feedback browser family, inspect any remaining failure, then proceed to the next stale-contract family. Do not run full Chromium qualification until the bounded families are ready.
+Qualify the corrected fourth **ENG-WP1.4** mobile racing family on targeted browser CI. After it passes, continue with Race Hub traversal and Rainbow Disc contracts. Do not run full Chromium qualification until the bounded families are ready.

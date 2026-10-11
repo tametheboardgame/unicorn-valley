@@ -66,7 +66,7 @@ ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the
 
 ## Next work
 
-The first and second ENG-WP1.4 families are green. Shared NPC/picnic interactions, migrated conversations and the dedicated Picnic Hill end-to-end regression passed targeted browser CI, with final dedicated confirmation on `a3ead042252f567fc137d7aaaec810958223bb0c` (run `38123716309`). The third family is now updating outdated Crystal Brook contextual-feedback coordinates and scene entry to the approved H6 world; focused browser qualification is pending.
+The first three ENG-WP1.4 families are green. NPC/picnic passed on `a3ead042252f567fc137d7aaaec810958223bb0c` (run `38123716309`); Crystal Brook feedback passed 2/2 on `f4c4f7744974660937a3f65ad9bf8c3887b8e27c`; responsive feedback and discovery passed 6/6 on `b3ac1e68660e4305b6f8f0035e9c4b917613fd5a`. The fourth family is repairing a real mobile-racing Leave defect (retired canvas Exit still referenced by the touch deck), while preserving RUN/JUMP and checking return to the current Race Hub. Targeted mobile CI qualification is pending.
 
 ## Operating reminders
 

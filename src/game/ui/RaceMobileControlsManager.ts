@@ -3,6 +3,8 @@ import '../../raceMobileControls.css';
 import { getVerticalSliceAudio } from '../audio/VerticalSliceAudio';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
+import type { NovaTutorialRaceScene } from '../scenes/NovaTutorialRaceScene';
+import type { RaceScene } from '../scenes/RaceScene';
 import { browserUsesLandscapeTabletPresentation } from './LandscapeTabletPresentation';
 import { browserHasRaceTouchCapability } from './RaceTouchCapability';
 
@@ -79,7 +81,6 @@ function nameRaceCanvasControls(scene: Phaser.Scene): void {
   for (const [text, name] of [
     ['JUMP', `${CONTROL_PREFIX}:canvas-jump-label`],
     ['tap / SPACE', `${CONTROL_PREFIX}:canvas-jump-hint`],
-    ['← Meadow', `${CONTROL_PREFIX}:canvas-exit`],
   ] as const) {
     if (scene.children.getByName(name)) {
       continue;
@@ -287,7 +288,6 @@ export class RaceMobileControlsManager {
       `${CONTROL_PREFIX}:canvas-jump-shadow`,
       `${CONTROL_PREFIX}:canvas-jump-label`,
       `${CONTROL_PREFIX}:canvas-jump-hint`,
-      `${CONTROL_PREFIX}:canvas-exit`,
       'race-run-button',
       'race-run-label',
       'race-run-hint',
@@ -302,7 +302,6 @@ export class RaceMobileControlsManager {
 
     for (const object of [
       scene.children.getByName(`${CONTROL_PREFIX}:canvas-jump-target`),
-      scene.children.getByName(`${CONTROL_PREFIX}:canvas-exit`),
       scene.children.getByName(RUN_TOUCH_ZONE_NAME),
       findNestedByName(scene.children.list, 'race-assistance-toggle'),
     ]) {
@@ -435,13 +434,10 @@ export class RaceMobileControlsManager {
       scene.scene.resume();
     }
     this.pausedRaceScene = null;
-    nameRaceCanvasControls(scene);
-    const target = scene.children.getByName(`${CONTROL_PREFIX}:canvas-exit`);
-    if (!target) {
-      return;
-    }
+    // The old canvas Exit object was retired; call the scene's canonical exit
+    // route so mobile Leave uses the same checkpoint/return logic as keyboard exit.
     void getVerticalSliceAudio().unlock();
-    target.emit('pointerdown');
+    (scene as RaceScene | NovaTutorialRaceScene).exitRace();
   }
 }
 
