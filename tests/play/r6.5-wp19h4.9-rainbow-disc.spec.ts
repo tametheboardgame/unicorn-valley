@@ -47,9 +47,8 @@ async function snapshotScene(page: Page, key: string): Promise<DiagnosticScene> 
   }, key);
 }
 
-async function primeSuccessfulTiming(page: Page): Promise<void> {
-  // A successful throw is available only during an unlocked attack/practice round.
-  // Never prime while the disc is still flying or the next round is being rendered.
+async function waitForTimingReady(page: Page): Promise<void> {
+  // A valid new throw requires an unlocked round, not an animation in flight.
   await expect
     .poll(async () => {
       const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -59,7 +58,10 @@ async function primeSuccessfulTiming(page: Page): Promise<void> {
       );
     })
     .toBe(true);
+}
 
+async function primeSuccessfulTiming(page: Page): Promise<void> {
+  await waitForTimingReady(page);
   await page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
@@ -78,6 +80,7 @@ async function clickNamedObject(page: Page, sceneKey: string, name: string): Pro
 }
 
 async function throwToPracticeTarget(page: Page, receiverIndex: number): Promise<void> {
+  await waitForTimingReady(page);
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
@@ -214,6 +217,7 @@ async function startGentleMatch(page: Page): Promise<void> {
 }
 
 async function completeOpenLanePass(page: Page): Promise<void> {
+  await waitForTimingReady(page);
   const receiverIndex = await currentOpenLane(page);
   await clickNamedObject(
     page,
@@ -371,9 +375,6 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
   for (let goal = 0; goal < 2; goal += 1) {
     for (let pass = 0; pass < 3; pass += 1) {
       await completeOpenLanePass(page);
-      if (pass < 2) {
-        await page.waitForTimeout(520);
-      }
     }
 
     if (goal === 0) {
@@ -625,13 +626,10 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   // Defenders rotate between lanes; throwing to receiver 0 is not reliably
   // intercepted. Target one of the currently marked lanes to assert turnover.
   const markedLane = Number(attackDefenders[0].name.split(':').at(-1));
-  await clickNamedObject(
-    page,
-    'RainbowDiscActivityScene',
-    `rainbow-disc-activity:receiver:${markedLane}`,
-  );
-  await primeSuccessfulTiming(page);
-  await page.keyboard.press('Space');
+  // The current MG-WP6 input contract is a physical throw to a defended lane.
+  // Reuse the proven drag path rather than a click + keyboard sequence that can
+  // select the lane without committing a throw.
+  await dragDiscToReceiver(page, markedLane);
 
   await expect
     .poll(async () => {
