@@ -625,7 +625,13 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   // Defenders rotate between lanes; throwing to receiver 0 is not reliably
   // intercepted. Target one of the currently marked lanes to assert turnover.
   const markedLane = Number(attackDefenders[0].name.split(':').at(-1));
-  await dragDiscToReceiver(page, markedLane);
+  await clickNamedObject(
+    page,
+    'RainbowDiscActivityScene',
+    `rainbow-disc-activity:receiver:${markedLane}`,
+  );
+  await primeSuccessfulTiming(page);
+  await page.keyboard.press('Space');
 
   await expect
     .poll(async () => {

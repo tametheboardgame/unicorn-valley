@@ -1497,6 +1497,9 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     }
 
     this.actionLocked = true;
+    // The throw meter is unavailable while the disc is in flight. Hide it
+    // immediately so visual and diagnostic readiness agree with input locking.
+    this.refreshTimingMeterVisibility();
     this.dragging = false;
     this.aimGraphics?.clear();
 
