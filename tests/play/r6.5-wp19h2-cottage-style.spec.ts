@@ -119,6 +119,9 @@ function hasObject(value: Snapshot, sceneKey: string, objectName: string): boole
 test.use({ hasTouch: true, viewport: { width: 1024, height: 768 } });
 
 test('H2.6 styles four walls independently and persists every surface', async ({ page }) => {
+  // Sharded CI reaches the final Done/Room Style assertion at the former 45s
+  // test limit; preserve the complete four-wall, persistence and re-entry flow.
+  test.setTimeout(75_000);
   await page.goto('/?diagnostics=1');
   await startScene(page, 'CottageInteriorScene');
 
