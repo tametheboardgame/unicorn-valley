@@ -178,7 +178,7 @@ First bounded family (complete and focused CI green on `10916c463ba225cba51dacd2
 - title/home responsive layout contracts;
 - cottage decorating presentation readiness.
 
-Second bounded family (runtime repair committed; focused browser qualification pending):
+Second bounded family (complete; focused browser qualification green):
 
 - current Nova placement at Rainbow Run Race Hub and conditional Picnic Hill presence;
 - Willow, Marigold and Nova dialogue activation from current locations;
@@ -186,7 +186,16 @@ Second bounded family (runtime repair committed; focused browser qualification p
 - confirmed WP19D interaction-registry migration regression: the shared Rainbow Meadow registry omitted both Marigold and Nova Talk targets at Picnic Hill; restored both using the canonical NPC presence authority;
 - replaced the migrated-conversation test's diagnostic scene-switch navigation with normal Boot/Preload entry routes to avoid deactivating the Race Hub during its startup.
 
-The earlier NPC production-identity subfamily passed targeted browser checks on `846ff7c59b3ec87e2347dfe6b538561277e4b2f3`. The combined dialogue/picnic run `38080724124` confirmed two real blockers (inactive hub after diagnostic transition, missing Marigold Talk). Both are addressed in this repair checkpoint but remain unqualified until CI returns.
+The NPC production-identity subfamily passed on `846ff7c59b3ec87e2347dfe6b538561277e4b2f3`. The dialogue and shared interaction regression tests passed (15/15) on `4da9cdd883ad6da7e1b0a4b5de9729fe84a50577`. The dedicated complete Marigold/Nova Picnic Hill conversation and return regression passed on `a3ead042252f567fc137d7aaaec810958223bb0c` (CI run `38123716309`). No further NPC/picnic remediation is pending.
+
+Third bounded family (active; focused qualification pending):
+
+- modernise Crystal Brook contextual feedback and responsive-evidence tests to the accepted H6 map topology;
+- use the canonical Crystal Grotto and Shallow Brook landmark coordinates rather than stale test-only positions;
+- enter via the normal Brook Boot/Preload path and remove arbitrary initial/reaction timing waits;
+- preserve the guidance/reaction distinction, safe positioning, semantic prompt and portrait touch evidence requirements.
+
+The historical Chromium baseline recorded seven contextual-feedback failures across these two files. All seven failed before the expected guidance or reaction was reachable at obsolete coordinates. The updated contracts must still pass in real browser qualification.
 
 ## Operating rules during this package
 
@@ -202,4 +211,4 @@ The earlier NPC production-identity subfamily passed targeted browser checks on 
 
 ## Next action
 
-Qualify the corrected **ENG-WP1.4** dialogue/picnic browser family. Only after it passes, advance to contextual-feedback browser contracts.
+Qualify the third **ENG-WP1.4** contextual-feedback browser family, inspect any remaining failure, then proceed to the next stale-contract family. Do not run full Chromium qualification until the bounded families are ready.

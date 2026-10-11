@@ -66,7 +66,7 @@ ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the
 
 ## Next work
 
-The first ENG-WP1.4 family and the NPC production-identity checks are green. The second family's full browser run exposed an inactive Race Hub diagnostic transition and the genuine missing Marigold/Nova Picnic Hill Talk registrations. Both have been repaired on the branch and await targeted browser qualification before advancing to contextual feedback.
+The first and second ENG-WP1.4 families are green. Shared NPC/picnic interactions, migrated conversations and the dedicated Picnic Hill end-to-end regression passed targeted browser CI, with final dedicated confirmation on `a3ead042252f567fc137d7aaaec810958223bb0c` (run `38123716309`). The third family is now updating outdated Crystal Brook contextual-feedback coordinates and scene entry to the approved H6 world; focused browser qualification is pending.
 
 ## Operating reminders
 
