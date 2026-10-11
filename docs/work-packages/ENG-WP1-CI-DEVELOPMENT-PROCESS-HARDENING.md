@@ -197,13 +197,28 @@ Third bounded family (complete; focused qualification green):
 
 The historical Chromium baseline recorded seven contextual-feedback failures across these two files. All seven failed before the expected guidance or reaction was reachable at obsolete coordinates. The modernised core tests passed 2/2 on `f4c4f7744974660937a3f65ad9bf8c3887b8e27c` (run `38124156235`), and all six responsive/discovery tests passed on `b3ac1e68660e4305b6f8f0035e9c4b917613fd5a` (run `38124423134`).
 
-Fourth bounded family (active; focused qualification pending):
+Fourth bounded family (complete; focused qualification green):
 
 - align mobile racing contracts with the touch RUN/JUMP/Leave deck and retired canvas Exit control;
 - the first focused run `38124659945` passed landscape and hybrid touch cases, but the two portrait cases exposed a real defect: the mobile Leave button attempted to emit pointerdown on the retired canvas Exit object, doing nothing;
 - route mobile Leave through the scene's canonical exit method (including checkpoint handling), and assert return to the current Rainbow Run Race Hub rather than the obsolete direct Rainbow Meadow destination;
 - preserve tests for real movement, jumping, disabled duplicate controls, both portrait race types and landscape/hybrid layout.
 
+All four mobile-race cases and 29 other selected regression tests passed on `a5726db43782b7293d02c0f88edb0d35769ce91e` (CI `38125054158`, 33/33). The repaired Leave action now routes through the race scene's canonical exit implementation.
+
+Fifth bounded family (complete; focused qualification green):
+
+- modernise Rainbow Meadow ⇄ Rainbow Run Race Hub gateway coordinates and race-exit readiness;
+- use the existing browser diagnostic helper to await race controls before asserting Escape.
+- all three Race Hub contracts passed on `ae7c897043d6099a479e2476490803992c7dace7` (CI `38125477510`, 3/3).
+
+Sixth bounded family (active; focused qualification pending):
+
+- refresh H4.9 Rainbow Disc match/practice test timing to await the visible, unlocked timing meter before priming throws;
+- test possession turnover by selecting a currently defended receiver rather than assuming a fixed marked lane;
+- preserve match scoring, practice results, defender read cues and Just Games behaviour without changing game mechanics.
+
+The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green.
 
 ## Operating rules during this package
 
@@ -219,4 +234,4 @@ Fourth bounded family (active; focused qualification pending):
 
 ## Next action
 
-Qualify the corrected fourth **ENG-WP1.4** mobile racing family on targeted browser CI. After it passes, continue with Race Hub traversal and Rainbow Disc contracts. Do not run full Chromium qualification until the bounded families are ready.
+Qualify the sixth **ENG-WP1.4** Rainbow Disc family on targeted browser CI. After it passes, audit the remaining useful stale contracts against the initial full Chromium baseline before ENG-WP1.5. Do not run full Chromium qualification until the bounded families are ready.

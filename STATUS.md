@@ -66,7 +66,7 @@ ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the
 
 ## Next work
 
-The first three ENG-WP1.4 families are green. NPC/picnic passed on `a3ead042252f567fc137d7aaaec810958223bb0c` (run `38123716309`); Crystal Brook feedback passed 2/2 on `f4c4f7744974660937a3f65ad9bf8c3887b8e27c`; responsive feedback and discovery passed 6/6 on `b3ac1e68660e4305b6f8f0035e9c4b917613fd5a`. The fourth family is repairing a real mobile-racing Leave defect (retired canvas Exit still referenced by the touch deck), while preserving RUN/JUMP and checking return to the current Race Hub. Targeted mobile CI qualification is pending.
+Five ENG-WP1.4 families are qualified: NPC/picnic end-to-end, Crystal Brook contextual and responsive feedback, mobile racing (33/33 selected browser regressions passed on `a5726db43782b7293d02c0f88edb0d35769ce91e`; CI `38125054158`), and Race Hub traversal (3/3 passed on `ae7c897043d6099a479e2476490803992c7dace7`; CI `38125477510`). The sixth family modernises historical Rainbow Disc timing and defended-lane assertions without changing game mechanics. Its focused browser qualification is pending.
 
 ## Operating reminders
 

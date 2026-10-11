@@ -48,6 +48,18 @@ async function snapshotScene(page: Page, key: string): Promise<DiagnosticScene> 
 }
 
 async function primeSuccessfulTiming(page: Page): Promise<void> {
+  // A successful throw is available only during an unlocked attack/practice round.
+  // Never prime while the disc is still flying or the next round is being rendered.
+  await expect
+    .poll(async () => {
+      const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+      return scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
+      );
+    })
+    .toBe(true);
+
   await page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
@@ -610,7 +622,10 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
     expect(defender?.displayHeight).toBeCloseTo(receiver?.displayHeight ?? 0, 0);
   }
 
-  await dragDiscToReceiver(page, 0);
+  // Defenders rotate between lanes; throwing to receiver 0 is not reliably
+  // intercepted. Target one of the currently marked lanes to assert turnover.
+  const markedLane = Number(attackDefenders[0].name.split(':').at(-1));
+  await dragDiscToReceiver(page, markedLane);
 
   await expect
     .poll(async () => {
