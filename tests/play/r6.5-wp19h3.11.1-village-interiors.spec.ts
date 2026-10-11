@@ -544,7 +544,7 @@ test('SH1.2A switches independent illustration sets and remembers the choice', a
   await expect(modern).toHaveAttribute('aria-pressed', 'true');
 
   const modernImage = page.locator('.story-reader-illustration img').first();
-  await expect(modernImage).toHaveAttribute('src', /\\S+/);
+  await expect(modernImage).toHaveAttribute('src', /\S+/);
   const modernSrc = await modernImage.getAttribute('src');
 
   await classic.click();
@@ -554,7 +554,7 @@ test('SH1.2A switches independent illustration sets and remembers the choice', a
   );
   await expect(classic).toHaveAttribute('aria-pressed', 'true');
   const classicImage = page.locator('.story-reader-illustration img').first();
-  await expect(classicImage).toHaveAttribute('src', /\\S+/);
+  await expect(classicImage).toHaveAttribute('src', /\S+/);
   expect(await classicImage.getAttribute('src')).not.toBe(modernSrc);
 
   await page.getByRole('button', { name: 'Library' }).click();
