@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft]
   workflow_dispatch:
     inputs:
       full_ci:
@@ -17,6 +18,12 @@ on:
 
 permissions:
   contents: read
+
+# Superseded commits to the same PR must not consume runner time. Main and
+# manually-triggered authoritative runs are never cancelled by newer runs.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   plan:
@@ -60,7 +67,7 @@ jobs:
           VERIFY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           VERIFY_PREVIOUS_HEAD_SHA: ${{ github.event.before }}
           VERIFY_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          VERIFY_FORCE_FULL: ${{ inputs.full_ci || false }}
+          VERIFY_FORCE_FULL: ${{ inputs.full_ci || github.event.action == 'ready_for_review' }}
         run: node scripts/verification/planVerification.mjs
       - name: Upload verification plan
         uses: actions/upload-artifact@v4
