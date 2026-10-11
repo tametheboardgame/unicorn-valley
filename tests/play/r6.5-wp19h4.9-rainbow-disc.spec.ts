@@ -216,13 +216,18 @@ async function startGentleMatch(page: Page): Promise<void> {
     .toBe(true);
 }
 
-async function completeOpenLanePass(page: Page): Promise<void> {
+async function completeOpenLanePass(page: Page, previousReceiver: number): Promise<number> {
   await waitForTimingReady(page);
   const receiverIndex = await currentOpenLane(page);
+  // Use the supported lane-choice keys: clicking the art sprite is not a
+  // deterministic way of changing receiver on software-rendered Chromium.
+  const steps = (receiverIndex - previousReceiver + 3) % 3;
+  if (steps > 0) {
+    await page.keyboard.press(steps === 1 ? 'ArrowDown' : 'ArrowUp');
+  }
   await primeSuccessfulTiming(page);
-  // Throw the physical disc into the actual open lane, matching the validated
-  // MG-WP6 interaction path rather than clicking a sprite then pressing Space.
-  await dragDiscToReceiver(page, receiverIndex);
+  await page.keyboard.press('Space');
+  return receiverIndex;
 }
 
 async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
@@ -370,8 +375,11 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     .toBe('paused');
 
   for (let goal = 0; goal < 2; goal += 1) {
+    // The match starts each attack with the centre receiver selected and keeps
+    // that selection between passes. Track only real keyboard selections.
+    let selectedReceiver = 1;
     for (let pass = 0; pass < 3; pass += 1) {
-      await completeOpenLanePass(page);
+      selectedReceiver = await completeOpenLanePass(page, selectedReceiver);
     }
 
     if (goal === 0) {
@@ -623,10 +631,12 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
   // Defenders rotate between lanes; throwing to receiver 0 is not reliably
   // intercepted. Target one of the currently marked lanes to assert turnover.
   const markedLane = Number(attackDefenders[0].name.split(':').at(-1));
-  // The current MG-WP6 input contract is a physical throw to a defended lane.
-  // Reuse the proven drag path rather than a click + keyboard sequence that can
-  // select the lane without committing a throw.
-  await dragDiscToReceiver(page, markedLane);
+  // Newly started match selects the centre receiver (1); choose one of the two
+  // currently defended lanes with the actual Up/Down control and throw with Space.
+  expect([0, 2]).toContain(markedLane);
+  await page.keyboard.press(markedLane === 0 ? 'ArrowUp' : 'ArrowDown');
+  await primeSuccessfulTiming(page);
+  await page.keyboard.press('Space');
 
   await expect
     .poll(async () => {
