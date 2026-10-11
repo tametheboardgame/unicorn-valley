@@ -13,6 +13,10 @@ on:
         required: true
         default: true
         type: boolean
+      pr_number:
+        description: Optional PR number to enforce live exact-head validation for manual qualification
+        required: false
+        type: number
   schedule:
     - cron: '17 4 * * 0'
 
@@ -311,7 +315,7 @@ jobs:
       - name: Enforce exact-head verification
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
           PR_DRAFT: ${{ github.event.pull_request.draft }}
           PLAN_HEAD: ${{ needs.plan.outputs.head_sha }}
           PLAN_CLASS: ${{ needs.plan.outputs.change_class }}

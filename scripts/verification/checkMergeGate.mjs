@@ -4,7 +4,7 @@ import { evaluateMergeGate } from './mergeGatePolicy.mjs';
 const flag = (name) => process.env[name] === 'true';
 const event = process.env.GITHUB_EVENT_NAME ?? '';
 const plannedHead = process.env.PLAN_HEAD ?? '';
-const isPR = event === 'pull_request';
+const isPR = event === 'pull_request' || Boolean(process.env.PR_NUMBER);
 
 async function getCurrentHead() {
   if (!isPR) return plannedHead;
@@ -32,7 +32,8 @@ try {
     changeClass: process.env.PLAN_CLASS,
     plannedHead,
     currentHead: await getCurrentHead(),
-    requireAuthoritative: !isPR || process.env.PR_DRAFT === 'false',
+    requireAuthoritative:
+      event !== 'pull_request' || process.env.PR_DRAFT === 'false',
     required: {
       tier0: true,
       tier1: flag('RUN_UNIT'),

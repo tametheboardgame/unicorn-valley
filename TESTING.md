@@ -80,7 +80,7 @@ For pull-request updates, CI uses the incremental `synchronize` delta since the 
 
 ### At a human-approved section boundary
 
-Before merging an approved substantive slice to `main`, mark the draft PR **Ready for review**. This triggers **authoritative full qualification on that exact head**. A subsequent push while non-draft automatically invalidates the previous result and runs full qualification again. Manual full-CI dispatch remains a supported fallback. The full gate includes:
+Before merging an approved substantive slice to `main`, mark the draft PR **Ready for review**. This triggers **authoritative full qualification on that exact head**. A subsequent push while non-draft automatically invalidates the previous result and runs full qualification again. Manual full-CI dispatch remains a supported fallback; provide its optional PR number when using it to qualify a PR, so the Merge Gate checks the live head rather than treating it as an unbound release run. The full gate includes:
 
 - full unit qualification;
 - production build/static smoke/performance;
