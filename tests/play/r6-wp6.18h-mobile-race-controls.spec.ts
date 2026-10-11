@@ -108,12 +108,14 @@ async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promi
   const objectByName = (name: string): DiagnosticObject | null =>
     sceneObjects.find((object) => object.name === name) ?? null;
 
+  // The touch deck owns Leave race; its retired canvas Exit counterpart must stay absent.
+  expect(objectByName('r6-wp6.18h:canvas-exit')).toBeNull();
+
   for (const name of [
     'r6-wp6.18h:canvas-jump-target',
     'r6-wp6.18h:canvas-jump-shadow',
     'r6-wp6.18h:canvas-jump-label',
     'r6-wp6.18h:canvas-jump-hint',
-    'r6-wp6.18h:canvas-exit',
     'race-run-button',
     'race-run-label',
     'race-run-hint',
@@ -126,7 +128,6 @@ async function expectCanvasControlsDisabled(page: Page, sceneKey: string): Promi
 
   for (const name of [
     'r6-wp6.18h:canvas-jump-target',
-    'r6-wp6.18h:canvas-exit',
     'race-run-touch-zone',
     'race-assistance-toggle',
   ]) {
