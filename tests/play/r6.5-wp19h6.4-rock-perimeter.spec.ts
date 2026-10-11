@@ -87,12 +87,13 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
     brook.objects.some(({ name }) => name === 'crystal-brook:meadow-gorge:rainbow-meadow-sign'),
   ).toBe(true);
   expect(brook.objects.some(({ name }) => name === 'crystal-brook:main-path')).toBe(true);
-  expect(brook.objects.some(({ name }) => name === 'crystal-brook:east-woodland')).toBe(true);
-  const woodsSign = brook.objects.find(
-    ({ name }) => name === 'crystal-brook:whispering-woods-sign',
+  // H6 replaced the monolithic east-woodland container and its old sign with
+  // a physical gap through mixed rocks. Check the authored Woods opening and
+  // the existing rock-edge treatment instead of removed presentation objects.
+  const woodsOpening = CRYSTAL_BROOK_BOUNDARY_OPENINGS.find(
+    (opening) => opening.id === 'whispering-woods-pass',
   );
-  expect(woodsSign).toBeDefined();
-  expect(woodsSign?.x).toBeLessThan(3100);
+  expect(woodsOpening?.width).toBeGreaterThanOrEqual(300);
   expect(rocks.filter(({ x }) => x > 3300).length).toBeGreaterThanOrEqual(10);
 });
 
@@ -123,9 +124,28 @@ test('H6.4 galloping along the rock perimeter does not snag on collision seams',
 
   await page.keyboard.down('Shift');
   await page.keyboard.down('ArrowRight');
-  await page.waitForTimeout(650);
-  await page.keyboard.up('ArrowRight');
-  await page.keyboard.up('Shift');
+  try {
+    // Assert real travel rather than wall-clock frames. Software-rendered CI
+    // can process far fewer game frames within a fixed 650ms delay.
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(() => {
+            const api = (
+              window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
+            ).__UNICORN_VALLEY_DIAGNOSTICS__;
+            const brook = api?.snapshot().scenes.find(({ key }) => key === 'CrystalBrookScene');
+            const player = brook?.objects.find(({ name }) => name === 'world-player-unicorn');
+            if (!player) throw new Error('Crystal Brook player unavailable.');
+            return player.x;
+          }),
+        { timeout: 8_000 },
+      )
+      .toBeGreaterThan(before.x + 180);
+  } finally {
+    await page.keyboard.up('ArrowRight');
+    await page.keyboard.up('Shift');
+  }
 
   const after = await page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
