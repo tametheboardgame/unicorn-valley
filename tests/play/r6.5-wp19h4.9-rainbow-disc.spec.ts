@@ -237,10 +237,15 @@ async function startGentleMatch(page: Page): Promise<void> {
     .toBe(true);
 }
 
-async function completeOpenLanePass(page: Page, previousReceiver: number): Promise<number> {
+async function completeOpenLanePass(page: Page, previousReceiver = 1): Promise<number> {
   await waitForTimingReady(page);
   const receiverIndex = await currentOpenLane(page);
-  expect((await matchState(page)).openLane).toBe(receiverIndex);
+  // Both Match and Passing Drill reuse this real throw helper; the diagnostic
+  // openLane is meaningful only during Match attack, not Practice.
+  const state = await matchState(page);
+  if (state.mode === 'match') {
+    expect(state.openLane).toBe(receiverIndex);
+  }
   // Use the supported lane-choice keys: clicking the art sprite is not a
   // deterministic way of changing receiver on software-rendered Chromium.
   const steps = (receiverIndex - previousReceiver + 3) % 3;
