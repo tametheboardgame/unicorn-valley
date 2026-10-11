@@ -242,6 +242,32 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  whole-game-smoke:
+    name: Current whole-game smoke
+    needs: [plan, tier0]
+    if: needs.plan.outputs.run_tier3 == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run current whole-game smoke contracts
+        run: npx playwright test --config=playwright.smoke.config.ts
+      - name: Upload current smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-whole-game-smoke
+          path: playtest-smoke-artifacts
+          if-no-files-found: warn
+          retention-days: 14
+
   tier3:
     name: Tier 3 - full Chromium (${{ matrix.shard }}/3)
     needs: [plan, tier0, tier1]
@@ -303,7 +329,7 @@ jobs:
 
   merge-gate:
     name: Merge Gate
-    needs: [plan, tier0, tier1, build-performance, tier2, tier3, tier4]
+    needs: [plan, tier0, tier1, build-performance, tier2, whole-game-smoke, tier3, tier4]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -329,6 +355,7 @@ jobs:
           RESULT_TIER1: ${{ needs.tier1.result }}
           RESULT_BUILD: ${{ needs.build-performance.result }}
           RESULT_TIER2: ${{ needs.tier2.result }}
+          RESULT_SMOKE: ${{ needs.whole-game-smoke.result }}
           RESULT_TIER3: ${{ needs.tier3.result }}
           RESULT_TIER4: ${{ needs.tier4.result }}
         run: node scripts/verification/checkMergeGate.mjs

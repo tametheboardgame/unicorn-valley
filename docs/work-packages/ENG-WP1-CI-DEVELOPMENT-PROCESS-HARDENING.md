@@ -253,6 +253,12 @@ ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
 - bidirectional traversal with no arrival bounce-back passed on `8d7d0ac94819c24bc9cc8338d335661c85660d90` (CI `38126714606`, 1/1).
 
 
+ENG-WP1.6 current whole-game smoke (CI qualification pending):
+
+- `playwright.smoke.config.ts` selects nine accepted current contracts across title/Just Games, Story House, Nova/picnic, Race Hub and Meadow–Brook transition;
+- authoritative runs require a separate `Current whole-game smoke` job, distinct from ownership-selected Tier 2 and broad Tier 3 regression;
+- the exact-head Merge Gate rejects a skipped or failed required smoke.
+
 ENG-WP1.7–1.10 pipeline implementation (CI qualification pending):
 
 - `291232e7a84321cfba6388f3477adfe1c3e01662`: PR concurrency cancellation and Ready-for-Review triggers.
