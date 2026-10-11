@@ -351,11 +351,17 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForScene(page, 'SunbeamVillageScene');
   await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  await page.waitForTimeout(250);
-  const returnedVillage = await sceneSnapshot(page, 'SunbeamVillageScene');
-  expect(
-    returnedVillage.objects.some(
-      (object) => object.visible && object.text?.includes('Marigold') === true,
-    ),
-  ).toBe(false);
+  // Confirm the shared interaction hint and visible world labels do not offer a
+  // ghost Marigold conversation after her move to Picnic Hill.
+  await expect
+    .poll(async () => {
+      const scene = await sceneSnapshot(page, 'SunbeamVillageScene');
+      return scene.objects.some(
+        (object) =>
+          object.visible &&
+          ((object.name === 'exploration-tablet-hint' && object.text === 'Marigold') ||
+            object.text?.includes('Marigold') === true),
+      );
+    })
+    .toBe(false);
 });
