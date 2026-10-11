@@ -88,8 +88,11 @@ jobs:
           node-version: 22.23.2
           package-manager-cache: false
       - run: npm ci --no-audit --no-fund
+      # Report deterministic failures together. A bad formatter diff must not
+      # obscure lint, architecture, policy or type-check failures on the same head.
       - name: Check formatting
         id: format
+        continue-on-error: true
         run: |
           if ! npm run format:check; then
             npm run format
@@ -97,7 +100,7 @@ jobs:
             exit 1
           fi
       - name: Upload formatter remediation
-        if: failure() && steps.format.conclusion == 'failure'
+        if: ${{ !cancelled() && steps.format.outcome == 'failure' }}
         uses: actions/upload-artifact@v4
         with:
           name: formatter-remediation
@@ -105,14 +108,24 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Lint
+        id: lint
+        continue-on-error: true
         run: npm run lint
       - name: Check architecture boundaries
+        id: architecture
+        continue-on-error: true
         run: npm run architecture:validate
       - name: Check verification policy
+        id: verification-policy
+        continue-on-error: true
         run: npm run verification:policy:test
       - name: Check performance policy
+        id: performance-policy
+        continue-on-error: true
         run: npm run performance:policy:test
       - name: Type-check runtime changes
+        id: typecheck
+        continue-on-error: true
         if: needs.plan.outputs.run_typecheck == 'true'
         run: npm run typecheck
       - name: Set up Python for project contract
@@ -121,8 +134,29 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate AI project contract
+        id: project-contract
+        continue-on-error: true
         if: needs.plan.outputs.run_project_contract == 'true'
         run: python scripts/ai/validate-project-state.py
+      - name: Consolidate Tier 0 failures
+        if: ${{ !cancelled() }}
+        env:
+          FORMAT: ${{ steps.format.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          ARCHITECTURE: ${{ steps.architecture.outcome }}
+          VERIFICATION_POLICY: ${{ steps.verification-policy.outcome }}
+          PERFORMANCE_POLICY: ${{ steps.performance-policy.outcome }}
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          PROJECT_CONTRACT: ${{ steps.project-contract.outcome }}
+        run: |
+          failed=0
+          for check in FORMAT LINT ARCHITECTURE VERIFICATION_POLICY PERFORMANCE_POLICY TYPECHECK PROJECT_CONTRACT; do
+            if [ "${!check}" = "failure" ]; then
+              echo "::error title=Tier 0 ${check} failed::Inspect the preceding ${check} step and formatter remediation artifact if applicable."
+              failed=1
+            fi
+          done
+          exit "$failed"
 
   tier1:
     name: Tier 1 - unit contracts
