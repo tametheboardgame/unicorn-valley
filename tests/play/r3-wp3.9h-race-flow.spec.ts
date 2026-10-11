@@ -41,9 +41,11 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
     const diagnosticWindow = window as typeof window & {
       __UNICORN_VALLEY_DIAGNOSTICS__?: { snapshot(): BrowserDiagnosticSnapshot };
     };
-    return diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__
-      ?.snapshot()
-      .activeScenes.includes(expectedScene);
+    const snapshot = diagnosticWindow.__UNICORN_VALLEY_DIAGNOSTICS__?.snapshot();
+    return (
+      snapshot?.activeScenes.includes(expectedScene) === true &&
+      snapshot.scenes.some(({ key }) => key === expectedScene)
+    );
   }, sceneKey);
 }
 

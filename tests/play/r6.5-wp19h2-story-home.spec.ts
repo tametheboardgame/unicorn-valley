@@ -173,11 +173,10 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
   await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['PipEggHatchScene']);
 
   await expect
-    .poll(async () =>
-      scene(await snapshot(page), 'PipEggHatchScene').objects.some(
-        ({ text, visible }) => text === 'Hello, Luma!' && visible,
-      ),
-    )
+    .poll(async () => {
+      const hatch = (await snapshot(page)).scenes.find(({ key }) => key === 'PipEggHatchScene');
+      return hatch?.objects.some(({ text, visible }) => text === 'Hello, Luma!' && visible) ?? false;
+    })
     .toBe(true);
 
   const canvas = await page.locator('canvas').boundingBox();
