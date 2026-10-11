@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForNamedObject } from '../support/browserDiagnostics';
 import { RAINBOW_MEADOW_LAYOUT } from '../../src/game/world/RainbowMeadowMap';
 import { RAINBOW_RUN_HUB_LAYOUT } from '../../src/game/world/RainbowRunHubMap';
 
@@ -33,21 +34,6 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
       .__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes(expected) === true;
   }, sceneKey);
-}
-
-async function waitForNamedObject(page: Page, sceneKey: string, name: string): Promise<void> {
-  await page.waitForFunction(
-    ({ key, objectName }) => {
-      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-        .__UNICORN_VALLEY_DIAGNOSTICS__;
-      return api?.snapshot().scenes.some(
-        (scene) =>
-          scene.key === key &&
-          scene.objects.some((object) => object.name === objectName && object.visible),
-      );
-    },
-    { key: sceneKey, objectName: name },
-  );
 }
 
 async function sceneObjects(page: Page, sceneKey: string): Promise<DiagnosticObject[]> {
