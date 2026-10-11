@@ -1,7 +1,7 @@
 ---
 id: ENG-WP2
 title: Test Contract Lifecycle and Work-Package Impact Reviews
-status: proposed
+status: in_progress
 autonomy: green
 depends_on: [ENG-WP1, ENG-WP1.11]
 parallel_safe: false
@@ -11,7 +11,7 @@ mini_game_platform_impact: none
 
 # ENG-WP2 — Test Contract Lifecycle and Test-Impact Assessments
 
-Tracking: [#301](https://github.com/tametheboardgame/unicorn-valley/issues/301). This is the **next proposed engineering package** following the successful six-shard ENG-WP1.11 baseline. This document fixes the intended architectural contract and checkpoint order; implementation has **not** started.
+Tracking: [#301](https://github.com/tametheboardgame/unicorn-valley/issues/301). This is the **active engineering package** following the successful six-shard ENG-WP1.11 baseline. This document fixes the intended architectural contract and checkpoint order; implementation has started with WP2.1.
 
 ## Objective
 
@@ -74,4 +74,8 @@ No production gameplay changes, no reducing full qualification, no mass-retrofit
 
 ## Completion record
 
-Planning only; WP2 has not been implemented or qualified.
+**WP2.1 implementation committed, awaiting CI.** Branch `agent/eng-wp2-1-contract-inventory` adds a filesystem-discovered unit/browser contract inventory, validates smoke and compatibility references, and derives ownership from the existing `verificationOwnership.mjs`. The existing historical unowned browser files are captured in a frozen baseline so newly added unowned contracts fail inventory validation while legacy debt remains visible.
+
+Initial inventory: **110 browser spec files**, **166 unit spec files**, **82 browser specs without an explicit ownership group**. These 82 are still executed by full Chromium CI and are not presumed obsolete; review/mapping belongs in subsequent deliberate slices. The lifecycle metadata (active, retired, replaced, quarantined and expiry/replacement integrity) has a first documented example in the canonical ownership module.
+
+WP2.2 mandatory new/current WP impact enforcement, WP2.3 browser fixture work and WP2.4 suite-health policy are **not implemented**. This checkpoint is not yet CI-qualified.

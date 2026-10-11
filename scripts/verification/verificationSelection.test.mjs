@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { matchesGlob, selectVerificationOwnership } from './verificationOwnership.mjs';
 import { buildVerificationSelection } from './verificationSelection.mjs';
+import { buildContractInventory, inspectContractInventory } from './contractInventory.mjs';
 
 test('ownership glob matching is path-aware and supports recursive globs', () => {
   assert.equal(matchesGlob('src/game/audio/AudioSettings.ts', 'src/game/audio/**'), true);
@@ -106,4 +107,82 @@ test('authoritative full qualification ignores selective shortcuts', () => {
   assert.equal(plan.runTier2, false);
   assert.equal(plan.runTier3, true);
   assert.equal(plan.runTier4, true);
+});
+
+test('WP2.1 inventory reconciles the actual test suite and legacy ownership debt', () => {
+  const report = inspectContractInventory(process.cwd(), '2026-10-11');
+  assert.deepEqual(report.errors, []);
+  assert.ok(report.summary.browser > 100);
+  assert.ok(report.summary.unit > 100);
+  assert.ok(report.summary.unownedBrowser > 0);
+  assert.ok(report.summary.mappedBrowser > 0);
+  assert.ok(report.contracts.some((record) => record.smoke));
+  assert.ok(report.contracts.some((record) => record.compatibility));
+});
+
+test('WP2.1 detects missing references, unowned additions and stale exceptions', () => {
+  const audio = 'tests/play/audio.spec.ts';
+  const missing = 'tests/play/missing.spec.ts';
+  const report = buildContractInventory({
+    browserSpecs: [audio, 'tests/play/new-feature.spec.ts'],
+    unitSpecs: [],
+    browserGroups: { audio: [audio, missing] },
+    unitGroups: { audio: [] },
+    ownershipRules: [
+      {
+        id: 'audio',
+        sourceGlobs: ['src/game/audio/**'],
+        browserGroups: ['audio'],
+        unitGroups: ['audio'],
+      },
+    ],
+    smokeSpecs: [missing],
+    legacyUnowned: [missing],
+    lifecycle: {},
+    asOf: '2026-10-11',
+  });
+  for (const code of [
+    'MISSING_BROWSER_REFERENCE',
+    'MISSING_PROFILE_REFERENCE',
+    'STALE_UNOWNED_BASELINE',
+    'NEW_UNOWNED_BROWSER',
+  ]) {
+    assert.ok(report.errors.some((issue) => issue.code === code), code);
+  }
+});
+
+test('WP2.1 legacy ownership debt remains visible without silently growing', () => {
+  const path = 'tests/play/legacy.spec.ts';
+  const report = buildContractInventory({
+    browserSpecs: [path],
+    unitSpecs: [],
+    browserGroups: {},
+    unitGroups: {},
+    ownershipRules: [],
+    legacyUnowned: [path],
+    lifecycle: {},
+  });
+  assert.equal(report.errors.length, 0);
+  assert.ok(report.warnings.some((issue) => issue.code === 'LEGACY_UNOWNED_BROWSER'));
+  assert.equal(report.summary.unownedBrowser, 1);
+});
+
+test('WP2.1 retirement needs replacement and quarantine has an expiry', () => {
+  const active = 'tests/play/active.spec.ts';
+  const report = buildContractInventory({
+    browserSpecs: [active],
+    unitSpecs: [],
+    browserGroups: { demo: [active] },
+    unitGroups: { demo: [] },
+    ownershipRules: [
+      { id: 'demo', sourceGlobs: [], browserGroups: ['demo'], unitGroups: ['demo'] },
+    ],
+    lifecycle: {
+      [active]: { status: 'quarantined', reason: 'Flaky', expiresOn: '2026-10-10' },
+      'tests/play/retired.spec.ts': { status: 'retired', reason: 'Obsolete' },
+    },
+    asOf: '2026-10-11',
+  });
+  assert.ok(report.errors.some((issue) => issue.code === 'EXPIRED_QUARANTINE'));
+  assert.ok(report.errors.some((issue) => issue.code === 'UNJUSTIFIED_RETIREMENT'));
 });

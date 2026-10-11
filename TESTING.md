@@ -166,3 +166,9 @@ Mini-game platform changes under `src/game/minigames/**` select the shared mini-
 - `src/game/minigames/MiniGameSandboxContract.testSupport.ts` provides the reusable sandbox/world adventure-effect assertions for unit fixtures.
 - Game-specific rules and representative world-entry tests remain required where behaviour changes; the shared contracts do not replace them.
 - Final human-approved substantive heads still require the repository's authoritative exact-head Tier 0-4 qualification before merge.
+
+## Contract inventory (ENG-WP2.1)
+
+Run `node scripts/verification/contractInventory.mjs --output=contract-inventory.json` to create a machine-readable inventory of current unit/browser spec files, owner groups, smoke/compatibility membership, lifecycle declarations and actionable errors. Existing `npm run verification:policy:test` covers inventory integrity and negative cases.
+
+The report derives ownership from `scripts/verification/verificationOwnership.mjs`. It does **not** select tests, replace the verification planner or reduce coverage. Frozen unowned browser specs are listed in `scripts/verification/contractInventoryBaseline.json` as explicit historical review debt; they still run in the authoritative full suite. Do not add new specs to that list as a shortcut: add a genuine source-to-test ownership mapping instead. When replacing, moving or retiring a mapped test, reconcile its ownership/lifecycle references and the baseline in the same change. Expired quarantine, missing replacement and missing config references are integrity errors. WP2.2 will add mandatory work-package test-impact reviews later.
