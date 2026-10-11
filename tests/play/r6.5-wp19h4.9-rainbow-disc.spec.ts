@@ -219,13 +219,10 @@ async function startGentleMatch(page: Page): Promise<void> {
 async function completeOpenLanePass(page: Page): Promise<void> {
   await waitForTimingReady(page);
   const receiverIndex = await currentOpenLane(page);
-  await clickNamedObject(
-    page,
-    'RainbowDiscActivityScene',
-    `rainbow-disc-activity:receiver:${receiverIndex}`,
-  );
   await primeSuccessfulTiming(page);
-  await page.keyboard.press('Space');
+  // Throw the physical disc into the actual open lane, matching the validated
+  // MG-WP6 interaction path rather than clicking a sprite then pressing Space.
+  await dragDiscToReceiver(page, receiverIndex);
 }
 
 async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
