@@ -66,7 +66,7 @@ ENG-WP1.3 is complete. The 14 obsolete historical contracts were retired and the
 
 ## Next work
 
-Five ENG-WP1.4 families are qualified: NPC/picnic end-to-end, Crystal Brook contextual and responsive feedback, mobile racing (33/33 selected browser regressions passed on `a5726db43782b7293d02c0f88edb0d35769ce91e`; CI `38125054158`), and Race Hub traversal (3/3 passed on `ae7c897043d6099a479e2476490803992c7dace7`; CI `38125477510`). The sixth family modernises historical Rainbow Disc timing and defended-lane assertions without changing game mechanics. Its focused browser qualification is pending.
+Six ENG-WP1.4 families are qualified: profile/title/home, NPC/picnic, Crystal Brook contextual-feedback and responsive evidence, mobile racing (33/33 on `a5726db43782b7293d02c0f88edb0d35769ce91e`), Race Hub traversal (3/3 on `ae7c897043d6099a479e2476490803992c7dace7`), and H6.4 rock perimeter (2/2 on `3b90541a63fe2b46b7688039ef2140d934e23b1c`). Rainbow Disc is progressing but still awaits final 6/6 qualification at `c47fce01af926a7211a25dbfb0e2a24643f9c0ec`; SH1.2A illustration-set migration is queued at `85f38ec54e3c92163190b503d1a1c4bc11d4ac66`. An isolated ENG-WP1.5 H6.3 browser diagnostic scope/startup defect has been fixed and verified 1/1 on `8d7d0ac94819c24bc9cc8338d335661c85660d90`. Full Chromium baseline and merge qualification remain outstanding.
 
 ## Operating reminders
 

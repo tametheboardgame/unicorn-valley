@@ -218,7 +218,28 @@ Sixth bounded family (active; focused qualification pending):
 - test possession turnover by selecting a currently defended receiver rather than assuming a fixed marked lane;
 - preserve match scoring, practice results, defender read cues and Just Games behaviour without changing game mechanics.
 
-The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green.
+The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts`; MG-WP6 replacement owner coverage in the baseline was already green. Fixes to transient timing-meter visibility and test round-readiness have brought the focused suite from 3/6 passing to 4/6 passing; corrected match sequencing is committed on `c47fce01af926a7211a25dbfb0e2a24643f9c0ec` and awaits browser qualification (CI `38127014376`).
+
+Seventh bounded family (complete; focused qualification green):
+
+- align H6.4 rock-perimeter validation to the accepted physical Woods opening rather than obsolete east woodland/sign object identities;
+- validate minimum gorge clearance against the authored opening plus safety margin;
+- hold player movement until the intended travelled distance is observed instead of assuming a fixed software-renderer frame rate.
+- both H6.4 browser contracts passed on `3b90541a63fe2b46b7688039ef2140d934e23b1c` (CI `38126837711`, 2/2).
+
+Eighth bounded family (active; focused qualification pending):
+
+- modernise SH1.2A Story House independent illustration sets and persistence test for the current compact Modern/Classic switch;
+- verify modern and classic image sources genuinely differ without coupling to obsolete file names;
+- retain the distinct single-illustration-set behaviour of another book.
+- test checkpoint `85f38ec54e3c92163190b503d1a1c4bc11d4ac66` awaiting browser qualification (CI `38127180622`).
+
+ENG-WP1.5 early isolated harness checkpoint (complete and focused CI green):
+
+- H6.3 Meadow/Brook gorge regression referenced a Node-only constant inside a browser-evaluated function, causing `ReferenceError: PLAYER_NAME is not defined`;
+- pass the object name explicitly into `page.evaluate`, and enter via normal Meadow Boot/Preload instead of a diagnostic scene restart;
+- bidirectional traversal with no arrival bounce-back passed on `8d7d0ac94819c24bc9cc8338d335661c85660d90` (CI `38126714606`, 1/1).
+
 
 ## Operating rules during this package
 
@@ -234,4 +255,4 @@ The earlier full Chromium baseline had three failures in `tests/play/r6.5-wp19h4
 
 ## Next action
 
-Qualify the sixth **ENG-WP1.4** Rainbow Disc family on targeted browser CI. After it passes, audit the remaining useful stale contracts against the initial full Chromium baseline before ENG-WP1.5. Do not run full Chromium qualification until the bounded families are ready.
+Qualify the corrected sixth **ENG-WP1.4** Rainbow Disc and eighth Story House illustration family on targeted browser CI. Audit remaining relevant stale and retired contracts against the initial full Chromium baseline. Then complete ENG-WP1.5 harness hardening, final workflow guardrails, and one meaningful full baseline before merging. Do not poll CI or run the full Chromium matrix repeatedly.
