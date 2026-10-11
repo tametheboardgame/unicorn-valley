@@ -139,6 +139,7 @@ export interface BrowserDiagnosticsApi {
     playerScore: number;
     oppositionScore: number;
     actionLocked: boolean;
+    timingActive: boolean;
   };
   arcadeSpriteVelocity(sceneKey: string, objectName: string): { x: number; y: number };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;

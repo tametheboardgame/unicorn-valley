@@ -43,6 +43,7 @@ interface RainbowDiscMatchState {
   playerScore: number;
   oppositionScore: number;
   actionLocked: boolean;
+  timingActive: boolean;
 }
 
 async function matchState(page: Page): Promise<RainbowDiscMatchState> {
@@ -69,33 +70,34 @@ async function snapshotScene(page: Page, key: string): Promise<DiagnosticScene> 
 }
 
 async function waitForTimingReady(page: Page): Promise<void> {
-  // The timing marker should return after each tween/re-render. Keep this a
-  // real product-readiness check, but report the runtime state if it stalls.
+  // Poll the small scene-owned state instead of repeatedly serialising all
+  // Phaser objects; full snapshots can starve scheduled tweens on CI.
   try {
     await expect
-      .poll(async () => {
-        const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
-        return scene.objects.some(
-          ({ name, effectiveVisible }) =>
-            name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
-        );
+      .poll(async () => (await matchState(page)).timingActive, {
+        timeout: 15_000,
+        intervals: [100, 250, 500, 1_000],
       })
       .toBe(true);
+    // Still require the visible player-facing timing control when input unlocks.
+    const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+    expect(
+      scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
+      ),
+    ).toBe(true);
   } catch (error) {
     const state = await matchState(page);
     const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
     const marker = scene.objects.find(
       ({ name }) => name === 'rainbow-disc-activity:timing-marker',
     );
-    const status = scene.objects.find(
-      ({ name }) => name === 'rainbow-disc-activity:status',
-    );
     throw new Error(
       `Rainbow Disc timing readiness stalled: ${JSON.stringify({
         state,
         markerVisible: marker?.visible,
         markerEffectiveVisible: marker?.effectiveVisible,
-        status: status?.text,
       })}`,
       { cause: error },
     );

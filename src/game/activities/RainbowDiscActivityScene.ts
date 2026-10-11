@@ -267,6 +267,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
     playerScore: number;
     oppositionScore: number;
     actionLocked: boolean;
+    timingActive: boolean;
   } {
     return {
       mode: this.mode,
@@ -280,6 +281,7 @@ export class RainbowDiscActivityScene extends Phaser.Scene {
       playerScore: this.playerScore,
       oppositionScore: this.oppositionScore,
       actionLocked: this.actionLocked,
+      timingActive: this.isTimingActive(),
     };
   }
 
