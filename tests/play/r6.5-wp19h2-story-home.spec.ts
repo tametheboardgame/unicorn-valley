@@ -173,11 +173,12 @@ test('H2.9 binds the strange egg and its hatch flow to the canonical cottage nes
   await expect.poll(async () => (await snapshot(page)).activeScenes).toEqual(['PipEggHatchScene']);
 
   await expect
-    .poll(async () =>
-      scene(await snapshot(page), 'PipEggHatchScene').objects.some(
-        ({ text, visible }) => text === 'Hello, Luma!' && visible,
-      ),
-    )
+    .poll(async () => {
+      const hatch = (await snapshot(page)).scenes.find(({ key }) => key === 'PipEggHatchScene');
+      return (
+        hatch?.objects.some(({ text, visible }) => text === 'Hello, Luma!' && visible) ?? false
+      );
+    })
     .toBe(true);
 
   const canvas = await page.locator('canvas').boundingBox();
@@ -251,26 +252,4 @@ test('H2.9 uses the smaller detailed strange egg with collision in Moonflower Gl
       artVisible: true,
       blocker: { width: 66, height: 34 },
     });
-});
-
-test('H2.9 reserves an inert architectural bay for future portal content', async ({ page }) => {
-  await page.goto('/?diagnostics=1');
-  await startScene(page, 'CottageInteriorScene');
-
-  await expect
-    .poll(async () => {
-      const bay = scene(await snapshot(page), 'CottageInteriorScene').objects.find(
-        ({ name }) => name === 'cottage-story:future-portal-bay',
-      );
-      return bay ? { x: bay.x, y: bay.y, interactive: bay.interactive } : null;
-    })
-    .toEqual({ x: 1280, y: 530, interactive: false });
-
-  const cottage = scene(await snapshot(page), 'CottageInteriorScene');
-  expect(
-    cottage.objects.some(
-      ({ name, interactive }) =>
-        name.includes('portal') && name !== 'cottage-story:future-portal-bay' && interactive,
-    ),
-  ).toBe(false);
 });

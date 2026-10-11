@@ -108,6 +108,7 @@ export class RaceScene extends Phaser.Scene {
   private finishPanel: Phaser.GameObjects.Container | null = null;
   private readonly collectableSprites = new Map<string, Phaser.GameObjects.Container>();
   private readonly npcRacerVisuals = new Map<string, NpcRacerVisual>();
+  private exiting = false;
 
   public constructor() {
     super('RaceScene');
@@ -132,6 +133,7 @@ export class RaceScene extends Phaser.Scene {
     this.collectableSprites.clear();
     this.npcRacerVisuals.clear();
     this.speedStreaks = [];
+    this.exiting = false;
 
     this.createCourse();
 
@@ -177,8 +179,10 @@ export class RaceScene extends Phaser.Scene {
     this.audio.enterScene(this.scene.key);
     this.input.once('pointerdown', () => void this.audio.unlock());
     this.input.keyboard?.once('keydown', () => void this.audio.unlock());
+    this.input.keyboard?.on('keydown-ESC', this.exitRace, this);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.keyboard?.off('keydown-ESC', this.exitRace, this);
       this.audio.leaveScene(this.scene.key);
       this.statusTimer?.destroy();
       this.statusTimer = null;
@@ -1195,6 +1199,11 @@ export class RaceScene extends Phaser.Scene {
   }
 
   public exitRace(): void {
+    if (this.exiting) {
+      return;
+    }
+    this.exiting = true;
+
     if (this.miniGameSession) {
       if (
         !this.isSandboxSession() &&

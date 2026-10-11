@@ -86,6 +86,7 @@ console.log(JSON.stringify(report, null, 2));
 const outputPath = process.env.GITHUB_OUTPUT;
 if (outputPath) {
   const outputs = {
+    head_sha: headSha,
     change_class: plan.changeClass,
     tiers: plan.tiers.join(','),
     owners: plan.owners.join(','),

@@ -1,4 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
+import {
+  CRYSTAL_BROOK_BOUNDARY_OPENINGS,
+  CRYSTAL_BROOK_MEADOW_THRESHOLD,
+} from '../../src/game/world/CrystalBrookMap';
 
 interface DiagnosticObject {
   name: string;
@@ -23,13 +27,6 @@ interface DiagnosticsApi {
 
 async function waitForBrook(page: Page): Promise<DiagnosticScene> {
   await page.waitForFunction(() => '__UNICORN_VALLEY_DIAGNOSTICS__' in window);
-  await page.evaluate(() => {
-    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-      .__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) throw new Error('Browser diagnostics are unavailable.');
-    api.startScene('CrystalBrookScene');
-  });
-
   await page.waitForFunction(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
@@ -54,7 +51,7 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
-  await page.goto('/?diagnostics=1');
+  await page.goto('/?scene=brook&diagnostics=1');
 
   const brook = await waitForBrook(page);
   const rocks = brook.objects.filter(
@@ -69,7 +66,19 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
   const nearestRockDistance = (x: number, y: number): number =>
     Math.min(...rocks.map((rock) => Math.hypot(rock.x - x, rock.y - y)));
 
-  expect(nearestRockDistance(120, 1090)).toBeGreaterThan(430);
+  // The accepted H6 gorge guarantees the complete authored opening (300)
+  // plus a 100px landscape buffer. The old 430px centre-distance constant
+  // predated the approved rock placement and was not tied to any path width.
+  const meadowOpening = CRYSTAL_BROOK_BOUNDARY_OPENINGS.find(
+    (opening) => opening.id === 'rainbow-meadow-gorge',
+  );
+  expect(meadowOpening).toBeDefined();
+  expect(
+    nearestRockDistance(
+      CRYSTAL_BROOK_MEADOW_THRESHOLD.position.x,
+      CRYSTAL_BROOK_MEADOW_THRESHOLD.position.y,
+    ),
+  ).toBeGreaterThan((meadowOpening?.width ?? 0) + 100);
   expect(nearestRockDistance(2860, 120)).toBeGreaterThan(250);
   expect(nearestRockDistance(3400, 1580)).toBeGreaterThan(190);
   expect(nearestRockDistance(2440, 2070)).toBeGreaterThan(320);
@@ -78,12 +87,13 @@ test('H6.4 renders a varied physical rock perimeter while preserving route openi
     brook.objects.some(({ name }) => name === 'crystal-brook:meadow-gorge:rainbow-meadow-sign'),
   ).toBe(true);
   expect(brook.objects.some(({ name }) => name === 'crystal-brook:main-path')).toBe(true);
-  expect(brook.objects.some(({ name }) => name === 'crystal-brook:east-woodland')).toBe(true);
-  const woodsSign = brook.objects.find(
-    ({ name }) => name === 'crystal-brook:whispering-woods-sign',
+  // H6 replaced the monolithic east-woodland container and its old sign with
+  // a physical gap through mixed rocks. Check the authored Woods opening and
+  // the existing rock-edge treatment instead of removed presentation objects.
+  const woodsOpening = CRYSTAL_BROOK_BOUNDARY_OPENINGS.find(
+    (opening) => opening.id === 'whispering-woods-pass',
   );
-  expect(woodsSign).toBeDefined();
-  expect(woodsSign?.x).toBeLessThan(3100);
+  expect(woodsOpening?.width).toBeGreaterThanOrEqual(300);
   expect(rocks.filter(({ x }) => x > 3300).length).toBeGreaterThanOrEqual(10);
 });
 
@@ -92,14 +102,15 @@ test('H6.4 galloping along the rock perimeter does not snag on collision seams',
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
-  await page.goto('/?diagnostics=1');
+  await page.goto('/?scene=brook&diagnostics=1');
 
   await waitForBrook(page);
   await page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
     if (!api) throw new Error('Browser diagnostics are unavailable.');
-    api.setArcadeSpritePosition('CrystalBrookScene', 'world-player-unicorn', 900, 245);
+    // Test alongside the rocky north rim, not inside its collision footprint.
+    api.setArcadeSpritePosition('CrystalBrookScene', 'world-player-unicorn', 900, 360);
   });
 
   const before = await page.evaluate(() => {
@@ -113,9 +124,28 @@ test('H6.4 galloping along the rock perimeter does not snag on collision seams',
 
   await page.keyboard.down('Shift');
   await page.keyboard.down('ArrowRight');
-  await page.waitForTimeout(650);
-  await page.keyboard.up('ArrowRight');
-  await page.keyboard.up('Shift');
+  try {
+    // Assert real travel rather than wall-clock frames. Software-rendered CI
+    // can process far fewer game frames within a fixed 650ms delay.
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(() => {
+            const api = (
+              window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi }
+            ).__UNICORN_VALLEY_DIAGNOSTICS__;
+            const brook = api?.snapshot().scenes.find(({ key }) => key === 'CrystalBrookScene');
+            const player = brook?.objects.find(({ name }) => name === 'world-player-unicorn');
+            if (!player) throw new Error('Crystal Brook player unavailable.');
+            return player.x;
+          }),
+        { timeout: 8_000 },
+      )
+      .toBeGreaterThan(before.x + 180);
+  } finally {
+    await page.keyboard.up('ArrowRight');
+    await page.keyboard.up('Shift');
+  }
 
   const after = await page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })

@@ -33,12 +33,6 @@ const REGIONS = [
     layers: ['background', 'signature', 'ambient'],
   },
   {
-    route: 'meadow',
-    sceneKey: 'RainbowMeadowScene',
-    environment: 'rainbow-meadow',
-    layers: ['background', 'signature', 'foreground', 'ambient'],
-  },
-  {
     route: 'brook',
     sceneKey: 'CrystalBrookScene',
     environment: 'crystal-brook',

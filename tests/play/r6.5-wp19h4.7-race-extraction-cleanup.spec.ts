@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+// ENG-WP1.3 replacement owner: current off-map Rainbow Run hub topology and reachability.
+
 const PLAYER_NAME = 'world-player-unicorn';
 const RACE_HUB_GATE = { x: 2950, y: 90 } as const;
 

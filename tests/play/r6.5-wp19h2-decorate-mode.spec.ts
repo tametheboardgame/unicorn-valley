@@ -359,13 +359,25 @@ test('H2.8 fresh-game starters support place, replace, move, remove and persiste
   });
   expect(await savedPlacements(page)).not.toHaveProperty('cottage-slot:tea-table');
 
+  await expect
+    .poll(async () => {
+      const roomObjects = scene(await snapshot(page), 'CottageInteriorScene').objects;
+      const rugArt = roomObjects.find(
+        ({ name }) => name === 'cottage-decoration-art:item:starter-meadow-rug',
+      );
+      const playerArt = roomObjects.find(({ name }) => name === 'world-player-unicorn');
+      return Boolean(
+        rugArt &&
+          playerArt &&
+          typeof rugArt.depth === 'number' &&
+          typeof playerArt.depth === 'number' &&
+          rugArt.depth < playerArt.depth,
+      );
+    })
+    .toBe(true);
+
   const physicalSnapshot = await snapshot(page);
   const roomObjects = scene(physicalSnapshot, 'CottageInteriorScene').objects;
-  const rugArt = roomObjects.find(
-    ({ name }) => name === 'cottage-decoration-art:item:starter-meadow-rug',
-  );
-  const playerArt = roomObjects.find(({ name }) => name === 'world-player-unicorn');
-  expect(rugArt?.depth).toBeLessThan(playerArt?.depth ?? Number.POSITIVE_INFINITY);
   expect(
     roomObjects.some(({ name }) => name === 'cottage-decoration-collider:cottage-slot:centre-rug'),
   ).toBe(false);

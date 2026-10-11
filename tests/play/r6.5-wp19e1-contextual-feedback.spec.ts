@@ -1,4 +1,17 @@
 import { expect, type Page, test } from '@playwright/test';
+import {
+  CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  CRYSTAL_BROOK_SHALLOW_RIPPLE,
+} from '../../src/game/world/CrystalBrookMap';
+
+const GROTTO_APPROACH = {
+  x: CRYSTAL_BROOK_GROTTO_THRESHOLD.position.x,
+  y: CRYSTAL_BROOK_GROTTO_THRESHOLD.position.y - 90,
+} as const;
+const SHALLOW_RIPPLE_APPROACH = {
+  x: CRYSTAL_BROOK_SHALLOW_RIPPLE.x,
+  y: CRYSTAL_BROOK_SHALLOW_RIPPLE.y + 85,
+} as const;
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
 
@@ -48,21 +61,6 @@ async function waitForScene(page: Page, sceneKey: string): Promise<void> {
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes(key) === true;
   }, sceneKey);
-}
-
-async function startScene(page: Page, sceneKey: string): Promise<void> {
-  await page.evaluate((key) => {
-    const api = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    api.startScene(key);
-  }, sceneKey);
-  await waitForScene(page, sceneKey);
 }
 
 async function getScene(page: Page, sceneKey: string): Promise<DiagnosticSceneSnapshot> {
@@ -134,16 +132,17 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => window.localStorage.clear());
-    await page.goto('/?diagnostics=1');
+    // Use normal Boot/Preload entry so the shared interaction owners are installed
+    // before any contextual feedback action is exercised.
+    await page.goto('/?scene=brook&diagnostics=1');
     await waitForDiagnostics(page);
-    await startScene(page, 'CrystalBrookScene');
-    await page.waitForTimeout(250);
+    await waitForScene(page, 'CrystalBrookScene');
   });
 
   test('closed Prism Grotto uses lower non-modal guidance without covering the top HUD', async ({
     page,
   }) => {
-    await positionPlayer(page, 'CrystalBrookScene', 3130, 1850);
+    await positionPlayer(page, 'CrystalBrookScene', GROTTO_APPROACH.x, GROTTO_APPROACH.y);
     await waitForInteraction(page, 'CrystalBrookScene', 'Crystal Grotto');
     await page.keyboard.press('KeyE');
 
@@ -172,7 +171,12 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
   test('small brook reactions stay world-anchored, viewport-safe and replace rapid repeats', async ({
     page,
   }) => {
-    await positionPlayer(page, 'CrystalBrookScene', 1900, 1260);
+    await positionPlayer(
+      page,
+      'CrystalBrookScene',
+      SHALLOW_RIPPLE_APPROACH.x,
+      SHALLOW_RIPPLE_APPROACH.y,
+    );
     await waitForInteraction(page, 'CrystalBrookScene', 'Shallow Brook');
     await page.keyboard.press('KeyE');
 
@@ -194,7 +198,14 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
     ).toBe(false);
 
     await page.keyboard.press('KeyE');
-    await page.waitForTimeout(120);
+    await expect
+      .poll(async () => {
+        const current = await getScene(page, 'CrystalBrookScene');
+        return current.objects.filter(
+          (object) => object.name === 'world-feedback-reaction-text' && object.effectiveVisible,
+        ).length;
+      })
+      .toBe(1);
     scene = await getScene(page, 'CrystalBrookScene');
     const reactions = scene.objects.filter(
       (object) => object.name === 'world-feedback-reaction-text' && object.effectiveVisible,

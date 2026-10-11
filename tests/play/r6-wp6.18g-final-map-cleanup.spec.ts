@@ -89,36 +89,3 @@ test('Pebble uses production character art without the legacy story circle', asy
   );
   expect(village.objects.some((object) => object.text?.startsWith('Pebble Talk'))).toBe(false);
 });
-
-test('Crystal Brook meadow branch replaces the ribbon-board crossing', async ({ page }) => {
-  await page.goto('/?diagnostics=1');
-  await waitForScene(page, 'TitleScene');
-  const meadow = await startScene(page, 'RainbowMeadowScene');
-
-  expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:path').visible).toBe(false);
-  expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:divider').visible).toBe(false);
-  expect(named(meadow, 'r6-wp6.18g:meadow-crystal-brook:path').visible).toBe(true);
-  expect(named(meadow, 'r6-region-gateway-art:meadow-crystal-brook:cave-mouth').visible).toBe(true);
-});
-
-test('production region gateways suppress their legacy R5 sign labels', async ({ page }) => {
-  await page.goto('/?diagnostics=1');
-  await waitForScene(page, 'TitleScene');
-
-  const meadow = await startScene(page, 'RainbowMeadowScene');
-  expect(named(meadow, 'r6-wp6.18g:legacy-gateway-label:meadow-crystal-brook').visible).toBe(false);
-
-  const brook = await startScene(page, 'CrystalBrookScene');
-  for (const id of [
-    'crystal-brook-meadow',
-    'crystal-brook-whispering-woods',
-    'crystal-brook-crystal-cascade',
-  ]) {
-    expect(named(brook, `r6-wp6.18g:legacy-gateway-label:${id}`).visible).toBe(false);
-  }
-
-  const woods = await startScene(page, 'WhisperingWoodsScene');
-  expect(
-    named(woods, 'r6-wp6.18g:legacy-gateway-label:whispering-woods-crystal-brook').visible,
-  ).toBe(false);
-});

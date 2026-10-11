@@ -125,7 +125,9 @@ async function completeMoonflowerCake(page: Page): Promise<void> {
 test('H3.11-R2 Wobbly Cake plays as a skill mini-game and preserves Maple quest progression', async ({
   page,
 }) => {
-  test.setTimeout(90_000);
+  // Full recipe uses real measuring, 24 stirs, three drags and 20 icing strokes.
+  // Sharded CI reached the topping screen at 90s; preserve the full journey.
+  test.setTimeout(120_000);
   await seedMapleReadyToBake(page);
   await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {

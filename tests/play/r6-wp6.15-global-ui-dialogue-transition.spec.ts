@@ -4,7 +4,7 @@ const PLAYER_NAME = 'world-player-unicorn';
 const PIP_APPROACH = { x: 1110, y: 825 } as const;
 const WILLOW_APPROACH = { x: 620, y: 1345 } as const;
 const MARIGOLD_APPROACH = { x: 1700, y: 1240 } as const;
-const NOVA_APPROACH = { x: 2370, y: 930 } as const;
+const NOVA_RACE_HUB_APPROACH = { x: 430, y: 800 } as const;
 const RETIRED_CONVERSATION_SCENES = [
   'WillowStoryScene',
   'MarigoldPicnicScene',
@@ -201,7 +201,10 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
     .poll(async () => {
       const scene = await sceneSnapshot(page, sceneKey);
       const hasTalkAction = scene.objects.some(
-        (object) => object.visible && object.text === 'Talk',
+        (object) =>
+          object.visible &&
+          object.name === 'exploration-interaction-prompt-label' &&
+          object.text === 'Talk',
       );
       const hasTargetLabel = scene.objects.some(
         (object) => object.visible && object.text === label,
@@ -221,11 +224,11 @@ async function openPipConversation(page: Page): Promise<void> {
 
 async function assertMigratedConversationStarts(
   page: Page,
-  sceneKey: 'SunbeamVillageScene' | 'RainbowMeadowScene',
+  sceneKey: 'SunbeamVillageScene' | 'RainbowRunEntryScene',
   speaker: 'Willow' | 'Marigold' | 'Nova',
   position: { x: number; y: number },
 ): Promise<void> {
-  await startScene(page, sceneKey);
+  await waitForScene(page, sceneKey);
   await positionPlayer(page, sceneKey, position.x, position.y);
   await waitForTalkTarget(page, sceneKey, speaker);
   await page.keyboard.press('KeyE');
@@ -356,7 +359,7 @@ test('supporting resident uses the shared dialogue family with production portra
   });
 });
 
-test('Willow, Marigold and Nova migrated conversations activate from the shared Talk action', async ({
+test('Willow, Marigold and Nova conversations activate from their current shared Talk actions', async ({
   page,
 }) => {
   test.setTimeout(90_000);
@@ -365,14 +368,17 @@ test('Willow, Marigold and Nova migrated conversations activate from the shared 
   const cases = [
     ['SunbeamVillageScene', 'Willow', WILLOW_APPROACH],
     ['SunbeamVillageScene', 'Marigold', MARIGOLD_APPROACH],
-    ['RainbowMeadowScene', 'Nova', NOVA_APPROACH],
+    ['RainbowRunEntryScene', 'Nova', NOVA_RACE_HUB_APPROACH],
   ] as const;
 
   for (const [sceneKey, speaker, position] of cases) {
     // Fully unload Phaser between cases. Re-navigating directly from a live
     // dialogue scene can leave the prior document servicing the next wait.
     await page.goto('about:blank');
-    await page.goto('/?diagnostics=1');
+    // Load the authored entry scene through Boot/Preload, not a diagnostic scene switch.
+    // The latter can race with the initial scene lifecycle and leave the hub inactive.
+    const route = sceneKey === 'RainbowRunEntryScene' ? 'race-hub' : 'village';
+    await page.goto(`/?scene=${route}&diagnostics=1`);
     await waitForDiagnostics(page);
     await assertMigratedConversationStarts(page, sceneKey, speaker, position);
   }

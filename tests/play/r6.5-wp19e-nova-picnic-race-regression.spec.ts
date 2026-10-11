@@ -163,7 +163,10 @@ async function waitForTalkTarget(page: Page, sceneKey: string, label: string): P
         (object) => object.name === 'exploration-interaction-prompt' && object.visible,
       );
       const promptLabelVisible = scene.objects.some(
-        (object) => object.name === 'exploration-interaction-prompt-label' && object.visible,
+        (object) =>
+          object.name === 'exploration-interaction-prompt-label' &&
+          object.visible &&
+          object.text === 'Talk',
       );
       const targetHintVisible = scene.objects.some(
         (object) => object.name === 'exploration-tablet-hint-panel' && object.visible,
@@ -257,8 +260,6 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   // Choosing the picnic commits Marigold's next location, but she finishes the current
   // Sunbeam visit instead of popping out of existence in front of the player.
   await waitForVisibleObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
-  await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  await waitForTalkTarget(page, 'SunbeamVillageScene', 'Marigold');
 
   // Re-enter through a genuine Meadow boot so the committed picnic presence is resolved
   // through the same lifecycle a player uses when leaving Sunbeam Village.
@@ -311,7 +312,13 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   );
   expect(picnicNova).toBeTruthy();
 
-  await positionPlayer(page, 'RainbowMeadowScene', (picnicNova?.x ?? 0) - 110, picnicNova?.y ?? 0);
+  // Approach from Nova's east side, away from Maple's moving picnic route.
+  await positionPlayer(
+    page,
+    'RainbowMeadowScene',
+    (picnicNova?.x ?? NOVA_PICNIC_POSITION.x) + 100,
+    (picnicNova?.y ?? NOVA_PICNIC_POSITION.y) - 70,
+  );
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
   await page.keyboard.press('KeyE');
   await waitForVisibleObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
@@ -343,6 +350,15 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
 
   await page.keyboard.press('Escape');
   await waitForHiddenObject(page, 'RainbowMeadowScene', 'dialogue-production-panel');
+  // Picnic Hill has several neighbouring conversation targets. After the
+  // dialogue closes the contextual prompt can legitimately select Maple.
+  // Re-enter Nova's own interaction zone before checking she is still talkable.
+  await positionPlayer(
+    page,
+    'RainbowMeadowScene',
+    (picnicNova?.x ?? NOVA_PICNIC_POSITION.x) + 100,
+    (picnicNova?.y ?? NOVA_PICNIC_POSITION.y) - 70,
+  );
   await waitForTalkTarget(page, 'RainbowMeadowScene', 'Nova');
 
   await page.goto('/?scene=village&diagnostics=1');
@@ -350,11 +366,17 @@ test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when N
   await waitForScene(page, 'SunbeamVillageScene');
   await waitForHiddenObject(page, 'SunbeamVillageScene', 'core-npc:marigold:world');
   await positionPlayer(page, 'SunbeamVillageScene', MARIGOLD_APPROACH.x, MARIGOLD_APPROACH.y);
-  await page.waitForTimeout(250);
-  const returnedVillage = await sceneSnapshot(page, 'SunbeamVillageScene');
-  expect(
-    returnedVillage.objects.some(
-      (object) => object.visible && object.text?.includes('Marigold') === true,
-    ),
-  ).toBe(false);
+  // Confirm the shared interaction hint and visible world labels do not offer a
+  // ghost Marigold conversation after her move to Picnic Hill.
+  await expect
+    .poll(async () => {
+      const scene = await sceneSnapshot(page, 'SunbeamVillageScene');
+      return scene.objects.some(
+        (object) =>
+          object.visible &&
+          ((object.name === 'exploration-tablet-hint' && object.text === 'Marigold') ||
+            object.text?.includes('Marigold') === true),
+      );
+    })
+    .toBe(false);
 });

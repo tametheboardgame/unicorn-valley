@@ -10,6 +10,8 @@ These gates apply across bounded work packages unless an explicitly approved pac
 ## Technical correctness
 
 - Required format/lint/type/test/build/performance/smoke checks pass.
+- Ready-for-review and later non-draft PR heads pass the authoritative full Chromium, compatibility and unit jobs plus a green **Merge Gate** for that exact live GitHub head; focused draft checks alone never authorise merging.
+- All deterministic Tier 0 errors are addressed together, including any formatter-remediation patch. A cancelled, superseded or skipped required job cannot be counted as passing.
 - Browser playtest and compatibility checks pass where required by CI.
 - New durable rules or state transitions receive objective automated coverage where practical.
 - No known progression blocker is introduced.

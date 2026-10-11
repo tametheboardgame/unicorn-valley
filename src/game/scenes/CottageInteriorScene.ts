@@ -114,7 +114,7 @@ export class CottageInteriorScene extends Phaser.Scene {
     this.decorationService = new HomeDecorationService(saveService);
     const homeView = buildCottageHomeView(save);
     this.renderHomeState(homeView);
-    void this.renderPlacedDecorations(homeView);
+    this.renderPlacedDecorations(homeView);
     this.normalInteractions = this.createNormalInteractions(homeView);
     this.decorationInteractions = this.createDecorationInteractions(homeView);
 
@@ -774,10 +774,12 @@ export class CottageInteriorScene extends Phaser.Scene {
     }
   }
 
-  private async renderPlacedDecorations(homeView: CottageHomeView): Promise<void> {
+  private renderPlacedDecorations(homeView: CottageHomeView): void {
     if (homeView.placements.length === 0) return;
 
-    if (!this.scene.isActive()) return;
+    // This runs during create(), before Phaser necessarily marks the scene as
+    // active. The former active-scene guard silently skipped all placed art
+    // even though the saved placements and their colliders were restored.
 
     const allSlots: readonly CottageDecorationSlot[] = [
       ...COTTAGE_INTERIOR_MAP.decorationSlots,

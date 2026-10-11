@@ -905,6 +905,10 @@ export class NovaTutorialRaceScene extends Phaser.Scene {
     });
   }
 
+  public exitRace(): void {
+    this.exitToMeadow();
+  }
+
   private exitToMeadow(): void {
     saveLocationCheckpoint(getBrowserSaveService(), RAINBOW_RUN_HUB_LOCATION_ID);
     this.scene.start('RainbowRunEntryScene');

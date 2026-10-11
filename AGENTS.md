@@ -132,7 +132,10 @@ The default development loop is **small change -> cheap relevant checks -> previ
 - Documentation-only changes must remain documentation/static-contract checks only.
 - Ordinary visual/content/UI iterations must not run Tier 3 full Chromium shards or Tier 4 cross-browser solely because the wider branch previously touched shared code.
 - Shared-system changes should use representative ownership-selected regression coverage during development unless the current delta itself is an explicit high-risk escalation.
-- After a substantive slice is human-approved and **before merge to `main` / production**, dispatch one authoritative full CI run against the exact approved head. That final gate runs the complete required unit/build/performance, Chromium and cross-browser qualification. Merge only after it is green.
+- Before pushing changed source or content, run `npm run format` and `npm run format:check`, then relevant local checks. CI reports formatter, lint, architecture and policy failures together; fix the complete set rather than sending multiple single-format commits.
+- Keep work in draft while iterating. Moving a PR to **Ready for review** starts full authoritative unit/build, Chromium and cross-browser qualification. Any later commit to a non-draft PR requires a fresh full qualification, even when the incremental diff is small.
+- The **Merge Gate** validates all required jobs for the plan and compares the qualified head against the PR's live GitHub head. A previously green, superseded SHA is not permission to merge. Never merge while the authoritative exact-head gate is red, incomplete or unverified.
+- Manual full CI remains an explicit authoritative fallback; production deployment is a separate Red action.
 - A full run on `main` after merge is confirmation, not a substitute for the pre-merge exact-head qualification.
 
 ### Git/tool reconnect rule

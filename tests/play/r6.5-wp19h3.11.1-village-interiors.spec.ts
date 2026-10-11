@@ -535,35 +535,37 @@ test('SH1.2A switches independent illustration sets and remembers the choice', a
 
   await page.locator('.story-library-book[data-story-id="the-hare-and-the-tortoise"]').click();
 
-  const illustrationSwitch = page.getByRole('navigation', { name: 'Illustrations' });
+  // SH1.6 replaced the old nav-labelled switch and long button labels with a
+  // compact Modern / Classic control group. Check the actual image-set contract.
+  const illustrationSwitch = page.locator('.story-reader-illustration-switch');
+  const modern = illustrationSwitch.getByRole('button', { name: 'Modern', exact: true });
+  const classic = illustrationSwitch.getByRole('button', { name: 'Classic', exact: true });
   await expect(illustrationSwitch).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Modern Illustrations' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
-  await expect(page.locator('.story-reader-illustration img').first()).toHaveAttribute(
-    'src',
-    /illustrations\/generated\/challenge\.webp$/,
-  );
+  await expect(modern).toHaveAttribute('aria-pressed', 'true');
 
-  await page.getByRole('button', { name: 'Classic Illustrations' }).click();
+  const modernImage = page.locator('.story-reader-illustration img').first();
+  await expect(modernImage).toHaveAttribute('src', /\S+/);
+  const modernSrc = await modernImage.getAttribute('src');
+
+  await classic.click();
   await expect(page.locator('.story-reader-paper')).toHaveAttribute(
     'data-story-illustration-set-id',
     'classic',
   );
-  await expect(page.locator('.story-reader-illustration img').first()).toHaveAttribute(
-    'src',
-    /illustrations\/start\.webp$/,
-  );
+  await expect(classic).toHaveAttribute('aria-pressed', 'true');
+  const classicImage = page.locator('.story-reader-illustration img').first();
+  await expect(classicImage).toHaveAttribute('src', /\S+/);
+  expect(await classicImage.getAttribute('src')).not.toBe(modernSrc);
 
   await page.getByRole('button', { name: 'Library' }).click();
   await page.locator('.story-library-book[data-story-id="the-hare-and-the-tortoise"]').click();
-  await expect(page.getByRole('button', { name: 'Classic Illustrations' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
+  await expect(
+    page
+      .locator('.story-reader-illustration-switch')
+      .getByRole('button', { name: 'Classic', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true');
 
   await page.getByRole('button', { name: 'Library' }).click();
   await page.locator('.story-library-book[data-story-id="the-duck-bread-baker"]').click();
-  await expect(page.getByRole('navigation', { name: 'Illustrations' })).toHaveCount(0);
+  await expect(page.locator('.story-reader-illustration-switch')).toHaveCount(0);
 });

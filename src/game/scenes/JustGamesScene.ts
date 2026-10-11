@@ -686,7 +686,9 @@ export class JustGamesScene extends Phaser.Scene {
   }
 
   private returnToTitle(): void {
-    if (this.launching) return;
+    // The keyboard plugin can still dispatch Escape to a suspended menu.
+    // Only the active Just Games scene may navigate back to Title.
+    if (this.launching || !this.scene.isActive()) return;
     this.scene.start('TitleScene');
   }
 }

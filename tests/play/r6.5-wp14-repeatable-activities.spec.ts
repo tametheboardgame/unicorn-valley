@@ -104,7 +104,10 @@ async function holdMeasure(page: Page, objectName: string, milliseconds: number)
 test('WP14 Maple baking reuses the cake table and rewards a strong repeat bake', async ({
   page,
 }) => {
-  test.setTimeout(90_000);
+  // Full keyboard/drag recipe and save assertions passed within 90 seconds on
+  // the CI software renderer; only the final return ran out of test time.
+  // Keep every real user interaction and reward assertion in this long E2E.
+  test.setTimeout(120_000);
   await seedActivityPrerequisites(page, 2);
   await openDiagnostics(page);
   await startScene(page, 'VillageInteriorScene', {

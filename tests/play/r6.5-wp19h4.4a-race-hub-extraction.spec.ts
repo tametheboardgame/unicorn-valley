@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForNamedObject } from '../support/browserDiagnostics';
+import { RAINBOW_MEADOW_LAYOUT } from '../../src/game/world/RainbowMeadowMap';
+import { RAINBOW_RUN_HUB_LAYOUT } from '../../src/game/world/RainbowRunHubMap';
 
 const PLAYER_NAME = 'world-player-unicorn';
 
@@ -94,21 +97,30 @@ test('H4.4A walks through the Meadow/Hub gateway in both directions', async ({ p
   await page.goto('/?scene=meadow&diagnostics=1');
   await waitForScene(page, 'RainbowMeadowScene');
 
-  await positionPlayer(page, 'RainbowMeadowScene', 2950, 190);
+  // Walk through the authored north boundary. This is independent of the nearby
+  // explicit Enter Race Hub prompt and is preserved by the H4.7 replacement owner.
+  const gate = RAINBOW_MEADOW_LAYOUT.hubFeatures.rainbowRunEntrance;
+  await positionPlayer(page, 'RainbowMeadowScene', gate.position.x, gate.position.y);
   await waitForScene(page, 'RainbowRunEntryScene');
+  await waitForNamedObject(page, 'RainbowRunEntryScene', PLAYER_NAME);
 
-  await positionPlayer(page, 'RainbowRunEntryScene', 1100, 1240);
+  const exit = RAINBOW_RUN_HUB_LAYOUT.meadowExit.walkThroughPosition;
+  await positionPlayer(page, 'RainbowRunEntryScene', exit.x, exit.y);
   await waitForScene(page, 'RainbowMeadowScene');
+  await waitForNamedObject(page, 'RainbowMeadowScene', PLAYER_NAME);
 
   const meadow = await sceneObjects(page, 'RainbowMeadowScene');
   const player = meadow.find(({ name }) => name === PLAYER_NAME);
-  expect(player?.x).toBeCloseTo(2950, 0);
-  expect(player?.y).toBeCloseTo(390, 0);
+  expect(player?.x).toBeCloseTo(gate.approach.x, 0);
+  expect(player?.y).toBeCloseTo(gate.approach.y, 0);
 });
 
 test('H4.4A race exits return to the Race Hub rather than Rainbow Meadow', async ({ page }) => {
   await page.goto('/?scene=race&diagnostics=1');
   await waitForScene(page, 'RaceScene');
+  // Wait for the real race HUD/input owner, not merely the scene-active flag,
+  // before sending Escape (consistent with the passing ENG-WP1.2 reproduction).
+  await waitForNamedObject(page, 'RaceScene', 'race-assistance-control');
   await page.keyboard.press('Escape');
   await waitForScene(page, 'RainbowRunEntryScene');
 

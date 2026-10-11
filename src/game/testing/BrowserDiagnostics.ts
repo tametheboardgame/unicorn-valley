@@ -130,6 +130,19 @@ export interface BrowserDiagnosticsApi {
   startScene(sceneKey: string, data?: object, keepExplorationHud?: boolean): void;
   selectRaceCourse(courseId: string): void;
   primeRainbowDiscTiming(): void;
+  rainbowDiscMatchState(): {
+    mode: string;
+    phase: string;
+    selectedReceiver: number;
+    openLane: number | null;
+    possession: number;
+    playerScore: number;
+    oppositionScore: number;
+    actionLocked: boolean;
+    timingActive: boolean;
+    defenceCueLane: number | null;
+    practiceThrows: number;
+  };
   arcadeSpriteVelocity(sceneKey: string, objectName: string): { x: number; y: number };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
 }
@@ -160,6 +173,7 @@ type InspectableContainer = Phaser.GameObjects.GameObject & {
 interface InspectableSceneRuntime {
   raceStarted?: unknown;
   primeDiagnosticSuccessfulTiming?: () => void;
+  getDiagnosticMatchState?: () => ReturnType<BrowserDiagnosticsApi['rainbowDiscMatchState']>;
   playerFinishPlace?: unknown;
   elapsedMs?: unknown;
   runState?: {
@@ -586,6 +600,14 @@ export function installBrowserDiagnostics(game: Phaser.Game): BrowserDiagnostics
         throw new Error('Rainbow Disc diagnostic timing is unavailable.');
       }
       scene.primeDiagnosticSuccessfulTiming();
+    },
+    rainbowDiscMatchState: () => {
+      const scene = game.scene.getScene('RainbowDiscActivityScene') as Phaser.Scene &
+        InspectableSceneRuntime;
+      if (!scene?.scene.isActive() || !scene.getDiagnosticMatchState) {
+        throw new Error('Rainbow Disc match diagnostics are unavailable.');
+      }
+      return scene.getDiagnosticMatchState();
     },
     arcadeSpriteVelocity: (sceneKey, objectName) => {
       const scene = game.scene.getScene(sceneKey);

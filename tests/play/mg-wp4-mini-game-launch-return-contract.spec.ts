@@ -21,6 +21,7 @@ const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
     gameId: 'rainbow-run-racing',
     variantId: 'race-course:crystal-brook-crystal-cascade',
     sceneKey: 'RaceScene',
+    readyObjectName: 'race-assistance-control',
   },
   { gameId: 'rainbow-disc', variantId: 'practice', sceneKey: 'RainbowDiscActivityScene' },
   { gameId: 'sunbeam-chess', sceneKey: 'ChessPlazaActivityScene' },
@@ -29,7 +30,12 @@ const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
     sceneKey: 'MapleBakingActivityScene',
     readyObjectName: 'h3-r2-baking-stage:recipe',
   },
-  { gameId: 'firefly-lantern', variantId: 'multicolour', sceneKey: 'FireflyLanternScene' },
+  {
+    gameId: 'firefly-lantern',
+    variantId: 'multicolour',
+    sceneKey: 'FireflyLanternScene',
+    readyObjectName: 'firefly-lantern-ui',
+  },
   { gameId: 'pond-leap', sceneKey: 'PondLeapActivityScene' },
   { gameId: 'coral-beachcombing', sceneKey: 'CoralBeachcombingActivityScene' },
 ];

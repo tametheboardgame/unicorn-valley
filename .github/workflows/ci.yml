@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft]
   workflow_dispatch:
     inputs:
       full_ci:
@@ -12,17 +13,29 @@ on:
         required: true
         default: true
         type: boolean
+      pr_number:
+        description: Optional PR number to enforce live exact-head validation for manual qualification
+        required: false
+        type: number
   schedule:
     - cron: '17 4 * * 0'
 
 permissions:
   contents: read
+  pull-requests: read
+
+# Superseded commits to the same PR must not consume runner time. Main and
+# manually-triggered authoritative runs are never cancelled by newer runs.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   plan:
     name: Verification plan
     runs-on: ubuntu-latest
     outputs:
+      head_sha: ${{ steps.plan.outputs.head_sha }}
       change_class: ${{ steps.plan.outputs.change_class }}
       tiers: ${{ steps.plan.outputs.tiers }}
       owners: ${{ steps.plan.outputs.owners }}
@@ -60,7 +73,7 @@ jobs:
           VERIFY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           VERIFY_PREVIOUS_HEAD_SHA: ${{ github.event.before }}
           VERIFY_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          VERIFY_FORCE_FULL: ${{ inputs.full_ci || false }}
+          VERIFY_FORCE_FULL: ${{ inputs.full_ci || (github.event_name == 'pull_request' && !github.event.pull_request.draft) }}
         run: node scripts/verification/planVerification.mjs
       - name: Upload verification plan
         uses: actions/upload-artifact@v4
@@ -81,8 +94,11 @@ jobs:
           node-version: 22.23.2
           package-manager-cache: false
       - run: npm ci --no-audit --no-fund
+      # Report deterministic failures together. A bad formatter diff must not
+      # obscure lint, architecture, policy or type-check failures on the same head.
       - name: Check formatting
         id: format
+        continue-on-error: true
         run: |
           if ! npm run format:check; then
             npm run format
@@ -90,7 +106,7 @@ jobs:
             exit 1
           fi
       - name: Upload formatter remediation
-        if: failure() && steps.format.conclusion == 'failure'
+        if: ${{ !cancelled() && steps.format.outcome == 'failure' }}
         uses: actions/upload-artifact@v4
         with:
           name: formatter-remediation
@@ -98,14 +114,24 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Lint
+        id: lint
+        continue-on-error: true
         run: npm run lint
       - name: Check architecture boundaries
+        id: architecture
+        continue-on-error: true
         run: npm run architecture:validate
       - name: Check verification policy
+        id: verification-policy
+        continue-on-error: true
         run: npm run verification:policy:test
       - name: Check performance policy
+        id: performance-policy
+        continue-on-error: true
         run: npm run performance:policy:test
       - name: Type-check runtime changes
+        id: typecheck
+        continue-on-error: true
         if: needs.plan.outputs.run_typecheck == 'true'
         run: npm run typecheck
       - name: Set up Python for project contract
@@ -114,8 +140,29 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate AI project contract
+        id: project-contract
+        continue-on-error: true
         if: needs.plan.outputs.run_project_contract == 'true'
         run: python scripts/ai/validate-project-state.py
+      - name: Consolidate Tier 0 failures
+        if: ${{ !cancelled() }}
+        env:
+          FORMAT: ${{ steps.format.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          ARCHITECTURE: ${{ steps.architecture.outcome }}
+          VERIFICATION_POLICY: ${{ steps.verification-policy.outcome }}
+          PERFORMANCE_POLICY: ${{ steps.performance-policy.outcome }}
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          PROJECT_CONTRACT: ${{ steps.project-contract.outcome }}
+        run: |
+          failed=0
+          for check in FORMAT LINT ARCHITECTURE VERIFICATION_POLICY PERFORMANCE_POLICY TYPECHECK PROJECT_CONTRACT; do
+            if [ "${!check}" = "failure" ]; then
+              echo "::error title=Tier 0 ${check} failed::Inspect the preceding ${check} step and formatter remediation artifact if applicable."
+              failed=1
+            fi
+          done
+          exit "$failed"
 
   tier1:
     name: Tier 1 - unit contracts
@@ -195,12 +242,40 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  whole-game-smoke:
+    name: Current whole-game smoke
+    needs: [plan, tier0]
+    if: needs.plan.outputs.run_tier3 == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run current whole-game smoke contracts
+        run: npx playwright test --config=playwright.smoke.config.ts
+      - name: Upload current smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-whole-game-smoke
+          path: playtest-smoke-artifacts
+          if-no-files-found: warn
+          retention-days: 14
+
   tier3:
     name: Tier 3 - full Chromium (${{ matrix.shard }}/3)
     needs: [plan, tier0, tier1]
     if: needs.plan.outputs.run_tier3 == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # Shard 2 exceeded the former 25m limit after 84 passing browser cases.
+    # Keep an explicit safety limit without prematurely cancelling qualification.
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -243,6 +318,17 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Install Chromium, Firefox and WebKit
         run: npx playwright install --with-deps chromium firefox webkit
+      - name: Confirm required browser profiles are selected
+        run: |
+          set -euo pipefail
+          npx playwright test --config=playwright.compat.config.ts --list > browser-profiles.txt
+          for profile in chromium-desktop firefox-desktop webkit-desktop chromium-tablet-touch webkit-tablet-touch chromium-mobile-touch webkit-mobile-touch; do
+            if ! grep -Fq "[$profile]" browser-profiles.txt; then
+              echo "::error::Missing required browser profile $profile from compatibility selection."
+              exit 1
+            fi
+          done
+          echo "All seven required compatibility profiles have selected tests."
       - name: Run compatibility matrix
         run: npm run test:browser-compat
       - name: Upload compatibility evidence
@@ -253,3 +339,36 @@ jobs:
           path: browser-compat-artifacts
           if-no-files-found: warn
           retention-days: 14
+
+  merge-gate:
+    name: Merge Gate
+    needs: [plan, tier0, tier1, build-performance, tier2, whole-game-smoke, tier3, tier4]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - name: Enforce exact-head verification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
+          PLAN_HEAD: ${{ needs.plan.outputs.head_sha }}
+          PLAN_CLASS: ${{ needs.plan.outputs.change_class }}
+          PLAN_RESULT: ${{ needs.plan.result }}
+          RUN_UNIT: ${{ needs.plan.outputs.run_unit }}
+          RUN_BUILD: ${{ needs.plan.outputs.run_build }}
+          RUN_TIER2: ${{ needs.plan.outputs.run_tier2 }}
+          RUN_TIER3: ${{ needs.plan.outputs.run_tier3 }}
+          RUN_TIER4: ${{ needs.plan.outputs.run_tier4 }}
+          RESULT_TIER0: ${{ needs.tier0.result }}
+          RESULT_TIER1: ${{ needs.tier1.result }}
+          RESULT_BUILD: ${{ needs.build-performance.result }}
+          RESULT_TIER2: ${{ needs.tier2.result }}
+          RESULT_SMOKE: ${{ needs.whole-game-smoke.result }}
+          RESULT_TIER3: ${{ needs.tier3.result }}
+          RESULT_TIER4: ${{ needs.tier4.result }}
+        run: node scripts/verification/checkMergeGate.mjs

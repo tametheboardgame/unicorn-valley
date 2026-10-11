@@ -31,6 +31,31 @@ interface DiagnosticsApi {
   };
   setArcadeSpritePosition(sceneKey: string, objectName: string, x: number, y: number): void;
   primeRainbowDiscTiming(): void;
+  rainbowDiscMatchState(): RainbowDiscMatchState;
+}
+
+interface RainbowDiscMatchState {
+  mode: string;
+  phase: string;
+  selectedReceiver: number;
+  openLane: number | null;
+  possession: number;
+  playerScore: number;
+  oppositionScore: number;
+  actionLocked: boolean;
+  timingActive: boolean;
+  defenceCueLane: number | null;
+  defenceCueRenderedLane: number | null;
+  practiceThrows: number;
+}
+
+async function matchState(page: Page): Promise<RainbowDiscMatchState> {
+  return page.evaluate(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) throw new Error('Browser diagnostics unavailable.');
+    return api.rainbowDiscMatchState();
+  });
 }
 
 async function waitForDiagnostics(page: Page): Promise<void> {
@@ -47,7 +72,41 @@ async function snapshotScene(page: Page, key: string): Promise<DiagnosticScene> 
   }, key);
 }
 
+async function waitForTimingReady(page: Page): Promise<void> {
+  // Poll the small scene-owned state instead of repeatedly serialising all
+  // Phaser objects; full snapshots can starve scheduled tweens on CI.
+  try {
+    await expect
+      .poll(async () => (await matchState(page)).timingActive, {
+        timeout: 15_000,
+        intervals: [100, 250, 500, 1_000],
+      })
+      .toBe(true);
+    // Still require the visible player-facing timing control when input unlocks.
+    const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+    expect(
+      scene.objects.some(
+        ({ name, effectiveVisible }) =>
+          name === 'rainbow-disc-activity:timing-marker' && effectiveVisible,
+      ),
+    ).toBe(true);
+  } catch (error) {
+    const state = await matchState(page);
+    const scene = await snapshotScene(page, 'RainbowDiscActivityScene');
+    const marker = scene.objects.find(({ name }) => name === 'rainbow-disc-activity:timing-marker');
+    throw new Error(
+      `Rainbow Disc timing readiness stalled: ${JSON.stringify({
+        state,
+        markerVisible: marker?.visible,
+        markerEffectiveVisible: marker?.effectiveVisible,
+      })}`,
+      { cause: error },
+    );
+  }
+}
+
 async function primeSuccessfulTiming(page: Page): Promise<void> {
+  await waitForTimingReady(page);
   await page.evaluate(() => {
     const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
       .__UNICORN_VALLEY_DIAGNOSTICS__;
@@ -66,13 +125,23 @@ async function clickNamedObject(page: Page, sceneKey: string, name: string): Pro
 }
 
 async function throwToPracticeTarget(page: Page, receiverIndex: number): Promise<void> {
+  await waitForTimingReady(page);
   await clickNamedObject(
     page,
     'RainbowDiscActivityScene',
     `rainbow-disc-activity:receiver-ring:${receiverIndex}`,
   );
-  await primeSuccessfulTiming(page);
+  // Readiness was already checked above. Avoid a second full-scene snapshot
+  // for each throw in this five-round journey.
+  await page.evaluate(() => {
+    const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+      .__UNICORN_VALLEY_DIAGNOSTICS__;
+    if (!api) throw new Error('Browser diagnostics unavailable.');
+    api.primeRainbowDiscTiming();
+  });
+  const previousThrows = (await matchState(page)).practiceThrows;
   await page.keyboard.press('Space');
+  await expect.poll(async () => (await matchState(page)).practiceThrows).toBe(previousThrows + 1);
 }
 async function setMeadowPlayerPosition(page: Page, x: number, y: number): Promise<void> {
   await page.evaluate(
@@ -107,58 +176,64 @@ async function currentOpenLane(page: Page): Promise<number> {
 }
 
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
-  const readLane = await page.evaluate(async () => {
-    const timeoutAt = performance.now() + 6000;
+  // The cached diagnostic survives the brief cue; the actual rendered route
+  // provides independent, player-visible evidence when that cache is unavailable.
+  // Never infer a lane from the hidden opposition attack state.
+  let telegraphedLane: number;
+  try {
+    const readLane = await page.waitForFunction(
+      () => {
+        const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+          .__UNICORN_VALLEY_DIAGNOSTICS__;
+        if (!api) return false;
+        const state = api.rainbowDiscMatchState();
+        if (state.phase !== 'defence') return false;
 
-    return new Promise<number>((resolve, reject) => {
-      const inspect = (): void => {
-        const api = (
-          window as typeof window & {
-            __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
-          }
-        ).__UNICORN_VALLEY_DIAGNOSTICS__;
-        const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
-        const cue = scene?.objects.find(
-          ({ name, effectiveVisible }) =>
-            name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
-        );
-
-        if (cue) {
-          resolve(Number(cue.name.split(':').at(-1)));
-          return;
+        let lane = state.defenceCueRenderedLane;
+        if (lane === null || lane === undefined) {
+          const cuePrefix = 'rainbow-disc-activity:defence-read-cue:';
+          const activity = api
+            .snapshot()
+            .scenes.find((scene) => scene.key === 'RainbowDiscActivityScene');
+          const visibleCue = activity?.objects.find(
+            ({ name, effectiveVisible }) => effectiveVisible && name.startsWith(cuePrefix),
+          );
+          if (!visibleCue) return false;
+          lane = Number(visibleCue.name.slice(cuePrefix.length));
         }
 
-        if (performance.now() >= timeoutAt) {
-          reject(new Error('Rainbow Disc defence read cue was not observed.'));
-          return;
-        }
-
-        requestAnimationFrame(inspect);
-      };
-
-      inspect();
-    });
-  });
+        // Playwright requires a truthy result; lane zero is valid.
+        return Number.isInteger(lane) && lane >= 0 && lane < 3 ? lane + 1 : false;
+      },
+      undefined,
+      { timeout: 12_000, polling: 150 },
+    );
+    telegraphedLane = (await readLane.jsonValue()) - 1;
+  } catch (error) {
+    const state = await matchState(page);
+    const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
+    const visibleCues = activity.objects
+      .filter(({ name }) => name.startsWith('rainbow-disc-activity:defence-read-cue:'))
+      .map(({ name, effectiveVisible }) => ({ name, effectiveVisible }));
+    throw new Error(
+      `Rainbow Disc cue observation stalled: ${JSON.stringify({ state, visibleCues })}`,
+      { cause: error },
+    );
+  }
 
   await page.waitForFunction(
     () => {
-      const api = (
-        window as typeof window & {
-          __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi;
-        }
-      ).__UNICORN_VALLEY_DIAGNOSTICS__;
-      const scene = api?.snapshot().scenes.find(({ key }) => key === 'RainbowDiscActivityScene');
-      return !scene?.objects.some(
-        ({ name, effectiveVisible }) =>
-          name.startsWith('rainbow-disc-activity:defence-read-cue:') && effectiveVisible,
-      );
+      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
+        .__UNICORN_VALLEY_DIAGNOSTICS__;
+      const state = api?.rainbowDiscMatchState();
+      return state?.phase === 'defence' && !state.actionLocked && state.defenceCueLane === null;
     },
     undefined,
-    { timeout: 6000 },
+    { timeout: 6_000, polling: 100 },
   );
 
   const choiceScene = await snapshotScene(page, 'RainbowDiscActivityScene');
-  const chosenLane = chooseCorrectly ? readLane : (readLane + 1) % 3;
+  const chosenLane = chooseCorrectly ? telegraphedLane : (telegraphedLane + 1) % 3;
   const receiver = choiceScene.objects.find(
     ({ name, effectiveVisible }) =>
       name === `rainbow-disc-activity:opponent-receiver:${chosenLane}` && effectiveVisible,
@@ -201,15 +276,31 @@ async function startGentleMatch(page: Page): Promise<void> {
     .toBe(true);
 }
 
-async function completeOpenLanePass(page: Page): Promise<void> {
+async function completeOpenLanePass(page: Page, previousReceiver = 1): Promise<number> {
+  await waitForTimingReady(page);
   const receiverIndex = await currentOpenLane(page);
-  await clickNamedObject(
-    page,
-    'RainbowDiscActivityScene',
-    `rainbow-disc-activity:receiver:${receiverIndex}`,
-  );
+  // Both Match and Passing Drill reuse this real throw helper; the diagnostic
+  // openLane is meaningful only during Match attack, not Practice.
+  const state = await matchState(page);
+  if (state.mode === 'match') {
+    expect(state.openLane).toBe(receiverIndex);
+  }
+  // Use the supported lane-choice keys: clicking the art sprite is not a
+  // deterministic way of changing receiver on software-rendered Chromium.
+  const steps = (receiverIndex - previousReceiver + 3) % 3;
+  if (steps > 0) {
+    await page.keyboard.press(steps === 1 ? 'ArrowDown' : 'ArrowUp');
+  }
+  await expect.poll(async () => (await matchState(page)).selectedReceiver).toBe(receiverIndex);
   await primeSuccessfulTiming(page);
+  const previousThrows = (await matchState(page)).practiceThrows;
   await page.keyboard.press('Space');
+  if (state.mode === 'practice') {
+    // A completed attempt is the contract, not merely an on-screen disc that
+    // can remain visible while the throw animation is still in flight.
+    await expect.poll(async () => (await matchState(page)).practiceThrows).toBe(previousThrows + 1);
+  }
+  return receiverIndex;
 }
 
 async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> {
@@ -234,6 +325,9 @@ async function dragDiscToReceiver(page: Page, receiverIndex = 1): Promise<void> 
 test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly after a score', async ({
   page,
 }) => {
+  // Complete two-goal match, defence and return uses several real animation
+  // sequences and browser interactions; retain all assertions on slow CI runners.
+  test.setTimeout(120_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=meadow&diagnostics=1');
@@ -357,14 +451,17 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
     .toBe('paused');
 
   for (let goal = 0; goal < 2; goal += 1) {
+    // The match starts each attack with the centre receiver selected and keeps
+    // that selection between passes. Track only real keyboard selections.
+    let selectedReceiver = 1;
     for (let pass = 0; pass < 3; pass += 1) {
-      await completeOpenLanePass(page);
-      if (pass < 2) {
-        await page.waitForTimeout(520);
-      }
+      selectedReceiver = await completeOpenLanePass(page, selectedReceiver);
     }
 
     if (goal === 0) {
+      // Observe the transient defence telegraph as soon as the third pass is
+      // released. Waiting for the score poll first can miss the cue entirely.
+      await defendTelegraphedLane(page, true);
       await expect
         .poll(async () => {
           const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -374,8 +471,6 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
           )?.text;
         })
         .toContain('YOU 1');
-
-      await defendTelegraphedLane(page, true);
       await expect
         .poll(async () => {
           const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
@@ -425,6 +520,8 @@ test('H4.9 Rainbow Disc lawn is alive before interaction and returns cleanly aft
 });
 
 test('H4.9B practice range launches a five-throw target challenge', async ({ page }) => {
+  // Five real throws and their animated returns take longer under sharded CI.
+  test.setTimeout(75_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto('/?scene=meadow&diagnostics=1');
@@ -610,18 +707,20 @@ test('H4.9D defended lanes can turn over possession and trigger a defence phase'
     expect(defender?.displayHeight).toBeCloseTo(receiver?.displayHeight ?? 0, 0);
   }
 
-  await dragDiscToReceiver(page, 0);
+  // Defenders rotate between lanes; throwing to receiver 0 is not reliably
+  // intercepted. Target one of the currently marked lanes to assert turnover.
+  const markedLane = Number(attackDefenders[0].name.split(':').at(-1));
+  // Newly started match selects the centre receiver (1); choose one of the two
+  // currently defended lanes with the actual Up/Down control and throw with Space.
+  expect([0, 2]).toContain(markedLane);
+  await page.keyboard.press(markedLane === 0 ? 'ArrowUp' : 'ArrowDown');
+  await expect.poll(async () => (await matchState(page)).selectedReceiver).toBe(markedLane);
+  await primeSuccessfulTiming(page);
+  await page.keyboard.press('Space');
 
-  await expect
-    .poll(async () => {
-      const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
-      return activity.objects.some(
-        ({ name, effectiveVisible }) =>
-          name === 'rainbow-disc-activity:defence-player' && effectiveVisible,
-      );
-    })
-    .toBe(true);
-
+  // The telegraph is time-limited. Observing it and correctly intercepting
+  // the next possession verifies the real defence phase, rather than waiting
+  // on a cosmetic sprite until the cue has already expired.
   await defendTelegraphedLane(page, true);
 
   await expect

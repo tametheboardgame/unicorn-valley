@@ -1,7 +1,11 @@
 import Phaser from 'phaser';
+import { MARIGOLD_CHARACTER_ID } from '../../content/r4PicnicEvent';
 import { createPipInteraction } from '../intro/PipIntro';
 import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { RainbowMeadowScene } from '../scenes/RainbowMeadowScene';
+import { getBrowserSaveService } from '../save/browserSaveService';
+import { startMarigoldConversation, startNovaConversation } from '../story/WorldStoryConversations';
+import { CoreNpcPresenceService, NOVA_CHARACTER_ID } from '../world/CoreNpcPresenceService';
 import { RAINBOW_MEADOW_LAYOUT, RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import { setSunbeamVillagePlayerSpawn, SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
 import type { InteractionActionKind, InteractionTarget } from './InteractionTarget';
@@ -89,6 +93,7 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
     return [];
   }
 
+  const presence = new CoreNpcPresenceService(getBrowserSaveService());
   const entrance = (id: string) => requiredPoint(RAINBOW_MEADOW_MAP.entrances, id, true);
   const feature = (id: string) => requiredPoint(RAINBOW_MEADOW_MAP.hubFeatures, id, true);
   const villageTarget: InteractionTarget = {
@@ -103,6 +108,30 @@ function meadowTargets(scene: Phaser.Scene): InteractionTarget[] {
 
   return [
     callbackTarget(villageTarget, 'enter', () => meadowActivate?.call(scene, villageTarget)),
+    {
+      id: 'interaction:meadow-marigold-picnic',
+      label: 'Marigold',
+      actionLabel: 'Talk',
+      actionKind: 'talk',
+      activationMode: 'explicit',
+      position: RAINBOW_MEADOW_LAYOUT.picnicHill.marigold,
+      interactionRadius: 155,
+      priority: 30,
+      visible: () => presence.resolve(MARIGOLD_CHARACTER_ID)?.area === 'picnic-hill',
+      result: { type: 'callback', activate: () => startMarigoldConversation(scene) },
+    },
+    {
+      id: 'interaction:meadow-nova-picnic',
+      label: 'Nova',
+      actionLabel: 'Talk',
+      actionKind: 'talk',
+      activationMode: 'explicit',
+      position: RAINBOW_MEADOW_LAYOUT.picnicHill.nova,
+      interactionRadius: 155,
+      priority: 35,
+      visible: () => presence.resolve(NOVA_CHARACTER_ID)?.area === 'picnic-hill',
+      result: { type: 'callback', activate: () => startNovaConversation(scene) },
+    },
     {
       id: 'interaction:rainbow-disc',
       label: 'Rainbow Disc',

@@ -1,4 +1,18 @@
 import { expect, type Page, test, type TestInfo } from '@playwright/test';
+import {
+  CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_SHALLOW_RIPPLE,
+} from '../../src/game/world/CrystalBrookMap';
+
+const GROTTO_APPROACH = {
+  x: CRYSTAL_BROOK_GROTTO_THRESHOLD.position.x,
+  y: CRYSTAL_BROOK_GROTTO_THRESHOLD.position.y - 90,
+} as const;
+const SHALLOW_RIPPLE_APPROACH = {
+  x: CRYSTAL_BROOK_SHALLOW_RIPPLE.x,
+  y: CRYSTAL_BROOK_SHALLOW_RIPPLE.y + 85,
+} as const;
 
 const WORLD_PLAYER_NAME = 'world-player-unicorn';
 
@@ -62,21 +76,12 @@ async function positionPlayer(page: Page, x: number, y: number): Promise<void> {
   );
 }
 
-async function openCrystalBrook(page: Page, x = 3130, y = 1850): Promise<void> {
+async function openCrystalBrook(page: Page, position = GROTTO_APPROACH): Promise<void> {
   await page.addInitScript(() => window.localStorage.clear());
-  await page.goto('/?diagnostics=1');
+  // Load the current Brook via Boot/Preload rather than restarting from diagnostics,
+  // which can race the shared interaction manager's scene registration.
+  await page.goto('/?scene=brook&diagnostics=1');
   await waitForDiagnostics(page);
-  await page.evaluate(() => {
-    const api = (
-      window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: BrowserDiagnosticsApi;
-      }
-    ).__UNICORN_VALLEY_DIAGNOSTICS__;
-    if (!api) {
-      throw new Error('Browser diagnostics are unavailable.');
-    }
-    api.startScene('CrystalBrookScene');
-  });
   await page.waitForFunction(() => {
     const api = (
       window as typeof window & {
@@ -85,7 +90,7 @@ async function openCrystalBrook(page: Page, x = 3130, y = 1850): Promise<void> {
     ).__UNICORN_VALLEY_DIAGNOSTICS__;
     return api?.snapshot().activeScenes.includes('CrystalBrookScene') === true;
   });
-  await positionPlayer(page, x, y);
+  await positionPlayer(page, position.x, position.y);
 }
 
 async function showReferenceGuidance(page: Page, portraitDomAction: boolean): Promise<void> {
@@ -181,7 +186,7 @@ test.describe('R6.5-WP19E1 semantic distinction evidence', () => {
   test.use({ viewport: { width: 1280, height: 720 }, hasTouch: false });
 
   test('captures a local Shallow Brook reaction beside its source', async ({ page }, testInfo) => {
-    await openCrystalBrook(page, 1900, 1260);
+    await openCrystalBrook(page, SHALLOW_RIPPLE_APPROACH);
     await expect
       .poll(async () => {
         const scene = await sceneSnapshot(page);
@@ -207,7 +212,14 @@ test.describe('R6.5-WP19E1 semantic distinction evidence', () => {
   test('captures dedicated Wonderbook discovery feedback without the legacy top duplicate', async ({
     page,
   }, testInfo) => {
-    await openCrystalBrook(page, 920, 590);
+    // Track the authored River Crystal location rather than a historical fixed position.
+    const northBankCrystal = CRYSTAL_BROOK_MAP.collectableSpots.find(
+      (spot) => spot.id === 'crystal-north-bank',
+    );
+    if (!northBankCrystal) {
+      throw new Error('Missing canonical north-bank River Crystal collectable.');
+    }
+    await openCrystalBrook(page, northBankCrystal.position);
 
     await expect
       .poll(async () => {

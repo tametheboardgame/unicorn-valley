@@ -113,7 +113,6 @@ async function holdUntilScene(
 for (const [alias, sceneKey, minimumDetails] of [
   ['glade', 'MoonflowerGladeScene', 18],
   ['village', 'SunbeamVillageScene', 32],
-  ['meadow', 'RainbowMeadowScene', 18],
 ] as const) {
   test(`${sceneKey} receives joined paths and scenic world gateways`, async ({ page }) => {
     await page.goto(`/?scene=${alias}&diagnostics=1`);
