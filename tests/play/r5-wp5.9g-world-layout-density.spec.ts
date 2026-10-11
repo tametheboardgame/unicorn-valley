@@ -77,7 +77,8 @@ function sceneFrom(value: DiagnosticSnapshot, sceneKey: string): DiagnosticScene
 
 const branchCues = [
   ['glade', 'MoonflowerGladeScene', 'region-branch-cue:moonflower-field'],
-  ['brook', 'CrystalBrookScene', 'region-branch-cue:prism-grotto'],
+  // H6 owns the current Crystal Grotto threshold, not the retired R5 branch plaque.
+  ['brook', 'CrystalBrookScene', 'brook-depth:crystal-grotto-entrance'],
   ['woods', 'WhisperingWoodsScene', 'region-branch-cue:lantern-clearing'],
 ] as const;
 
@@ -106,7 +107,7 @@ test.describe('R5-WP5.9G world layout and density', () => {
 
     const brook = sceneFrom(await snapshot(page), 'CrystalBrookScene');
     expect(
-      brook.objects.filter(({ name }) => name === 'region-branch-cue:prism-grotto'),
+      brook.objects.filter(({ name }) => name === 'brook-depth:crystal-grotto-entrance'),
     ).toHaveLength(1);
     expect(
       brook.objects.filter(({ name }) => name === 'exploration-geometry-presentation-anchor'),
