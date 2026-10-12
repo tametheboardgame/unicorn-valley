@@ -116,6 +116,16 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
   const actual = new Set();
   const seenShards = new Set();
   const reference = shards[0].provenance;
+  if (!reference || !/^\d+\/\d+$/.test(reference.shard)) {
+    throw new Error('Invalid first shard provenance');
+  }
+  if (manifest.provenance) {
+    if (manifest.provenance.sourceSha !== reference.sourceSha ||
+      manifest.provenance.headSha !== reference.headSha ||
+      manifest.provenance.runId !== reference.runId) {
+      throw new Error('Discovered manifest has a mismatched SHA or run identity');
+    }
+  }
   const shardCount = Number(reference.shard.split('/')[1]);
   for (const shard of shards) {
     const p = shard.provenance;

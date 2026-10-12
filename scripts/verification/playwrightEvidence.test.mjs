@@ -56,5 +56,6 @@ test('reconciles complete independent shards and rejects omissions/duplicates/SH
   assert.throws(() => reconcilePlaywrightEvidence(manifest, [first, first]), /Duplicate/);
   assert.throws(() => reconcilePlaywrightEvidence(manifest, [first, { ...second, provenance: { ...second.provenance, headSha: c } }]), /Mismatched SHA/);
   assert.throws(() => reconcilePlaywrightEvidence({ tests: [{ identity: 'not-present' }] }, [first, second]), /Unexpected executed/);
+  assert.throws(() => reconcilePlaywrightEvidence({ ...manifest, provenance: { ...provenance, sourceSha: c } }, [first, second]), /mismatched SHA/);
   assert.throws(() => reconcilePlaywrightEvidence({ tests: [manifest.tests[0], manifest.tests[0]] }, [first, second]), /duplicated manifest/);
 });
