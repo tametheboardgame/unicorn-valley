@@ -276,6 +276,38 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  test-discovery:
+    name: WP3.1 - full Chromium discovery evidence
+    needs: [plan, tier0]
+    if: needs.plan.outputs.run_tier3 == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Discover complete Playwright test inventory without launching browsers
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-discovery.json
+        run: npx playwright test --list --reporter=json
+      - name: Normalise source-bound discovery manifest
+        env:
+          TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+        run: node scripts/verification/playwrightEvidence.mjs --input=playwright-discovery.json --output=discovery-manifest.json --discovery
+      - name: Upload complete discovery manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromium-test-discovery
+          path: |
+            playwright-discovery.json
+            discovery-manifest.json
+          if-no-files-found: warn
+          retention-days: 14
+
   tier3:
     name: Tier 3 - full Chromium (${{ matrix.shard }}/6)
     needs: [plan, tier0, tier1]
@@ -303,6 +335,13 @@ jobs:
       - name: Summarise automated findings
         if: always()
         run: node scripts/summarisePlaytest.mjs
+      - name: Emit WP3.1 per-shard execution evidence
+        if: always()
+        continue-on-error: true
+        env:
+          TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+          TEST_EVIDENCE_SHARD: ${{ matrix.shard }}/6
+        run: node scripts/verification/playwrightEvidence.mjs --input=playtest-artifacts/playwright-results.json --output=playtest-artifacts/test-evidence.json
       - name: Upload playtest report and screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -346,6 +385,40 @@ jobs:
         with:
           name: tier4-browser-compatibility
           path: browser-compat-artifacts
+          if-no-files-found: warn
+          retention-days: 14
+
+  test-evidence:
+    name: WP3.1 - reconcile Chromium evidence (observational)
+    needs: [plan, tier3, test-discovery]
+    if: ${{ always() && needs.plan.outputs.run_tier3 == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - name: Download independent test discovery
+        uses: actions/download-artifact@v4
+        with:
+          name: chromium-test-discovery
+          path: discovery-evidence
+      - name: Download six shard reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: tier3-chromium-*-of-6
+          path: shard-evidence
+      - name: Reconcile discovered and recorded identities
+        continue-on-error: true
+        run: node scripts/verification/reconcilePlaywrightArtifacts.mjs --manifest=discovery-evidence/discovery-manifest.json --shards=shard-evidence --output=reconciliation-report.json
+      - name: Upload reconciliation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromium-evidence-reconciliation
+          path: reconciliation-report.json
           if-no-files-found: warn
           retention-days: 14
 

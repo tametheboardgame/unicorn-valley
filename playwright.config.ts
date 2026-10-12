@@ -9,7 +9,11 @@ export default defineConfig({
     timeout: 6_000,
   },
   outputDir: 'playtest-artifacts/results',
-  reporter: [['list'], ['html', { outputFolder: 'playtest-artifacts/html-report', open: 'never' }]],
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: 'playtest-artifacts/html-report', open: 'never' }],
+    ['json', { outputFile: 'playtest-artifacts/playwright-results.json' }],
+  ],
   use: {
     baseURL: 'http://127.0.0.1:4173',
     viewport: { width: 1280, height: 720 },
