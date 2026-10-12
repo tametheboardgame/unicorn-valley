@@ -151,13 +151,16 @@ export function evaluateTestImpact({
   }
   for (const path of contracts) {
     if (typeof path !== 'string') continue;
-    const validRemoved = removedTests.has(path) && ['retired', 'replaced'].includes(review.disposition);
+    const validRemoved =
+      removedTests.has(path) && ['retired', 'replaced'].includes(review.disposition);
     if (!fileExists(path) && !validRemoved)
       errors.push('Reviewed contract is absent from current source: ' + path);
   }
   if (removedTests.size) {
     if (!['retired', 'replaced'].includes(review.disposition))
-      errors.push('Deleting a test requires disposition retired or replaced and documented replacement.');
+      errors.push(
+        'Deleting a test requires disposition retired or replaced and documented replacement.',
+      );
     const replacementExists = contracts.some(
       (path) => typeof path === 'string' && !removedTests.has(path) && fileExists(path),
     );

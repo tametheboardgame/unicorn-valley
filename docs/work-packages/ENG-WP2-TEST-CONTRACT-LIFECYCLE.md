@@ -7,7 +7,7 @@ depends_on: [ENG-WP1, ENG-WP1.11]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
+test_impact_stage: reviewed
 test_impact_scope: Stage-aware final review enforcement for independent development PRs
 ---
 
@@ -99,4 +99,4 @@ Decision [UV-D028](../../DECISIONS.md) preserves rapid preview iteration with a 
 
 Branch: agent/eng-wp2-2-progressive-impact-review. PR-local JSON review contracts live in TEST_IMPACT_V1 comments in the PR body; stage=provisional on drafts is informational, never a full-test blocker. On Ready for review, a full cumulative PR diff is reconciled against declared stream areas and changed test files, with substantive retained-test reasoning required when no tests change. New WP front matter has explicit test_impact_stage and test_impact_scope, validated structurally. This is enforced for PR #307 onwards, exempting existing older open PRs, and applies across World, Just Games, Story House and engineering rather than modifying central state per PR.
 
-First implementation adds a Node validator and negative tests to the Tier 0 suite, fires CI on PR description edits, and preserves six static Chromium shards and the exact-head Merge Gate. It has **not passed qualification or merged** as of this roadmap checkpoint. WP2.3 flake analysis, WP2.4 health policy and WP2.5 latest-main/stream-state checks remain separate.
+First implementation adds a Node validator and negative tests to the Tier 0 suite, fires CI on PR description edits, and preserves six static Chromium shards and the exact-head Merge Gate. Its draft Tier 0 policy tests and static checks passed in prior run #38219310208. The additional test-retirement coverage passed its policy tests in run #38219547539 (which failed only Biome formatting). Code, documentation and impact review have now been reconciled. **Authoritative exact-head CI and merge are still pending**; do not mark WP2.2 complete until those conditions are met. WP2.3 flake analysis, WP2.4 health policy and WP2.5 latest-main/stream-state checks remain separate.
