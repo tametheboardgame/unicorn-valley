@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForReadySceneSnapshot } from '../support/browserDiagnostics';
 
 interface DiagnosticObject {
   name: string;
@@ -134,18 +135,14 @@ test('production environment layers give every main region a distinct non-intera
 }) => {
   for (const region of REGIONS) {
     await page.goto(`/?scene=${region.route}&diagnostics=1`);
-    await waitForScene(page, region.sceneKey);
-    await waitForObject(
+    // Capture the exact scene snapshot in which its rendered anchor is present.
+    // Re-reading after separate wait calls could land in a different scene lifecycle.
+    const scene = await waitForReadySceneSnapshot(
       page,
       region.sceneKey,
       `environment-production:${region.environment}:anchor`,
     );
-
-    const scene = (await snapshot(page)).scenes.find(({ key }) => key === region.sceneKey);
     expect(scene).toBeTruthy();
-    if (!scene) {
-      continue;
-    }
 
     for (const layer of region.layers) {
       const object = scene.objects.find(

@@ -59,6 +59,40 @@ export async function getDiagnosticSnapshot(page: Page): Promise<BrowserDiagnost
   });
 }
 
+/**
+ * Capture the same observable scene snapshot that satisfied readiness. Separate
+ * waitForScene/waitForNamedObject/snapshot calls can straddle a scene transition,
+ * producing a false missing-scene assertion even when the ready object was seen.
+ *
+ * This is an existence and visibility gate, not a replacement for the caller's
+ * gameplay, input or non-interactivity assertions. The existing Playwright
+ * test/step timeouts still bound failures.
+ */
+export async function waitForReadySceneSnapshot(
+  page: Page,
+  sceneKey: string,
+  readyObjectName: string,
+): Promise<DiagnosticSceneSnapshot> {
+  const handle = await page.waitForFunction(
+    ({ key, name }) => {
+      const diagnostics = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__;
+      const snapshot = diagnostics?.snapshot();
+      if (!snapshot?.activeScenes.includes(key)) return false;
+      const scene = snapshot.scenes.find((candidate) => candidate.key === key);
+      if (!scene?.objects.some((object) => object.name === name && object.visible)) {
+        return false;
+      }
+      return scene;
+    },
+    { key: sceneKey, name: readyObjectName },
+  );
+  try {
+    return (await handle.jsonValue()) as DiagnosticSceneSnapshot;
+  } finally {
+    await handle.dispose();
+  }
+}
+
 export async function waitForScene(page: Page, sceneKey: string): Promise<void> {
   await page.waitForFunction((key) => {
     const diagnostics = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__;
