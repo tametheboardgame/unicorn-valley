@@ -104,9 +104,18 @@ test.describe('R5-WP5.9C global atmosphere and weather', () => {
 
     await page.keyboard.press('t');
     await page.keyboard.press('t');
-    await page.keyboard.press('y');
-    await page.keyboard.press('y');
-    await page.waitForTimeout(150);
+
+    // Phaser key presses are edge-triggered. Check each weather mode has
+    // actually registered before sending the next press or changing scenes.
+    for (const label of ['🌤️ Clear', '🌧️ Gentle Rain']) {
+      await page.keyboard.press('y');
+      await expect
+        .poll(async () => {
+          const glade = sceneFrom(await snapshot(page), 'MoonflowerGladeScene');
+          return glade.objects.find(({ name }) => name === 'magical-weather-control')?.text;
+        })
+        .toBe(label);
+    }
 
     await page.evaluate(() => {
       const diagnostics = (
