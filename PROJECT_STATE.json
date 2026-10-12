@@ -10,8 +10,8 @@
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "agent/eng-wp2-1-contract-inventory",
-  "latest_commit": "a226c4dfa6d2e493bb40cb9bbe1e43ca3bbdb29a",
-  "ci_state": "unknown",
+  "latest_commit": "cff97062dd9e52b49660532e8b4d612f08d2dd56",
+  "ci_state": "failing",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
   "next_work_package": null,
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-11",
-  "updated_at": "2026-10-11"
+  "last_activity_at": "2026-10-12",
+  "updated_at": "2026-10-12"
 }

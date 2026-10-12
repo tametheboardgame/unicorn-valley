@@ -20,6 +20,11 @@ Create an **adaptive, automatically rebalanced full-suite CI**, driven by the cu
 
 Do **not** create a second competing ownership map, automatic test-retirement authority or weaker merge gate.
 
+## Two-speed delivery requirement inherited from ENG-WP2
+
+ENG-WP3 optimises **final qualification execution**, not the draft preview feedback loop. Keep previews available promptly after minimal safe build/smoke; provisional draft test-impact assessments are allowed to be incomplete. Only after functional/visual approval, code/documentation reconciliation and a complete actual-diff contract review should the final full-suite adaptive planner and exact-head Merge Gate be mandatory. Never introduce dynamic scheduling or test-inventory reconciliation as a new full-suite bottleneck for every small visual edit. Truly high-risk current changes retain existing fail-safe escalation.
+
+
 ## Grounded baseline (11 October 2026)
 
 | Observation | Three-shard reference | Six-shard accepted baseline |

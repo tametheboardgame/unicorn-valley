@@ -117,6 +117,13 @@ TypeScript strict mode is part of the quality gate.
 - Prefer explicit domain types at system boundaries.
 - Do not bypass compiler errors with broad casts merely to satisfy a work package.
 
+## Fast preview iteration and final-stage reconciliation
+
+A draft feature/visual work package starts with a brief scope, risk and provisional test-impact note. Make small changes and provide a working branch preview URL promptly after the minimum credible build/smoke, then repeat on feedback (e.g. repositioning a Sunbeam Village object). Full documentation, code and test-contract reviews are **not** prerequisites for each preview edit.
+
+When the visual/functional baseline is approved, tidy code/architecture, reconcile documentation, then review the final actual diff against existing tests and ownership. Update coverage or record justified unchanged contracts. Only then mark the PR Ready for review and require authoritative full exact-head Tier 0–4 CI and Merge Gate before merge. WP2.2 must allow unfinished provisional draft assessments and block incomplete final-stage ones. High-risk current deltas remain subject to fail-safe checks. Production deployment is separately authorised.
+
+
 ## Branch and work-package discipline
 
 - Implement one roadmap work package per branch unless an explicit dependency requires a stacked branch.

@@ -7,6 +7,11 @@ These gates apply across bounded work packages unless an explicitly approved pac
 - No unintended regression against the accepted baseline in `PROJECT.md` and `STATUS.md`.
 - Protected gameplay, save, child-UX and release invariants remain intact unless the package explicitly owns changing them.
 
+## Preview feedback is not acceptance
+
+During an unfinished work package, rapid working draft previews and proportionate selected checks support user feedback; a full audit and all browser tests are **not** required after each cosmetic/content change. When the final visual/functional result is approved, perform code/architecture tidy-up, documentation reconciliation and a complete test-impact review against the actual final diff, then qualify the exact PR head before merge. Under WP2.2, provisional draft impact notes may remain incomplete, but final assessments must not. Existing high-risk change escalation still applies.
+
+
 ## Technical correctness
 
 - Required format/lint/type/test/build/performance/smoke checks pass.

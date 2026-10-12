@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-10-11
+Last updated: 2026-10-12
 
 ## Engineering checkpoint
 
@@ -12,17 +12,17 @@ Initial measured Chromium critical path changed from **29.9 min (3 shards)** to 
 
 ## Current engineering implementation — ENG-WP2.1
 
-Active branch: `agent/eng-wp2-1-contract-inventory`, following roadmap PR #304.
+Active branch: `agent/eng-wp2-1-contract-inventory`, PR #305 targeting `main`. Roadmap PR #304 qualified and merged as `fa48da5ea450cfc9bbd188fd5d9dcb5c285ef7ef`.
 
 A first inventory pass found **110 full Chromium spec files, 166 unit test files and 82 browser specs not referenced by current BROWSER_GROUPS**. These are unowned for targeted selection, not automatically stale or missing from the full suite.
 
 WP2.1 adds a derived contract inventory and a frozen legacy-unowned list. New unowned Chromium specs, missing mapped files, broken smoke/cross-browser references, stale exceptions, expired quarantines and invalid retirement declarations are errors. Prior ownership debt remains visible pending deliberate review. This checkpoint changes **no product behaviour, test selection, assertions, sharding or Merge Gate rules**.
 
-Validation: new verification-policy tests and CI pending. WP2.2 feature-change impact enforcement remains next, followed by WP2.3/WP2.4 and adaptive ENG-WP3.
+Validation: WP2.1 inventory/verification policy, static, unit, six Chromium shards and compatibility passed on preceding head, but whole-game smoke failed with a Rainbow Run scene readiness timeout (run #38170197800). PR #305 remains draft and unmerged. New policy decision **UV-D028** establishes fast preview-driven iteration, code/docs/test-impact review only at finalisation, then exact-head full CI. Rules are committed to AGENTS.md, TESTING.md, WP2 roadmap, template and PR checklist, but **WP2.2 stage-aware machine enforcement is not yet implemented**. WP2.3/2.4 and adaptive ENG-WP3 remain future checkpoints.
 
 ## Engineering roadmap
 
-1. **[ENG-WP2 — Test Contract Lifecycle and Work-Package Impact Reviews](docs/work-packages/ENG-WP2-TEST-CONTRACT-LIFECYCLE.md)**, [issue #301](https://github.com/tametheboardgame/unicorn-valley/issues/301): next proposed implementation package. Owns required test-impact review for new/current work packages, contract ownership and health policy.
+1. **[ENG-WP2 — Test Contract Lifecycle and Work-Package Impact Reviews](docs/work-packages/ENG-WP2-TEST-CONTRACT-LIFECYCLE.md)**, [issue #301](https://github.com/tametheboardgame/unicorn-valley/issues/301): active implementation package. Owns finalisation-stage test-impact review for new/current work packages, contract ownership and health policy.
 2. **[ENG-WP3 — Adaptive Test Architecture](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md)**, [issue #303](https://github.com/tametheboardgame/unicorn-valley/issues/303): subsequent bounded architecture work. Owns duration history, dynamic balancing and optional cross-browser optimisation. Consumes WP2's registry/impact policy rather than competing with it.
 
 Proposed order: WP2.1 contract identity and WP2.2 mandatory change assessment first; WP3.1 evidence and WP3.2 shadow balancing next, with WP2.3/2.4 hardening/health. Dynamic production of CI shard matrices requires a separately qualified WP3.3 PR and static-six rollback.
