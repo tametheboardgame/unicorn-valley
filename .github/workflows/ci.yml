@@ -421,6 +421,20 @@ jobs:
           path: reconciliation-report.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Produce WP2.4 suite health (observational)
+        if: always()
+        continue-on-error: true
+        run: node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report.json --shards=shard-evidence --output=suite-health.json --markdown=suite-health.md
+      - name: Upload WP2.4 suite health report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: suite-health
+          path: |
+            suite-health.json
+            suite-health.md
+          if-no-files-found: warn
+          retention-days: 14
 
   merge-gate:
     name: Merge Gate
