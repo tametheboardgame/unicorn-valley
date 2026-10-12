@@ -20,7 +20,7 @@ Last updated: 2026-10-12
 
 Its independent SHA-bound manifest and execution evidence reconciled **311/311 test identities across all six Chromium shards**: 308 expected, three real runtime skips, zero missing/duplicate/unknown identities and zero unexpected/flaky outcomes. Per-test and per-file execution durations are archived with the CI artifacts. The existing static six-shard scheduler, test assertions, cross-browser profiles and exact-head Merge Gate were not altered. Evidence collection is observational in WP3.1; future changes to gate authority require separate qualifications.
 
-**Next proposed bounded package:** [ENG-WP2.4 Test Suite Health](docs/work-packages/ENG-WP2.4-TEST-SUITE-HEALTH.md), which will use WP3.1's evidence for owner/flake/slow-test lifecycle reporting. [ENG-WP3.2](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) can subsequently model balancing in shadow mode; no scheduler switch is authorised yet.
+**Active bounded package:** [ENG-WP2.4 Test Suite Health](docs/work-packages/ENG-WP2.4-TEST-SUITE-HEALTH.md), which is implementing observational health reports using WP3.1's evidence for owner/flake/slow-test lifecycle reporting. [ENG-WP3.2](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) can subsequently model balancing in shadow mode; no scheduler switch is authorised yet.
 
 ## Concurrent workstreams and remaining engineering packages
 
@@ -36,3 +36,7 @@ The root status/state files are an integration checkpoint; independent content s
 ## Qualification and governance
 
 Fast, proportional tests on drafts; after final code/documentation/test-impact review, all Tier 0–4 checks, every required shard and live-head Merge Gate must pass. Do not claim success for a skipped required job. GitHub repository-admin branch protection requiring Merge Gate remains to be verified; an in-repository gate alone is not platform enforcement. Do not deploy production.
+
+## ENG-WP2.4 implementation checkpoint — 12 October 2026
+
+Branch: `agent/eng-wp2-4-suite-health`. Draft PR will implement a source-bound test-health report combining WP2.1 contract inventory and WP3.1 Chromium evidence. Legacy ownership debt must remain visible; new or invalid contracts must fail the existing policy. Six static shards and exact-head Merge Gate remain unchanged. No production deployment.

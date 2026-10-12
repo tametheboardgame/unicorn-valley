@@ -1,7 +1,7 @@
 ---
 id: ENG-WP2.4
 title: Test Suite Health and Contract Review Policy
-status: proposed
+status: in_progress
 autonomy: green
 depends_on: [ENG-WP2.1, ENG-WP2.2, ENG-WP3.1]
 parallel_safe: false
@@ -36,6 +36,6 @@ No gameplay changes, arbitrary timeout increases, blanket retries, test deletion
 
 **This documentation-only proposal is reviewed for PR #310.** ENG-WP2.4 remains proposed and its actual implementation has not started. The later implementation PR will carry its own progressive test-impact assessment and Node policy/evidence tests. Existing gameplay and Chromium contracts remain unchanged by this proposal.
 
-## Completion record
+## Implementation checkpoint
 
-Proposed after the WP3.1 merge on 12 October 2026; implementation not started.
+Started 12 October 2026 on a dedicated branch from the qualified WP3.1 close-out. Phase A: source-bound health reporting, inventory evidence correlation, explicit status and duration warnings, integrity checks, and Node policy tests. Phase B: CI artifact integration and actual-diff review, without new merge requirements or shard changes. No qualification or merge yet.
