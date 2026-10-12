@@ -174,7 +174,14 @@ test('a duration regression needs two independent historical measurements', () =
     valid: true,
     provenance: { ...provenance, runId: String(id) },
     records: [
-      { path: paths[1], kind: 'browser', durationMs: id * 10000 + 80000, tests: 1, unexpected: 0, flaky: 0 },
+      {
+        path: paths[1],
+        kind: 'browser',
+        durationMs: id * 10000 + 80000,
+        tests: 1,
+        unexpected: 0,
+        flaky: 0,
+      },
     ],
   }));
   assert.equal(assessSuiteHealth({ ...input, history: [history[0]] }).summary.slowingSpecs, 0);
@@ -188,14 +195,13 @@ test('one current and one previous real failure count as repeated independent ru
   input.shards[2].tests[0].status = 'flaky';
   input.reconciliation.statuses.expected = 4;
   input.reconciliation.statuses.flaky = 1;
-  const history = [{
-    schemaVersion: 1,
-    valid: true,
-    provenance: { ...provenance, runId: '100' },
-    records: [{ path: paths[2], kind: 'browser', durationMs: 150, unexpected: 0, flaky: 1 }],
-  }];
-  assert.equal(
-    assessSuiteHealth({ ...input, history }).summary.confirmedRecurringFailureSpecs,
-    1,
-  );
+  const history = [
+    {
+      schemaVersion: 1,
+      valid: true,
+      provenance: { ...provenance, runId: '100' },
+      records: [{ path: paths[2], kind: 'browser', durationMs: 150, unexpected: 0, flaky: 1 }],
+    },
+  ];
+  assert.equal(assessSuiteHealth({ ...input, history }).summary.confirmedRecurringFailureSpecs, 1);
 });

@@ -149,11 +149,15 @@ export function assessSuiteHealth({
         issue('SLOW_SPEC_OBSERVED', contract.path, `${observation.durationMs} ms in one run`),
       );
     }
-    const failureRuns = pastFailures +
-      (observation && (observation.unexpected > 0 || observation.flaky > 0) ? 1 : 0);
+    const failureRuns =
+      pastFailures + (observation && (observation.unexpected > 0 || observation.flaky > 0) ? 1 : 0);
     if (failureRuns >= 2) {
       warnings.push(
-        issue('REPEATED_FAILURE_HISTORY', contract.path, `${failureRuns} distinct runs including current`),
+        issue(
+          'REPEATED_FAILURE_HISTORY',
+          contract.path,
+          `${failureRuns} distinct runs including current`,
+        ),
       );
     }
     if (
@@ -184,13 +188,17 @@ export function assessSuiteHealth({
     for (const path of observed.keys()) {
       if (!latest.has(path)) {
         newBrowserSpecs.push(path);
-        warnings.push(issue('ADDED_BROWSER_SPEC', path, 'Not present in most recent main baseline'));
+        warnings.push(
+          issue('ADDED_BROWSER_SPEC', path, 'Not present in most recent main baseline'),
+        );
       }
     }
     for (const [path, record] of latest) {
       if (record.kind === 'browser' && !observed.has(path)) {
         removedBrowserSpecs.push(path);
-        warnings.push(issue('REMOVED_BROWSER_SPEC', path, 'Absent from current full-suite inventory'));
+        warnings.push(
+          issue('REMOVED_BROWSER_SPEC', path, 'Absent from current full-suite inventory'),
+        );
       }
     }
   }
@@ -204,11 +212,16 @@ export function assessSuiteHealth({
     if (durations.length < 2) continue;
     durations.sort((a, b) => a - b);
     const middle = Math.floor(durations.length / 2);
-    const median = durations.length % 2 ? durations[middle] : (durations[middle - 1] + durations[middle]) / 2;
+    const median =
+      durations.length % 2 ? durations[middle] : (durations[middle - 1] + durations[middle]) / 2;
     if (record.durationMs >= median * 1.3 && record.durationMs - median >= 30000) {
       slowingSpecs++;
       warnings.push(
-        issue('SLOWING_SPEC_TREND', record.path, `${record.durationMs}ms current vs ${median}ms historical median`),
+        issue(
+          'SLOWING_SPEC_TREND',
+          record.path,
+          `${record.durationMs}ms current vs ${median}ms historical median`,
+        ),
       );
     }
   }

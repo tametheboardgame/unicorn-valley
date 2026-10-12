@@ -44,15 +44,15 @@ test('only completed main runs are historical; failed runs retain valid failure 
     run(5, { event: 'pull_request' }),
     run(6, { conclusion: 'failure' }),
   ];
-  assert.deepEqual(eligibleHistoryRuns(data, 1).map((x) => x.id), [6]);
+  assert.deepEqual(
+    eligibleHistoryRuns(data, 1).map((x) => x.id),
+    [6],
+  );
 });
 
 test('history must match GitHub run identity, SHA and complete per-spec counters', () => {
   assert.equal(validateHistoricalHealth(snapshot(10), run(10)).valid, true);
-  assert.throws(
-    () => validateHistoricalHealth(snapshot(10), run(11)),
-    /incomplete or not bound/,
-  );
+  assert.throws(() => validateHistoricalHealth(snapshot(10), run(11)), /incomplete or not bound/);
   assert.throws(
     () =>
       validateHistoricalHealth(

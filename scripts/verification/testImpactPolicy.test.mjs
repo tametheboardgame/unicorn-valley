@@ -157,10 +157,7 @@ test('new browser test contracts must appear in final assessment of actual PR di
     files: [...changed, added],
     body: body({
       ...completed,
-      contracts: [
-        ...completed.contracts,
-        'tests/play/mg-wp7-new-mode-contract.spec.ts',
-      ],
+      contracts: [...completed.contracts, 'tests/play/mg-wp7-new-mode-contract.spec.ts'],
       evidence: 'Both updated and newly introduced contracts reviewed against the complete PR diff',
     }),
   });
