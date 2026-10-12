@@ -83,7 +83,6 @@ test('missing file, expired quarantine and vanished replacement fail closed', ()
     browserGroups: { health: [...paths, 'tests/play/missing.spec.ts'] },
     unitGroups: {},
     ownershipRules: [],
-    lifecycle: {},
     lifecycle: {
       [paths[0]]: { status: 'quarantined', reason: 'known flake', expiresOn: '2026-10-01' },
       'tests/play/retired.spec.ts': {
