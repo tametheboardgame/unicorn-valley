@@ -187,3 +187,42 @@ The report derives ownership from `scripts/verification/verificationOwnership.mj
 New PRs from #307 onwards use the TEST_IMPACT_V1 JSON block in the PR description. A draft PR may leave this provisional; an incomplete final review is a **warning, not a preview blocker** in draft. A Ready-for-review PR must set stage reviewed, reconcile declared areas with the entire changed-file list, identify every modified spec/unit test, reference existing test contracts, document tests updated/replaced/retired or unchanged with a reason, and record risk, evidence, review and any human gate. CI retrieves the full PR changed-file list from the GitHub API and fails closed on incomplete results.
 
 New work-package files declare test_impact_stage and test_impact_scope in YAML front matter; stage reviewed is required in a new WP by final qualification. Historic completed WP files and older open PRs are not retroactively subject to the new contract. The policy runs as a Tier 0 check and does **not** change which unit/Chromium/cross-browser tests run or reduce Merge Gate authority. An edited PR description starts a fresh CI run.
+
+## Observable browser fixture — WP2.3A
+
+Use waitForReadySceneSnapshot(page, sceneKey, readyObjectName) from tests/support/browserDiagnostics.ts when asserting a scene's objects after player-visible readiness. Unlike separate scene/object waits and a later snapshot, it returns the **same diagnostic scene** which simultaneously showed the scene active and the required ready marker visible. Keep separate real gameplay, interaction, scene-exit and non-interactivity assertions; the fixture must never make an absent marker count as a pass.
+
+For Just Games launch/return, include a real visible readiness marker when available (for example the Pond Leap frog or Chess Academy teacher). For sequential interactive clicks, wait for the real first-action feedback before sending the second. Fail under Playwright's existing bounded waits when the required state does not appear. Do not use broad retries, sleep loops, global timeout increases or skips.
+
+
+### ENG-WP2.3A: intentional invisible scene anchors
+
+The environment-production manager creates an invisible zone named `environment-production:<area>:anchor` with `setVisible(false)`. This is structural metadata, **not** a missing rendered scene. Pass `'present'` as the fourth argument to `waitForReadySceneSnapshot` only for such deliberately non-visible markers; default `'visible'` remains mandatory for player-facing Pond Leap frogs, Chess teacher objects and interactive controls. Preserve the existing layer/non-interactivity assertions after capturing the same ready scene snapshot.
+
+Environment checks are now one Playwright test per region (Glade, Village, Brook, Woods, Rainbow Run), with separate boot/context and failure localisation. Do not increase the 45-second global limit or hide failed assertions. This replaces one five-region composite, retaining all five regions and original layer assertions.
+
+
+### ENG-WP2.3A: Escape transition across resumed mini-game menus
+
+The Just Games menu and the Chess Academy both subscribe to Escape. The Academy's Escape stops its scene and resumes Just Games; under full parallel Chromium load a single keydown reached both handlers, leaving the player on Title instead of Just Games. `JustGamesScene` now records the monotonic resumption time and ignores any Escape event that originated before that scene resumed. A subsequent fresh Escape still navigates to Title, and mouse-driven Back to Home is unchanged. The existing MG-WP4 launch/return contract now explicitly verifies **first Escape → Just Games, second fresh Escape → Title** for Chess Academy. No timeouts, sleeps, retries or assertion reductions have been introduced.
+
+### ENG-WP2.3A — short-lived Rainbow Disc defence readiness
+
+`tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts` now observes the actually rendered defence route **and** the player-actionable state in one `page.waitForFunction` call. Do not first await the cue and then start a second watch after it may have expired. The diagnostic `defenceCueRenderedLane` is the route the player actually saw, not the hidden attack target. A correct/wrong lane is still selected through the real mouse and the subsequent game-state assertions still run. Missing actionable state is a failure with a current diagnostic snapshot, not a skip or automatic retry.
+
+
+### ENG-WP2.3A — settings accessibility browser journey
+
+The canonical Settings persistence test still visits the real Settings screen, toggles Reduced Motion via a real pointer action, asserts local storage, leaves via Escape, reloads and verifies persisted UI. The previous helper issued eight or more ArrowDown keypresses and full Phaser snapshots per visit; under six concurrent Chromium jobs this made an otherwise fully passing 45-second journey run out of time during clean-up. Its scoped helper now performs genuine mouse-wheel scrolling inside the Settings viewport in bounded 520-unit steps (338 logical-pixel scroll, less than the 420-pixel view), stopping only when the same target is visibly interactive. It retains every persistence and display assertion and does not change the global timeout or real game input handling. Other keyboard-specific tests remain separate. Trace from CI #38238393181 confirms the former journey reached its final assertion; this change removes unnecessary unrelated row traversal without assuming success.
+
+
+### ENG-WP2.3A — fixed Settings navigation and physical Story House collision proof
+
+The settings-test wheel optimisation failed because Playwright's wheel events did not reliably scroll the Phaser scene: CI screenshot remained at the top after all wheel attempts. The corrected test sends the game's supported real ArrowDown input in *pairs*, requiring the same named control to be visible and interactive after each pair. It avoids full Phaser snapshots after every single keypress. All persistence, reload, settings and accessibility assertions remain intact.
+
+The Story House counter-collision regression previously assumed the player sprite's centre Y must always be at least 674, independent of actual Phaser physics body scaling. The new assertion verifies the character moved towards the desk and, crucially, its actual Arcade `bodyY` has not passed into the counter's physical `bodyY + bodyHeight` boundary, allowing only one logical pixel for contact rounding. The counter identity and 300×112 dimensions remain checked separately. This validates **physical blocking**, not a potentially stale render-origin constant, and is stronger than asserting a world-space centre coordinate by itself.
+
+
+### ENG-WP2.3A — whole-game smoke: multi-scene integration budgets
+
+The Marigold/Nova picnic regression intentionally exercises a complete player journey: dialogue before/after saving Maple's cake quest, genuine village and meadow bootstraps, persistent picnic relocation, both characters' conversations, and a final return to verify that the departed NPC no longer offers ghost interaction. It has remained **one integration contract** because the save-state journey is the subject of the test. CI run `38245167553` passed every substantive assertion, including its final one, but finished at 48.2 seconds against Playwright's default 45-second test-wide budget under simultaneous browser shards. This specific regression now declares `test.setTimeout(90_000)`, consistent with other full cross-scene contracts; this is a **per-test total execution budget**, not a per-step assertion or global timeout. Do not extend the global timeout or suppress assertions. If this test fails inside 90 seconds, investigate the actual step/scene and attached trace rather than making another blanket time change. All six Chromium shards and compatibility passed on the run identifying this isolated whole-game smoke failure.

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForReadySceneSnapshot } from '../support/browserDiagnostics';
 
 interface DiagnosticObject {
   name: string;
@@ -129,23 +130,22 @@ function playerObject(scene: DiagnosticScene): DiagnosticObject {
   return player;
 }
 
-test('production environment layers give every main region a distinct non-interactive visual pass', async ({
-  page,
-}) => {
-  for (const region of REGIONS) {
+// Each region has an independent boot and failure diagnosis. The five-region
+// composite previously exhausted one 45s budget under concurrent full CI.
+for (const region of REGIONS) {
+  test(`${region.environment} production layers remain present and non-interactive`, async ({
+    page,
+  }) => {
     await page.goto(`/?scene=${region.route}&diagnostics=1`);
-    await waitForScene(page, region.sceneKey);
-    await waitForObject(
+    // Production anchor is deliberately an invisible structural zone (not a
+    // player-facing element); require presence, not visibility.
+    const scene = await waitForReadySceneSnapshot(
       page,
       region.sceneKey,
       `environment-production:${region.environment}:anchor`,
+      'present',
     );
-
-    const scene = (await snapshot(page)).scenes.find(({ key }) => key === region.sceneKey);
     expect(scene).toBeTruthy();
-    if (!scene) {
-      continue;
-    }
 
     for (const layer of region.layers) {
       const object = scene.objects.find(
@@ -154,8 +154,8 @@ test('production environment layers give every main region a distinct non-intera
       expect(object, `${region.environment} should expose its ${layer} layer`).toBeTruthy();
       expect(object?.interactive).toBe(false);
     }
-  }
-});
+  });
+}
 
 test('environment production scenery leaves established open-ground traversal intact', async ({
   page,

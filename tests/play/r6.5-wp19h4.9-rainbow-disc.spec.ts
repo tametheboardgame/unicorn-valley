@@ -176,61 +176,49 @@ async function currentOpenLane(page: Page): Promise<number> {
 }
 
 async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promise<void> {
-  // The cached diagnostic survives the brief cue; the actual rendered route
-  // provides independent, player-visible evidence when that cache is unavailable.
-  // Never infer a lane from the hidden opposition attack state.
+  // Observe the rendered route AND the moment a player can make a defence
+  // choice in one browser wait. A separate "cue was seen" wait followed by an
+  // "input unlocked" wait can cross the short defence lifecycle under CI load.
+  // Never derive the correct lane from the hidden opposition attack state.
   let telegraphedLane: number;
   try {
-    const readLane = await page.waitForFunction(
+    const actionableLane = await page.waitForFunction(
       () => {
         const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
           .__UNICORN_VALLEY_DIAGNOSTICS__;
         if (!api) return false;
         const state = api.rainbowDiscMatchState();
-        if (state.phase !== 'defence') return false;
-
-        let lane = state.defenceCueRenderedLane;
-        if (lane === null || lane === undefined) {
-          const cuePrefix = 'rainbow-disc-activity:defence-read-cue:';
-          const activity = api
-            .snapshot()
-            .scenes.find((scene) => scene.key === 'RainbowDiscActivityScene');
-          const visibleCue = activity?.objects.find(
-            ({ name, effectiveVisible }) => effectiveVisible && name.startsWith(cuePrefix),
-          );
-          if (!visibleCue) return false;
-          lane = Number(visibleCue.name.slice(cuePrefix.length));
+        if (state.phase !== 'defence' || state.actionLocked || state.defenceCueLane !== null) {
+          return false;
         }
-
-        // Playwright requires a truthy result; lane zero is valid.
-        return Number.isInteger(lane) && lane >= 0 && lane < 3 ? lane + 1 : false;
+        // This read-only diagnostic only remembers an actually rendered route.
+        // Its value stays available after the short-lived graphic disappears.
+        const lane = state.defenceCueRenderedLane;
+        return Number.isInteger(lane) && lane !== null && lane >= 0 && lane < 3 ? lane + 1 : false;
       },
       undefined,
-      { timeout: 12_000, polling: 150 },
+      { timeout: 12_000, polling: 100 },
     );
-    telegraphedLane = (await readLane.jsonValue()) - 1;
+    // +1 makes lane zero truthy for Playwright's waitForFunction.
+    telegraphedLane = (await actionableLane.jsonValue()) - 1;
+    await actionableLane.dispose();
   } catch (error) {
     const state = await matchState(page);
     const activity = await snapshotScene(page, 'RainbowDiscActivityScene');
     const visibleCues = activity.objects
       .filter(({ name }) => name.startsWith('rainbow-disc-activity:defence-read-cue:'))
       .map(({ name, effectiveVisible }) => ({ name, effectiveVisible }));
+    const availableReceivers = activity.objects
+      .filter(
+        ({ name, effectiveVisible }) =>
+          name.startsWith('rainbow-disc-activity:opponent-receiver:') && effectiveVisible,
+      )
+      .map(({ name }) => name);
     throw new Error(
-      `Rainbow Disc cue observation stalled: ${JSON.stringify({ state, visibleCues })}`,
+      `Rainbow Disc actionable defence not observed: ${JSON.stringify({ state, visibleCues, availableReceivers })}`,
       { cause: error },
     );
   }
-
-  await page.waitForFunction(
-    () => {
-      const api = (window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: DiagnosticsApi })
-        .__UNICORN_VALLEY_DIAGNOSTICS__;
-      const state = api?.rainbowDiscMatchState();
-      return state?.phase === 'defence' && !state.actionLocked && state.defenceCueLane === null;
-    },
-    undefined,
-    { timeout: 6_000, polling: 100 },
-  );
 
   const choiceScene = await snapshotScene(page, 'RainbowDiscActivityScene');
   const chosenLane = chooseCorrectly ? telegraphedLane : (telegraphedLane + 1) % 3;

@@ -4,6 +4,7 @@ import {
   getDiagnosticSnapshot,
   openDiagnostics,
   waitForNamedObject,
+  waitForReadySceneSnapshot,
   waitForScene,
 } from '../support/browserDiagnostics';
 
@@ -24,7 +25,11 @@ const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
     readyObjectName: 'race-assistance-control',
   },
   { gameId: 'rainbow-disc', variantId: 'practice', sceneKey: 'RainbowDiscActivityScene' },
-  { gameId: 'sunbeam-chess', sceneKey: 'ChessPlazaActivityScene' },
+  {
+    gameId: 'sunbeam-chess',
+    sceneKey: 'ChessPlazaActivityScene',
+    readyObjectName: 'sunbeam-chess:teacher',
+  },
   {
     gameId: 'wobbly-cake',
     sceneKey: 'MapleBakingActivityScene',
@@ -36,7 +41,11 @@ const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
     sceneKey: 'FireflyLanternScene',
     readyObjectName: 'firefly-lantern-ui',
   },
-  { gameId: 'pond-leap', sceneKey: 'PondLeapActivityScene' },
+  {
+    gameId: 'pond-leap',
+    sceneKey: 'PondLeapActivityScene',
+    readyObjectName: 'pond-leap:frog',
+  },
   { gameId: 'coral-beachcombing', sceneKey: 'CoralBeachcombingActivityScene' },
 ];
 
@@ -60,9 +69,14 @@ async function assertJustGamesLaunchReturnContract(
   }
 
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
-  await waitForScene(page, entry.sceneKey);
   if (entry.readyObjectName) {
-    await waitForNamedObject(page, entry.sceneKey, entry.readyObjectName);
+    const readyScene = await waitForReadySceneSnapshot(page, entry.sceneKey, entry.readyObjectName);
+    // Keep a positive assertion on the player-visible entry marker.
+    expect(
+      readyScene.objects.some((object) => object.name === entry.readyObjectName && object.visible),
+    ).toBe(true);
+  } else {
+    await waitForScene(page, entry.sceneKey);
   }
 
   expect(await page.evaluate((key) => window.localStorage.getItem(key), SAVE_KEY)).toBeNull();
@@ -72,6 +86,13 @@ async function assertJustGamesLaunchReturnContract(
 
   const snapshot = await getDiagnosticSnapshot(page);
   expect(snapshot.activeScenes).not.toContain(entry.sceneKey);
+
+  if (entry.gameId === 'sunbeam-chess') {
+    // A single ESC leaves the Academy at Just Games; a *fresh* second ESC
+    // legitimately returns to Title. The same event must never do both.
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'TitleScene');
+  }
 }
 
 test.describe('MG-WP4 reusable Just Games launch/return contract', () => {

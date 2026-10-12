@@ -206,7 +206,16 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e2');
+    // A registered pawn selection updates the coaching message. Do not race
+    // the rerendered board with a second input before the first is observable.
+    await expect
+      .poll(async () => {
+        const snapshot = await getDiagnosticSnapshot(page);
+        return objectText(snapshot, 'sunbeam-chess:coach-message');
+      })
+      .toContain('That pawn');
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:square:e4');
+    await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
 
     await expect
       .poll(async () => {

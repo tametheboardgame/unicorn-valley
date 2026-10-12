@@ -39,3 +39,7 @@ Proposed order: WP2.1 contract identity and WP2.2 mandatory change assessment fi
 `main` still requires GitHub repository-administrator branch protection to make **Merge Gate** a platform-required check; in-repository gate alone is not platform protection.
 
 Keep CI checks bounded, maintain the exact-head merge requirement, and do not poll repeatedly. Reconnect GitHub automatically if access fails. Each new substantive package is a bounded PR with a clear rollback.
+
+## Current scoped reliability work — ENG-WP2.3A
+
+Branch agent/eng-wp2-3-browser-readiness addresses three historical failure families: environment scene snapshot transitions, Pond Leap sandbox readiness and Chess Academy input sequencing. The first checkpoint adds atomic diagnostic scene/ready-object capture and stricter real-feedback assertions, without changing gameplay or reducing tests. **Targeted draft CI qualified (7/7 selected browser tests, Tier 0/build green); full authoritative six-shard Chromium and merge gate pending.** PR #308 is still open and unmerged; no game logic changed. WP2.5 still owns parallel-stream state and latest-main merge freshness.

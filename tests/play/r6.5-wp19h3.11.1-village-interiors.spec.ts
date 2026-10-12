@@ -4,6 +4,7 @@ interface DiagnosticObject {
   name: string;
   x: number;
   y: number;
+  bodyY: number | null;
   bodyWidth: number | null;
   bodyHeight: number | null;
   visible: boolean;
@@ -214,7 +215,10 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
       .length,
   ).toBe(4);
 
-  // Regression for H3.11.10: the desk centre must stop the player visibly in front of Quill.
+  // Regression for H3.11.10: the player must approach the desk, but its
+  // actual physics body must remain outside the counter's collision rectangle.
+  // A hard-coded sprite-centre Y assumes a fixed texture/body scale; rendered
+  // unicorn poses can change the body dimensions without removing collision.
   await page.evaluate(() => {
     (
       window as typeof window & { __UNICORN_VALLEY_DIAGNOSTICS__?: Diagnostics }
@@ -228,14 +232,23 @@ test('H3.11.4 gives Story House a dedicated storykeeper and physical reading roo
   await page.keyboard.down('ArrowUp');
   await page.waitForTimeout(420);
   await page.keyboard.up('ArrowUp');
-  await expect
-    .poll(async () => {
-      const current = (await snapshot(page)).scenes.find(
-        ({ key }) => key === 'VillageInteriorScene',
-      );
-      return current?.objects.find(({ name }) => name === 'world-player-unicorn')?.y ?? 0;
-    })
-    .toBeGreaterThanOrEqual(674);
+  const afterApproach = (await snapshot(page)).scenes.find(
+    ({ key }) => key === 'VillageInteriorScene',
+  );
+  const movedPlayer = afterApproach?.objects.find(({ name }) => name === 'world-player-unicorn');
+  const deskBody = afterApproach?.objects.find(
+    ({ name }) => name === 'village-interior-collider:library:counter',
+  );
+  expect(movedPlayer).toBeDefined();
+  expect(deskBody).toBeDefined();
+  expect(movedPlayer?.y).toBeLessThan(710);
+  expect(movedPlayer?.bodyY).not.toBeNull();
+  expect(deskBody?.bodyY).not.toBeNull();
+  expect(deskBody?.bodyHeight).toBeGreaterThan(0);
+  // Phaser Arcade may round collision contact by less than one logical pixel.
+  // A collision-less traverse crosses this boundary by many tens of pixels.
+  const deskBottom = (deskBody?.bodyY ?? 0) + (deskBody?.bodyHeight ?? 0);
+  expect(movedPlayer?.bodyY ?? -Infinity).toBeGreaterThanOrEqual(deskBottom - 1);
 
   await page.evaluate(() => {
     (

@@ -78,6 +78,9 @@ export class JustGamesScene extends Phaser.Scene {
   private detailLayer: Phaser.GameObjects.Container | null = null;
   private statusText: Phaser.GameObjects.Text | null = null;
   private launching = false;
+  // Phaser can deliver the same ESC keydown to the catalogue just resumed by
+  // the departing mini-game. A resumed menu must only accept a *new* keypress.
+  private lastResumedAtMs = -1;
 
   public constructor() {
     super('JustGamesScene');
@@ -92,6 +95,7 @@ export class JustGamesScene extends Phaser.Scene {
     this.variantButtons = [];
     this.detailLayer = null;
     this.launching = false;
+    this.lastResumedAtMs = -1;
 
     this.cameras.main.setBackgroundColor('#5a4578');
     this.createBackdrop();
@@ -680,15 +684,19 @@ export class JustGamesScene extends Phaser.Scene {
   }
 
   private handleResume(): void {
+    // DOM KeyboardEvent.timeStamp uses the same monotonic clock as performance.now().
+    // Do not let the ESC that dismissed the mini-game also dismiss this menu.
+    this.lastResumedAtMs = performance.now();
     this.launching = false;
     this.renderSelection();
     this.statusText?.setText('Welcome back. Pick another game or play again.');
   }
 
-  private returnToTitle(): void {
-    // The keyboard plugin can still dispatch Escape to a suspended menu.
-    // Only the active Just Games scene may navigate back to Title.
+  private returnToTitle(event?: KeyboardEvent): void {
+    // The keyboard plugin can dispatch the departing mini-game's ESC to a
+    // newly resumed menu. Only a later, fresh ESC may return to Title.
     if (this.launching || !this.scene.isActive()) return;
+    if (event && event.timeStamp <= this.lastResumedAtMs) return;
     this.scene.start('TitleScene');
   }
 }

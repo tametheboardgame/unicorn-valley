@@ -192,6 +192,12 @@ function visiblePanelY(scene: DiagnosticScene): number {
 test('Marigold and Nova dialogue keep accepted sizing and Meet Nova works when Nova is already at the picnic', async ({
   page,
 }) => {
+  // This single end-to-end regression deliberately proves save persistence
+  // across separate Village/Meadow/Title boots, both residents' dialogues,
+  // and their final locations. CI trace 38245167553 reached the final
+  // assertion before the default 45s test-wide deadline. Set a scoped
+  // multi-scene journey budget; leave individual waits and assertions intact.
+  test.setTimeout(90_000);
   await page.addInitScript(() => {
     const resetMarker = 'uv-marigold-regression-storage-reset';
     if (window.sessionStorage.getItem(resetMarker) === '1') {
