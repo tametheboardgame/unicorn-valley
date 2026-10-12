@@ -125,7 +125,9 @@ async function scrollUntilInteractive(
       await page.keyboard.press('ArrowDown');
     }
   }
-  throw new Error(`${objectName} did not become visible and interactive after keyboard navigation.`);
+  throw new Error(
+    `${objectName} did not become visible and interactive after keyboard navigation.`,
+  );
 }
 
 async function tapObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
