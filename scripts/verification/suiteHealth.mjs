@@ -109,7 +109,7 @@ export function assessSuiteHealth({
       throw new Error('Historical health evidence must be complete');
     }
     assertProvenance(run.provenance);
-    const key = run.provenance.runId + `:${run.provenance.headSha}`;
+    const key = `${run.provenance.runId}:${run.provenance.headSha}`;
     if (
       seenRuns.has(key) ||
       (run.provenance.runId === reconciliation.provenance.runId &&
@@ -141,16 +141,16 @@ export function assessSuiteHealth({
     }
     if (observation?.skipped) {
       warnings.push(
-        issue('RUNTIME_SKIPS', contract.path, observation.skipped + ' actual runtime skips'),
+        issue('RUNTIME_SKIPS', contract.path, `${observation.skipped} actual runtime skips`),
       );
     }
     if (observation && observation.durationMs >= slowThresholdMs) {
       warnings.push(
-        issue('SLOW_SPEC_OBSERVED', contract.path, observation.durationMs + ' ms in one run'),
+        issue('SLOW_SPEC_OBSERVED', contract.path, `${observation.durationMs} ms in one run`),
       );
     }
     if (pastFailures >= 2) {
-      warnings.push(issue('REPEATED_FAILURE_HISTORY', contract.path, pastFailures + ' prior runs'));
+      warnings.push(issue('REPEATED_FAILURE_HISTORY', contract.path, `${pastFailures} prior runs`));
     }
     if (
       contract.reviewedOn &&
@@ -224,7 +224,7 @@ export function formatSuiteHealth(report) {
     '',
     '## Slowest observed files',
     '',
-    ...report.slowest.slice(0, 12).map((x) => `- ${x.path}: ${x.durationMs}` + ' ms'),
+    ...report.slowest.slice(0, 12).map((x) => `- ${x.path}: ${x.durationMs} ms`),
     '',
     '## Errors',
     '',
@@ -270,7 +270,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     });
     writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
     writeFileSync(markdown, formatSuiteHealth(report));
-    console.log(`ENG-WP2.4 suite health: ${JSON.stringify}`(report.summary));
+    console.log(`ENG-WP2.4 suite health: ${JSON.stringify(report.summary)}`);
     for (const error of report.errors) console.error(`ERROR ${error.code}: ${error.path}`);
     if (!report.valid) process.exitCode = 1;
   } catch (error) {
