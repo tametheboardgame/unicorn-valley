@@ -90,6 +90,20 @@ export const BROWSER_GROUPS = Object.freeze({
   ],
 });
 
+/**
+ * Explicit lifecycle metadata beside the canonical ownership selection rules.
+ * Unlisted discovered tests remain active but are not considered reviewed.
+ * No status in this map is permission to skip an executable test.
+ */
+export const CONTRACT_LIFECYCLE = Object.freeze({
+  'tests/play/r6.5-wp19g-mp3-audio-foundation.spec.ts': {
+    status: 'active',
+    intent: 'Audio foundation behaviour and player-facing feedback',
+    reviewedOn: '2026-10-11',
+    reviewedIn: 'ENG-WP2.1',
+  },
+});
+
 export const ESCALATION_GLOBS = Object.freeze([
   '.github/**',
   'scripts/**',

@@ -58,6 +58,18 @@ If sources materially contradict each other, resolve durable state or surface th
 
 Do not create a competing scene registry, UI token set, overlay positioning system, dialogue stack, audio binding mechanism or ad hoc verification rule without an explicit architectural reason recorded in the active work package.
 
+## Parallel World, Just Games and Story House streams
+
+The main world, Just Games and Story House are **independent concurrent development streams**, not three permanent integration branches. Each uses a short-lived work-package branch and PR targeting `main`, with its own provisional preview URL, human feedback and final test review. See [parallel development stream ownership](docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md).
+
+- The **World** stream owns areas, storyline, world NPCs/quests and the **first simple world-first implementation** of a new mini-game, including its single scene/catalogue/Just Games registration in the original package.
+- The **Just Games** stream deepens the same canonical mini-game implementation and catalogue presentation; it must not duplicate gameplay or independently change world placement/progression.
+- The **Story House** stream owns independently discoverable book/title folders, chapters and artwork; it must not rewrite the shared reader for ordinary new titles.
+- Shared registries, scene keys, generated story catalogue, root project-state and global rules are **integration touchpoints**. Check open PR file overlap and designate one owner; sequence the affected work rather than allowing concurrent edits to the same gameplay contract.
+- `PROJECT_STATE.json` currently models only one global active package. Until per-stream records exist, use the stream's bounded work package and PR for interim status; reserve broad root project-state changes for meaningful integration decisions rather than each visual tweak.
+- A green exact-PR-head Merge Gate does **not yet prove** qualification against a newly advanced `main`. Before merging after another stream lands, bring the PR onto current `main` and rerun its authoritative qualification; technical freshness enforcement is tracked by [ENG-WP2.5 #306](https://github.com/tametheboardgame/unicorn-valley/issues/306). Never drop tests or other stream's changes to settle conflicts.
+
+
 ## Mini-game platform contract
 
 This rule applies across **all** roadmaps and work packages, not only the independent Mini-Game roadmap.
@@ -100,8 +112,8 @@ Hard stop unless explicitly authorised for the specific action. Includes product
 ## Work-package loop
 
 1. Confirm metadata, scope, dependencies, non-goals and invariants.
-2. Implement the smallest coherent change set.
-3. Run specified technical validation.
+2. Implement and preview small coherent changes, iterating rapidly until any required human visual/product approval.
+3. Run proportionate draft validation; finalise code, docs and test impact **after** the approved baseline before full qualification.
 4. Fix current-work failures while staying in scope.
 5. Record material durable decisions.
 6. Update `STATUS.md` and `PROJECT_STATE.json` at meaningful checkpoints.
@@ -110,6 +122,21 @@ Hard stop unless explicitly authorised for the specific action. Includes product
 9. Continue only to eligible independent work.
 
 A package is not complete merely because code exists. Technical validation and human acceptance are separate gates.
+
+## Rapid iteration, finalisation and test-review timing
+
+**Development is optimised for iteration speed; finalisation is optimised for correctness.** The normal feature/area loop is:
+
+1. **Plan briefly.** Confirm scope, invariants, a provisional risk/test-impact note and any human acceptance gate. A complete test inventory is **not** required before iteration.
+2. **Iterate in a draft PR.** Make small changes (move the Sunbeam Village sundial, recolour Story House, revise paths), run the cheapest checks needed for a usable build and preview, publish the updated preview URL promptly, and repeat based on feedback. Neither comprehensive test reconciliation nor full documentation review is a prerequisite for each preview.
+3. **Approve/freeze the behaviour.** When human visual/product approval is required, record it; routine design iteration stops.
+4. **Finalise the implementation.** Review architecture and code; remove temporary workarounds and reconcile the documentation against the accepted behaviour.
+5. **Review tests against the actual final diff.** Check affected behavioural contracts, add/update/replace tests and ownership or explicitly explain why existing coverage remains sufficient. Resolve issues discovered by review before qualification.
+6. **Qualify and merge.** Only after these reviews, mark Ready for review, run all required unit/build/smoke/Chromium/cross-browser checks and the live-head Merge Gate. Any later non-draft commit invalidates that qualification. Production deployment needs separate authorisation.
+
+**WP2.2 assessment is progressive:** a new/current draft work package carries a provisional impact note (possibly `TBC`); the *complete, reconciled* assessment becomes mandatory **only at finalisation/Ready for review**. A draft must not fail purely because its final review is unfinished. A justified `tests unchanged — reviewed, with reason` is acceptable. The validator must have negative tests for both incomplete draft permission and incomplete final-stage rejection.
+
+The existing fail-safe exceptions still apply: genuinely high-risk **current** changes to CI, bootstrapping, persistence, shared architecture or security-sensitive code may need earlier targeted or full tests; do not defer known broken gameplay. Avoid turning a past high-risk commit into repeated full qualification for later trivial draft updates. A preview is provisional feedback, **not** merge or release authority.
 
 ## Interruption / execution-window procedure
 
@@ -133,7 +160,7 @@ The default development loop is **small change -> cheap relevant checks -> previ
 - Ordinary visual/content/UI iterations must not run Tier 3 full Chromium shards or Tier 4 cross-browser solely because the wider branch previously touched shared code.
 - Shared-system changes should use representative ownership-selected regression coverage during development unless the current delta itself is an explicit high-risk escalation.
 - Before pushing changed source or content, run `npm run format` and `npm run format:check`, then relevant local checks. CI reports formatter, lint, architecture and policy failures together; fix the complete set rather than sending multiple single-format commits.
-- Keep work in draft while iterating. Moving a PR to **Ready for review** starts full authoritative unit/build, Chromium and cross-browser qualification. Any later commit to a non-draft PR requires a fresh full qualification, even when the incremental diff is small.
+- Keep work in draft while iterating; do final code/docs/test-impact reconciliation before moving to **Ready for review**, which starts full authoritative unit/build, Chromium and cross-browser qualification. Any later commit to a non-draft PR requires a fresh full qualification, even when the incremental diff is small.
 - The **Merge Gate** validates all required jobs for the plan and compares the qualified head against the PR's live GitHub head. A previously green, superseded SHA is not permission to merge. Never merge while the authoritative exact-head gate is red, incomplete or unverified.
 - Manual full CI remains an explicit authoritative fallback; production deployment is a separate Red action.
 - A full run on `main` after merge is confirmation, not a substitute for the pre-merge exact-head qualification.

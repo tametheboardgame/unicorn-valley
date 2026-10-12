@@ -2,6 +2,15 @@
 
 H3.11.4F keeps Story House content-driven. A conforming book should be added as content, not as a reader-code feature.
 
+## Story House as a parallel content stream
+
+New titles, illustrations and cover revisions belong to their own `public/stories/<story-id>/**` content folders, title-specific image manifests and visual-bible documents. This can proceed independently of Main World and Just Games gameplay branches, with its own draft PR and preview. A normal title should not change the shared Story House reader or world scenes.
+
+`public/stories/catalogue.json` is a **tracked generated aggregate**, not a manually owned Story House list. If another stream/title has merged since this branch was based, synchronise with `main`, regenerate using `npm run story:catalogue`, verify with `npm run story:catalogue:check` and commit the combined result before final qualification. Never keep only one side of a conflicting generated catalogue.
+
+See `docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md`. Shared reader/Story Library infrastructure changes require an explicit architectural owner and separate integration review.
+
+
 ## Classic and modern covers
 
 The Story House shelf supports an independent global cover-style choice. A title can declare

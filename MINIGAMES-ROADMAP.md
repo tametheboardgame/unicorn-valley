@@ -24,6 +24,15 @@ This roadmap is intentionally independent of the main release roadmap. It is not
 
 The canonical mini-game architecture is `docs/architecture/MINI-GAME-PLATFORM.md`. The repo-wide authoring rules in `AGENTS.md`, `ACCEPTANCE.md` and `docs/architecture/ENGINEERING-STANDARDS.md` apply to every roadmap and work package, regardless of which programme originated the game.
 
+## Concurrency with main-world and Story House streams
+
+This programme may develop **in parallel** with the world and Story House roadmaps, but a mini-game's original world-first implementation and its later Just Games enhancements must never concurrently own the **same gameplay module**. The world work package delivers the basic canonical rules/scene and minimal Just Games launch/catalogue/manifest integration **atomically**. The MG work package starts substantial refinement after that game's world-first integration merges, or after an explicit non-overlapping interface/handoff is agreed.
+
+The Just Games stream owns enhancements, modes and practice through the **same** game. It does not implement a second world copy, alter physical world story placement or independently overwrite shared catalogue registration while a world PR changes it. For independent games, MG and World may work fully concurrently. Check shared `MiniGameCatalogue.ts`, `SceneKeys.ts`, `SceneManifest.ts` and game modules before final qualification.
+
+See `docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md` and [ENG-WP2.5](https://github.com/tametheboardgame/unicorn-valley/issues/306) for the cross-stream merge/freshness safeguards.
+
+
 ## Purpose
 
 Create and maintain a durable portfolio of embedded games that are discovered naturally through Unicorn Valley, playable through **Just Games**, and deep enough to be satisfying games in their own right.
