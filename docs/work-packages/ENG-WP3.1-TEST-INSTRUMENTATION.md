@@ -1,0 +1,50 @@
+---
+id: ENG-WP3.1
+title: Test Inventory and Execution Evidence
+status: in_progress
+autonomy: green
+depends_on: [ENG-WP2.1, ENG-WP2.2, ENG-WP2.3A]
+parallel_safe: false
+human_gate: none
+mini_game_platform_impact: none
+test_impact_stage: provisional
+test_impact_scope: Non-gameplay Playwright discovery and execution telemetry for static six-shard CI
+---
+
+# ENG-WP3.1 — Test Inventory and Execution Evidence
+
+Tracking: [ENG-WP3 #303](https://github.com/tametheboardgame/unicorn-valley/issues/303). Source plan: [ENG-WP3 adaptive architecture](ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md). Integration baseline `d874e6d1155e1fa38c3821327b64dce42a948972`.
+
+## Objective
+
+Make every authoritative CI run yield source-SHA-bound machine-readable evidence of which Chromium tests were discovered, executed, passed, failed or explicitly skipped, how long they took and which of the existing six shards ran them. Keep the WP2.1 contract inventory as the source of ownership/lifecycle truth and **do not change execution scheduling**.
+
+## Bounded implementation
+
+1. Capture Playwright's supported discovery output against the actual checkout revision and project config. Record deterministic per-test identity, source spec path, project/title path, run/head SHA and explicit skip markers where supported.
+2. Produce per-shard JSON execution reports for all six static Chromium shards; preserve existing list/HTML reporters. Extract per-file and per-test duration, status and attempt information, with an explicit provenance record (actual checked-out tree SHA, planned PR head, run ID and shard).
+3. Add deterministic unit/negative tests for missing execution, duplicate test identity, unknown executed identity, invalid/mismatched revision, and recorded skips. Reconciliation is report-only during WP3.1: failure to build *credible evidence* is visible and cannot be labelled complete; do not newly block the existing merge gate without separately qualified evidence.
+4. Publish bounded JSON artifacts from CI only when the full Chromium suite is already required; use the existing six runners/shards, without extra browser executions. Show the completeness and duration report with known caveats.
+5. Document retention, missing-report behaviour, exact provenance and hand-off into ENG-WP2.4 (health policy) and ENG-WP3.2 (shadow sharding).
+
+## Invariants
+
+No gameplay changes; no test deletions, blanket skips or automatic retries; no global timeout or Playwright test semantics changes. Static `--shard=N/6`, full current smoke, seven cross-browser profiles, fast provisional draft previews and existing exact-head Merge Gate are unchanged. No production deployment. Rollback instrumentation without disturbing WP2 ownership/impact governance.
+
+## Test Impact Assessment
+
+- Stage: provisional (reconcile to reviewed before Ready for review).
+- Affected behaviours: CI reporting and provenance only; test execution behaviour and coverage unchanged.
+- Source owner: engineering verification; existing `scripts/verification/contractInventory.mjs` remains inventory/ownership authority.
+- Proposed tests: reporter-JSON parsing and reconciliation positives and negatives, missing/duplicated/unknown identity, SHA mismatch, skipped outcome; real final-run evidence before qualification.
+- Scope: Node unit/policy, Tier 0 and full exact-head CI at finalisation. No gameplay or human visual acceptance.
+- Risk: a partial or malformed report could be mistaken for complete coverage; fail closed in evidence checker, and avoid modifying the Merge Gate before evidence is proven.
+- Final reviewer/evidence: to be recorded against actual PR diff after implementation.
+
+## Acceptance
+
+Machine report and manifest are archived with each required Chromium shard; every discovered test has exactly one recorded terminal result (including explicit skips), every executed test is discovered, revision/shard identity is coherent and per-spec duration is available. Negative tests demonstrate omissions/duplicates and mismatched SHA are rejected. Demonstrate reports on one real six-shard qualifying run, preserving unchanged required checks.
+
+## Completion record
+
+Started 12 October 2026, after approved ENG-WP2.3A merge. Draft implementation in progress; no claim of qualification, approval or merge.
