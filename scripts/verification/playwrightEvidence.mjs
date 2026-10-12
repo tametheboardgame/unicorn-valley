@@ -13,7 +13,12 @@ function requiredText(value, name) {
 function normaliseFile(value) {
   const file = requiredText(value, 'Playwright test file').replaceAll('\\', '/');
   const index = file.lastIndexOf('tests/play/');
-  const relative = index < 0 ? file : file.slice(index);
+  // Playwright 1.55's JSON reporter emits paths relative to config.rootDir;
+  // a nested spec is "folder/example.spec.ts", not "tests/play/folder/...".
+  if (index < 0 && (file.startsWith('/') || file.startsWith('../'))) {
+    throw new Error('Invalid Playwright spec path: ' + file);
+  }
+  const relative = index < 0 ? 'tests/play/' + file.replace(/^\.\//, '') : file.slice(index);
   if (!/^tests\/play\/.+\.spec\.ts$/.test(relative) || relative.includes('/../')) {
     throw new Error('Invalid Playwright spec path: ' + file);
   }
@@ -21,7 +26,7 @@ function normaliseFile(value) {
 }
 
 /** Read-only report normalisation. WP2 contract inventory still owns coverage. */
-export function normalisePlaywrightReport(report, provenance) {
+export function normalisePlaywrightReport(report, provenance, { discovery = false } = {}) {
   if (!report || !Array.isArray(report.suites))
     throw new Error('Invalid Playwright JSON report: missing suites');
   const sourceSha = requiredText(provenance.sourceSha, 'sourceSha');
@@ -31,9 +36,13 @@ export function normalisePlaywrightReport(report, provenance) {
   if (!/^[0-9a-f]{40}$/i.test(sourceSha) || !/^[0-9a-f]{40}$/i.test(headSha)) {
     throw new Error('Source/head SHA must be full Git commit hashes');
   }
-  if (!/^[1-9]\d*\/[1-9]\d*$/.test(shard)) throw new Error('Invalid shard identity: ' + shard);
-  const [number, total] = shard.split('/').map(Number);
-  if (number > total) throw new Error('Shard number exceeds total');
+  if (!(discovery && shard === 'all/6')) {
+    if (!/^[1-9]\d*\/[1-9]\d*$/.test(shard)) {
+      throw new Error('Invalid shard identity: ' + shard);
+    }
+    const [number, total] = shard.split('/').map(Number);
+    if (number > total) throw new Error('Shard number exceeds total');
+  }
   const tests = [];
   const seen = new Set();
 
@@ -56,12 +65,13 @@ export function normalisePlaywrightReport(report, provenance) {
         const status = test.status;
         if (!EXPECTED_STATUSES.has(status))
           throw new Error('Unknown Playwright status: ' + String(status));
-        if (!Array.isArray(test.results))
+        if (!discovery && !Array.isArray(test.results)) {
           throw new Error('Missing Playwright test results: ' + identity);
-        if (status !== 'skipped' && test.results.length === 0) {
+        }
+        if (!discovery && status !== 'skipped' && test.results.length === 0) {
           throw new Error('Executed test has no results: ' + identity);
         }
-        const attempts = test.results.map((result) => {
+        const attempts = (test.results ?? []).map((result) => {
           const durationMs = Number(result.duration);
           if (!Number.isFinite(durationMs) || durationMs < 0) {
             throw new Error('Invalid duration for ' + identity);
@@ -98,6 +108,7 @@ export function normalisePlaywrightReport(report, provenance) {
   }
   return {
     schemaVersion: 1,
+    mode: discovery ? 'discovery' : 'execution',
     provenance: { sourceSha, headSha, runId, shard },
     summary: {
       tests: tests.length,
@@ -184,12 +195,17 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const input = requiredText(arg('input'), 'input');
     const output = requiredText(arg('output'), 'output');
     const report = JSON.parse(readFileSync(input, 'utf8'));
-    const evidence = normalisePlaywrightReport(report, {
-      sourceSha: process.env.GITHUB_SHA,
-      headSha: process.env.TEST_EVIDENCE_HEAD_SHA,
-      runId: process.env.GITHUB_RUN_ID,
-      shard: process.env.TEST_EVIDENCE_SHARD,
-    });
+    const discovery = process.argv.includes('--discovery');
+    const evidence = normalisePlaywrightReport(
+      report,
+      {
+        sourceSha: process.env.GITHUB_SHA,
+        headSha: process.env.TEST_EVIDENCE_HEAD_SHA,
+        runId: process.env.GITHUB_RUN_ID,
+        shard: discovery ? 'all/6' : process.env.TEST_EVIDENCE_SHARD,
+      },
+      { discovery },
+    );
     writeFileSync(output, JSON.stringify(evidence, null, 2) + '\n');
     console.log('WP3.1 Playwright evidence: ' + JSON.stringify(evidence.summary));
   } catch (error) {

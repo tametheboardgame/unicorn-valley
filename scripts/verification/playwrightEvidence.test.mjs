@@ -7,7 +7,7 @@ const b = 'b'.repeat(40);
 const c = 'c'.repeat(40);
 const provenance = { sourceSha: a, headSha: b, runId: '1234', shard: '1/2' };
 
-function report(status = 'expected') {
+function report(status = 'expected', file = 'tests/play/example.spec.ts') {
   return {
     suites: [
       {
@@ -15,11 +15,11 @@ function report(status = 'expected') {
         suites: [
           {
             title: 'tests/play/example.spec.ts',
-            file: 'tests/play/example.spec.ts',
+            file,
             specs: [
               {
                 title: 'shows welcome',
-                file: 'tests/play/example.spec.ts',
+                file,
                 line: 7,
                 column: 1,
                 tests: [
@@ -117,4 +117,22 @@ test('reconciles complete independent shards and rejects omissions/duplicates/SH
       ]),
     /duplicated manifest/,
   );
+});
+
+test('supports Playwright 1.55 rootDir-relative files and discovery without results', () => {
+  const observed = report('expected', 'example.spec.ts');
+  const current = normalisePlaywrightReport(observed, provenance);
+  assert.equal(current.tests[0].file, 'tests/play/example.spec.ts');
+  const discovery = structuredClone(observed);
+  discovery.suites[0].suites[0].specs[0].tests[0].results = [];
+  const inventory = normalisePlaywrightReport(
+    discovery,
+    { ...provenance, shard: 'all/6' },
+    { discovery: true },
+  );
+  assert.equal(inventory.mode, 'discovery');
+  assert.equal(inventory.tests[0].identity, current.tests[0].identity);
+  assert.equal(inventory.tests[0].durationMs, 0);
+  assert.throws(() => normalisePlaywrightReport(discovery, provenance), /no results/);
+  assert.throws(() => normalisePlaywrightReport(report('expected', '../evil.spec.ts'), provenance), /Invalid Playwright/);
 });
