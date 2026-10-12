@@ -22,7 +22,8 @@ function normaliseFile(value) {
 
 /** Read-only report normalisation. WP2 contract inventory still owns coverage. */
 export function normalisePlaywrightReport(report, provenance) {
-  if (!report || !Array.isArray(report.suites)) throw new Error('Invalid Playwright JSON report: missing suites');
+  if (!report || !Array.isArray(report.suites))
+    throw new Error('Invalid Playwright JSON report: missing suites');
   const sourceSha = requiredText(provenance.sourceSha, 'sourceSha');
   const headSha = requiredText(provenance.headSha, 'headSha');
   const runId = requiredText(provenance.runId, 'runId');
@@ -53,8 +54,10 @@ export function normalisePlaywrightReport(report, provenance) {
         if (seen.has(identity)) throw new Error('Duplicate Playwright test identity: ' + identity);
         seen.add(identity);
         const status = test.status;
-        if (!EXPECTED_STATUSES.has(status)) throw new Error('Unknown Playwright status: ' + String(status));
-        if (!Array.isArray(test.results)) throw new Error('Missing Playwright test results: ' + identity);
+        if (!EXPECTED_STATUSES.has(status))
+          throw new Error('Unknown Playwright status: ' + String(status));
+        if (!Array.isArray(test.results))
+          throw new Error('Missing Playwright test results: ' + identity);
         if (status !== 'skipped' && test.results.length === 0) {
           throw new Error('Executed test has no results: ' + identity);
         }
@@ -66,16 +69,24 @@ export function normalisePlaywrightReport(report, provenance) {
           return { status: requiredText(result.status, 'attempt status'), durationMs };
         });
         tests.push({
-          identity, file, project, titlePath, line, column, status,
+          identity,
+          file,
+          project,
+          titlePath,
+          line,
+          column,
+          status,
           expectedStatus: typeof test.expectedStatus === 'string' ? test.expectedStatus : null,
-          attempts, durationMs: attempts.reduce((sum, item) => sum + item.durationMs, 0),
+          attempts,
+          durationMs: attempts.reduce((sum, item) => sum + item.durationMs, 0),
         });
       }
     }
     for (const child of suite.suites ?? []) walk(child, titles);
   }
   for (const suite of report.suites) walk(suite, []);
-  if (tests.length === 0) throw new Error('No Playwright test identities found: refusing empty evidence');
+  if (tests.length === 0)
+    throw new Error('No Playwright test identities found: refusing empty evidence');
   tests.sort((a, b) => a.identity.localeCompare(b.identity));
   const files = new Map();
   for (const test of tests) {
@@ -89,7 +100,8 @@ export function normalisePlaywrightReport(report, provenance) {
     schemaVersion: 1,
     provenance: { sourceSha, headSha, runId, shard },
     summary: {
-      tests: tests.length, files: files.size,
+      tests: tests.length,
+      files: files.size,
       expected: tests.filter((t) => t.status === 'expected').length,
       unexpected: tests.filter((t) => t.status === 'unexpected').length,
       flaky: tests.filter((t) => t.status === 'flaky').length,
@@ -120,16 +132,22 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
     throw new Error('Invalid first shard provenance');
   }
   if (manifest.provenance) {
-    if (manifest.provenance.sourceSha !== reference.sourceSha ||
+    if (
+      manifest.provenance.sourceSha !== reference.sourceSha ||
       manifest.provenance.headSha !== reference.headSha ||
-      manifest.provenance.runId !== reference.runId) {
+      manifest.provenance.runId !== reference.runId
+    ) {
       throw new Error('Discovered manifest has a mismatched SHA or run identity');
     }
   }
   const shardCount = Number(reference.shard.split('/')[1]);
   for (const shard of shards) {
     const p = shard.provenance;
-    if (p.sourceSha !== reference.sourceSha || p.headSha !== reference.headSha || p.runId !== reference.runId) {
+    if (
+      p.sourceSha !== reference.sourceSha ||
+      p.headSha !== reference.headSha ||
+      p.runId !== reference.runId
+    ) {
       throw new Error('Mismatched SHA or run identity across shards');
     }
     if (Number(p.shard.split('/')[1]) !== shardCount || seenShards.has(p.shard)) {
@@ -137,7 +155,8 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
     }
     seenShards.add(p.shard);
     for (const test of shard.tests) {
-      if (!expected.has(test.identity)) throw new Error('Unexpected executed test: ' + test.identity);
+      if (!expected.has(test.identity))
+        throw new Error('Unexpected executed test: ' + test.identity);
       if (actual.has(test.identity)) throw new Error('Duplicate executed test: ' + test.identity);
       actual.add(test.identity);
     }
@@ -146,12 +165,22 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
   for (const identity of expected) {
     if (!actual.has(identity)) throw new Error('Missing executed or skipped test: ' + identity);
   }
-  return { complete: true, discovered: expected.size, recorded: actual.size, shards: seenShards.size };
+  return {
+    complete: true,
+    discovered: expected.size,
+    recorded: actual.size,
+    shards: seenShards.size,
+  };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
-    const arg = (name) => process.argv.find((item) => item.startsWith('--' + name + '='))?.split('=').slice(1).join('=');
+    const arg = (name) =>
+      process.argv
+        .find((item) => item.startsWith('--' + name + '='))
+        ?.split('=')
+        .slice(1)
+        .join('=');
     const input = requiredText(arg('input'), 'input');
     const output = requiredText(arg('output'), 'output');
     const report = JSON.parse(readFileSync(input, 'utf8'));
