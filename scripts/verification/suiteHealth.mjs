@@ -197,8 +197,10 @@ export function assessSuiteHealth({
   let slowingSpecs = 0;
   for (const record of slow) {
     const durations = previous
-      .map((run) => run.get(record.path)?.durationMs)
-      .filter((duration) => Number.isFinite(duration) && duration > 0);
+      .map((run) => run.get(record.path))
+      .filter((earlier) => earlier?.tests === record.tests && Number.isFinite(earlier.durationMs))
+      .map((earlier) => earlier.durationMs)
+      .filter((duration) => duration > 0);
     if (durations.length < 2) continue;
     durations.sort((a, b) => a - b);
     const middle = Math.floor(durations.length / 2);

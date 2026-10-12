@@ -174,11 +174,13 @@ test('a duration regression needs two independent historical measurements', () =
     valid: true,
     provenance: { ...provenance, runId: String(id) },
     records: [
-      { path: paths[1], kind: 'browser', durationMs: id * 10000 + 80000, unexpected: 0, flaky: 0 },
+      { path: paths[1], kind: 'browser', durationMs: id * 10000 + 80000, tests: 1, unexpected: 0, flaky: 0 },
     ],
   }));
   assert.equal(assessSuiteHealth({ ...input, history: [history[0]] }).summary.slowingSpecs, 0);
   assert.equal(assessSuiteHealth({ ...input, history }).summary.slowingSpecs, 1);
+  history[1].records[0].tests = 2;
+  assert.equal(assessSuiteHealth({ ...input, history }).summary.slowingSpecs, 0);
 });
 
 test('one current and one previous real failure count as repeated independent runs', () => {

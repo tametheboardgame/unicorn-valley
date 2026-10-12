@@ -40,3 +40,9 @@ Fast, proportional tests on drafts; after final code/documentation/test-impact r
 ## ENG-WP2.4 implementation checkpoint — 12 October 2026
 
 Branch: `agent/eng-wp2-4-suite-health`. Draft PR will implement a source-bound test-health report combining WP2.1 contract inventory and WP3.1 Chromium evidence. Legacy ownership debt must remain visible; new or invalid contracts must fail the existing policy. Six static shards and exact-head Merge Gate remain unchanged. No production deployment.
+
+## ENG-WP2.4 history and governance checkpoint — 12 October 2026
+
+[Draft PR #311](https://github.com/tametheboardgame/unicorn-valley/pull/311): the first full suite-health [CI #38279756359](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38279756359) passed six shards, seven compatibility profiles and exact-head Merge Gate at `95b503f375481b7ceecd091aa5e1709daaaf3d4d`. Its 311/311 identity reconciliation showed zero missing or flaky tests, three actual skips; the health artifact observed all 110 browser specs, found 82 existing unowned browser specs, 3 slow files, zero hard errors and 107 warnings.
+
+Subsequent **unqualified draft work** adds bounded main-run history ingestion, historical evidence validation, changed test-inventory alerts and comparable-duration trends. Daily test fixing, static shard counts and Merge Gate authority are unchanged. Engineering maintains a weekly review, monthly ownership-debt triage and quarterly lifecycle review. Draft PR #311 is **not yet final-ready or merged**; its newest head requires CI qualification and final WP2.2 impact review.

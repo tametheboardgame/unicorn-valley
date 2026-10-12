@@ -244,3 +244,13 @@ node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report
 ```
 
 Use the JSON for all per-file evidence and warning codes; Markdown shows the leading issues. Historical failures require a manually supplied, validated JSON array of prior complete reports via `--history=history.json`; normal CI does not invent history from one successful run. Contract ownership or quarantine changes must be made in WP2.1 metadata, never by making the health reporter silently omit tests.
+
+## ENG-WP2.4 routine suite-health review and historical evidence
+
+The existing scheduled full CI job runs weekly on Sunday. When six-shard reports are available, it now attempts to retrieve **up to five** independent health reports from recently completed `main` GitHub Actions runs. A failed workflow can still provide a valid complete health report; cancelled, partial, mismatched and expired reports never count as evidence. Full reports and provenance are included in the `suite-health` artifact; retrieval metadata distinguishes `history-loaded`, `no-eligible-history` and `history-unavailable`. Artifact retention is 14 days, so this is a bounded recent history, not perpetual storage.
+
+Engineering verification maintains the weekly review, monthly ownership-backlog review and quarterly contract-lifecycle review. Mapped source-area owners fix tests with their affected work packages. Do not grandfather newly unowned browser contracts, inflate timeouts, delete tests or call a single slow observation repeated flakiness. Longstanding unowned browser entries still execute and are warning-level debt.
+
+Warnings include 180-second cumulative slow spec duration; two comparable prior complete runs plus both a 30% and 30-second increase for a duration trend; two independent runs with unexpected/flaky status for recurring failures; actual runtime skips; changed inventoried files since the latest eligible `main` evidence; and review age beyond 180 days. For a final PR, the **WP2.2 actual-diff test-impact check remains blocking**, including any added/modified tests not listed in `contracts[]` and any deletion without replacement. New node tests for history selection, SHA/run integrity, and changed test-impact contracts are part of Tier 0.
+
+Neither historical availability nor the report's warning count is a new Merge Gate criterion. Evidence integrity is protected in report generation, while the six static Chromium shards and existing authoritative merge checks remain unchanged.

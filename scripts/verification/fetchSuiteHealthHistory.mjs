@@ -47,13 +47,18 @@ export function validateHistoricalHealth(snapshot, run) {
   for (const record of snapshot.records) {
     if (
       typeof record.path !== 'string' ||
-      !/^tests\/play\/.+\.spec\.ts$/.test(record.path) &&
-        !(record.kind === 'unit' && /^src\/.+\.test\.[cm]?[jt]sx?$/.test(record.path)) ||
+      !(
+        (record.kind === 'browser' && /^tests\/play\/.+\.spec\.ts$/.test(record.path)) ||
+        (record.kind === 'unit' && /^src\/.+\.test\.[cm]?[jt]sx?$/.test(record.path))
+      ) ||
       paths.has(record.path) ||
       !['browser', 'unit'].includes(record.kind) ||
-      !['tests', 'expected', 'unexpected', 'flaky', 'skipped', 'durationMs'].every(
-        (field) => Number.isFinite(record[field]) && record[field] >= 0,
-      )
+      !['tests', 'expected', 'unexpected', 'flaky', 'skipped'].every(
+        (field) => Number.isInteger(record[field]) && record[field] >= 0,
+      ) ||
+      !Number.isFinite(record.durationMs) ||
+      record.durationMs < 0 ||
+      record.expected + record.unexpected + record.flaky + record.skipped !== record.tests
     ) {
       throw new Error('Invalid or duplicated historical contract record');
     }
