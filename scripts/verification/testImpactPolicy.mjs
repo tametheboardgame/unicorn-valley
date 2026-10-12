@@ -13,13 +13,27 @@ function meaningful(value, min = 12) {
 }
 export function impactAreasForFile(file) {
   const path = typeof file === 'string' ? file : file.filename;
-  if (/^public\/stories\/|^src\/game\/(?:storyhouse|storyHouse|library)\//i.test(path) ||
-      /^tests\/play\/(?:sh-|story-|.*story-house)/.test(path)) return 'story-house';
-  if (/^src\/game\/minigames\/(?:MiniGameCatalogue|MiniGameLauncher|MiniGameSession)/.test(path) ||
-      /^src\/game\/scenes\/(?:SceneKeys|SceneManifest)/.test(path)) return 'shared';
-  if (/^src\/game\/(?:minigames|activities|racing)\//.test(path) ||
-      /^tests\/play\/(?:mg-|.*(?:chess|pond-leap|rainbow-disc))/.test(path)) return 'just-games';
-  if (/^scripts\/|^\.github\/|^tests\/support\/|^package(?:-lock)?\.json$|^playwright.*\.config\./.test(path)) return 'engineering';
+  if (
+    /^public\/stories\/|^src\/game\/(?:storyhouse|storyHouse|library)\//i.test(path) ||
+    /^tests\/play\/(?:sh-|story-|.*story-house)/.test(path)
+  )
+    return 'story-house';
+  if (
+    /^src\/game\/minigames\/(?:MiniGameCatalogue|MiniGameLauncher|MiniGameSession)/.test(path) ||
+    /^src\/game\/scenes\/(?:SceneKeys|SceneManifest)/.test(path)
+  )
+    return 'shared';
+  if (
+    /^src\/game\/(?:minigames|activities|racing)\//.test(path) ||
+    /^tests\/play\/(?:mg-|.*(?:chess|pond-leap|rainbow-disc))/.test(path)
+  )
+    return 'just-games';
+  if (
+    /^scripts\/|^\.github\/|^tests\/support\/|^package(?:-lock)?\.json$|^playwright.*\.config\./.test(
+      path,
+    )
+  )
+    return 'engineering';
   if (/^src\/|^public\/|^tests\/play\//.test(path)) return 'world';
   return null;
 }
@@ -32,7 +46,8 @@ function requiresReview(files) {
 }
 export function parseImpactBlock(body) {
   const matches = [...String(body ?? '').matchAll(BLOCK)];
-  if (matches.length !== 1) return { error: 'Expected exactly one TEST_IMPACT_V1 PR-description block.' };
+  if (matches.length !== 1)
+    return { error: 'Expected exactly one TEST_IMPACT_V1 PR-description block.' };
   try {
     const value = JSON.parse(matches[0][1]);
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -43,14 +58,31 @@ export function parseImpactBlock(body) {
     return { error: 'Invalid TEST_IMPACT_V1 JSON: ' + error.message };
   }
 }
-export function evaluateTestImpact({ number, draft, body, files, fileExists = () => true, readPackage = () => '' }) {
+export function evaluateTestImpact({
+  number,
+  draft,
+  body,
+  files,
+  fileExists = () => true,
+  readPackage = () => '',
+}) {
   const errors = [];
   const warnings = [];
   if (!Number.isInteger(number) || number <= 0) {
-    return { passed: false, errors: ['Missing PR number; cannot enforce impact review.'], warnings };
+    return {
+      passed: false,
+      errors: ['Missing PR number; cannot enforce impact review.'],
+      warnings,
+    };
   }
   if (number < ENFORCE_FROM_PR) {
-    return { passed: true, exempt: true, errors, warnings, summary: 'Existing PR predates WP2.2 rollout.' };
+    return {
+      passed: true,
+      exempt: true,
+      errors,
+      warnings,
+      summary: 'Existing PR predates WP2.2 rollout.',
+    };
   }
   if (draft) {
     const parsed = parseImpactBlock(body);
@@ -58,13 +90,28 @@ export function evaluateTestImpact({ number, draft, body, files, fileExists = ()
     else if (!['provisional', 'reviewed'].includes(parsed.value.stage)) {
       warnings.push('Draft impact stage should be provisional or reviewed.');
     }
-    return { passed: true, provisional: true, errors, warnings, summary: 'Draft preview: no final-stage impact gate.' };
+    return {
+      passed: true,
+      provisional: true,
+      errors,
+      warnings,
+      summary: 'Draft preview: no final-stage impact gate.',
+    };
   }
   if (!Array.isArray(files)) {
-    return { passed: false, errors: ['Final review requires the cumulative PR file list.'], warnings };
+    return {
+      passed: false,
+      errors: ['Final review requires the cumulative PR file list.'],
+      warnings,
+    };
   }
   if (!requiresReview(files)) {
-    return { passed: true, errors, warnings, summary: 'No changed application, tests or new work package.' };
+    return {
+      passed: true,
+      errors,
+      warnings,
+      summary: 'No changed application, tests or new work package.',
+    };
   }
   const parsed = parseImpactBlock(body);
   if (parsed.error) return { passed: false, errors: [parsed.error], warnings };
@@ -84,10 +131,13 @@ export function evaluateTestImpact({ number, draft, body, files, fileExists = ()
   const expected = [...new Set(files.map(impactAreasForFile).filter(Boolean))].sort();
   const declared = Array.isArray(review.areas) ? [...new Set(review.areas)].sort() : [];
   if (!declared.length || declared.some((area) => !AREAS.has(area))) {
-    errors.push('Declare valid affected areas: world, just-games, story-house, shared, engineering.');
+    errors.push(
+      'Declare valid affected areas: world, just-games, story-house, shared, engineering.',
+    );
   }
   const missing = expected.filter((area) => !declared.includes(area));
-  if (missing.length) errors.push('The complete PR diff requires missing area(s): ' + missing.join(', ') + '.');
+  if (missing.length)
+    errors.push('The complete PR diff requires missing area(s): ' + missing.join(', ') + '.');
   if (!DISPOSITIONS.has(review.disposition)) {
     errors.push('Select a reviewed test disposition: updated, unchanged, replaced, retired.');
   }
@@ -97,28 +147,47 @@ export function evaluateTestImpact({ number, draft, body, files, fileExists = ()
     errors.push('Name the reviewed existing/test-changed contract paths in contracts[].');
   }
   for (const path of contracts) {
-    if (typeof path === 'string' && !fileExists(path)) errors.push('Reviewed contract is absent from current source: ' + path);
+    if (typeof path === 'string' && !fileExists(path))
+      errors.push('Reviewed contract is absent from current source: ' + path);
   }
   const notReviewed = changedTests.filter((path) => !contracts.includes(path));
-  if (notReviewed.length) errors.push('Modified test contracts missing from assessment: ' + notReviewed.join(', ') + '.');
-  if (review.disposition === 'unchanged' && changedTests.length) errors.push('The diff changes tests; disposition cannot be unchanged.');
-  if (review.disposition === 'updated' && changedTests.length === 0) errors.push('Disposition updated requires at least one changed test contract.');
+  if (notReviewed.length)
+    errors.push('Modified test contracts missing from assessment: ' + notReviewed.join(', ') + '.');
+  if (review.disposition === 'unchanged' && changedTests.length)
+    errors.push('The diff changes tests; disposition cannot be unchanged.');
+  if (review.disposition === 'updated' && changedTests.length === 0)
+    errors.push('Disposition updated requires at least one changed test contract.');
   for (const file of files) {
     const path = file.filename ?? file;
     if (file.status !== 'added' || !PACKAGE.test(path)) continue;
     let metadata = '';
-    try { metadata = readPackage(path); } catch {
+    try {
+      metadata = readPackage(path);
+    } catch {
       errors.push('Cannot read newly added work package ' + path + '.');
       continue;
     }
     const match = metadata.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!match || !/^test_impact_stage:\s*reviewed\s*$/m.test(match[1]) ||
-        !/^test_impact_scope:\s*\S.+$/m.test(match[1])) {
-      errors.push('New work package ' + path + ' requires test_impact_stage and test_impact_scope front matter.');
+    if (
+      !match ||
+      !/^test_impact_stage:\s*reviewed\s*$/m.test(match[1]) ||
+      !/^test_impact_scope:\s*\S.+$/m.test(match[1])
+    ) {
+      errors.push(
+        'New work package ' +
+          path +
+          ' requires test_impact_stage and test_impact_scope front matter.',
+      );
     }
   }
   return {
-    passed: errors.length === 0, errors, warnings, expectedAreas: expected, changedTests,
-    summary: errors.length ? 'Final test-impact review incomplete.' : 'Final PR-wide impact assessment verified.',
+    passed: errors.length === 0,
+    errors,
+    warnings,
+    expectedAreas: expected,
+    changedTests,
+    summary: errors.length
+      ? 'Final test-impact review incomplete.'
+      : 'Final PR-wide impact assessment verified.',
   };
 }
