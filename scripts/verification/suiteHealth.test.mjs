@@ -18,6 +18,7 @@ function fixture() {
     browserGroups: { health: paths },
     unitGroups: {},
     ownershipRules: [],
+    lifecycle: {},
     legacyUnowned: [],
     asOf: '2026-10-12',
   });
@@ -62,6 +63,7 @@ test('legacy unowned warns but new unowned contract blocks', () => {
       browserGroups: { health: paths.slice(1) },
       unitGroups: {},
       ownershipRules: [],
+    lifecycle: {},
       legacyUnowned,
     });
   }
@@ -79,6 +81,7 @@ test('missing file, expired quarantine and vanished replacement fail closed', ()
     browserGroups: { health: [...paths, 'tests/play/missing.spec.ts'] },
     unitGroups: {},
     ownershipRules: [],
+    lifecycle: {},
     lifecycle: {
       [paths[0]]: { status: 'quarantined', reason: 'known flake', expiresOn: '2026-10-01' },
       'tests/play/retired.spec.ts': {

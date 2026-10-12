@@ -103,6 +103,8 @@ jobs:
           if ! npm run format:check; then
             npm run format
             git diff -- . > formatting.patch
+            echo 'Formatter remediation preview (first 500 lines; complete patch remains an artifact):'
+            sed -n '1,500p' formatting.patch
             exit 1
           fi
       - name: Upload formatter remediation

@@ -14,7 +14,7 @@
   "ci_state": "unknown",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
-  "next_work_package": "ENG-WP2.5",
+  "next_work_package": null,
   "next_work_package_path": null,
   "human_input_required": false,
   "blocker_reason": null,
