@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "stream": "just-games",
+  "status": "unclaimed",
+  "workPackage": null,
+  "workPackagePath": null,
+  "branch": null,
+  "prNumber": null,
+  "baseMainSha": null,
+  "updatedOn": "2026-10-12",
+  "note": "Initial integrated stream record; draft work remains in its own PR until the stream claims this record."
+}
