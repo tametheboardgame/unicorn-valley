@@ -2,38 +2,32 @@
 
 Last updated: 2026-10-11
 
-## Current work
+## Engineering checkpoint
 
-**ENG-WP1.11 — Six-Shard Chromium Qualification** is the active bounded engineering package.
+**ENG-WP1 — complete.** [PR #299](https://github.com/tametheboardgame/unicorn-valley/pull/299) passed its exact-head Merge Gate and merged on 11 October 2026.
 
-- Branch: `agent/eng-wp1-11-six-chromium-shards`
-- Tracking issue: [#300](https://github.com/tametheboardgame/unicorn-valley/issues/300)
-- Detailed package: `docs/work-packages/ENG-WP1.11-CHROMIUM-SIX-SHARD-QUALIFICATION.md`
-- State: baseline captured; six-shard implementation and comparison pending. This change has a dedicated, single-commit rollback boundary.
-- Next engineering programme: [ENG-WP2 — work-package test assessments and contract lifecycle, #301](https://github.com/tametheboardgame/unicorn-valley/issues/301).
+**ENG-WP1.11 — complete.** [PR #302](https://github.com/tametheboardgame/unicorn-valley/pull/302) merged as `e9985075d9aebd129eebfe5550b2ace90d13d50a` after exact-head [CI #38165098951](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38165098951) passed all six Chromium shards, cross-browser, unit, static, build, smoke and Merge Gate.
 
-## Accepted engineering baseline
+Initial measured Chromium critical path changed from **29.9 min (3 shards)** to **14.36 min (6 shards)**. Same 307 selected tests (304 passed, 3 skipped); six-shard combined runner elapsed 65.82 min against ~70.8 min before. This is an initial comparison of successful runs, not a permanent performance guarantee. The isolated six-shard switch can be reverted via commit `940d0c34cdb6f74273cc72a920206846db8c86ce`.
 
-ENG-WP1 is **complete**. [PR #299](https://github.com/tametheboardgame/unicorn-valley/pull/299) was merged into `main` on 11 October 2026 (`0231c1d8b68c90c5f62519419d73853f297a92c9`).
+## Next engineering work (roadmap, not started)
 
-Authoritative [CI #38160902089](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38160902089) passed Tier 0, Tier 1, build/performance, current whole-game smoke, three full Chromium shards, Tier 4 compatibility and the exact-head Merge Gate on PR head `13c52cc990ee3ff885550c1924f8f0be4ad28f73`. The earlier 47-browser-failure baseline was remediated.
+1. **[ENG-WP2 — Test Contract Lifecycle and Work-Package Impact Reviews](docs/work-packages/ENG-WP2-TEST-CONTRACT-LIFECYCLE.md)**, [issue #301](https://github.com/tametheboardgame/unicorn-valley/issues/301): next proposed implementation package. Owns required test-impact review for new/current work packages, contract ownership and health policy.
+2. **[ENG-WP3 — Adaptive Test Architecture](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md)**, [issue #303](https://github.com/tametheboardgame/unicorn-valley/issues/303): subsequent bounded architecture work. Owns duration history, dynamic balancing and optional cross-browser optimisation. Consumes WP2's registry/impact policy rather than competing with it.
 
-Three-shard performance benchmark from that run: 20.5 / 29.9 / 20.4 minutes; **307 tests selected, 304 passed, 3 skipped**. The slowest Chromium shard was 29.9 minutes. See ENG-WP1.11 for measurements and reversal rules.
+Proposed order: WP2.1 contract identity and WP2.2 mandatory change assessment first; WP3.1 evidence and WP3.2 shadow balancing next, with WP2.3/2.4 hardening/health. Dynamic production of CI shard matrices requires a separately qualified WP3.3 PR and static-six rollback.
 
-**Repository administration action still outstanding:** require `Merge Gate` via GitHub branch protection on `main`; the integration cannot set protected-branch configuration.
+**Current engineering code work:** none actively being implemented in this planning checkpoint. Existing six-shard `main` is the accepted CI baseline. No production deployment performed.
 
-## Product baseline and paused features
+## Product scope
 
-- Story House: complete through SH1.8, including Alice, Peter Rabbit, Jemima Puddle-Duck and The Lantern at the Edge of the Woods.
-- Crystal Brook: H6.0–H6.5 human-approved; H6.6 Crystal Cup Race Hub maturity is the next world checkpoint.
-- Mini-games: MG-WP0–MG-WP6 complete; MG-WP7 Pond Leap expansion remains paused.
-- Rainbow Run final racing-area review remains deferred.
-- Keep product feature development separate from the short engineering optimisation and ENG-WP2 governance work; no production deployment is authorised by this work.
+- Story House complete through SH1.8; Alice, Peter Rabbit, Jemima Puddle-Duck and The Lantern at the Edge of the Woods approved and merged.
+- Crystal Brook H6.0–H6.5 approved; H6.6 Crystal Cup Race Hub is the next deferred world package.
+- MG-WP0–MG-WP6 complete; MG-WP7 Pond Leap expansion is paused.
+- Rainbow Run final area/racing review remains deferred. Resume product packages independently of this testing architecture roadmap when authorised; new/current packages will be subject to WP2 impact review once enforced.
 
-## Next decisions
+## Governance reminder
 
-1. Qualify six-shard CI in its own PR and compare real elapsed time and runner costs against the three-shard baseline.
-2. If worse, do not merge; if merged and later found worse, revert the isolated six-shard implementation commit by PR.
-3. Start ENG-WP2 only after an explicit recorded disposition for this trial.
+`main` still requires GitHub repository-administrator branch protection to make **Merge Gate** a platform-required check; in-repository gate alone is not platform protection.
 
-Do not repeatedly poll CI; on a user request check once, diagnose terminal failures, and stop if awaiting an external run. Reconnect GitHub automatically after connection loss.
+Keep CI checks bounded, maintain the exact-head merge requirement, and do not poll repeatedly. Reconnect GitHub automatically if access fails. Each new substantive package is a bounded PR with a clear rollback.

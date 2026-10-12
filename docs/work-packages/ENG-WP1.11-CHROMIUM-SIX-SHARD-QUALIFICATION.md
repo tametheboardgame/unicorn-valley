@@ -1,7 +1,7 @@
 ---
 id: ENG-WP1.11
 title: Six-Shard Chromium Qualification and Performance Comparison
-status: in_progress
+status: complete
 autonomy: green
 depends_on: [ENG-WP1]
 parallel_safe: false
@@ -89,4 +89,8 @@ Open a small rollback PR, verify required CI, merge. The revert restores `[1, 2,
 
 ## Completion
 
-Pending six-shard authoritative qualification, comparison, and decision.
+**Completed 11 October 2026.** The isolated six-shard implementation commit `940d0c34cdb6f74273cc72a920206846db8c86ce` passed draft [CI #38163775839](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38163775839) and authoritative exact-head [CI #38165098951](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38165098951), including all six full Chromium shards, cross-browser, unit/build/smoke and Merge Gate. [PR #302](https://github.com/tametheboardgame/unicorn-valley/pull/302) merged into `main` as `e9985075d9aebd129eebfe5550b2ace90d13d50a`.
+
+Observed draft Chromium job durations: **14.36, 6.03, 13.15, 11.06, 14.13 and 7.09 min**. Six shards finished all 307 selected tests (304 passed, 3 skipped), compared with the three-shard critical path of 29.9 min. The six-shard critical path was **14.36 min (~52% faster)** and the aggregate runner-job elapsed was **65.82 min (~7% less)**. No observed GitHub queueing of the six runners in the trial; one-run measurement, not a long-term guarantee.
+
+**Revertible implementation:** `git revert 940d0c34cdb6f74273cc72a920206846db8c86ce` in its own branch/PR returns exactly to static three shards while preserving all earlier ENG-WP1 hardening and this baseline record. For the next evolution use [ENG-WP2](ENG-WP2-TEST-CONTRACT-LIFECYCLE.md) and [ENG-WP3](ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md); any new adaptive change should use **static six** as its immediate fallback.
