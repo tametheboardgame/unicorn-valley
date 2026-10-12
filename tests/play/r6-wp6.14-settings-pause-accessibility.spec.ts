@@ -104,12 +104,20 @@ async function waitForInteractiveObject(
   );
 }
 
-async function moveSelectionUntilVisible(
+async function scrollUntilInteractive(
   page: Page,
   sceneKey: string,
   objectName: string,
   maxSteps = 16,
 ): Promise<void> {
+  // The Settings viewport supports actual wheel scrolling. Using one scroll
+  // gesture per check avoids traversing every unrelated row with individual
+  // ArrowDown keypresses and heavyweight Phaser diagnostics snapshots.
+  // Keep steps smaller than the 420px viewport so no row can be skipped.
+  const bounds = await page.locator('canvas').boundingBox();
+  if (!bounds) throw new Error('Game canvas has no browser bounds.');
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + (350 / 720) * bounds.height);
+
   for (let step = 0; step <= maxSteps; step += 1) {
     const current = await snapshot(page);
     const object = current.scenes
@@ -118,9 +126,11 @@ async function moveSelectionUntilVisible(
     if (object?.visible && object.interactive) {
       return;
     }
-    await page.keyboard.press('ArrowDown');
+    if (step < maxSteps) {
+      await page.mouse.wheel(0, 520);
+    }
   }
-  throw new Error(`${objectName} did not become visible and interactive.`);
+  throw new Error(`${objectName} did not become visible and interactive after scrolling.`);
 }
 
 async function tapObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
@@ -187,7 +197,7 @@ test('title launches canonical settings with fullscreen and persistent accessibi
       ?.objects.some((object) => object.name === 'title-setting-fullscreen') ?? false,
   ).toBe(false);
 
-  await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
+  await scrollUntilInteractive(page, 'SettingsScene', 'settings-row-reduced-motion');
   await tapObject(page, 'SettingsScene', 'settings-row-reduced-motion');
   await expect
     .poll(async () => sceneText(await snapshot(page), 'SettingsScene'))
@@ -199,7 +209,7 @@ test('title launches canonical settings with fullscreen and persistent accessibi
   );
   expect(JSON.parse(storedAccessibility ?? '{}')).toMatchObject({ reducedMotion: true });
 
-  await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-fullscreen');
+  await scrollUntilInteractive(page, 'SettingsScene', 'settings-row-fullscreen');
   current = await snapshot(page);
   expect(
     sceneText(current, 'SettingsScene').some((value) => value.startsWith('Fullscreen: ')),
@@ -211,7 +221,7 @@ test('title launches canonical settings with fullscreen and persistent accessibi
   await waitForScene(page, 'TitleScene');
   await tapTitleText(page, 'Settings');
   await waitForScene(page, 'SettingsScene');
-  await moveSelectionUntilVisible(page, 'SettingsScene', 'settings-row-reduced-motion');
+  await scrollUntilInteractive(page, 'SettingsScene', 'settings-row-reduced-motion');
   expect(sceneText(await snapshot(page), 'SettingsScene')).toContain('Reduced motion: On');
 });
 
