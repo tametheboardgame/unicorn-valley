@@ -15,7 +15,7 @@ Tracking: [#301](https://github.com/tametheboardgame/unicorn-valley/issues/301).
 
 ## Objective
 
-Prevent a repeat of the historical-test cleanup crisis by making test maintenance part of **every new or active work package and its code review**, rather than relying on occasional whole-suite repair.
+Prevent repeated historical-test crises by making test maintenance an enforced **work-package finalisation and pre-merge** requirement, without slowing down draft visual/feature iteration.
 
 ENG-WP2 is the **source of truth for which behavioural contracts exist, who owns them, what is being reviewed and which changes require new/updated/replaced coverage**. [ENG-WP3](ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) consumes that metadata to make execution faster. Neither creates a second verification-ownership system.
 
@@ -35,19 +35,18 @@ Inventory active browser/unit/smoke/cross-browser contracts. Define metadata der
 
 **Acceptance:** actionable integrity report, machine tests detecting missing/retired paths or bad ownership, migration example. No runtime sharding change.
 
-### WP2.2 — Mandatory impact assessment for future work packages
+### WP2.2 — Progressive assessment, mandatory final test review
 
-Add a **Test Impact Assessment** to new and current/next package template and PR evidence:
-- player behaviour(s) added, changed or deliberately removed;
-- existing behavioural contract IDs/files and source-to-test ownership;
-- tests to add/update/replace/retire, or explicit `reviewed: no test change` with reason;
-- risk level and relevant smoke/compatibility, save/progression, keyboard/mouse/touch and accessibility requirements;
-- expected validation tiers, named reviewer/acceptance evidence and unresolved exceptions.
+Add an explicit **Test Impact Assessment** to the new/current work-package template and PR evidence, using two stages:
 
-Add machine-readable metadata validated by `validate-project-state.py`, compare stated impact to the **actual diff** through appropriate CI policy checks. New and current/next packages only, not all previously closed packages. A change without credible assessment must fail the relevant pre-merge check; a valid no-test-change decision remains possible. Detect mismatches but never automatically rewrite, delete or weaken an assertion.
+- **Provisional (draft):** identify affected area/behaviours, obvious risks and likely test owners. `TBC during finalisation` is acceptable. Several small UI/content/positioning updates must produce quick working preview URLs with light checks, **not** full suite or documentation/test-contract audits on every draft commit. Incomplete final-stage review must not fail a draft.
+- **Reviewed (finalisation before Ready for review):** once the visual/functional work is approved, tidy code/architecture, reconcile documentation, and review tests against the **actual final diff**. Identify affected behavioural contracts and source-to-test owners, update/add/replace tests where necessary, or explicitly record `tests unchanged — reviewed, with reason`. Check unit, smoke, browser, compatibility, persistence, keyboard/mouse/touch and accessibility as applicable. Record risk, reviewer, human acceptance and supporting test evidence.
 
-**Acceptance:** positive example covering a feature and negative tests proving missing/false/unchecked assessment is rejected.
+Implement machine-readable stage metadata in `validate-project-state.py` and review evidence in `AGENTS.md`, `TESTING.md`, the WP template and PR checklist. Apply to new/current-next packages only; do not retrofit closed work packages. CI must **allow incomplete provisional drafts**, validate the structure and optionally warn about unresolved items, and **reject incomplete, false or unchecked final-stage assessments** on non-draft heads. Compare assessment claims to changed files; never auto-rewrite, delete or weaken assertions.
 
+Keep the risk-selected draft tests and existing high-risk-current-delta escalation. Full exact-head Tier 0–4 qualification still occurs **after finalisation**, immediately before merge. Do not treat a preview as qualification.
+
+**Acceptance:** cosmetic-only and feature-change worked examples; negative policy tests showing incomplete draft is allowed and unreviewed Ready-for-review is blocked; diff-to-coverage evidence; no additional per-preview full test burden.
 ### WP2.3 — Stable, player-observable contracts
 
 Harden reusable browser test fixtures: observable readiness, bounded waits with diagnostics, scene lifecycle, no screenshot polling loops, input modality coverage; improve actual flaky test families only when a current contract is understood. Keep functional assertions intact; no speculative timeouts or mass skips.
@@ -62,11 +61,15 @@ Own suite-health definitions and review process: owner-less/ageing contracts, re
 
 ## Policy lifecycle for any future feature PR
 
-1. **Plan:** an impact assessment identifies affected behavioural contracts and expected tests.
-2. **Develop:** draft PR runs cheap risk/ownership-selected tests; changes to tests and mappings accompany the feature delta where appropriate.
-3. **Review:** compare assessment and files changed; account for new, replaced, removed, skipped or unowned tests. Require justified `no test change` when appropriate.
-4. **Qualify:** human product/UX acceptance remains separate. Non-draft exact-head full suite (all Chromium shards, cross-browser, unit, smoke, build and Merge Gate) still required before merging.
-5. **Maintain:** ownership, last-reviewed evidence and health exceptions remain recorded and visible.
+1. **Plan lightly:** scope, invariants, provisional test-impact note and human gate.
+2. **Iterate and preview:** draft PR, fast build/preview URL, proportionate focused validation, repeated human feedback.
+3. **Approve/freeze:** complete the functional/visual revision and record necessary human approval.
+4. **Code/documentation review:** tidy architecture, implementation and current documentation.
+5. **Final test-impact review:** reconcile the final diff with behavioural contracts and ownership; update tests or justify no changes.
+6. **Ready for review:** run the complete exact-head unit/build/smoke/Chromium/cross-browser CI and Merge Gate; fix and rerun as needed.
+7. **Merge and maintain:** merge only after green gate and human approval; retain lifecycle/health evidence. Production deployment remains separate.
+
+**WP2.2 must enforce the assessment only at finalisation; normal draft preview edits must remain fast.**
 
 ## Scope limits / rollback
 

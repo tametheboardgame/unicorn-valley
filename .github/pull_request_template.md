@@ -1,42 +1,32 @@
 ## Work package
-
 - ID:
 - Bounded package: `docs/work-packages/...`
-- Autonomy: Green / Amber / Red
-- Human gate: none / visual / playtest / product / release / other
+- Human gate: none / visual / playtest / product / release
+- Draft preview URL:
+- Visual/functional approval: pending / accepted / not required
 
-## Scope
+## During draft iteration — provisional only
+- Scope and current feedback:
+- Known risks, likely test owners and provisional test-impact note (TBC is acceptable):
+- Minimal build/smoke and relevant focused checks:
 
-Describe the bounded outcome delivered by this PR.
+**Keep the PR draft and provide preview URLs promptly. Final code/documentation/test-contract review is not required between ordinary visual changes.**
 
-## Validation
+## Finalisation — complete BEFORE Ready for review
+- [ ] Approved behaviour frozen; code and architecture reviewed/tidied
+- [ ] Current documentation reconciled against approved behaviour
+- [ ] Full Test Impact Assessment reconciled to actual diff and ownership
+- [ ] Tests added/updated/replaced OR `tests unchanged — reviewed, with reason` recorded
+- [ ] Relevant save, keyboard/mouse/touch, accessibility, browser/compatibility risks addressed
+- [ ] Human approval and final evidence recorded as required
 
-- [ ] `npm run validate`
-- [ ] CI `Validate` passes
-- [ ] CI `Browser playtest` passes where applicable
-- [ ] CI `Browser compatibility` passes where applicable
-- [ ] `Validate AI Project Contract` passes
+## Authoritative qualification — after finalisation
+- [ ] Required static/unit/build/smoke checks passed
+- [ ] All required Chromium shards and browser compatibility passed on live exact PR head
+- [ ] Exact-head Merge Gate green; no unqualified later commits
+- [ ] Production deployment separately authorised if requested
 
-Additional focused validation:
-
-- 
-
-## Acceptance / safety
-
-- [ ] Work remains inside the named package scope.
-- [ ] Accepted baseline and invariants are preserved unless this package explicitly changes them.
-- [ ] Save/persistence implications have been checked.
-- [ ] Mobile/touch implications have been checked.
-- [ ] Required human acceptance is recorded separately from technical validation.
-- [ ] No Red action such as production deployment is included without explicit authorisation.
-
-## Durable state
-
-- [ ] Material decisions recorded in `DECISIONS.md` if needed.
-- [ ] `STATUS.md` reflects the real checkpoint where appropriate.
-- [ ] `PROJECT_STATE.json` reflects the real checkpoint where appropriate.
-- [ ] Next action/blocker is clear.
-
-## Notes / limitations
-
-List anything the next agent or reviewer needs to know.
+## Durable hand-off
+- [ ] Material decisions documented in `DECISIONS.md` if applicable
+- [ ] `STATUS.md` and `PROJECT_STATE.json` up to date as needed
+- Next action, known limitations and blockers:

@@ -34,6 +34,22 @@ Every current or next work package must declare `mini_game_platform_impact` befo
 
 Use `changed - platform` for changes to the shared mini-game platform itself. Historical packages are not retrofitted, but the project-state validator rejects a current/next package that omits or malforms this declaration.
 
+## Two-stage Test Impact Assessment (ENG-WP2)
+
+New/current work packages have a short provisional impact note at planning and an exhaustive review at **finalisation**, not during each small draft visual adjustment.
+
+```md
+## Test Impact Assessment
+- Stage: provisional / reviewed
+- Affected behaviours, owner groups and known risks:
+- Potential regression coverage: TBC during draft
+- Final actual-diff test/ownership reconciliation: completed before Ready for review
+- Tests added/updated/replaced OR unchanged with reason:
+- Final reviewer, evidence and exceptions:
+```
+
+Maintain rapid preview iteration on draft PRs. Once the user has approved the result where required, tidy code and documentation, then complete the test-impact review and run full exact-head CI before merge. The planned WP2.2 validator must permit provisional drafts and block incomplete final reviews. Do not retrofit closed packages. See `AGENTS.md`, `TESTING.md` and the current ENG-WP2 package.
+
 ## Standard body
 
 Each package should cover:

@@ -65,6 +65,14 @@ These selected runners are normally driven by CI environment values produced by 
 
 The project deliberately separates **fast development feedback** from **authoritative section/release qualification**.
 
+### Provisional draft preview versus finalisation
+
+For an unfinished visual or content package, a preview URL is the primary feedback loop. After a viable build and minimal required smoke, publish it promptly; do not hold feedback behind full Chromium/cross-browser checks or a completed impact assessment. Keep the PR in **draft**, with a short provisional scope/risk/test-impact note. Iterate freely within scope. Risky current deltas and known broken gameplay still require proportionate or escalated safety checks.
+
+**After the final visual/functional baseline is approved**, do code/architecture cleanup and documentation reconciliation, then complete a comprehensive test-contract review against the actual final diff. Add, update or explicitly replace tests and ownership, or justify existing unchanged coverage. Complete this work **before** the Ready-for-review transition that triggers the authoritative full CI on that exact head.
+
+WP2.2 must validate the two stages differently: incomplete **provisional drafts are allowed**, while incomplete **final-stage/non-draft** reviews fail. This rule must have automated positive and negative policy tests. A preview is not a merge or deployment approval.
+
 ### During active development
 
 Use the cheapest checks that protect the current change and make the preview credible.
@@ -78,9 +86,9 @@ Use the cheapest checks that protect the current change and make the preview cre
 
 For pull-request updates, CI uses the incremental `synchronize` delta since the previous PR head when available. The fallback is the cumulative PR diff. This avoids a long-lived branch repeatedly paying for an earlier high-risk change after each later minor correction.
 
-### At a human-approved section boundary
+### At the finalised merge boundary
 
-Before merging an approved substantive slice to `main`, mark the draft PR **Ready for review**. This triggers **authoritative full qualification on that exact head**. A subsequent push while non-draft automatically invalidates the previous result and runs full qualification again. Manual full-CI dispatch remains a supported fallback; provide its optional PR number when using it to qualify a PR, so the Merge Gate checks the live head rather than treating it as an unbound release run. The full gate includes:
+After code, documentation and full test-impact finalisation, and before merging an approved substantive slice to `main`, mark the draft PR **Ready for review**. This triggers **authoritative full qualification on that exact head**. A subsequent push while non-draft automatically invalidates the previous result and runs full qualification again. Manual full-CI dispatch remains a supported fallback; provide its optional PR number when using it to qualify a PR, so the Merge Gate checks the live head rather than treating it as an unbound release run. The full gate includes:
 
 - full unit qualification;
 - production build/static smoke/performance;

@@ -295,3 +295,13 @@ All current and future roadmaps must obey the shared mini-game contract in `AGEN
 `SceneManifest` remains the scene/loading authority; the mini-game catalogue must not become a competing scene registry. Just Games sessions are sandboxed by default and may not mutate normal adventure quest, world, relationship, inventory, Shimmer, collection or unlock progression. Existing historical games remain recorded under the packages that created them and are migrated to the new platform through the MG programme rather than rewriting history.
 
 The initial platform sequence is MG-WP0 foundation, MG-WP1 existing-game migration, MG-WP2 sandbox/persistence isolation, MG-WP3 Just Games shell and MG-WP4 future-game authoring guardrails, followed by independent game improvement packages.
+
+## UV-D028 - Rapid preview development and final-stage test reviews
+
+Status: Accepted, 2026-10-12.
+
+The user confirmed that feature and area development must permit many small visual/positional/content changes in a draft PR with a quickly updated playable preview URL (e.g. moving Sunbeam Village's sundial or recolouring Story House). Only the cheapest appropriate build, smoke and risk-selected checks should protect each iteration. A complete test audit, code/documentation finalisation or full Chromium/cross-browser qualification is **not** a prerequisite for every routine edit.
+
+After the approved functional/visual baseline is frozen, the agent reviews code and architecture, reconciles documentation, then reviews the actual final diff against behavioural test contracts and ownership, updating/adding/replacing tests as necessary or explicitly justifying no change. **Only then** move to Ready for review, require the authoritative full exact-head test suite and Merge Gate, and merge when green. Later non-draft commits require fresh qualification; production deployment remains independently authorised.
+
+ENG-WP2.2 must treat test-impact assessment as **progressive**: a provisional draft note may remain incomplete, whereas a final/non-draft review must be complete and auditable. A high-risk *current* change or broken gameplay can still trigger earlier risk-based checks. ENG-WP3 adaptive CI must preserve this two-speed contract.

@@ -67,12 +67,7 @@ export function buildContractInventory({
   for (const [group, references] of Object.entries(browserGroups)) {
     for (const path of references) {
       if (!BROWSER_SPEC.test(path) || !browserOwners.has(path)) {
-        addIssue(
-          errors,
-          'MISSING_BROWSER_REFERENCE',
-          path,
-          `Referenced by ownership group ${group}`,
-        );
+        addIssue(errors, 'MISSING_BROWSER_REFERENCE', path, 'Referenced by ownership group ' + group);
         continue;
       }
       ownedBrowserPaths.add(path);
@@ -96,12 +91,7 @@ export function buildContractInventory({
   ]) {
     for (const path of paths) {
       if (!browserOwners.has(path)) {
-        addIssue(
-          errors,
-          'MISSING_PROFILE_REFERENCE',
-          path,
-          `${label} config references missing spec`,
-        );
+        addIssue(errors, 'MISSING_PROFILE_REFERENCE', path, label + ' config references missing spec');
       }
     }
   }
@@ -119,12 +109,7 @@ export function buildContractInventory({
   }
   for (const path of legacy) {
     if (!currentUnowned.has(path)) {
-      addIssue(
-        errors,
-        'STALE_UNOWNED_BASELINE',
-        path,
-        'Remove stale debt entry after mapping or deletion',
-      );
+      addIssue(errors, 'STALE_UNOWNED_BASELINE', path, 'Remove stale debt entry after mapping or deletion');
     }
   }
 
@@ -169,7 +154,7 @@ export function buildContractInventory({
       addIssue(warnings, 'UNOWNED_UNIT', path, 'Unit test has no matching source ownership rule');
     }
     return {
-      id: `${kind}:${path}`,
+      id: kind + ':' + path,
       path,
       kind,
       owners,
@@ -202,7 +187,7 @@ export function buildContractInventory({
     contracts,
     historicalContracts: Object.entries(lifecycle)
       .filter(([, data]) => ['retired', 'replaced'].includes(data.status))
-      .map(([path, data]) => ({ id: `historical:${path}`, path, ...data })),
+      .map(([path, data]) => ({ id: 'historical:' + path, path, ...data })),
     errors,
     warnings,
   };
@@ -217,7 +202,9 @@ export function inspectContractInventory(root = process.cwd(), asOf) {
   return buildContractInventory({
     browserSpecs: paths.filter((path) => BROWSER_SPEC.test(path)),
     unitSpecs: files.filter((path) => UNIT_SPEC.test(path)),
-    smokeSpecs: configSpecPaths(readFileSync(join(root, 'playwright.smoke.config.ts'), 'utf8')),
+    smokeSpecs: configSpecPaths(
+      readFileSync(join(root, 'playwright.smoke.config.ts'), 'utf8'),
+    ),
     compatibilitySpecs: configSpecPaths(
       readFileSync(join(root, 'playwright.compat.config.ts'), 'utf8'),
     ),
@@ -229,9 +216,9 @@ export function inspectContractInventory(root = process.cwd(), asOf) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const report = inspectContractInventory();
   const output = process.argv.find((arg) => arg.startsWith('--output='))?.slice(9);
-  if (output) writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`);
-  console.log(`Contract inventory: ${JSON.stringify(report.summary)}`);
-  for (const issue of report.errors) console.error(`ERROR ${issue.code}: ${issue.path}`);
-  console.log(`Legacy ownership debt: ${report.summary.unownedBrowser} browser specs`);
+  if (output) writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
+  console.log('Contract inventory: ' + JSON.stringify(report.summary));
+  for (const issue of report.errors) console.error('ERROR ' + issue.code + ': ' + issue.path);
+  console.log('Legacy ownership debt: ' + report.summary.unownedBrowser + ' browser specs');
   if (report.errors.length) process.exitCode = 1;
 }
