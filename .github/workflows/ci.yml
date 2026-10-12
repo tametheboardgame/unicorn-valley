@@ -303,6 +303,13 @@ jobs:
       - name: Summarise automated findings
         if: always()
         run: node scripts/summarisePlaytest.mjs
+      - name: Emit WP3.1 per-shard execution evidence
+        if: always()
+        continue-on-error: true
+        env:
+          TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+          TEST_EVIDENCE_SHARD: ${{ matrix.shard }}/6
+        run: node scripts/verification/playwrightEvidence.mjs --input=playtest-artifacts/playwright-results.json --output=playtest-artifacts/test-evidence.json
       - name: Upload playtest report and screenshots
         if: always()
         uses: actions/upload-artifact@v4

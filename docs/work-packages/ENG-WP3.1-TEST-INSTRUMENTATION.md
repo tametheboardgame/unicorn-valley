@@ -48,3 +48,7 @@ Machine report and manifest are archived with each required Chromium shard; ever
 ## Completion record
 
 Started 12 October 2026, after approved ENG-WP2.3A merge. Draft implementation in progress; no claim of qualification, approval or merge.
+
+## Implementation checkpoint — 12 October 2026
+
+The existing `playwright.config.ts` retains list/HTML reporting and adds the built-in JSON reporter. The six existing Chromium shard jobs now emit provenance-bound `test-evidence.json` beside the unmodified Playwright report. The evidence normaliser records per-test identity, run/head/source SHA, status, explicit skips, attempts and total duration, plus grouped per-spec totals. Node negative tests reject malformed reports, duplicate IDs, unreported identities, missing shards and mismatched provenance. During WP3.1 these artifacts are observational; the evidence step is `continue-on-error` and the proven exact-head Merge Gate is unchanged. A second checkpoint must produce and verify an independently enumerated full discovery manifest and run the reconciliation on real artifacts before WP3.1 is finalised.
