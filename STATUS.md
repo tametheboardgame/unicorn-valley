@@ -10,17 +10,13 @@ Last updated: 2026-10-12
 
 Initial measured Chromium critical path changed from **29.9 min (3 shards)** to **14.36 min (6 shards)**. Same 307 selected tests (304 passed, 3 skipped); six-shard combined runner elapsed 65.82 min against ~70.8 min before. This is an initial comparison of successful runs, not a permanent performance guarantee. The isolated six-shard switch can be reverted via commit `940d0c34cdb6f74273cc72a920206846db8c86ce`.
 
-## Current engineering implementation — ENG-WP2.1
+## Engineering progress
 
-Active branch: `agent/eng-wp2-1-contract-inventory`, PR #305 targeting `main`. Roadmap PR #304 qualified and merged as `fa48da5ea450cfc9bbd188fd5d9dcb5c285ef7ef`.
+**ENG-WP2.1 — complete and merged.** PR #305 merged to main as 4c627ffff4aa22d69f8a62eaa74a897d161374fa on 12 October 2026, after authoritative CI #38212024744 attempt 2 passed all six Chromium shards, compatibility, unit/build/smoke and Merge Gate. The visible failed-first-attempt records are kept for WP2.3. Inventory: 110 browser files, 166 unit files, 82 legacy unmapped browser specs recorded as visible debt but still fully tested.
 
-A first inventory pass found **110 full Chromium spec files, 166 unit test files and 82 browser specs not referenced by current BROWSER_GROUPS**. These are unowned for targeted selection, not automatically stale or missing from the full suite.
+**ENG-WP2.2 — final review complete, authoritative CI pending.** PR #307 on agent/eng-wp2-2-progressive-impact-review implements PR-local, stage-sensitive Test Impact Assessments. Drafts remain permissive; final reviews must reconcile the cumulative PR changed-file list, affected areas, changed tests and valid replacement contracts. Policy/architecture/lint/unit validation passed on earlier draft checks; the latest change corrects formatting and records the accepted final impact review. No gameplay or Chromium sharding change. **Ready-for-review qualification and merge remain outstanding.**
 
-WP2.1 adds a derived contract inventory and a frozen legacy-unowned list. New unowned Chromium specs, missing mapped files, broken smoke/cross-browser references, stale exceptions, expired quarantines and invalid retirement declarations are errors. Prior ownership debt remains visible pending deliberate review. This checkpoint changes **no product behaviour, test selection, assertions, sharding or Merge Gate rules**.
-
-Validation: all draft Tier 0, selected unit/build and whole-game smoke checks passed on [CI #38210251505](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38210251505), with Chromium and compatibility qualification still to be verified. Code/documentation/test-impact finalisation complete; PR #305 is moving to Ready for review for authoritative exact-head full qualification. Six-shard main baseline is unchanged. **Do not claim WP2.1 complete or merged until full qualification and merge are confirmed.**
-
-Accepted governance: **UV-D028** keeps repeated preview edits rapid with review/CI at finalisation; **UV-D029** defines three parallel World/Just Games/Story House streams. **WP2.2** must implement draft-versus-final test-impact enforcement; **WP2.5 issue #306** owns machine-enforced per-stream state, overlap detection and merge freshness. These future checks have not been implemented by WP2.1.
+Fast-development decision UV-D028 and concurrent World/Just Games/Story House decision UV-D029 are active policy on main. ENG-WP2.5 #306 still owns the distinct technical integration-base freshness, overlap and per-stream state safeguards; no claim that these mechanisms have already been implemented.
 
 ## Engineering roadmap
 
@@ -29,7 +25,7 @@ Accepted governance: **UV-D028** keeps repeated preview edits rapid with review/
 
 Proposed order: WP2.1 contract identity and WP2.2 mandatory change assessment first; WP3.1 evidence and WP3.2 shadow balancing next, with WP2.3/2.4 hardening/health. Dynamic production of CI shard matrices requires a separately qualified WP3.3 PR and static-six rollback.
 
-**Current engineering code work:** WP2.1 inventory work is implemented on a draft branch, pending qualification. Existing six-shard `main` is the accepted CI baseline. No production deployment performed.
+**Current engineering code work:** WP2.2 stage-aware validator is in development and awaiting CI qualification. Existing six-shard `main` is the accepted CI baseline. No production deployment performed.
 
 ## Product scope
 
