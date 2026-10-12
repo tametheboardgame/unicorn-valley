@@ -144,3 +144,22 @@ test('deliberately retired test must name an existing replacement contract', () 
   });
   assert.match(falseUpdate.errors.join(' '), /Deleting a test requires/);
 });
+
+test('new browser test contracts must appear in final assessment of actual PR diff', () => {
+  const added = {
+    filename: 'tests/play/mg-wp7-new-mode-contract.spec.ts',
+    status: 'added',
+  };
+  const incomplete = evaluate({ files: [...changed, added] });
+  assert.equal(incomplete.passed, false);
+  assert.match(incomplete.errors.join(' '), /Modified test contracts missing/);
+  const completedReview = evaluate({
+    files: [...changed, added],
+    body: body({
+      ...completed,
+      contracts: [...completed.contracts, 'tests/play/mg-wp7-new-mode-contract.spec.ts'],
+      evidence: 'Both updated and newly introduced contracts reviewed against the complete PR diff',
+    }),
+  });
+  assert.equal(completedReview.passed, true, completedReview.errors.join('\n'));
+});

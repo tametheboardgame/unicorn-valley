@@ -232,3 +232,25 @@ The Marigold/Nova picnic regression intentionally exercises a complete player jo
 When a full six-shard Chromium run is selected, the current CI now archives a `chromium-test-discovery` artifact from `npx playwright test --list --reporter=json`, plus `test-evidence.json` alongside each of the six existing `tier3-chromium-N-of-6` artifacts. A separate `chromium-evidence-reconciliation` artifact compares every discovered stable test identity to exactly one execution-or-skip identity, rejects duplicate/missing/unknown tests and SHA/run/shard mismatches, and ranks the slowest spec files by measured durations. This evidence feeds ENG-WP2.4 health policy and ENG-WP3.2 shadow balancing but does not yet control the shard scheduler or alter the exact-head Merge Gate.
 
 **Crucial distinction:** Playwright's `--list` JSON output marks all listed cases `skipped` because none executes. The normalised discovery manifest reports them as `discovered`. Only actual per-shard execution JSON supplies real `expected`, `unexpected`, `flaky` and `skipped` outcomes. The complete [CI #38267022053](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38267022053) proved 311/311 identities reconciled across 6/6 shards, with 308 expected and 3 actual skips. The observed source checkout is a GitHub PR merge SHA, recorded separately from the candidate PR head; both are bound to the run ID. Missing observational evidence is a finding, not permission to reduce game tests.
+
+## ENG-WP2.4 suite-health evidence
+
+The full-suite CI's existing **WP3.1 evidence reconciliation** job also emits a read-only `suite-health` artifact (`suite-health.json` and `suite-health.md`). It combines actual six-shard Playwright outcomes and the WP2.1 contract inventory. It shows test ownership, unowned historical debt, genuine skips, slow specs, lifecycle status and review age. A slow file in one run is **not** labelled flaky; repeated failures require multiple independently identified, complete historical runs.
+
+The corresponding Node tests run within `npm run verification:policy:test` (Tier 0). The report itself is currently observational and **does not** change required shards, browser assertions, draft preview speed or the Merge Gate. For local analysis after downloading the normalised reconciliation and six shard artifacts:
+
+```sh
+node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report.json --shards=shard-evidence --output=suite-health.json --markdown=suite-health.md
+```
+
+Use the JSON for all per-file evidence and warning codes; Markdown shows the leading issues. For local/offline analysis, historical reports can be supplied as a validated JSON array via `--history=history.json`. In normal CI, a separate observational step automatically attempts to retrieve qualifying historical reports from retained `main` artifacts; if no such records exist, the report explicitly uses single-run mode rather than inventing trends. Contract ownership or quarantine changes must be made in WP2.1 metadata, never by making the health reporter silently omit tests.
+
+## ENG-WP2.4 routine suite-health review and historical evidence
+
+The existing scheduled full CI job runs weekly on Sunday. When six-shard reports are available, it now attempts to retrieve **up to five** independent health reports from recently completed `main` GitHub Actions runs. A failed workflow can still provide a valid complete health report; cancelled, partial, mismatched and expired reports never count as evidence. Full reports and provenance are included in the `suite-health` artifact; retrieval metadata distinguishes `history-loaded`, `no-eligible-history` and `history-unavailable`. Artifact retention is 14 days, so this is a bounded recent history, not perpetual storage.
+
+Engineering verification maintains the weekly review, monthly ownership-backlog review and quarterly contract-lifecycle review. Mapped source-area owners fix tests with their affected work packages. Do not grandfather newly unowned browser contracts, inflate timeouts, delete tests or call a single slow observation repeated flakiness. Longstanding unowned browser entries still execute and are warning-level debt.
+
+Warnings include 180-second cumulative slow spec duration; two comparable prior complete runs plus both a 30% and 30-second increase for a duration trend; two independent runs with unexpected/flaky status for recurring failures; actual runtime skips; changed inventoried files since the latest eligible `main` evidence; and review age beyond 180 days. For a final PR, the **WP2.2 actual-diff test-impact check remains blocking**, including any added/modified tests not listed in `contracts[]` and any deletion without replacement. New node tests for history selection, SHA/run integrity, and changed test-impact contracts are part of Tier 0.
+
+Neither historical availability nor the report's warning count is a new Merge Gate criterion. Evidence integrity is protected in report generation, while the six static Chromium shards and existing authoritative merge checks remain unchanged.
