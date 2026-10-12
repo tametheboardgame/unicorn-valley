@@ -7,8 +7,8 @@ depends_on: [ENG-WP2.1, ENG-WP2.2, ENG-WP3.1]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
-test_impact_scope: Health thresholds and review evidence for existing CI test contracts
+test_impact_stage: reviewed
+test_impact_scope: Reviewed documentation-only WP2.4 proposal; implementation will require its own provisional then final review
 ---
 
 # ENG-WP2.4 — Test Suite Health and Contract Review Policy
@@ -34,7 +34,7 @@ No gameplay changes, arbitrary timeout increases, blanket retries, test deletion
 
 ## Test Impact Assessment
 
-Provisional. Engineering test-metadata/reporting only. Expected test updates are Node policy and evidence-analysis unit tests; existing gameplay/Chromium contracts remain intact. A complete actual-diff reviewed assessment is required before Ready for review.
+**This documentation-only proposal is reviewed for PR #310.** ENG-WP2.4 remains proposed and its actual implementation has not started. The later implementation PR will carry its own progressive test-impact assessment and Node policy/evidence tests. Existing gameplay and Chromium contracts remain unchanged by this proposal.
 
 ## Completion record
 
