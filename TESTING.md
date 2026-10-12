@@ -193,3 +193,10 @@ New work-package files declare test_impact_stage and test_impact_scope in YAML f
 Use waitForReadySceneSnapshot(page, sceneKey, readyObjectName) from tests/support/browserDiagnostics.ts when asserting a scene's objects after player-visible readiness. Unlike separate scene/object waits and a later snapshot, it returns the **same diagnostic scene** which simultaneously showed the scene active and the required ready marker visible. Keep separate real gameplay, interaction, scene-exit and non-interactivity assertions; the fixture must never make an absent marker count as a pass.
 
 For Just Games launch/return, include a real visible readiness marker when available (for example the Pond Leap frog or Chess Academy teacher). For sequential interactive clicks, wait for the real first-action feedback before sending the second. Fail under Playwright's existing bounded waits when the required state does not appear. Do not use broad retries, sleep loops, global timeout increases or skips.
+
+
+### ENG-WP2.3A: intentional invisible scene anchors
+
+The environment-production manager creates an invisible zone named `environment-production:<area>:anchor` with `setVisible(false)`. This is structural metadata, **not** a missing rendered scene. Pass `'present'` as the fourth argument to `waitForReadySceneSnapshot` only for such deliberately non-visible markers; default `'visible'` remains mandatory for player-facing Pond Leap frogs, Chess teacher objects and interactive controls. Preserve the existing layer/non-interactivity assertions after capturing the same ready scene snapshot.
+
+Environment checks are now one Playwright test per region (Glade, Village, Brook, Woods, Rainbow Run), with separate boot/context and failure localisation. Do not increase the 45-second global limit or hide failed assertions. This replaces one five-region composite, retaining all five regions and original layer assertions.

@@ -64,27 +64,33 @@ export async function getDiagnosticSnapshot(page: Page): Promise<BrowserDiagnost
  * waitForScene/waitForNamedObject/snapshot calls can straddle a scene transition,
  * producing a false missing-scene assertion even when the ready object was seen.
  *
- * This is an existence and visibility gate, not a replacement for the caller's
- * gameplay, input or non-interactivity assertions. The existing Playwright
- * test/step timeouts still bound failures.
+ * By default readiness requires a visible, player-observable object. A few
+ * legacy environment-production anchors are intentionally invisible zones;
+ * callers may explicitly request presence-only for those structural markers.
+ * This gate never replaces gameplay, input or non-interactivity assertions.
  */
 export async function waitForReadySceneSnapshot(
   page: Page,
   sceneKey: string,
   readyObjectName: string,
+  markerVisibility: 'visible' | 'present' = 'visible',
 ): Promise<DiagnosticSceneSnapshot> {
   const handle = await page.waitForFunction(
-    ({ key, name }) => {
+    ({ key, name, visibility }) => {
       const diagnostics = (window as DiagnosticWindow).__UNICORN_VALLEY_DIAGNOSTICS__;
       const snapshot = diagnostics?.snapshot();
       if (!snapshot?.activeScenes.includes(key)) return false;
       const scene = snapshot.scenes.find((candidate) => candidate.key === key);
-      if (!scene?.objects.some((object) => object.name === name && object.visible)) {
+      if (
+        !scene?.objects.some(
+          (object) => object.name === name && (visibility === 'present' || object.visible),
+        )
+      ) {
         return false;
       }
       return scene;
     },
-    { key: sceneKey, name: readyObjectName },
+    { key: sceneKey, name: readyObjectName, visibility: markerVisibility },
   );
   try {
     return (await handle.jsonValue()) as DiagnosticSceneSnapshot;
