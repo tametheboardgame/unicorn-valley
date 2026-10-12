@@ -70,16 +70,10 @@ async function assertJustGamesLaunchReturnContract(
 
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   if (entry.readyObjectName) {
-    const readyScene = await waitForReadySceneSnapshot(
-      page,
-      entry.sceneKey,
-      entry.readyObjectName,
-    );
+    const readyScene = await waitForReadySceneSnapshot(page, entry.sceneKey, entry.readyObjectName);
     // Keep a positive assertion on the player-visible entry marker.
     expect(
-      readyScene.objects.some(
-        (object) => object.name === entry.readyObjectName && object.visible,
-      ),
+      readyScene.objects.some((object) => object.name === entry.readyObjectName && object.visible),
     ).toBe(true);
   } else {
     await waitForScene(page, entry.sceneKey);
