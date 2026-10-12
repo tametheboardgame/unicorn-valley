@@ -86,6 +86,13 @@ async function assertJustGamesLaunchReturnContract(
 
   const snapshot = await getDiagnosticSnapshot(page);
   expect(snapshot.activeScenes).not.toContain(entry.sceneKey);
+
+  if (entry.gameId === 'sunbeam-chess') {
+    // A single ESC leaves the Academy at Just Games; a *fresh* second ESC
+    // legitimately returns to Title. The same event must never do both.
+    await page.keyboard.press('Escape');
+    await waitForScene(page, 'TitleScene');
+  }
 }
 
 test.describe('MG-WP4 reusable Just Games launch/return contract', () => {

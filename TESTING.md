@@ -200,3 +200,8 @@ For Just Games launch/return, include a real visible readiness marker when avail
 The environment-production manager creates an invisible zone named `environment-production:<area>:anchor` with `setVisible(false)`. This is structural metadata, **not** a missing rendered scene. Pass `'present'` as the fourth argument to `waitForReadySceneSnapshot` only for such deliberately non-visible markers; default `'visible'` remains mandatory for player-facing Pond Leap frogs, Chess teacher objects and interactive controls. Preserve the existing layer/non-interactivity assertions after capturing the same ready scene snapshot.
 
 Environment checks are now one Playwright test per region (Glade, Village, Brook, Woods, Rainbow Run), with separate boot/context and failure localisation. Do not increase the 45-second global limit or hide failed assertions. This replaces one five-region composite, retaining all five regions and original layer assertions.
+
+
+### ENG-WP2.3A: Escape transition across resumed mini-game menus
+
+The Just Games menu and the Chess Academy both subscribe to Escape. The Academy's Escape stops its scene and resumes Just Games; under full parallel Chromium load a single keydown reached both handlers, leaving the player on Title instead of Just Games. `JustGamesScene` now records the monotonic resumption time and ignores any Escape event that originated before that scene resumed. A subsequent fresh Escape still navigates to Title, and mouse-driven Back to Home is unchanged. The existing MG-WP4 launch/return contract now explicitly verifies **first Escape → Just Games, second fresh Escape → Title** for Chess Academy. No timeouts, sleeps, retries or assertion reductions have been introduced.
