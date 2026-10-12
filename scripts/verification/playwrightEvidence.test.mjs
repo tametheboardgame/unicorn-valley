@@ -134,5 +134,8 @@ test('supports Playwright 1.55 rootDir-relative files and discovery without resu
   assert.equal(inventory.tests[0].identity, current.tests[0].identity);
   assert.equal(inventory.tests[0].durationMs, 0);
   assert.throws(() => normalisePlaywrightReport(discovery, provenance), /no results/);
-  assert.throws(() => normalisePlaywrightReport(report('expected', '../evil.spec.ts'), provenance), /Invalid Playwright/);
+  assert.throws(
+    () => normalisePlaywrightReport(report('expected', '../evil.spec.ts'), provenance),
+    /Invalid Playwright/,
+  );
 });

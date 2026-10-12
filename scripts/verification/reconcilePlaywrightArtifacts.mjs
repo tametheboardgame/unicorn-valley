@@ -72,9 +72,14 @@ try {
     files: [...files.values()].sort((a, b) => b.durationMs - a.durationMs),
   };
   writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n');
-  console.log('WP3.1 independent full-suite reconciliation: ' + JSON.stringify({
-    coverage: completeness, statuses: report.statuses, slowest: report.files.slice(0, 8),
-  }));
+  console.log(
+    'WP3.1 independent full-suite reconciliation: ' +
+      JSON.stringify({
+        coverage: completeness,
+        statuses: report.statuses,
+        slowest: report.files.slice(0, 8),
+      }),
+  );
 } catch (error) {
   console.error('::error title=WP3.1 evidence incomplete::' + error.message);
   process.exitCode = 1;
