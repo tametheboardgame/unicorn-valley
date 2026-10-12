@@ -90,7 +90,6 @@ export const BROWSER_GROUPS = Object.freeze({
   ],
 });
 
-
 /**
  * Explicit lifecycle metadata beside the canonical ownership selection rules.
  * Unlisted discovered tests remain active but are not considered reviewed.

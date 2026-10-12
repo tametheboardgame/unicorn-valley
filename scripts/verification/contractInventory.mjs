@@ -67,7 +67,12 @@ export function buildContractInventory({
   for (const [group, references] of Object.entries(browserGroups)) {
     for (const path of references) {
       if (!BROWSER_SPEC.test(path) || !browserOwners.has(path)) {
-        addIssue(errors, 'MISSING_BROWSER_REFERENCE', path, 'Referenced by ownership group ' + group);
+        addIssue(
+          errors,
+          'MISSING_BROWSER_REFERENCE',
+          path,
+          'Referenced by ownership group ' + group,
+        );
         continue;
       }
       ownedBrowserPaths.add(path);
@@ -91,7 +96,12 @@ export function buildContractInventory({
   ]) {
     for (const path of paths) {
       if (!browserOwners.has(path)) {
-        addIssue(errors, 'MISSING_PROFILE_REFERENCE', path, label + ' config references missing spec');
+        addIssue(
+          errors,
+          'MISSING_PROFILE_REFERENCE',
+          path,
+          label + ' config references missing spec',
+        );
       }
     }
   }
@@ -109,7 +119,12 @@ export function buildContractInventory({
   }
   for (const path of legacy) {
     if (!currentUnowned.has(path)) {
-      addIssue(errors, 'STALE_UNOWNED_BASELINE', path, 'Remove stale debt entry after mapping or deletion');
+      addIssue(
+        errors,
+        'STALE_UNOWNED_BASELINE',
+        path,
+        'Remove stale debt entry after mapping or deletion',
+      );
     }
   }
 
@@ -202,9 +217,7 @@ export function inspectContractInventory(root = process.cwd(), asOf) {
   return buildContractInventory({
     browserSpecs: paths.filter((path) => BROWSER_SPEC.test(path)),
     unitSpecs: files.filter((path) => UNIT_SPEC.test(path)),
-    smokeSpecs: configSpecPaths(
-      readFileSync(join(root, 'playwright.smoke.config.ts'), 'utf8'),
-    ),
+    smokeSpecs: configSpecPaths(readFileSync(join(root, 'playwright.smoke.config.ts'), 'utf8')),
     compatibilitySpecs: configSpecPaths(
       readFileSync(join(root, 'playwright.compat.config.ts'), 'utf8'),
     ),
