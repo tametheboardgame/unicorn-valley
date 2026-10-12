@@ -254,3 +254,9 @@ Engineering verification maintains the weekly review, monthly ownership-backlog 
 Warnings include 180-second cumulative slow spec duration; two comparable prior complete runs plus both a 30% and 30-second increase for a duration trend; two independent runs with unexpected/flaky status for recurring failures; actual runtime skips; changed inventoried files since the latest eligible `main` evidence; and review age beyond 180 days. For a final PR, the **WP2.2 actual-diff test-impact check remains blocking**, including any added/modified tests not listed in `contracts[]` and any deletion without replacement. New node tests for history selection, SHA/run integrity, and changed test-impact contracts are part of Tier 0.
 
 Neither historical availability nor the report's warning count is a new Merge Gate criterion. Evidence integrity is protected in report generation, while the six static Chromium shards and existing authoritative merge checks remain unchanged.
+
+## ENG-WP2.5 parallel-stream validation
+
+Tier 0 validates the four independent JSON status records in `docs/streams/state/` and runs stream-ownership and merge-freshness regression tests. During final PR review, the changed-file policy blocks new product PRs from editing global root project state or another stream's record; provisional drafts remain fast. The CI concurrency group already keys on PR number, so updating one draft does not cancel another.
+
+The exact-head Merge Gate now also queries current `main`, compares it with the **live** PR head and verifies that latest main is the merge base (zero behind). A stale but previously green PR must integrate current main and rerun its full CI before merging. API errors fail closed. GitHub strict protected branch/merge queue settings must still be configured by a repository administrator to close the remaining merge-time race.
