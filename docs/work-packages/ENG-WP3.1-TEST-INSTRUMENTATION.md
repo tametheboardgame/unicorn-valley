@@ -1,7 +1,7 @@
 ---
 id: ENG-WP3.1
 title: Test Inventory and Execution Evidence
-status: in_progress
+status: complete
 autonomy: green
 depends_on: [ENG-WP2.1, ENG-WP2.2, ENG-WP2.3A]
 parallel_safe: false
@@ -47,7 +47,7 @@ Machine report and manifest are archived with each required Chromium shard; ever
 
 ## Completion record
 
-Started 12 October 2026, after approved ENG-WP2.3A merge. Draft implementation in progress; no claim of qualification, approval or merge.
+Started and completed 12 October 2026. PR #309 merged into main as `118669255e42890092a7ad1ac2862ecfc2aaecd3` after authoritative exact-head CI #38269906778 passed every required Tier 0–4 job, all six Chromium shards, whole-game smoke, cross-browser, independent discovery/reconciliation and Merge Gate. No human UX acceptance was required and no production deployment was performed.
 
 ## Implementation checkpoint — 12 October 2026
 
@@ -64,3 +64,9 @@ The real full-run evidence aggregator on [CI #38267022053](https://github.com/ta
 The discovery-only JSON reporter labels all cases `skipped` because `--list` does not execute tests. The normalised discovery manifest now uses `status: discovered` and a separate `summary.discovered` field, avoiding false skipped-test counts. Only shard **execution** manifests contribute runtime pass/skip/flaky/fail counts.
 
 No static-six matrix, test identities, assertion, global timeouts, retries, compatibility profiles or Merge Gate dependency changed. The separate evidence aggregator is fail-closed internally; its result is observational and not added as a required Merge Gate input in WP3.1. Finalisation: this correction must pass a fresh exact-head full run after PR #309 is marked Ready for review; then merge only after current-main freshness and all original required checks are green.
+
+## Final qualification and hand-off (12 October 2026)
+
+[Authoritative run #38269906778](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38269906778), PR head `630a0a7a0ee480acde09f7917dd10c4c43a11572`, passed all original Merge Gate dependencies and both observational WP3.1 evidence jobs. Reconciliation: 311 unique discovered tests and 311 terminal outcomes across six shards; 308 expected, three explicit execution skips, zero unexpected/flaky/missing/duplicate. Actual observed slowest files include Chess Academy (~296 seconds), freeze-stability (~276 seconds), and Rainbow Disc (~190 seconds); these are single-run measured values, not forecasts. Merge SHA: `118669255e42890092a7ad1ac2862ecfc2aaecd3`. Earlier 'draft / qualification pending' paragraphs above are historical checkpoints superseded by this final record.
+
+WP2.4 consumes these artifacts for ownership/flake/skip/age policy; WP3.2 can use the per-file timings in a shadow-only scheduler proposal. Neither may retroactively treat WP3.1 observational reconciliation as a required Merge Gate or silently omit tests. Static-six remains authoritative.

@@ -12,15 +12,15 @@ Last updated: 2026-10-12
 
 **ENG-WP2.3A — complete and merged.** [PR #308](https://github.com/tametheboardgame/unicorn-valley/pull/308) merged as `d874e6d1155e1fa38c3821327b64dce42a948972` after [CI #38251348719](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38251348719) passed Tier 0, unit, production build, whole-game smoke, **all six Chromium shards**, cross-browser compatibility and exact-head Merge Gate. The checkpoint repaired scene readiness, Chess Academy Escape dispatch, Rainbow Disc defence observation, Settings test traversal, Story House physics assertions and one documented end-to-end smoke budget.
 
-**Accepted integrated `main` at this hand-off:** `d874e6d1155e1fa38c3821327b64dce42a948972`. No production deployment authorised.
+**Accepted integrated `main` at this hand-off:** `118669255e42890092a7ad1ac2862ecfc2aaecd3` (ENG-WP3.1). No production deployment authorised.
 
-## Active work — ENG-WP3.1 Test Instrumentation
+## Completed work — ENG-WP3.1 Test Instrumentation
 
-Branch: `agent/eng-wp3-1-test-evidence`. Bounded package: [ENG-WP3.1](docs/work-packages/ENG-WP3.1-TEST-INSTRUMENTATION.md). Roadmap: [ENG-WP3](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md), [issue #303](https://github.com/tametheboardgame/unicorn-valley/issues/303).
+**ENG-WP3.1 — complete and merged.** [PR #309](https://github.com/tametheboardgame/unicorn-valley/pull/309) passed all required exact-head checks on [CI #38269906778](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38269906778) at `630a0a7a0ee480acde09f7917dd10c4c43a11572`, then merged into `main` as `118669255e42890092a7ad1ac2862ecfc2aaecd3`.
 
-Goal: add **machine-readable, source-revision-bound Playwright discovery and per-shard execution evidence** including test identities, result statuses, skips and durations. Reconcile missing and duplicate identities with unit-tested fail-closed reporting. **Do not change the six static Chromium shards, browser coverage, assertions, automatic retry policy or exact-head Merge Gate.** WP3.1 initially collects evidence; WP2.4 will own policy/health thresholds and WP3.2 will experiment with scheduling in shadow mode.
+Its independent SHA-bound manifest and execution evidence reconciled **311/311 test identities across all six Chromium shards**: 308 expected, three real runtime skips, zero missing/duplicate/unknown identities and zero unexpected/flaky outcomes. Per-test and per-file execution durations are archived with the CI artifacts. The existing static six-shard scheduler, test assertions, cross-browser profiles and exact-head Merge Gate were not altered. Evidence collection is observational in WP3.1; future changes to gate authority require separate qualifications.
 
-Current stage: implementation and actual-diff impact review complete. Draft full CI #38267022053 passed all six browser shards, cross-browser, smoke, build, unit, Tier 0, Merge Gate and the independent 311/311 test-evidence reconciliation. A final discovery-report semantic correction was committed after that run, so **authoritative Ready-for-review exact-head qualification remains required before merge**. `PROJECT_STATE.json.latest_commit` records the last verified integrated base at this branch's creation, not a promise that draft commits are qualified.
+**Next proposed bounded package:** [ENG-WP2.4 Test Suite Health](docs/work-packages/ENG-WP2.4-TEST-SUITE-HEALTH.md), which will use WP3.1's evidence for owner/flake/slow-test lifecycle reporting. [ENG-WP3.2](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) can subsequently model balancing in shadow mode; no scheduler switch is authorised yet.
 
 ## Concurrent workstreams and remaining engineering packages
 
