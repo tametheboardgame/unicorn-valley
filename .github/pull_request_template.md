@@ -5,6 +5,14 @@
 - Draft preview URL:
 - Visual/functional approval: pending / accepted / not required
 
+## Development stream and overlap review
+
+- Stream: World / Just Games / Story House / Engineering
+- Other active PRs touching the same gameplay, global registry or generated catalogue files:
+- Shared-file owner and integration handoff (or `none`):
+- Base synchronised with latest `main` before **final** qualification: pending during draft
+
+
 ## During draft iteration — provisional only
 - Scope and current feedback:
 - Known risks, likely test owners and provisional test-impact note (TBC is acceptable):

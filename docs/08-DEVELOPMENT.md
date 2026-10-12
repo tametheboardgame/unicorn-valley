@@ -124,6 +124,13 @@ A draft feature/visual work package starts with a brief scope, risk and provisio
 When the visual/functional baseline is approved, tidy code/architecture, reconcile documentation, then review the final actual diff against existing tests and ownership. Update coverage or record justified unchanged contracts. Only then mark the PR Ready for review and require authoritative full exact-head Tier 0–4 CI and Merge Gate before merge. WP2.2 must allow unfinished provisional draft assessments and block incomplete final-stage ones. High-risk current deltas remain subject to fail-safe checks. Production deployment is separately authorised.
 
 
+## Parallel stream integration
+
+World/area, Just Games and Story House authors work independently on short-lived PR branches and branch-specific preview deployments. The [stream ownership and merge-freshness contract](architecture/PARALLEL-DEVELOPMENT-STREAMS.md) names each area's code boundaries, shared registration files and integration hand-offs.
+
+Before marking Ready for review, compare changed files to other open stream PRs, reconcile legitimate shared catalogue/manifest edits and update against current `main`. If another PR merges after the final CI qualification, update/requalify the candidate before merging it; the current exact-head gate alone does not verify latest-base freshness. Dedicated WP2.5 work will automate this safeguard and add per-stream project-state records; draft previews remain lightweight.
+
+
 ## Branch and work-package discipline
 
 - Implement one roadmap work package per branch unless an explicit dependency requires a stacked branch.

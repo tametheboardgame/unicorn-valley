@@ -71,6 +71,13 @@ Own suite-health definitions and review process: owner-less/ageing contracts, re
 
 **WP2.2 must enforce the assessment only at finalisation; normal draft preview edits must remain fast.**
 
+## WP2.5 — Independent workstream and merge-safety governance (follow-up)
+
+Tracking [#306](https://github.com/tametheboardgame/unicorn-valley/issues/306) and policy `docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md`. Main World, Just Games and Story House are independently previewed and qualified workstreams. WP2.5 will add per-stream durable status records, overlapping-file ownership detection and **latest-`main` integration freshness** to complement the existing exact-head gate; it must preserve quick draft previews.
+
+World-first mini-game registration remains atomic in the originating world package. Just Games enhances that same scene and gameplay only after handoff; Story House owns title-local content plus deterministic regeneration of the shared catalogue. Shared architectural files require one responsible PR. **This section is planning only; the WP2.1 PR does not yet implement the technical freshness/state mechanisms.**
+
+
 ## Scope limits / rollback
 
 No production gameplay changes, no reducing full qualification, no mass-retrofit of historical closed packages, no test deletion solely to go green. Each checkpoint gets an independently reviewable PR and a simple rollback. Maintain the proven static-six Chromium fallback.

@@ -305,3 +305,15 @@ The user confirmed that feature and area development must permit many small visu
 After the approved functional/visual baseline is frozen, the agent reviews code and architecture, reconciles documentation, then reviews the actual final diff against behavioural test contracts and ownership, updating/adding/replacing tests as necessary or explicitly justifying no change. **Only then** move to Ready for review, require the authoritative full exact-head test suite and Merge Gate, and merge when green. Later non-draft commits require fresh qualification; production deployment remains independently authorised.
 
 ENG-WP2.2 must treat test-impact assessment as **progressive**: a provisional draft note may remain incomplete, whereas a final/non-draft review must be complete and auditable. A high-risk *current* change or broken gameplay can still trigger earlier risk-based checks. ENG-WP3 adaptive CI must preserve this two-speed contract.
+
+## UV-D029 - Independent World, Just Games and Story House development streams
+
+Status: Accepted, 2026-10-12.
+
+The game evolves through three concurrently active workstreams: **Main World** (world/quest/story and basic world-first mini-games), **Just Games** (later substantive enhancements to the same canonical mini-games), and **Story House** (book titles, covers and illustrations). Use separate short-lived branches, PRs and preview URLs with one integrated `main`; the streams do not create permanent divergent game implementations.
+
+The World origin package must register a new game in the existing catalogue and manifest with basic Just Games capability. Later Just Games refinements enhance that same scene/game logic without editing its world placement or duplicating behaviour. Story House creates per-title content independently and regenerates the shared tracked story catalogue during fresh-main integration. Shared registries, root project state and testing infrastructure remain explicit integration boundaries with a named owner; prefer non-overlapping modules and serialise any genuinely shared work.
+
+Before any final merge, check overlapping changed files and integrate/requalify against latest `main`, particularly if another stream merged after the candidate's exact-head CI run. **Current CI guarantees exact PR head, but not freshness relative to changed main.** ENG-WP2.5 [#306](https://github.com/tametheboardgame/unicorn-valley/issues/306) owns machine enforcement and per-stream state migration. None of these governance improvements should slow ordinary draft preview iteration or weaken end-of-package test review.
+
+See `docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md`.

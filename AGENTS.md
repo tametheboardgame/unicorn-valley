@@ -58,6 +58,18 @@ If sources materially contradict each other, resolve durable state or surface th
 
 Do not create a competing scene registry, UI token set, overlay positioning system, dialogue stack, audio binding mechanism or ad hoc verification rule without an explicit architectural reason recorded in the active work package.
 
+## Parallel World, Just Games and Story House streams
+
+The main world, Just Games and Story House are **independent concurrent development streams**, not three permanent integration branches. Each uses a short-lived work-package branch and PR targeting `main`, with its own provisional preview URL, human feedback and final test review. See [parallel development stream ownership](docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md).
+
+- The **World** stream owns areas, storyline, world NPCs/quests and the **first simple world-first implementation** of a new mini-game, including its single scene/catalogue/Just Games registration in the original package.
+- The **Just Games** stream deepens the same canonical mini-game implementation and catalogue presentation; it must not duplicate gameplay or independently change world placement/progression.
+- The **Story House** stream owns independently discoverable book/title folders, chapters and artwork; it must not rewrite the shared reader for ordinary new titles.
+- Shared registries, scene keys, generated story catalogue, root project-state and global rules are **integration touchpoints**. Check open PR file overlap and designate one owner; sequence the affected work rather than allowing concurrent edits to the same gameplay contract.
+- `PROJECT_STATE.json` currently models only one global active package. Until per-stream records exist, use the stream's bounded work package and PR for interim status; reserve broad root project-state changes for meaningful integration decisions rather than each visual tweak.
+- A green exact-PR-head Merge Gate does **not yet prove** qualification against a newly advanced `main`. Before merging after another stream lands, bring the PR onto current `main` and rerun its authoritative qualification; technical freshness enforcement is tracked by [ENG-WP2.5 #306](https://github.com/tametheboardgame/unicorn-valley/issues/306). Never drop tests or other stream's changes to settle conflicts.
+
+
 ## Mini-game platform contract
 
 This rule applies across **all** roadmaps and work packages, not only the independent Mini-Game roadmap.
