@@ -141,3 +141,59 @@ test('repeated failures require two independently identified historical runs', (
     /Duplicated/,
   );
 });
+
+test('changed spec inventories are warnings, not automatic removal of assertions', () => {
+  const input = fixture();
+  const older = {
+    schemaVersion: 1,
+    valid: true,
+    provenance: { ...provenance, runId: '122' },
+    records: [
+      { path: paths[1], kind: 'browser', durationMs: 220000, unexpected: 0, flaky: 0 },
+      {
+        path: 'tests/play/retired-by-diff.spec.ts',
+        kind: 'browser',
+        durationMs: 100,
+        unexpected: 0,
+        flaky: 0,
+      },
+    ],
+  };
+  const report = assessSuiteHealth({ ...input, history: [older] });
+  assert.equal(report.valid, true);
+  assert.equal(report.summary.newBrowserSpecsSinceLastRun, 5);
+  assert.equal(report.summary.removedBrowserSpecsSinceLastRun, 1);
+  assert.equal(report.summary.slowingSpecs, 0);
+  assert.equal(report.summary.warningCounts.REMOVED_BROWSER_SPEC, 1);
+});
+
+test('a duration regression needs two independent historical measurements', () => {
+  const input = fixture();
+  const history = [1, 2].map((id) => ({
+    schemaVersion: 1,
+    valid: true,
+    provenance: { ...provenance, runId: String(id) },
+    records: [
+      { path: paths[1], kind: 'browser', durationMs: id * 10000 + 80000, unexpected: 0, flaky: 0 },
+    ],
+  }));
+  assert.equal(assessSuiteHealth({ ...input, history: [history[0]] }).summary.slowingSpecs, 0);
+  assert.equal(assessSuiteHealth({ ...input, history }).summary.slowingSpecs, 1);
+});
+
+test('one current and one previous real failure count as repeated independent runs', () => {
+  const input = fixture();
+  input.shards[2].tests[0].status = 'flaky';
+  input.reconciliation.statuses.expected = 4;
+  input.reconciliation.statuses.flaky = 1;
+  const history = [{
+    schemaVersion: 1,
+    valid: true,
+    provenance: { ...provenance, runId: '100' },
+    records: [{ path: paths[2], kind: 'browser', durationMs: 150, unexpected: 0, flaky: 1 }],
+  }];
+  assert.equal(
+    assessSuiteHealth({ ...input, history }).summary.confirmedRecurringFailureSpecs,
+    1,
+  );
+});

@@ -23,6 +23,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  actions: read
 
 # Superseded commits to the same PR must not consume runner time. Main and
 # manually-triggered authoritative runs are never cancelled by newer runs.
@@ -423,10 +424,16 @@ jobs:
           path: reconciliation-report.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Retrieve bounded historical suite-health artifacts from main
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/verification/fetchSuiteHealthHistory.mjs --output=suite-health-history.json --metadata=suite-health-history-metadata.json
       - name: Produce WP2.4 suite health (observational)
         if: always()
         continue-on-error: true
-        run: node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report.json --shards=shard-evidence --output=suite-health.json --markdown=suite-health.md
+        run: node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report.json --shards=shard-evidence --history=suite-health-history.json --output=suite-health.json --markdown=suite-health.md
       - name: Upload WP2.4 suite health report
         if: always()
         uses: actions/upload-artifact@v4
@@ -435,6 +442,7 @@ jobs:
           path: |
             suite-health.json
             suite-health.md
+            suite-health-history-metadata.json
           if-no-files-found: warn
           retention-days: 14
 

@@ -149,8 +149,12 @@ export function assessSuiteHealth({
         issue('SLOW_SPEC_OBSERVED', contract.path, `${observation.durationMs} ms in one run`),
       );
     }
-    if (pastFailures >= 2) {
-      warnings.push(issue('REPEATED_FAILURE_HISTORY', contract.path, `${pastFailures} prior runs`));
+    const failureRuns = pastFailures +
+      (observation && (observation.unexpected > 0 || observation.flaky > 0) ? 1 : 0);
+    if (failureRuns >= 2) {
+      warnings.push(
+        issue('REPEATED_FAILURE_HISTORY', contract.path, `${failureRuns} distinct runs including current`),
+      );
     }
     if (
       contract.reviewedOn &&
@@ -173,6 +177,43 @@ export function assessSuiteHealth({
   const slow = records
     .filter((record) => record.kind === 'browser' && record.observed)
     .sort((a, b) => b.durationMs - a.durationMs);
+  const newBrowserSpecs = [];
+  const removedBrowserSpecs = [];
+  if (previous.length) {
+    const latest = previous[0];
+    for (const path of observed.keys()) {
+      if (!latest.has(path)) {
+        newBrowserSpecs.push(path);
+        warnings.push(issue('ADDED_BROWSER_SPEC', path, 'Not present in most recent main baseline'));
+      }
+    }
+    for (const [path, record] of latest) {
+      if (record.kind === 'browser' && !observed.has(path)) {
+        removedBrowserSpecs.push(path);
+        warnings.push(issue('REMOVED_BROWSER_SPEC', path, 'Absent from current full-suite inventory'));
+      }
+    }
+  }
+  let slowingSpecs = 0;
+  for (const record of slow) {
+    const durations = previous
+      .map((run) => run.get(record.path)?.durationMs)
+      .filter((duration) => Number.isFinite(duration) && duration > 0);
+    if (durations.length < 2) continue;
+    durations.sort((a, b) => a - b);
+    const middle = Math.floor(durations.length / 2);
+    const median = durations.length % 2 ? durations[middle] : (durations[middle - 1] + durations[middle]) / 2;
+    if (record.durationMs >= median * 1.3 && record.durationMs - median >= 30000) {
+      slowingSpecs++;
+      warnings.push(
+        issue('SLOWING_SPEC_TREND', record.path, `${record.durationMs}ms current vs ${median}ms historical median`),
+      );
+    }
+  }
+  const warningCounts = {};
+  for (const warning of warnings) {
+    warningCounts[warning.code] = (warningCounts[warning.code] ?? 0) + 1;
+  }
   return {
     schemaVersion: 1,
     valid: errors.length === 0,
@@ -188,8 +229,16 @@ export function assessSuiteHealth({
       legacyUnownedBrowserSpecs: inventory.summary?.unownedBrowser ?? null,
       actualRuntimeSkips: totals.skipped,
       slowSpecs: slow.filter((x) => x.durationMs >= slowThresholdMs).length,
-      confirmedRecurringFailureSpecs: records.filter((x) => x.previousFailureRuns >= 2).length,
+      confirmedRecurringFailureSpecs: records.filter((x) => {
+        const currentFailed = x.unexpected > 0 || x.flaky > 0 ? 1 : 0;
+        return x.previousFailureRuns + currentFailed >= 2;
+      }).length,
+      newBrowserSpecsSinceLastRun: newBrowserSpecs.length,
+      removedBrowserSpecsSinceLastRun: removedBrowserSpecs.length,
+      slowingSpecs,
+      observedBrowserDurationMs: slow.reduce((sum, file) => sum + file.durationMs, 0),
       historyRuns: previous.length,
+      warningCounts,
       errors: errors.length,
       warnings: warnings.length,
     },
@@ -219,8 +268,17 @@ export function formatSuiteHealth(report) {
     `- Runtime skips: ${s.actualRuntimeSkips}`,
     `- Slow specs: ${s.slowSpecs}`,
     `- Confirmed repeated failures: ${s.confirmedRecurringFailureSpecs}`,
+    `- Browser specs added/removed vs last main run: ${s.newBrowserSpecsSinceLastRun}/${s.removedBrowserSpecsSinceLastRun}`,
+    `- Slowing browser specs (at least two history samples): ${s.slowingSpecs}`,
+    `- Cumulative observed browser test duration: ${s.observedBrowserDurationMs} ms`,
     `- Independent historical runs: ${s.historyRuns}`,
     `- Errors: ${s.errors}; warnings: ${s.warnings}`,
+    '',
+    '## Warning categories',
+    '',
+    ...Object.entries(s.warningCounts)
+      .sort((left, right) => right[1] - left[1])
+      .map(([code, count]) => `- ${code}: ${count}`),
     '',
     '## Slowest observed files',
     '',
