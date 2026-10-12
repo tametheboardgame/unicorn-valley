@@ -18,7 +18,9 @@ A first inventory pass found **110 full Chromium spec files, 166 unit test files
 
 WP2.1 adds a derived contract inventory and a frozen legacy-unowned list. New unowned Chromium specs, missing mapped files, broken smoke/cross-browser references, stale exceptions, expired quarantines and invalid retirement declarations are errors. Prior ownership debt remains visible pending deliberate review. This checkpoint changes **no product behaviour, test selection, assertions, sharding or Merge Gate rules**.
 
-Validation: WP2.1 inventory/verification policy, static, unit, six Chromium shards and compatibility passed on preceding head, but whole-game smoke failed with a Rainbow Run scene readiness timeout (run #38170197800). PR #305 remains draft and unmerged. New policy decision **UV-D028** establishes fast preview-driven iteration, code/docs/test-impact review only at finalisation, then exact-head full CI. Rules are committed to AGENTS.md, TESTING.md, WP2 roadmap, template and PR checklist, but **WP2.2 stage-aware machine enforcement is not yet implemented**. WP2.3/2.4 and adaptive ENG-WP3 remain future checkpoints.
+Validation: all draft Tier 0, selected unit/build and whole-game smoke checks passed on [CI #38210251505](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38210251505), with Chromium and compatibility qualification still to be verified. Code/documentation/test-impact finalisation complete; PR #305 is moving to Ready for review for authoritative exact-head full qualification. Six-shard main baseline is unchanged. **Do not claim WP2.1 complete or merged until full qualification and merge are confirmed.**
+
+Accepted governance: **UV-D028** keeps repeated preview edits rapid with review/CI at finalisation; **UV-D029** defines three parallel World/Just Games/Story House streams. **WP2.2** must implement draft-versus-final test-impact enforcement; **WP2.5 issue #306** owns machine-enforced per-stream state, overlap detection and merge freshness. These future checks have not been implemented by WP2.1.
 
 ## Engineering roadmap
 
