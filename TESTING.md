@@ -205,3 +205,7 @@ Environment checks are now one Playwright test per region (Glade, Village, Brook
 ### ENG-WP2.3A: Escape transition across resumed mini-game menus
 
 The Just Games menu and the Chess Academy both subscribe to Escape. The Academy's Escape stops its scene and resumes Just Games; under full parallel Chromium load a single keydown reached both handlers, leaving the player on Title instead of Just Games. `JustGamesScene` now records the monotonic resumption time and ignores any Escape event that originated before that scene resumed. A subsequent fresh Escape still navigates to Title, and mouse-driven Back to Home is unchanged. The existing MG-WP4 launch/return contract now explicitly verifies **first Escape → Just Games, second fresh Escape → Title** for Chess Academy. No timeouts, sleeps, retries or assertion reductions have been introduced.
+
+### ENG-WP2.3A — short-lived Rainbow Disc defence readiness
+
+`tests/play/r6.5-wp19h4.9-rainbow-disc.spec.ts` now observes the actually rendered defence route **and** the player-actionable state in one `page.waitForFunction` call. Do not first await the cue and then start a second watch after it may have expired. The diagnostic `defenceCueRenderedLane` is the route the player actually saw, not the hidden attack target. A correct/wrong lane is still selected through the real mouse and the subsequent game-state assertions still run. Missing actionable state is a failure with a current diagnostic snapshot, not a skip or automatic retry.
