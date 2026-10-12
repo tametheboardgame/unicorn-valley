@@ -1,25 +1,25 @@
 ---
 id: ENG-WP2.4
 title: Test Suite Health and Contract Review Policy
-status: in_progress
+status: complete
 autonomy: green
 depends_on: [ENG-WP2.1, ENG-WP2.2, ENG-WP3.1]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
-test_impact_scope: Implementation PR #311 under provisional review until exact-head CI qualification
+test_impact_stage: reviewed
+test_impact_scope: Reviewed suite-health and historical evidence changes with full PR diff and Tier 0-4 CI
 ---
 
 # ENG-WP2.4 — Test Suite Health and Contract Review Policy
 
-Tracking: [ENG-WP2 #301](https://github.com/tametheboardgame/unicorn-valley/issues/301). Based on the completed [ENG-WP3.1 evidence package](ENG-WP3.1-TEST-INSTRUMENTATION.md). **Implementation in draft PR #311.** Health reporting is observational; no new Merge Gate dependency or shard selection rule.
+Tracking: [ENG-WP2 #301](https://github.com/tametheboardgame/unicorn-valley/issues/301). Based on the completed [ENG-WP3.1 evidence package](ENG-WP3.1-TEST-INSTRUMENTATION.md). **Implementation complete in PR #311; final non-draft CI qualification required before merge.** Health reporting is observational; no new Merge Gate dependency or shard selection rule.
 
 ## Goal
 
 Expose ageing, unowned, slow and repeatedly failing tests early enough for their owning workstreams to maintain them during ordinary finalisation, without silently skipping them or impeding rapid provisional preview iterations.
 
-## Proposed bounded scope
+## Delivered bounded scope
 
 1. Consume the WP2.1 `contractInventory.mjs` inventory and WP3.1 run-scoped identity/duration/skip reports. WP2 owns policy and disposition; WP3 remains owner of execution instrumentation and future scheduling.
 2. Report currently unmapped specs by path; contracts needing lifecycle review; explicit skips, quarantines/expiry, replacements, changed test inventory and last-known health. No automatic retirements.
@@ -34,19 +34,19 @@ No gameplay changes, arbitrary timeout increases, blanket retries, test deletion
 
 ## Test Impact Assessment
 
-PR #310 only introduced the proposal. PR #311 implements the first reporting and validation checkpoint. Its test-impact assessment remains provisional pending final review. Existing browser gameplay contracts and test selectors remain unchanged.
+PR #310 introduced the proposal. PR #311 implements source-bound suite-health reporting, historical evidence retrieval, warning trends and governance. Full cumulative PR diff reviewed on 12 October 2026: `.github/workflows/ci.yml`, `package.json`, four source/test verification scripts, one additional verification-policy test, and project documentation/state. Specifically, all **three** changed Node test contracts (`fetchSuiteHealthHistory.test.mjs`, `suiteHealth.test.mjs` and `testImpactPolicy.test.mjs`) are named in the PR's final `TEST_IMPACT_V1` block. Existing gameplay, browser contracts and test selectors are unchanged. No human UX acceptance is required.
 
 ## Implementation checkpoint
 
-Started 12 October 2026 on a dedicated branch from the qualified WP3.1 close-out. Phase A: source-bound health reporting, inventory evidence correlation, explicit status and duration warnings, integrity checks, and Node policy tests. Phase B: CI artifact integration and actual-diff review, without new merge requirements or shard changes. Latest draft CI found formatting, suite-health test fixture and project-state errors; the test fixture and state have been corrected. No passing full authoritative run or merge yet.
+Started 12 October 2026 on a dedicated branch from the qualified WP3.1 close-out. Phase A: source-bound health reporting, inventory evidence correlation, explicit status and duration warnings, integrity checks, and Node policy tests. Phase B: CI artifact integration and actual-diff review, without new merge requirements or shard changes. Earlier formatting, fixture and project-state errors were repaired. Complete draft exact-head CI #38286844656 passed all six Chromium shards, cross-browser, unit, build, whole-game smoke, evidence reconciliation and Merge Gate on `23091ff420e39531c6280e3df0310442a383a0bb`. Final non-draft qualification is required after this record is updated.
 
-## Implemented checkpoint (draft)
+## Implemented reporting and verification
 
 - `scripts/verification/suiteHealth.mjs` consumes WP2.1 contract inventory and complete source/run-bound WP3.1 six-shard results; produces JSON and Markdown health evidence.
 - Reports legacy unowned tests as debt, genuine skips, slow spec observations, missing review/expired quarantine provenance through inventory, unobserved specs, and repeated failures only after distinct historical run evidence.
 - `scripts/verification/suiteHealth.test.mjs` covers positive/negative policy cases; included in Tier 0 via the existing verification policy test entrypoint.
 - CI generates an observational `suite-health` artifact with both formats after WP3.1 reconciliation. It does not add any Merge Gate dependency, change static six-shard selection or modify browser assertions.
-- The optional `--history=history.json` argument expects previously validated health report objects; CI currently supplies only its current run and must not claim historical flakiness without actual archived records. Future history ingestion and retention needs operational qualification.
+- The optional `--history=history.json` argument accepts validated prior health reports. CI now attempts bounded lookup of independent `main` artifacts, with explicit source/run validation. The first live execution returned `no-eligible-history` (zero candidates) rather than manufacturing recurring flakiness; 14-day retention is documented.
 
 ## Health policy
 
@@ -96,4 +96,6 @@ Comparisons are warnings, not test-selection authority or automatic deletion. WP
 
 ## Validation and hand-off
 
-The initial qualified baseline (before history wiring) is the green run above. The additional history fetching, comparisons, policy test and cadence documentation are a **new unqualified commit** until CI completes on their exact head. PR #311 stays draft. The final check must inspect the generated history metadata, the health JSON's warning categories and the actual cumulative diff, then complete the PR's final impact assessment before marking Ready-for-review. No production deployment.
+**Final engineering review completed 12 October 2026.** [Full CI #38286844656](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38286844656) passed at `23091ff420e39531c6280e3df0310442a383a0bb`. The 311/311 independent reconciliation had 308 expected, three true skips and zero flaky or unexpected results. The suite-health report had 110/110 observed browser specs, zero integrity errors, 107 categorized warning observations (82 legacy browser, 20 unit ownership, three slow spec, two skip-containing files), and `no-eligible-history`, which is correct for initial rollout. The final PR-wide test-impact assessment now names every changed verification test and records the absence of gameplay changes. No new merge authority, full-suite scheduling changes or production deployment.
+
+This close-out documentation is an additional PR-head change. **Ready-for-review exact-head CI and the final live-head Merge Gate must still pass before merging**; do not treat this narrative as an approval for a failed or superseded run.

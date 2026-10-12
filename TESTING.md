@@ -243,7 +243,7 @@ The corresponding Node tests run within `npm run verification:policy:test` (Tier
 node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report.json --shards=shard-evidence --output=suite-health.json --markdown=suite-health.md
 ```
 
-Use the JSON for all per-file evidence and warning codes; Markdown shows the leading issues. Historical failures require a manually supplied, validated JSON array of prior complete reports via `--history=history.json`; normal CI does not invent history from one successful run. Contract ownership or quarantine changes must be made in WP2.1 metadata, never by making the health reporter silently omit tests.
+Use the JSON for all per-file evidence and warning codes; Markdown shows the leading issues. For local/offline analysis, historical reports can be supplied as a validated JSON array via `--history=history.json`. In normal CI, a separate observational step automatically attempts to retrieve qualifying historical reports from retained `main` artifacts; if no such records exist, the report explicitly uses single-run mode rather than inventing trends. Contract ownership or quarantine changes must be made in WP2.1 metadata, never by making the health reporter silently omit tests.
 
 ## ENG-WP2.4 routine suite-health review and historical evidence
 

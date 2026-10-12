@@ -20,7 +20,7 @@ Last updated: 2026-10-12
 
 Its independent SHA-bound manifest and execution evidence reconciled **311/311 test identities across all six Chromium shards**: 308 expected, three real runtime skips, zero missing/duplicate/unknown identities and zero unexpected/flaky outcomes. Per-test and per-file execution durations are archived with the CI artifacts. The existing static six-shard scheduler, test assertions, cross-browser profiles and exact-head Merge Gate were not altered. Evidence collection is observational in WP3.1; future changes to gate authority require separate qualifications.
 
-**Active bounded package:** [ENG-WP2.4 Test Suite Health](docs/work-packages/ENG-WP2.4-TEST-SUITE-HEALTH.md), which is implementing observational health reports using WP3.1's evidence for owner/flake/slow-test lifecycle reporting. [ENG-WP3.2](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) can subsequently model balancing in shadow mode; no scheduler switch is authorised yet.
+**Completed technical package:** [ENG-WP2.4 Test Suite Health](docs/work-packages/ENG-WP2.4-TEST-SUITE-HEALTH.md), which now produces observational ownership, flake-history, slow-test and lifecycle health reports using WP3.1's evidence. [ENG-WP3.2](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) can subsequently model balancing in shadow mode; no scheduler switch is authorised yet.
 
 ## Concurrent workstreams and remaining engineering packages
 
@@ -39,10 +39,10 @@ Fast, proportional tests on drafts; after final code/documentation/test-impact r
 
 ## ENG-WP2.4 implementation checkpoint — 12 October 2026
 
-Branch: `agent/eng-wp2-4-suite-health`. Draft PR will implement a source-bound test-health report combining WP2.1 contract inventory and WP3.1 Chromium evidence. Legacy ownership debt must remain visible; new or invalid contracts must fail the existing policy. Six static shards and exact-head Merge Gate remain unchanged. No production deployment.
+Branch: `agent/eng-wp2-4-suite-health`. PR #311 implements a source-bound test-health report combining WP2.1 contract inventory and WP3.1 Chromium evidence. Legacy ownership debt must remain visible; new or invalid contracts must fail the existing policy. Six static shards and exact-head Merge Gate remain unchanged. No production deployment.
 
 ## ENG-WP2.4 history and governance checkpoint — 12 October 2026
 
 [Draft PR #311](https://github.com/tametheboardgame/unicorn-valley/pull/311): the first full suite-health [CI #38279756359](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38279756359) passed six shards, seven compatibility profiles and exact-head Merge Gate at `95b503f375481b7ceecd091aa5e1709daaaf3d4d`. Its 311/311 identity reconciliation showed zero missing or flaky tests, three actual skips; the health artifact observed all 110 browser specs, found 82 existing unowned browser specs, 3 slow files, zero hard errors and 107 warnings.
 
-Subsequent **unqualified draft work** adds bounded main-run history ingestion, historical evidence validation, changed test-inventory alerts and comparable-duration trends. Daily test fixing, static shard counts and Merge Gate authority are unchanged. Engineering maintains a weekly review, monthly ownership-debt triage and quarterly lifecycle review. Draft PR #311 is **not yet final-ready or merged**; its newest head requires CI qualification and final WP2.2 impact review.
+Final history and governance implementation was qualified in [CI #38286844656](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38286844656) (six shards, cross-browser, unit, build, smoke and Merge Gate all passing). The new suite-health artifact reports 110/110 inventoried browser specs observed, 311/311 individual test outcomes, 107 explained warnings and no integrity errors. History retrieval correctly returned `no-eligible-history` on initial rollout. Daily test fixing, static shard counts and Merge Gate authority are unchanged. Engineering maintains weekly health triage, monthly ownership-debt review and quarterly lifecycle review. **PR #311's close-out commit awaits final non-draft exact-head CI before merge.**
