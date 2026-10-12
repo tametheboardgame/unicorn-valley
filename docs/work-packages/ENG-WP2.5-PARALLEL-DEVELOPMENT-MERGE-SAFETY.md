@@ -41,3 +41,7 @@ Stage: provisional. Areas: engineering/shared governance. Positive and negative 
 
 ## Completion record
 Implementation and final qualification pending.
+
+## A/B/C implementation checkpoint
+
+Draft PR #312 now includes four independent JSON stream-state records, negative-policy tests for wrong-stream/global state mutations, and a live-main merge ancestry test integrated into final exact-head CI. Engineering-only root state is updated at this checkpoint. Scope A policies for shared file registry and branch previews are documented in the architecture guide. End-to-end stream integration and platform branch protection remain unverified; no new Merge Gate authority is claimed beyond the explicitly tested condition.
