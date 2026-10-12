@@ -7,7 +7,7 @@ depends_on: [ENG-WP1, ENG-WP1.11]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
+test_impact_stage: reviewed
 test_impact_scope: Stage-aware final review enforcement for independent development PRs
 ---
 
@@ -112,4 +112,4 @@ Failure mechanisms and bounded fixes:
 
 Acceptance: check all changed regressions and full CI, document before/after pass/fail evidence, preserve original negative outcomes, do not use arbitrary waits, retries or weakened assertions. Marigold/Nova long multi-scene smoke remains a separate WP2.3 follow-up pending evidence, not a blanket timeout change.
 
-**Status:** first patch committed on agent/eng-wp2-3-browser-readiness; draft CI and final human/merge gate pending.
+**WP2.3A code, test and documentation review complete; authoritative qualification pending.** Draft [CI #38227446359](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38227446359) passed Tier 0, production build and **7/7** selected Just Games launch/return browser tests (including Pond Leap, Chess Academy entry). On previous head the only initial Tier 0 issue was a Biome line-wrap, corrected exactly; typecheck, lint, verification policy and test-impact validation passed. The previously flaky environment and Chess resume contracts require full-Chromium exact-head proof and are not yet declared resolved. Preserve original failed traces from WP2.1/WP2.2 for WP2.4 health reporting. The active PR #289 touches the same diagnostics fixture for different Pond Leap timing methods; manual merge-order and integration freshness instructions are recorded on both PRs until WP2.5 implements them.
