@@ -7,7 +7,7 @@ depends_on: [ENG-WP2.1, ENG-WP2.2, ENG-WP2.3A]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
+test_impact_stage: reviewed
 test_impact_scope: Non-gameplay Playwright discovery and execution telemetry for static six-shard CI
 ---
 
@@ -33,13 +33,13 @@ No gameplay changes; no test deletions, blanket skips or automatic retries; no g
 
 ## Test Impact Assessment
 
-- Stage: provisional (reconcile to reviewed before Ready for review).
+- Stage: reviewed (final actual-diff assessment completed 12 October 2026).
 - Affected behaviours: CI reporting and provenance only; test execution behaviour and coverage unchanged.
 - Source owner: engineering verification; existing `scripts/verification/contractInventory.mjs` remains inventory/ownership authority.
 - Proposed tests: reporter-JSON parsing and reconciliation positives and negatives, missing/duplicated/unknown identity, SHA mismatch, skipped outcome; real final-run evidence before qualification.
 - Scope: Node unit/policy, Tier 0 and full exact-head CI at finalisation. No gameplay or human visual acceptance.
 - Risk: a partial or malformed report could be mistaken for complete coverage; fail closed in evidence checker, and avoid modifying the Merge Gate before evidence is proven.
-- Final reviewer/evidence: to be recorded against actual PR diff after implementation.
+- Final reviewer/evidence: engineering review of full PR #309 diff. Independent discovery and six-shard reconciliation succeeded in [CI #38267022053](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38267022053): 311 identities, 110 spec files, 311 recorded across six distinct shards, 308 expected, three actual skips, zero missing/duplicate/unknown or flaky. Tier 0, unit, build, whole-game smoke, cross-browser and Merge Gate all passed on that inspected draft head. Final changed head requires separate authoritative Ready-for-review qualification.
 
 ## Acceptance
 
@@ -56,3 +56,11 @@ The existing `playwright.config.ts` retains list/HTML reporting and adds the bui
 ## WP3.1 observed runner contract, 12 October 2026
 
 CI #38263972891 qualified Tier 0/unit/build/smoke/cross-browser and its first Chromium shards, but an **observational** reporter step in a passing shard failed to produce `test-evidence.json`: Playwright 1.55 serialises spec paths relative to the configured `tests/play` root. The normaliser now accepts this actual format and rejects traversal/absolute paths. It also has a discovery-only mode for `npx playwright test --list --reporter=json` (no browser launches). A separate job stores the complete SHA-bound manifest; a read-only aggregation job attempts exact identity reconciliation against each of the existing six shard artifacts. Reconciliation remains observational in WP3.1 and does **not** change `merge-gate.needs`. Failed or absent evidence is reported rather than treated as valid; the original static-six game tests still control merge qualification. The actual real-run reconciliation must be inspected before finalisation.
+
+## Verified evidence and remaining gate (12 October 2026)
+
+The real full-run evidence aggregator on [CI #38267022053](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38267022053), source head `f44e7388a421a258adff8370eab63c6df8ffdcdf`, confirms a **complete test-identity partition**, exactly 311 unique discovered and recorded identities across six shards, with 308 expected outcomes and three actual skips. Per-test/file duration evidence is present; the slowest observed files were Chess Academy (~301s) and freeze-stability (~270s). This is observational telemetry, not a new scheduling estimate.
+
+The discovery-only JSON reporter labels all cases `skipped` because `--list` does not execute tests. The normalised discovery manifest now uses `status: discovered` and a separate `summary.discovered` field, avoiding false skipped-test counts. Only shard **execution** manifests contribute runtime pass/skip/flaky/fail counts.
+
+No static-six matrix, test identities, assertion, global timeouts, retries, compatibility profiles or Merge Gate dependency changed. The separate evidence aggregator is fail-closed internally; its result is observational and not added as a required Merge Gate input in WP3.1. Finalisation: this correction must pass a fresh exact-head full run after PR #309 is marked Ready for review; then merge only after current-main freshness and all original required checks are green.

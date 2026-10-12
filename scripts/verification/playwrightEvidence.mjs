@@ -85,7 +85,9 @@ export function normalisePlaywrightReport(report, provenance, { discovery = fals
           titlePath,
           line,
           column,
-          status,
+          // --list reports every unexecuted test as "skipped". This is a
+          // discovery-only marker, NEVER evidence of a real runtime skip.
+          status: discovery ? 'discovered' : status,
           expectedStatus: typeof test.expectedStatus === 'string' ? test.expectedStatus : null,
           attempts,
           durationMs: attempts.reduce((sum, item) => sum + item.durationMs, 0),
@@ -113,6 +115,7 @@ export function normalisePlaywrightReport(report, provenance, { discovery = fals
     summary: {
       tests: tests.length,
       files: files.size,
+      ...(discovery ? { discovered: tests.length } : {}),
       expected: tests.filter((t) => t.status === 'expected').length,
       unexpected: tests.filter((t) => t.status === 'unexpected').length,
       flaky: tests.filter((t) => t.status === 'flaky').length,

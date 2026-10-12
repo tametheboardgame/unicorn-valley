@@ -20,7 +20,7 @@ Branch: `agent/eng-wp3-1-test-evidence`. Bounded package: [ENG-WP3.1](docs/work-
 
 Goal: add **machine-readable, source-revision-bound Playwright discovery and per-shard execution evidence** including test identities, result statuses, skips and durations. Reconcile missing and duplicate identities with unit-tested fail-closed reporting. **Do not change the six static Chromium shards, browser coverage, assertions, automatic retry policy or exact-head Merge Gate.** WP3.1 initially collects evidence; WP2.4 will own policy/health thresholds and WP3.2 will experiment with scheduling in shadow mode.
 
-Current stage: initial instrumentation branch and provisional impact assessment. Technical qualification and merge are not yet complete. `PROJECT_STATE.json.latest_commit` records the last verified integrated base at this branch's creation, not a promise that draft commits are qualified.
+Current stage: implementation and actual-diff impact review complete. Draft full CI #38267022053 passed all six browser shards, cross-browser, smoke, build, unit, Tier 0, Merge Gate and the independent 311/311 test-evidence reconciliation. A final discovery-report semantic correction was committed after that run, so **authoritative Ready-for-review exact-head qualification remains required before merge**. `PROJECT_STATE.json.latest_commit` records the last verified integrated base at this branch's creation, not a promise that draft commits are qualified.
 
 ## Concurrent workstreams and remaining engineering packages
 

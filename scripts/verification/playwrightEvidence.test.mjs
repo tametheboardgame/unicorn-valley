@@ -131,6 +131,9 @@ test('supports Playwright 1.55 rootDir-relative files and discovery without resu
     { discovery: true },
   );
   assert.equal(inventory.mode, 'discovery');
+  assert.equal(inventory.tests[0].status, 'discovered');
+  assert.equal(inventory.summary.discovered, 1);
+  assert.equal(inventory.summary.skipped, 0);
   assert.equal(inventory.tests[0].identity, current.tests[0].identity);
   assert.equal(inventory.tests[0].durationMs, 0);
   assert.throws(() => normalisePlaywrightReport(discovery, provenance), /no results/);
