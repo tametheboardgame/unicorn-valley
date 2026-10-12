@@ -73,7 +73,7 @@ test('new work packages require stage metadata but old ones do not', () => {
       ...completed, disposition: 'unchanged',
       reason: 'This planning-only package does not change executable behaviour',
     }),
-    readPackage: () => '---\nid: NEW-WP\ntest_impact_stage: provisional\ntest_impact_scope: Scene review\n---',
+    readPackage: () => '---\nid: NEW-WP\ntest_impact_stage: reviewed\ntest_impact_scope: Scene review completed\n---',
   });
   assert.equal(good.passed, true, good.errors.join('\n'));
 });

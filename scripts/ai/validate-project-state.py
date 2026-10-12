@@ -176,6 +176,18 @@ def validate_wp(
                 f"{path.relative_to(ROOT)} has invalid mini_game_platform_impact: {impact!r}; "
                 "expected none, changed - <id>, or new - <id> - world-first|just-games-first",
             )
+    impact_stage = metadata.get("test_impact_stage")
+    if impact_stage is not None:
+        if impact_stage not in {"provisional", "reviewed"}:
+            error(errors, f"{path.relative_to(ROOT)} has invalid test_impact_stage: {impact_stage!r}")
+        scope = metadata.get("test_impact_scope")
+        if not isinstance(scope, str) or not scope.strip():
+            error(errors, f"{path.relative_to(ROOT)} requires test_impact_scope when staged")
+        elif impact_stage == "reviewed" and (
+            len(scope.strip()) < 12 or re.search(r"\\b(?:tbc|todo|pending)\\b", scope, re.I)
+        ):
+            error(errors, f"{path.relative_to(ROOT)} reviewed test_impact_scope is incomplete")
+
     if metadata.get("status") not in WP_STATUSES:
         error(errors, f"{path.relative_to(ROOT)} has invalid status: {metadata.get('status')!r}")
     if metadata.get("autonomy") not in WP_AUTONOMY:

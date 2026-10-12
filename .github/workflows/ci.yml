@@ -5,7 +5,7 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft]
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft, edited]
   workflow_dispatch:
     inputs:
       full_ci:
@@ -125,6 +125,13 @@ jobs:
         id: verification-policy
         continue-on-error: true
         run: npm run verification:policy:test
+      - name: Validate progressive test impact
+        id: test-impact
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: node scripts/verification/checkTestImpact.mjs
       - name: Check performance policy
         id: performance-policy
         continue-on-error: true
@@ -151,12 +158,13 @@ jobs:
           LINT: ${{ steps.lint.outcome }}
           ARCHITECTURE: ${{ steps.architecture.outcome }}
           VERIFICATION_POLICY: ${{ steps.verification-policy.outcome }}
+          TEST_IMPACT: ${{ steps.test-impact.outcome }}
           PERFORMANCE_POLICY: ${{ steps.performance-policy.outcome }}
           TYPECHECK: ${{ steps.typecheck.outcome }}
           PROJECT_CONTRACT: ${{ steps.project-contract.outcome }}
         run: |
           failed=0
-          for check in FORMAT LINT ARCHITECTURE VERIFICATION_POLICY PERFORMANCE_POLICY TYPECHECK PROJECT_CONTRACT; do
+          for check in FORMAT LINT ARCHITECTURE VERIFICATION_POLICY TEST_IMPACT PERFORMANCE_POLICY TYPECHECK PROJECT_CONTRACT; do
             if [ "${!check}" = "failure" ]; then
               echo "::error title=Tier 0 ${check} failed::Inspect the preceding ${check} step and formatter remediation artifact if applicable."
               failed=1

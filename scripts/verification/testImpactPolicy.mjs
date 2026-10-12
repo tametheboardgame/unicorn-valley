@@ -112,7 +112,7 @@ export function evaluateTestImpact({ number, draft, body, files, fileExists = ()
       continue;
     }
     const match = metadata.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!match || !/^test_impact_stage:\s*(?:provisional|reviewed)\s*$/m.test(match[1]) ||
+    if (!match || !/^test_impact_stage:\s*reviewed\s*$/m.test(match[1]) ||
         !/^test_impact_scope:\s*\S.+$/m.test(match[1])) {
       errors.push('New work package ' + path + ' requires test_impact_stage and test_impact_scope front matter.');
     }
