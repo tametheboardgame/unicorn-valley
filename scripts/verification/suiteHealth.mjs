@@ -7,8 +7,12 @@ const SHA = /^[0-9a-f]{40}$/i;
 const STATUSES = ['expected', 'unexpected', 'flaky', 'skipped'];
 
 function assertProvenance(value) {
-  if (!value || !SHA.test(value.sourceSha ?? '') || !SHA.test(value.headSha ?? '') ||
-      !String(value.runId ?? '').trim()) {
+  if (
+    !value ||
+    !SHA.test(value.sourceSha ?? '') ||
+    !SHA.test(value.headSha ?? '') ||
+    !String(value.runId ?? '').trim()
+  ) {
     throw new Error('Missing or invalid source/head SHA or run provenance');
   }
 }
@@ -33,9 +37,15 @@ export function assessSuiteHealth({
   if (!inventory || !Array.isArray(inventory.contracts) || !Array.isArray(inventory.errors)) {
     throw new Error('Missing WP2.1 contract inventory');
   }
-  if (!reconciliation || reconciliation.valid !== true || reconciliation.complete !== true ||
-      !Number.isInteger(reconciliation.discovered) || reconciliation.discovered < 1 ||
-      reconciliation.recorded !== reconciliation.discovered || reconciliation.shards !== 6) {
+  if (
+    !reconciliation ||
+    reconciliation.valid !== true ||
+    reconciliation.complete !== true ||
+    !Number.isInteger(reconciliation.discovered) ||
+    reconciliation.discovered < 1 ||
+    reconciliation.recorded !== reconciliation.discovered ||
+    reconciliation.shards !== 6
+  ) {
     throw new Error('WP3.1 reconciliation is missing or incomplete');
   }
   assertProvenance(reconciliation.provenance);
@@ -52,18 +62,26 @@ export function assessSuiteHealth({
     }
     assertProvenance(shard.provenance);
     const p = shard.provenance;
-    if (p.sourceSha !== reconciliation.provenance.sourceSha ||
-        p.headSha !== reconciliation.provenance.headSha ||
-        p.runId !== reconciliation.provenance.runId ||
-        !/^[1-6]\/6$/.test(p.shard) || shardNames.has(p.shard)) {
+    if (
+      p.sourceSha !== reconciliation.provenance.sourceSha ||
+      p.headSha !== reconciliation.provenance.headSha ||
+      p.runId !== reconciliation.provenance.runId ||
+      !/^[1-6]\/6$/.test(p.shard) ||
+      shardNames.has(p.shard)
+    ) {
       throw new Error('Mismatched or duplicated shard provenance');
     }
     shardNames.add(p.shard);
     for (const test of shard.tests) {
-      if (typeof test.identity !== 'string' || typeof test.file !== 'string' ||
-          !/^tests\/play\/.+\.spec\.ts$/.test(test.file) ||
-          identities.has(test.identity) || !STATUSES.includes(test.status) ||
-          !Number.isFinite(test.durationMs) || test.durationMs < 0) {
+      if (
+        typeof test.identity !== 'string' ||
+        typeof test.file !== 'string' ||
+        !/^tests\/play\/.+\.spec\.ts$/.test(test.file) ||
+        identities.has(test.identity) ||
+        !STATUSES.includes(test.status) ||
+        !Number.isFinite(test.durationMs) ||
+        test.durationMs < 0
+      ) {
         throw new Error('Invalid or duplicated terminal test identity or duration');
       }
       identities.add(test.identity);
@@ -91,9 +109,12 @@ export function assessSuiteHealth({
       throw new Error('Historical health evidence must be complete');
     }
     assertProvenance(run.provenance);
-    const key = run.provenance.runId + ':' + run.provenance.headSha;
-    if (seenRuns.has(key) || (run.provenance.runId === reconciliation.provenance.runId &&
-        run.provenance.headSha === reconciliation.provenance.headSha)) {
+    const key = run.provenance.runId + `:${run.provenance.headSha}`;
+    if (
+      seenRuns.has(key) ||
+      (run.provenance.runId === reconciliation.provenance.runId &&
+        run.provenance.headSha === reconciliation.provenance.headSha)
+    ) {
       throw new Error('Duplicated current or historical health run');
     }
     seenRuns.add(key);
@@ -104,7 +125,8 @@ export function assessSuiteHealth({
   const warnings = [...(inventory.warnings ?? [])];
   const known = new Set(inventory.contracts.map((item) => item.path));
   for (const path of observed.keys()) {
-    if (!known.has(path)) errors.push(issue('UNKNOWN_EXECUTED_SPEC', path, 'Not in WP2.1 inventory'));
+    if (!known.has(path))
+      errors.push(issue('UNKNOWN_EXECUTED_SPEC', path, 'Not in WP2.1 inventory'));
   }
   const records = inventory.contracts.map((contract) => {
     const observation = contract.kind === 'browser' ? observed.get(contract.path) : null;
@@ -113,20 +135,29 @@ export function assessSuiteHealth({
       return earlier && (earlier.unexpected > 0 || earlier.flaky > 0);
     }).length;
     if (contract.kind === 'browser' && !observation) {
-      warnings.push(issue('NOT_OBSERVED', contract.path, 'No execution evidence for inventoried spec'));
+      warnings.push(
+        issue('NOT_OBSERVED', contract.path, 'No execution evidence for inventoried spec'),
+      );
     }
     if (observation?.skipped) {
-      warnings.push(issue('RUNTIME_SKIPS', contract.path, observation.skipped + ' actual runtime skips'));
+      warnings.push(
+        issue('RUNTIME_SKIPS', contract.path, observation.skipped + ' actual runtime skips'),
+      );
     }
     if (observation && observation.durationMs >= slowThresholdMs) {
-      warnings.push(issue('SLOW_SPEC_OBSERVED', contract.path, observation.durationMs + ' ms in one run'));
+      warnings.push(
+        issue('SLOW_SPEC_OBSERVED', contract.path, observation.durationMs + ' ms in one run'),
+      );
     }
     if (pastFailures >= 2) {
       warnings.push(issue('REPEATED_FAILURE_HISTORY', contract.path, pastFailures + ' prior runs'));
     }
-    if (contract.reviewedOn && /^\d{4}-\d{2}-\d{2}$/.test(contract.reviewedOn) &&
-        Date.parse(asOf) - Date.parse(contract.reviewedOn) > 180 * 86400000) {
-      warnings.push(issue('REVIEW_OVERDUE', contract.path, 'Reviewed ' + contract.reviewedOn));
+    if (
+      contract.reviewedOn &&
+      /^\d{4}-\d{2}-\d{2}$/.test(contract.reviewedOn) &&
+      Date.parse(asOf) - Date.parse(contract.reviewedOn) > 180 * 86400000
+    ) {
+      warnings.push(issue('REVIEW_OVERDUE', contract.path, `Reviewed ${contract.reviewedOn}`));
     }
     return {
       path: contract.path,
@@ -174,34 +205,38 @@ export function formatSuiteHealth(report) {
   return [
     '# Chromium test-suite health',
     '',
-    'Source: ' + report.provenance.sourceSha,
-    'PR head: ' + report.provenance.headSha,
-    'Run: ' + report.provenance.runId,
-    'Evidence: ' + report.evidenceMode + ' (one run is not proof of recurring flakiness)',
+    `Source: ${report.provenance.sourceSha}`,
+    `PR head: ${report.provenance.headSha}`,
+    `Run: ${report.provenance.runId}`,
+    `Evidence: ${report.evidenceMode} (one run is not proof of recurring flakiness)`,
     '',
     '## Inventory and evidence',
     '',
-    '- Browser specs: ' + s.inventoryBrowserSpecs + ', observed: ' + s.observedBrowserSpecs,
-    '- Unobserved browser specs: ' + s.unobservedBrowserSpecs,
-    '- Unit specs: ' + s.inventoryUnitSpecs,
-    '- Historical unowned browser specs: ' + s.legacyUnownedBrowserSpecs,
-    '- Runtime skips: ' + s.actualRuntimeSkips,
-    '- Slow specs: ' + s.slowSpecs,
-    '- Confirmed repeated failures: ' + s.confirmedRecurringFailureSpecs,
-    '- Independent historical runs: ' + s.historyRuns,
-    '- Errors: ' + s.errors + '; warnings: ' + s.warnings,
+    `- Browser specs: ${s.inventoryBrowserSpecs}, observed: ${s.observedBrowserSpecs}`,
+    `- Unobserved browser specs: ${s.unobservedBrowserSpecs}`,
+    `- Unit specs: ${s.inventoryUnitSpecs}`,
+    `- Historical unowned browser specs: ${s.legacyUnownedBrowserSpecs}`,
+    `- Runtime skips: ${s.actualRuntimeSkips}`,
+    `- Slow specs: ${s.slowSpecs}`,
+    `- Confirmed repeated failures: ${s.confirmedRecurringFailureSpecs}`,
+    `- Independent historical runs: ${s.historyRuns}`,
+    `- Errors: ${s.errors}; warnings: ${s.warnings}`,
     '',
     '## Slowest observed files',
     '',
-    ...report.slowest.slice(0, 12).map((x) => '- ' + x.path + ': ' + x.durationMs + ' ms'),
+    ...report.slowest.slice(0, 12).map((x) => `- ${x.path}: ${x.durationMs}` + ' ms'),
     '',
     '## Errors',
     '',
-    ...(report.errors.length ? report.errors.slice(0, 25).map((x) => '- ' + x.code + ': ' + x.path) : ['- None']),
+    ...(report.errors.length
+      ? report.errors.slice(0, 25).map((x) => `- ${x.code}: ${x.path}`)
+      : ['- None']),
     '',
     '## Warnings (first 25)',
     '',
-    ...(report.warnings.length ? report.warnings.slice(0, 25).map((x) => '- ' + x.code + ': ' + x.path) : ['- None']),
+    ...(report.warnings.length
+      ? report.warnings.slice(0, 25).map((x) => `- ${x.code}: ${x.path}`)
+      : ['- None']),
     '',
     'Historical debt remains visible, not automatically retired or blocked. Full detail is in JSON.',
     '',
@@ -211,7 +246,7 @@ export function formatSuiteHealth(report) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
     const arg = (name) =>
-      process.argv.find((part) => part.startsWith('--' + name + '='))?.slice(name.length + 3);
+      process.argv.find((part) => part.startsWith(`--${name}=`))?.slice(name.length + 3);
     const input = arg('reconciliation');
     const shardRoot = arg('shards');
     const output = arg('output');
@@ -235,11 +270,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     });
     writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
     writeFileSync(markdown, formatSuiteHealth(report));
-    console.log('ENG-WP2.4 suite health: ' + JSON.stringify(report.summary));
-    for (const error of report.errors) console.error('ERROR ' + error.code + ': ' + error.path);
+    console.log(`ENG-WP2.4 suite health: ${JSON.stringify}`(report.summary));
+    for (const error of report.errors) console.error(`ERROR ${error.code}: ${error.path}`);
     if (!report.valid) process.exitCode = 1;
   } catch (error) {
-    console.error('::error title=Suite health reporting failed::' + error.message);
+    console.error(`::error title=Suite health reporting failed::${error.message}`);
     process.exitCode = 1;
   }
 }

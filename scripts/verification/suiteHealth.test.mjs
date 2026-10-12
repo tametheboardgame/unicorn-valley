@@ -25,12 +25,14 @@ function fixture() {
   const shards = paths.map((path, index) => ({
     mode: 'execution',
     provenance: { ...provenance, shard: index + 1 + '/6' },
-    tests: [{
-      file: path,
-      identity: 'test-' + index,
-      status: index === 0 ? 'skipped' : 'expected',
-      durationMs: index === 1 ? 240000 : 200,
-    }],
+    tests: [
+      {
+        file: path,
+        identity: 'test-' + index,
+        status: index === 0 ? 'skipped' : 'expected',
+        durationMs: index === 1 ? 240000 : 200,
+      },
+    ],
   }));
   const reconciliation = {
     valid: true,
@@ -63,7 +65,7 @@ test('legacy unowned warns but new unowned contract blocks', () => {
       browserGroups: { health: paths.slice(1) },
       unitGroups: {},
       ownershipRules: [],
-    lifecycle: {},
+      lifecycle: {},
       legacyUnowned,
     });
   }
@@ -102,7 +104,8 @@ test('missing file, expired quarantine and vanished replacement fail closed', ()
 test('missing results, inconsistent SHA, duplicate shards and unknown files reject', () => {
   const input = fixture();
   assert.throws(
-    () => assessSuiteHealth({ ...input, reconciliation: { ...input.reconciliation, complete: false } }),
+    () =>
+      assessSuiteHealth({ ...input, reconciliation: { ...input.reconciliation, complete: false } }),
     /incomplete/,
   );
   const mismatched = structuredClone(input);
@@ -127,12 +130,15 @@ test('repeated failures require two independently identified historical runs', (
     records: [{ path: paths[2], unexpected: 1, flaky: 0 }],
   }));
   assert.equal(
-    assessSuiteHealth({ ...input, history: history.slice(0, 1) })
-      .summary.confirmedRecurringFailureSpecs,
+    assessSuiteHealth({ ...input, history: history.slice(0, 1) }).summary
+      .confirmedRecurringFailureSpecs,
     0,
   );
   const twice = assessSuiteHealth({ ...input, history });
   assert.equal(twice.summary.confirmedRecurringFailureSpecs, 1);
   assert(twice.warnings.some((x) => x.code === 'REPEATED_FAILURE_HISTORY'));
-  assert.throws(() => assessSuiteHealth({ ...input, history: [history[0], history[0]] }), /Duplicated/);
+  assert.throws(
+    () => assessSuiteHealth({ ...input, history: [history[0], history[0]] }),
+    /Duplicated/,
+  );
 });
