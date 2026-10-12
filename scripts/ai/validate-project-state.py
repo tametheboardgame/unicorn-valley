@@ -184,7 +184,7 @@ def validate_wp(
         if not isinstance(scope, str) or not scope.strip():
             error(errors, f"{path.relative_to(ROOT)} requires test_impact_scope when staged")
         elif impact_stage == "reviewed" and (
-            len(scope.strip()) < 12 or re.search(r"\\b(?:tbc|todo|pending)\\b", scope, re.I)
+            len(scope.strip()) < 12 or re.search(r"\b(?:tbc|todo|pending)\b", scope, re.I)
         ):
             error(errors, f"{path.relative_to(ROOT)} reviewed test_impact_scope is incomplete")
 

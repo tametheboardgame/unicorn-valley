@@ -7,6 +7,8 @@ depends_on: [ENG-WP1, ENG-WP1.11]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
+test_impact_stage: provisional
+test_impact_scope: Stage-aware final review enforcement for independent development PRs
 ---
 
 # ENG-WP2 — Test Contract Lifecycle and Test-Impact Assessments
@@ -91,3 +93,10 @@ Initial inventory: **110 browser spec files**, **166 unit spec files**, **82 bro
 Finalisation audit (12 October 2026): inventory derives ownership from existing `verificationOwnership.mjs`, reports rather than deletes the **82 existing unmapped** browser specifications, and detects newly unowned specs/missing references/invalid lifecycle records. All existing gameplay and browser assertions remain unchanged. Tier 0, unit, build, whole-game smoke and initial Chromium shards passed on [draft CI #38210251505](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38210251505); that run was not merge-authoritative. [PR #305](https://github.com/tametheboardgame/unicorn-valley/pull/305) requires a final **Ready-for-review exact-head** qualification before merge, with the six Chromium shards and compatibility all green. Do not call WP2.1 complete or merged before those results are verified.
 
 Decision [UV-D028](../../DECISIONS.md) preserves rapid preview iteration with a progressive test-impact review at finalisation, and [UV-D029](../../DECISIONS.md) governs concurrent World, Just Games and Story House streams. Their technical enforcement remains explicitly future work: WP2.2 stage-sensitive impact validation, and [WP2.5 / #306](https://github.com/tametheboardgame/unicorn-valley/issues/306) per-stream status, overlap detection and latest-main merge freshness. WP2.3 browser fixture work and WP2.4 suite health are likewise **not implemented**.
+
+
+### ENG-WP2.2 implementation checkpoint (12 October 2026)
+
+Branch: agent/eng-wp2-2-progressive-impact-review. PR-local JSON review contracts live in TEST_IMPACT_V1 comments in the PR body; stage=provisional on drafts is informational, never a full-test blocker. On Ready for review, a full cumulative PR diff is reconciled against declared stream areas and changed test files, with substantive retained-test reasoning required when no tests change. New WP front matter has explicit test_impact_stage and test_impact_scope, validated structurally. This is enforced for PR #307 onwards, exempting existing older open PRs, and applies across World, Just Games, Story House and engineering rather than modifying central state per PR.
+
+First implementation adds a Node validator and negative tests to the Tier 0 suite, fires CI on PR description edits, and preserves six static Chromium shards and the exact-head Merge Gate. It has **not passed qualification or merged** as of this roadmap checkpoint. WP2.3 flake analysis, WP2.4 health policy and WP2.5 latest-main/stream-state checks remain separate.

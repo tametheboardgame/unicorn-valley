@@ -73,3 +73,14 @@ The detailed canonical release document may contain more context. The bounded pa
 ## Current proposed programme
 
 Start with `R6.5-WP19-PLAN-WHOLE-GAME-AUDIT.md` and `docs/2026-09-08-REMEDIATION-PROPOSAL.md`. WP19A-I bounded files are proposed and await approval. WP18K remains the behaviour-preserving foundation between WP19A and WP19B. No gameplay implementation was done by the audit.
+
+## WP2.2 implementation: progressive machine-readable impact metadata
+
+For a newly created work package (no retrofitting of closed packages), include the two front-matter keys below and update stage to reviewed at finalisation:
+
+    test_impact_stage: provisional
+    test_impact_scope: Brief description of the intended functional or visual delta
+
+Keep the **full, per-PR assessment** in the PR description's TEST_IMPACT_V1 JSON block. This is deliberately PR-local, not stored in the global PROJECT_STATE.json, so independent World, Just Games and Story House PRs do not overwrite one another. Draft assessments may be incomplete: the preview remains available. Finalised new packages must say reviewed, and the PR description must identify actual changed areas, affected existing contracts, tests updated or explicitly unchanged with a reason, risk, code and documentation review, evidence, named reviewer and any human gate.
+
+WP2.2 applies this technical CI requirement to PR #307 onwards and leaves earlier open PRs untouched. Final PR files are fetched cumulatively from GitHub, not derived from the last draft push. Existing full tests and exact-head Merge Gate are unchanged. For genuinely risky current changes, keep the existing early fail-safe test selection.

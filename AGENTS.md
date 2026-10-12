@@ -211,3 +211,8 @@ Before claiming work complete:
 - known limitations are explicit;
 - blockers and decisions are explicit;
 - next action is clear.
+
+
+## ENG-WP2.2 — PR-local test-impact contract
+
+All new PRs from #307 onwards carry the PR template's TEST_IMPACT_V1 JSON evidence. The draft stage may be provisional and intentionally incomplete; no completed review is needed merely to get a working preview. At finalisation, after human approval where required and code/documentation tidy-up, the author moves the PR-local assessment to stage reviewed, lists all relevant diff areas, affected test contract paths, and a reasoned test disposition with evidence and reviewer. Only then mark Ready for review. CI validates the cumulative PR file list, including modified tests and newly introduced work packages. This rule is stream-local; do not mutate shared PROJECT_STATE.json on every small visual/content change. Prior open PRs are grandfathered. The existing risk-based tests and exact-head full qualification remain mandatory.

@@ -9,7 +9,7 @@
   "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
-  "branch": "agent/eng-wp2-1-contract-inventory",
+  "branch": "agent/eng-wp2-2-progressive-impact-review",
   "latest_commit": "86ddce83f39b8542e74ee355c8a33dd9cfba3c2a",
   "ci_state": "unknown",
   "technical_validation_state": "pending",

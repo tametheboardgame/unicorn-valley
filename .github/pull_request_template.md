@@ -38,3 +38,25 @@
 - [ ] Material decisions documented in `DECISIONS.md` if applicable
 - [ ] `STATUS.md` and `PROJECT_STATE.json` up to date as needed
 - Next action, known limitations and blockers:
+
+## Machine-readable test-impact evidence (ENG-WP2.2)
+
+This PR-local JSON is **allowed to remain provisional in draft**. Before Ready for review, set stage to reviewed, list the actual changed areas and affected test contract paths, and complete every finalisation field. A code-only colour change may use disposition unchanged if the retained test coverage is named and the reason is substantive. Do not use this block to hide test removals or unresolved findings.
+
+
+<!-- TEST_IMPACT_V1
+{
+  "stage": "provisional",
+  "scope": "Briefly describe the work-package outcome",
+  "risk": "TBC during finalisation",
+  "areas": [],
+  "disposition": "pending",
+  "contracts": [],
+  "reason": "TBC during finalisation",
+  "evidence": "TBC during finalisation",
+  "reviewedBy": "TBC",
+  "codeReview": "pending",
+  "documentationReview": "pending",
+  "humanAcceptance": "pending"
+}
+END_TEST_IMPACT_V1 -->
