@@ -28,19 +28,29 @@ export function validateStreamState(state, expectedStream) {
     return ['Expected one JSON stream-state object.'];
   }
   const allowed = [
-    'schemaVersion', 'stream', 'status', 'workPackage', 'workPackagePath',
-    'branch', 'prNumber', 'baseMainSha', 'updatedOn', 'note',
+    'schemaVersion',
+    'stream',
+    'status',
+    'workPackage',
+    'workPackagePath',
+    'branch',
+    'prNumber',
+    'baseMainSha',
+    'updatedOn',
+    'note',
   ];
-  const extra = Object.keys(state).filter(key => !allowed.includes(key));
+  const extra = Object.keys(state).filter((key) => !allowed.includes(key));
   if (extra.length) errors.push('Unknown stream-state fields: ' + extra.join(', '));
   if (state.schemaVersion !== 1) errors.push('Stream-state schemaVersion must be 1.');
   if (!STREAMS.includes(expectedStream) || state.stream !== expectedStream) {
     errors.push('Stream-state file and stream identity disagree.');
   }
   if (!STATES.includes(state.status)) errors.push('Invalid stream status.');
-  if (typeof state.updatedOn !== 'string' ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(state.updatedOn) ||
-      Number.isNaN(Date.parse(state.updatedOn))) {
+  if (
+    typeof state.updatedOn !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(state.updatedOn) ||
+    Number.isNaN(Date.parse(state.updatedOn))
+  ) {
     errors.push('Invalid stream updatedOn date.');
   }
   if (typeof state.note !== 'string' || state.note.trim().length < 15) {
@@ -48,16 +58,25 @@ export function validateStreamState(state, expectedStream) {
   }
   const activeValues = [
     typeof state.workPackage === 'string' && state.workPackage.length > 3,
-    typeof state.workPackagePath === 'string' && /^docs\/work-packages\/[a-zA-Z0-9_.-]+\.md$/.test(state.workPackagePath),
+    typeof state.workPackagePath === 'string' &&
+      /^docs\/work-packages\/[a-zA-Z0-9_.-]+\.md$/.test(state.workPackagePath),
     typeof state.branch === 'string' && state.branch.length > 8,
     Number.isInteger(state.prNumber) && state.prNumber > 0,
     typeof state.baseMainSha === 'string' && SHA.test(state.baseMainSha),
   ];
   if (state.status === 'unclaimed' || state.status === 'complete') {
-    if ([state.workPackage, state.workPackagePath, state.branch, state.prNumber, state.baseMainSha].some(value => value !== null)) {
+    if (
+      [
+        state.workPackage,
+        state.workPackagePath,
+        state.branch,
+        state.prNumber,
+        state.baseMainSha,
+      ].some((value) => value !== null)
+    ) {
       errors.push('Unclaimed/complete stream records cannot point to an active PR.');
     }
-  } else if (activeValues.some(value => !value)) {
+  } else if (activeValues.some((value) => !value)) {
     errors.push('Active stream requires package, real path, branch, PR number and base-main SHA.');
   } else if (streamFromBranch(state.branch) !== expectedStream) {
     errors.push('Active stream branch namespace does not match record owner.');
@@ -69,7 +88,8 @@ export function evaluateStreamFileOwnership({ branch, files, number, enforceFrom
   const errors = [];
   const warnings = [];
   const stream = streamFromBranch(branch);
-  if (!Array.isArray(files)) return { stream, errors: ['Missing cumulative PR file list.'], warnings };
+  if (!Array.isArray(files))
+    return { stream, errors: ['Missing cumulative PR file list.'], warnings };
   if (!Number.isInteger(number) || number < enforceFrom) {
     return { stream, errors, warnings, exempt: true };
   }
