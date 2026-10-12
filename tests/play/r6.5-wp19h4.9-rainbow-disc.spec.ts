@@ -194,9 +194,7 @@ async function defendTelegraphedLane(page: Page, chooseCorrectly = true): Promis
         // This read-only diagnostic only remembers an actually rendered route.
         // Its value stays available after the short-lived graphic disappears.
         const lane = state.defenceCueRenderedLane;
-        return Number.isInteger(lane) && lane !== null && lane >= 0 && lane < 3
-          ? lane + 1
-          : false;
+        return Number.isInteger(lane) && lane !== null && lane >= 0 && lane < 3 ? lane + 1 : false;
       },
       undefined,
       { timeout: 12_000, polling: 100 },
