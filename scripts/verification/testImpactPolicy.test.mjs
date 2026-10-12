@@ -114,3 +114,33 @@ test('source classification separates all three streams and shared platforms', (
   assert.equal(impactAreasForFile('scripts/verification/testImpactPolicy.mjs'), 'engineering');
   assert.equal(impactAreasForFile('src/game/world/CrystalBrookScene.ts'), 'world');
 });
+
+test('deliberately retired test must name an existing replacement contract', () => {
+  const removed = 'tests/play/mg-old-mode.spec.ts';
+  const replacement = 'tests/play/mg-new-mode.spec.ts';
+  const review = {
+    ...completed,
+    disposition: 'retired',
+    contracts: [removed, replacement],
+    reason: 'The former game mode was replaced by the approved new canonical mode',
+  };
+  const files = [{ filename: removed, status: 'removed' }];
+  const good = evaluate({
+    files,
+    body: body(review),
+    fileExists: (path) => path === replacement,
+  });
+  assert.equal(good.passed, true, good.errors.join('\n'));
+  const bad = evaluate({
+    files,
+    body: body({ ...review, contracts: [removed] }),
+    fileExists: () => false,
+  });
+  assert.match(bad.errors.join(' '), /existing replacement contract/);
+  const falseUpdate = evaluate({
+    files,
+    body: body({ ...review, disposition: 'updated' }),
+    fileExists: (path) => path === replacement,
+  });
+  assert.match(falseUpdate.errors.join(' '), /Deleting a test requires/);
+});

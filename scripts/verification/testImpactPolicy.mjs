@@ -142,13 +142,26 @@ export function evaluateTestImpact({
     errors.push('Select a reviewed test disposition: updated, unchanged, replaced, retired.');
   }
   const changedTests = files.filter((f) => TEST.test(f.filename ?? f)).map((f) => f.filename ?? f);
+  const removedTests = new Set(
+    files.filter((f) => f.status === 'removed' && TEST.test(f.filename)).map((f) => f.filename),
+  );
   const contracts = Array.isArray(review.contracts) ? review.contracts : [];
   if (!contracts.length || contracts.some((path) => typeof path !== 'string' || !TEST.test(path))) {
     errors.push('Name the reviewed existing/test-changed contract paths in contracts[].');
   }
   for (const path of contracts) {
-    if (typeof path === 'string' && !fileExists(path))
+    if (typeof path !== 'string') continue;
+    const validRemoved = removedTests.has(path) && ['retired', 'replaced'].includes(review.disposition);
+    if (!fileExists(path) && !validRemoved)
       errors.push('Reviewed contract is absent from current source: ' + path);
+  }
+  if (removedTests.size) {
+    if (!['retired', 'replaced'].includes(review.disposition))
+      errors.push('Deleting a test requires disposition retired or replaced and documented replacement.');
+    const replacementExists = contracts.some(
+      (path) => typeof path === 'string' && !removedTests.has(path) && fileExists(path),
+    );
+    if (!replacementExists) errors.push('Deleted test requires an existing replacement contract.');
   }
   const notReviewed = changedTests.filter((path) => !contracts.includes(path));
   if (notReviewed.length)
