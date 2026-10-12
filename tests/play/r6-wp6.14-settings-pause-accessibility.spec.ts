@@ -110,27 +110,22 @@ async function scrollUntilInteractive(
   objectName: string,
   maxSteps = 16,
 ): Promise<void> {
-  // The Settings viewport supports actual wheel scrolling. Using one scroll
-  // gesture per check avoids traversing every unrelated row with individual
-  // ArrowDown keypresses and heavyweight Phaser diagnostics snapshots.
-  // Keep steps smaller than the 420px viewport so no row can be skipped.
-  const bounds = await page.locator('canvas').boundingBox();
-  if (!bounds) throw new Error('Game canvas has no browser bounds.');
-  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + (350 / 720) * bounds.height);
-
-  for (let step = 0; step <= maxSteps; step += 1) {
+  // Keyboard selection is the Settings panel's supported accessibility path.
+  // Check after each two real ArrowDown presses: two rows cannot jump over the
+  // fully interactive viewport, and fewer full Phaser snapshots keep this
+  // multi-visit persistence journey within the existing test budget.
+  for (let step = 0; step <= maxSteps; step += 2) {
     const current = await snapshot(page);
     const object = current.scenes
       .find((scene) => scene.key === sceneKey)
       ?.objects.find((candidate) => candidate.name === objectName);
-    if (object?.visible && object.interactive) {
-      return;
-    }
+    if (object?.visible && object.interactive) return;
     if (step < maxSteps) {
-      await page.mouse.wheel(0, 520);
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
     }
   }
-  throw new Error(`${objectName} did not become visible and interactive after scrolling.`);
+  throw new Error(`${objectName} did not become visible and interactive after keyboard navigation.`);
 }
 
 async function tapObject(page: Page, sceneKey: string, objectName: string): Promise<void> {
