@@ -1,7 +1,7 @@
 ---
 id: ENG-WP3
 title: Adaptive Test Execution and Qualification Architecture
-status: proposed
+status: in_progress
 autonomy: green
 depends_on: [ENG-WP2]
 parallel_safe: false
@@ -125,4 +125,4 @@ Exit: stable runbook, measurable multi-run performance and cost evidence, separa
 
 ## Completion
 
-**WP3.1 complete (12 October 2026).** PR #309 merged as `118669255e42890092a7ad1ac2862ecfc2aaecd3` after all required checks and independent 311/311 six-shard identity reconciliation passed in CI #38269906778. This adds observational SHA-bound discovery/result/duration artifacts, not a new scheduler or Merge Gate dependency. WP3.2 (shadow scheduler), WP3.3 (qualified scheduling activation), WP3.4 and WP3.5 remain proposed. Static-six remains the accepted execution configuration.
+**WP3.1 complete (12 October 2026).** PR #309 merged as `118669255e42890092a7ad1ac2862ecfc2aaecd3` after all required checks and independent 311/311 six-shard identity reconciliation passed in CI #38269906778. This adds observational SHA-bound discovery/result/duration artifacts, not a new scheduler or Merge Gate dependency. WP3.2 shadow scheduling has begun on 13 October 2026; WP3.3 activation, optional WP3.4 and WP3.5 remain proposed. Static-six remains the accepted execution configuration.
