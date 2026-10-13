@@ -1,3 +1,16 @@
+---
+id: ENG-WP2.5D
+title: Parallel Integration Validation Evidence
+status: in_progress
+autonomy: green
+depends_on: [ENG-WP2.5]
+parallel_safe: false
+human_gate: none
+mini_game_platform_impact: none
+test_impact_stage: provisional
+test_impact_scope: Real concurrent PR deployment evidence, overlap diagnostics and deterministic story catalogue integration tests
+---
+
 # ENG-WP2.5D — Concurrent Stream Integration Evidence
 
 Evidence collected 13 October 2026 for [issue #306](https://github.com/tametheboardgame/unicorn-valley/issues/306) and [draft PR #312](https://github.com/tametheboardgame/unicorn-valley/pull/312).
