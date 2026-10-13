@@ -60,9 +60,7 @@ async function main() {
       if (page === 10) throw new Error('Open-PR audit exceeded 1000 entries.');
     }
   }
-  const overlap = evaluateFinalOverlap(
-    { number, branch: pr.head.ref, files }, otherPrs,
-  );
+  const overlap = evaluateFinalOverlap({ number, branch: pr.head.ref, files }, otherPrs);
   result.errors.push(...overlap.errors);
   result.warnings.push(...overlap.warnings);
   const summary = [

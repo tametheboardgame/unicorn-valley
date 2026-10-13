@@ -25,15 +25,13 @@ export function inspectConcurrentPrs(prs) {
     if (!stream || !preview) continue;
     const url = preview.branchUrl;
     const validUrl =
-      typeof url === 'string' &&
-      /^https:\/\/[a-z0-9-]+\.unicorn-valley\.pages\.dev\/?$/.test(url);
+      typeof url === 'string' && /^https:\/\/[a-z0-9-]+\.unicorn-valley\.pages\.dev\/?$/.test(url);
     const matchesHead =
       typeof preview.deployedPrefix === 'string' &&
       typeof pr.headSha === 'string' &&
       pr.headSha.startsWith(preview.deployedPrefix) &&
       preview.deployedPrefix.length >= 7;
-    const confirmed =
-      validUrl && matchesHead && preview.status === 'success';
+    const confirmed = validUrl && matchesHead && preview.status === 'success';
     previews.push({
       number: pr.number,
       stream,
@@ -77,7 +75,10 @@ export function evaluateFinalOverlap(candidate, otherPrs) {
       continue;
     }
     errors.push(
-      'Unresolved overlap with open PR #' + other + ': ' + conflict.path +
+      'Unresolved overlap with open PR #' +
+        other +
+        ': ' +
+        conflict.path +
         '. Agree sole owner and serialise integration before ready-for-review.',
     );
   }
