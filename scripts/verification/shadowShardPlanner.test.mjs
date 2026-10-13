@@ -5,6 +5,7 @@ import {
   makeShadowReport,
   validateCleanSnapshot,
   formatShadowReport,
+  parseShadowHistory,
 } from './shadowShardPlanner.mjs';
 
 const A = 'a'.repeat(40);
@@ -179,4 +180,15 @@ test('missing, duplicate, wrong type or failed current contracts reject, never s
   empty.summary.inventoryBrowserSpecs = 0;
   empty.summary.observedBrowserSpecs = 0;
   assert.throws(() => makeShadowReport({ current: empty }), /incomplete/i);
+});
+
+test('CLI history consumes WP2.4 flat report arrays instead of discarding them', () => {
+  const clean = snapshot('80', B);
+  const parsed = parseShadowHistory(JSON.parse(JSON.stringify([clean])));
+  const current = snapshot();
+  const report = makeShadowReport({ current, history: parsed });
+  assert.equal(report.summary.historyAccepted, 1);
+  assert.equal(report.summary.historyComparable, 1);
+  assert.throws(() => parseShadowHistory({ reports: [clean] }), /array of reports/);
+  assert.throws(() => parseShadowHistory(null), /array of reports/);
 });

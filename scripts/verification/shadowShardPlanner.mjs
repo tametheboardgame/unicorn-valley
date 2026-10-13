@@ -199,6 +199,14 @@ function actualStaticSix(current, shards, provenance) {
   return { available: true, kind: 'measured-test-duration-only', ...metrics(load), shards: load };
 }
 
+/** WP2.4 stores a flat JSON array, never an object with .reports. */
+export function parseShadowHistory(value) {
+  if (!Array.isArray(value)) {
+    throw new Error('Expected historical suite-health input to be an array of reports');
+  }
+  return value;
+}
+
 export function makeShadowReport({ current, history = [], shards = [] }) {
   const now = validateCleanSnapshot(current);
   if (!Array.isArray(history)) throw new Error('History must be a list of independent reports');
@@ -348,7 +356,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     }
     const current = JSON.parse(readFileSync(health, 'utf8'));
     const history = arg('history')
-      ? (JSON.parse(readFileSync(arg('history'), 'utf8')).reports ?? [])
+      ? parseShadowHistory(JSON.parse(readFileSync(arg('history'), 'utf8')))
       : [];
     const shardNames = readdirSync(shardRoot).filter((x) => /^tier3-chromium-[1-6]-of-6$/.test(x));
     const shards = shardNames.map((name) =>
