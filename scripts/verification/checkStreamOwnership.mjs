@@ -28,7 +28,7 @@ async function fetchFiles(pr) {
     if (items.length < 100) break;
     if (page === 30) throw new Error('PR has more than 3000 changed files.');
   }
-  if (files.length !== pr.changed_files) {
+  if (Number.isInteger(pr.changed_files) && files.length !== pr.changed_files) {
     throw new Error('Changed-file pagination mismatch for PR #' + pr.number);
   }
   return files;
