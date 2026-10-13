@@ -52,7 +52,7 @@ const SCENE_KEY = 'MoonflowerGladeScene';
 const PLAYER_NAME = 'world-player-unicorn';
 const START_X = 1600;
 const START_Y = 900;
-const PERFORMANCE_SAMPLE_FRAMES = 12;
+// At 12 frames the nearest-rank 95th percentile is the maximum, not a stable\n// tail measurement. Sixty samples distinguish sustained slow frames from a\n// single CI-runner scheduling stall while the existing worst-frame guard stays.\nconst PERFORMANCE_SAMPLE_FRAMES = 60;
 const WALK_SPEED_TARGET = 300;
 const GALLOP_SPEED_TARGET = WALK_SPEED_TARGET * 1.6;
 const SETTLED_SPEED_FRACTION = 0.95;
@@ -359,8 +359,8 @@ async function measureMovement(
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     touchReleased = true;
 
-    // Frame performance is independent of how long movement input stays held. Gather enough actual
-    // game frames after release so percentile checks are stable even on a heavily loaded runner.
+    // Frame performance is independent of how long movement input stays held. Gather 60 actual game frames after release: the p95 must describe sustained tail
+    // performance, not the single worst frame of a tiny sample. Worst-frame guard remains.
     await page.waitForFunction(
       (requiredSamples) => {
         const api = (
@@ -371,7 +371,7 @@ async function measureMovement(
         return (api?.performance().sampleCount ?? 0) >= requiredSamples;
       },
       PERFORMANCE_SAMPLE_FRAMES,
-      { timeout: 8_000 },
+      { timeout: 20_000 },
     );
 
     const performance = await page.evaluate(() => {
