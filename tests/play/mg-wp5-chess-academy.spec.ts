@@ -155,6 +155,9 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
   });
 
   test('plays a normal coached opening move and undoes the full turn', async ({ page }) => {
+    // The real coach note deliberately holds for 2.4 game-clock seconds; on
+    // saturated browser shards that can take longer than six wall-clock seconds.
+    test.setTimeout(90_000);
     await openChessAcademy(page);
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:coach-match');
@@ -179,7 +182,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       .poll(async () => {
         const snapshot = await getDiagnosticSnapshot(page);
         return objectText(snapshot, 'sunbeam-chess:coach-status');
-      })
+      }, { timeout: 20_000 })
       .toContain('Your move');
 
     const afterReply = await getDiagnosticSnapshot(page);
@@ -200,6 +203,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
   test('offers to resume an unfinished Coach Match after leaving Chess Academy', async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     await openChessAcademy(page);
 
     await clickNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:mode:coach-match');
@@ -221,7 +225,7 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
       .poll(async () => {
         const snapshot = await getDiagnosticSnapshot(page);
         return objectText(snapshot, 'sunbeam-chess:coach-status');
-      })
+      }, { timeout: 20_000 })
       .toContain('Your move');
 
     await page.keyboard.press('Escape');
