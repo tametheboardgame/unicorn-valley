@@ -1,6 +1,7 @@
 import { appendFileSync } from 'node:fs';
 import { evaluateStreamFileOwnership } from './streamStatePolicy.mjs';
 import { evaluateFinalOverlap } from './parallelIntegrationPolicy.mjs';
+import { completedPackagePaths, evaluateCloseout } from './integrationCloseoutPolicy.mjs';
 
 const name = process.env.GITHUB_EVENT_NAME ?? '';
 const repo = process.env.GITHUB_REPOSITORY;
@@ -63,6 +64,15 @@ async function main() {
   const overlap = evaluateFinalOverlap({ number, branch: pr.head.ref, files }, otherPrs);
   result.errors.push(...overlap.errors);
   result.warnings.push(...overlap.warnings);
+  const completion = evaluateCloseout({
+    number,
+    draft: pr.draft,
+    branch: pr.head.ref,
+    files,
+    completedPackages: completedPackagePaths(files),
+  });
+  result.errors.push(...completion.errors);
+  result.warnings.push(...completion.notes);
   const summary = [
     'Stream ownership #' + number + ': ' + (result.stream ?? 'unclassified'),
     ...result.errors.map((item) => 'ERROR: ' + item),

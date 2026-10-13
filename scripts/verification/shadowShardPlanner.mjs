@@ -204,7 +204,6 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
       ignored.push({ runId: String(item?.provenance?.runId ?? 'unknown'), reason: error.message });
     }
   }
-  const weights = new Map();
   const usable = [...now.filter((file) => file.durationMs > 0).map((file) => file.durationMs)];
   const defaultMs = usable.length ? Math.max(60_000, percentile(usable, 0.9)) : 120_000;
   const weighted = now.map((file) => {
@@ -225,7 +224,6 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
       source: estimated ? 'conservative-unmeasured-default' : historicalSamples ? 'clean-history-median' : 'current-clean-only',
       historicalSamples,
     };
-    weights.set(file.path, record);
     return record;
   });
   const plans = COUNTS.map((count) => {
