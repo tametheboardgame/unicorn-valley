@@ -39,5 +39,4 @@ describe('summariseFrameDurations', () => {
     expect(sustained.worstFrameMs).toBe(187);
     expect(sustained.longFrameCount).toBe(5);
   });
-
 });
