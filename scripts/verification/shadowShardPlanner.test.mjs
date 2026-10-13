@@ -1,23 +1,42 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { allocateByDuration, makeShadowReport, validateCleanSnapshot, formatShadowReport } from './shadowShardPlanner.mjs';
+import {
+  allocateByDuration,
+  makeShadowReport,
+  validateCleanSnapshot,
+  formatShadowReport,
+} from './shadowShardPlanner.mjs';
 
 const A = 'a'.repeat(40);
 const B = 'b'.repeat(40);
-const paths = Array.from({ length: 15 }, (_, i) => `tests/play/shadow-${String(i).padStart(2, '0')}.spec.ts`);
+const paths = Array.from(
+  { length: 15 },
+  (_, i) => `tests/play/shadow-${String(i).padStart(2, '0')}.spec.ts`,
+);
 
 function snapshot(id = '101', sha = A, files = paths) {
   const records = files.map((path, i) => ({
-    path, kind: 'browser', observed: true, tests: 2,
-    expected: 2, skipped: 0, unexpected: 0, flaky: 0,
+    path,
+    kind: 'browser',
+    observed: true,
+    tests: 2,
+    expected: 2,
+    skipped: 0,
+    unexpected: 0,
+    flaky: 0,
     durationMs: 1000 + i * 2000,
   }));
   return {
-    schemaVersion: 1, valid: true, errors: [],
+    schemaVersion: 1,
+    valid: true,
+    errors: [],
     provenance: { sourceSha: sha, headSha: sha, runId: id, shard: 'all/6' },
     records,
-    summary: { observedBrowserSpecs: records.length,
-      inventoryBrowserSpecs: records.length, unobservedBrowserSpecs: 0 },
+    summary: {
+      observedBrowserSpecs: records.length,
+      inventoryBrowserSpecs: records.length,
+      unobservedBrowserSpecs: 0,
+    },
   };
 }
 
@@ -29,8 +48,18 @@ function shards(snap) {
     tests: browser.flatMap((file, i) =>
       i % 6 === index
         ? [
-            { file: file.path, identity: `${i}:one`, status: 'expected', durationMs: file.durationMs / 2 },
-            { file: file.path, identity: `${i}:two`, status: 'expected', durationMs: file.durationMs / 2 },
+            {
+              file: file.path,
+              identity: `${i}:one`,
+              status: 'expected',
+              durationMs: file.durationMs / 2,
+            },
+            {
+              file: file.path,
+              identity: `${i}:two`,
+              status: 'expected',
+              durationMs: file.durationMs / 2,
+            },
           ]
         : [],
     ),
@@ -103,7 +132,8 @@ test('SHA mismatch, current/duplicate IDs, cancelled and non-green histories can
   const incomplete = snapshot('100', B);
   incomplete.summary.unobservedBrowserSpecs = 1;
   const report = makeShadowReport({
-    current, history: [wrongSha, duplicate, cancelled, nonGreen, incomplete],
+    current,
+    history: [wrongSha, duplicate, cancelled, nonGreen, incomplete],
   });
   assert.equal(report.summary.historyAccepted, 0);
   assert.equal(report.summary.historyIgnored, 5);
@@ -148,5 +178,5 @@ test('missing, duplicate, wrong type or failed current contracts reject, never s
   empty.records = [];
   empty.summary.inventoryBrowserSpecs = 0;
   empty.summary.observedBrowserSpecs = 0;
-  assert.throws(() => makeShadowReport({ current: empty }), /Incomplete/);
+  assert.throws(() => makeShadowReport({ current: empty }), /incomplete/i);
 });

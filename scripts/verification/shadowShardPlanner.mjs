@@ -90,9 +90,7 @@ export function allocateByDuration(weightedFiles, shardCount) {
   for (const file of [...weightedFiles].sort(
     (a, b) => b.durationMs - a.durationMs || a.path.localeCompare(b.path),
   )) {
-    const target = [...shards].sort(
-      (a, b) => a.durationMs - b.durationMs || a.id - b.id,
-    )[0];
+    const target = [...shards].sort((a, b) => a.durationMs - b.durationMs || a.id - b.id)[0];
     target.durationMs += file.durationMs;
     target.files.push(file.path);
   }
@@ -124,8 +122,9 @@ function metrics(shards) {
 
 function compatibleRecords(current, historical) {
   const index = new Map(historical.map((x) => [x.path, x]));
-  return current.length === historical.length && current.every(
-    (file) => index.has(file.path) && index.get(file.path).tests === file.tests,
+  return (
+    current.length === historical.length &&
+    current.every((file) => index.has(file.path) && index.get(file.path).tests === file.tests)
   );
 }
 
@@ -149,12 +148,19 @@ function actualStaticSix(current, shards, provenance) {
       ids.has(p.shard) ||
       !Array.isArray(shard.tests)
     ) {
-      return { available: false, reason: 'mismatched, incomplete or duplicated current shard evidence' };
+      return {
+        available: false,
+        reason: 'mismatched, incomplete or duplicated current shard evidence',
+      };
     }
     ids.add(p.shard);
     let total = 0;
     for (const t of shard.tests) {
-      if (!SPEC.test(t.file ?? '') || !finite(t.durationMs) || !['expected', 'skipped'].includes(t.status)) {
+      if (
+        !SPEC.test(t.file ?? '') ||
+        !finite(t.durationMs) ||
+        !['expected', 'skipped'].includes(t.status)
+      ) {
         return { available: false, reason: 'untrusted shard test record' };
       }
       if (fileToShard[t.file] !== undefined && fileToShard[t.file] !== p.shard) {
@@ -173,11 +179,17 @@ function actualStaticSix(current, shards, provenance) {
     seen.size !== current.length ||
     current.some((file) => {
       const observed = seen.get(file.path);
-      return !observed || observed.tests !== file.tests ||
-        Math.abs(observed.durationMs - file.durationMs) > 0.01;
+      return (
+        !observed ||
+        observed.tests !== file.tests ||
+        Math.abs(observed.durationMs - file.durationMs) > 0.01
+      );
     })
   ) {
-    return { available: false, reason: 'current shard files do not match the validated health inventory' };
+    return {
+      available: false,
+      reason: 'current shard files do not match the validated health inventory',
+    };
   }
   for (const file of current) {
     const index = Number(fileToShard[file.path].split('/')[0]) - 1;
@@ -210,7 +222,9 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
     const samples = [file.durationMs];
     let historicalSamples = 0;
     for (const entry of eligible.slice(0, 10)) {
-      const older = entry.records.find((other) => other.path === file.path && other.tests === file.tests);
+      const older = entry.records.find(
+        (other) => other.path === file.path && other.tests === file.tests,
+      );
       if (older && older.durationMs > 0) {
         samples.push(older.durationMs);
         historicalSamples++;
@@ -221,13 +235,18 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
       path: file.path,
       tests: file.tests,
       durationMs: estimated ? defaultMs : median(samples.filter((n) => n > 0)),
-      source: estimated ? 'conservative-unmeasured-default' : historicalSamples ? 'clean-history-median' : 'current-clean-only',
+      source: estimated
+        ? 'conservative-unmeasured-default'
+        : historicalSamples
+          ? 'clean-history-median'
+          : 'current-clean-only',
       historicalSamples,
     };
     return record;
   });
   const plans = COUNTS.map((count) => {
-    if (weighted.length < count) return { count, available: false, reason: 'insufficient files for non-empty shards' };
+    if (weighted.length < count)
+      return { count, available: false, reason: 'insufficient files for non-empty shards' };
     const allocation = allocateByDuration(weighted, count);
     return { count, available: true, ...metrics(allocation), shards: allocation };
   });
@@ -235,14 +254,20 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
   const comparisonRuns = [];
   for (const entry of eligible) {
     if (!compatibleRecords(now, entry.records)) {
-      ignored.push({ runId: String(entry.report.provenance.runId), reason: 'inventory or test count changed' });
+      ignored.push({
+        runId: String(entry.report.provenance.runId),
+        reason: 'inventory or test count changed',
+      });
       continue;
     }
-    const historyWeights = entry.records.map((file) => ({ path: file.path, durationMs: file.durationMs }));
+    const historyWeights = entry.records.map((file) => ({
+      path: file.path,
+      durationMs: file.durationMs,
+    }));
     const replay = {};
     for (const count of COUNTS) {
-      replay[count] = historyWeights.length >= count
-        ? metrics(allocateByDuration(historyWeights, count)) : null;
+      replay[count] =
+        historyWeights.length >= count ? metrics(allocateByDuration(historyWeights, count)) : null;
     }
     if (staticSix.available) {
       const byPath = new Map(historyWeights.map((f) => [f.path, f.durationMs]));
@@ -274,7 +299,8 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
       unknownDefaultMs: defaultMs,
       nonZeroCurrentSamples: usable.length,
     },
-    caveat: 'This is file-test-runtime modelling plus 90s setup assumptions, NOT measured CI wall time or proof of end-to-end Merge Gate speed. Queue time, browser compatibility and smoke may dominate. Execution stays static six shards.',
+    caveat:
+      'This is file-test-runtime modelling plus 90s setup assumptions, NOT measured CI wall time or proof of end-to-end Merge Gate speed. Queue time, browser compatibility and smoke may dominate. Execution stays static six shards.',
     staticSix,
     plans,
     comparisons: comparisonRuns,
@@ -283,27 +309,36 @@ export function makeShadowReport({ current, history = [], shards = [] }) {
 }
 
 export function formatShadowReport(report) {
-  const rows = report.plans.map((plan) => plan.available
-    ? `| ${plan.count} | ${Math.round(plan.largestTestLoadMs / 1000)}s | ${Math.round(plan.predictedCriticalPathMs / 1000)}s | ${Math.round(plan.predictedRunnerMs / 60000)} min | ${Math.round(plan.skewMs / 1000)}s |`
-    : `| ${plan.count} | unavailable | - | - | - |`);
+  const rows = report.plans.map((plan) =>
+    plan.available
+      ? `| ${plan.count} | ${Math.round(plan.largestTestLoadMs / 1000)}s | ${Math.round(plan.predictedCriticalPathMs / 1000)}s | ${Math.round(plan.predictedRunnerMs / 60000)} min | ${Math.round(plan.skewMs / 1000)}s |`
+      : `| ${plan.count} | unavailable | - | - | - |`,
+  );
   return [
-    '# ENG-WP3.2 — duration-aware Chromium shadow allocation', '',
+    '# ENG-WP3.2 — duration-aware Chromium shadow allocation',
+    '',
     `Current run: ${report.provenance.runId}; head: ${report.provenance.headSha}`,
-    `Mode: ${report.mode}`, '',
+    `Mode: ${report.mode}`,
+    '',
     '| Proposed shards | Longest file-test workload | Critical path + assumed setup | Estimated runner cost | Load spread |',
     '| --- | ---: | ---: | ---: | ---: |',
-    ...rows, '',
+    ...rows,
+    '',
     `Current static-six test durations: ${report.staticSix.available ? Math.round(report.staticSix.largestTestLoadMs / 1000) + 's max shard test workload' : report.staticSix.reason}`,
     `Comparable historical replay runs: ${report.summary.historyComparable} (${report.summary.historicalEvidence}); ignored: ${report.summary.historyIgnored}`,
-    `Unmeasured-file conservative estimate: ${report.summary.unknownDefaultMs} ms`, '',
-    report.caveat, '',
-    'WP3.3 must qualify dynamic execution separately; no scheduler activation or merge-gate changes in this package.', '',
+    `Unmeasured-file conservative estimate: ${report.summary.unknownDefaultMs} ms`,
+    '',
+    report.caveat,
+    '',
+    'WP3.3 must qualify dynamic execution separately; no scheduler activation or merge-gate changes in this package.',
+    '',
   ].join('\n');
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
-    const arg = (key) => process.argv.find((x) => x.startsWith('--' + key + '='))?.slice(key.length + 3);
+    const arg = (key) =>
+      process.argv.find((x) => x.startsWith('--' + key + '='))?.slice(key.length + 3);
     const health = arg('health');
     const shardRoot = arg('shards');
     const output = arg('output');
@@ -312,11 +347,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       throw new Error('Expected --health, --shards, --output and --markdown');
     }
     const current = JSON.parse(readFileSync(health, 'utf8'));
-    const history = arg('history') ? JSON.parse(readFileSync(arg('history'), 'utf8')).reports ?? [] : [];
+    const history = arg('history')
+      ? (JSON.parse(readFileSync(arg('history'), 'utf8')).reports ?? [])
+      : [];
     const shardNames = readdirSync(shardRoot).filter((x) => /^tier3-chromium-[1-6]-of-6$/.test(x));
-    const shards = shardNames.map((name) => JSON.parse(
-      readFileSync(join(shardRoot, name, 'test-evidence.json'), 'utf8'),
-    ));
+    const shards = shardNames.map((name) =>
+      JSON.parse(readFileSync(join(shardRoot, name, 'test-evidence.json'), 'utf8')),
+    );
     const report = makeShadowReport({ current, history, shards });
     writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
     writeFileSync(markdown, formatShadowReport(report));

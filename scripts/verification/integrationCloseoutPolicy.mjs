@@ -14,7 +14,8 @@ export function evaluateCloseout({ number, draft, branch, files, completedPackag
   const errors = [];
   const notes = [];
   if (draft || number < 314) return { errors, notes, enforced: false };
-  if (!Array.isArray(files) || !branch) return { errors: ['Missing PR file inventory or branch'], notes, enforced: true };
+  if (!Array.isArray(files) || !branch)
+    return { errors: ['Missing PR file inventory or branch'], notes, enforced: true };
   const touched = new Set(files.map((file) => (typeof file === 'string' ? file : file.filename)));
   if (ENGINEERING.test(branch) && [...touched].some((x) => ENGINEERING_WP.test(x))) {
     for (const path of GLOBAL) {
@@ -29,7 +30,8 @@ export function evaluateCloseout({ number, draft, branch, files, completedPackag
     for (const file of completedPackages) {
       if (!WP.test(file)) errors.push('Unrecognised completed work package: ' + file);
     }
-    if (!touched.has(product.state)) errors.push('Completed product stream must update ' + product.state);
+    if (!touched.has(product.state))
+      errors.push('Completed product stream must update ' + product.state);
     notes.push('Product stream completion is local; root state updates belong to integration.');
   }
   return { errors, notes, enforced: true };
@@ -46,7 +48,9 @@ export function completedPackagePaths(changedFiles) {
       const content = readFileSync(path, 'utf8');
       if (/^---\s*\n[\s\S]*?^status:\s*complete\s*$/m.test(content)) complete.push(path);
     } catch (error) {
-      throw new Error('Cannot read changed package completion status: ' + path + ': ' + error.message);
+      throw new Error(
+        'Cannot read changed package completion status: ' + path + ': ' + error.message,
+      );
     }
   }
   return complete;
