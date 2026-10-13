@@ -7,8 +7,8 @@ depends_on: [ENG-WP2.5]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
-test_impact_scope: Real concurrent PR deployment evidence, overlap diagnostics and deterministic story catalogue integration tests
+test_impact_stage: reviewed
+test_impact_scope: Reviewed real concurrent PR deployment provenance, paginated live overlap assessment and real generator merge-order tests
 ---
 
 # ENG-WP2.5D — Concurrent Stream Integration Evidence
@@ -61,3 +61,7 @@ The tested stale-main scenario uses an unchanged green candidate head with a new
 - Real overlapping source and governance paths: identified, not silently auto-resolved.
 - Repository protection read: HTTP 403; ruleset list empty at audit time. **Admin action outstanding** before platform-enforced merge safety can be claimed.
 - No product PRs modified or merged. Existing game/browser test suites retained.
+
+## Technical checkpoint
+
+The integration test implementation passed draft Tier 0 on [CI #38360120193](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38360120193). Full exact-head finalisation and live preview browser checks remain distinct work. Strict protected branch enforcement is tracked as [ENG-WP2.5E #313](https://github.com/tametheboardgame/unicorn-valley/issues/313), not asserted as implemented by the in-repository Merge Gate.
