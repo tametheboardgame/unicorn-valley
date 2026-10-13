@@ -160,15 +160,18 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     await page.keyboard.press('Space');
 
     await expect
-      .poll(async () => {
-        const next = await getDiagnosticSnapshot(page);
-        const zone = rainbowDiscObject(next, 'rainbow-disc-activity:timing-success-zone');
-        if (!zone?.effectiveVisible) return false;
-        return (
-          Math.abs(zone.x - firstZone.x) > 1 ||
-          Math.abs(zone.displayWidth - firstZone.displayWidth) > 1
-        );
-      }, { timeout: 20_000 })
+      .poll(
+        async () => {
+          const next = await getDiagnosticSnapshot(page);
+          const zone = rainbowDiscObject(next, 'rainbow-disc-activity:timing-success-zone');
+          if (!zone?.effectiveVisible) return false;
+          return (
+            Math.abs(zone.x - firstZone.x) > 1 ||
+            Math.abs(zone.displayWidth - firstZone.displayWidth) > 1
+          );
+        },
+        { timeout: 20_000 },
+      )
       .toBe(true);
   });
 
@@ -286,19 +289,30 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     // First called target is the middle ring. Deliberately select the left ring.
     // Observe the real selected lane before the edge-triggered throw input.
     await page.keyboard.press('ArrowLeft');
-    await expect.poll(() => page.evaluate(() => {
-      const diagnostics = (window as typeof window & {
-        __UNICORN_VALLEY_DIAGNOSTICS__?: { rainbowDiscMatchState(): { selectedReceiver: number } };
-      }).__UNICORN_VALLEY_DIAGNOSTICS__;
-      return diagnostics?.rainbowDiscMatchState().selectedReceiver;
-    })).toBe(0);
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const diagnostics = (
+            window as typeof window & {
+              __UNICORN_VALLEY_DIAGNOSTICS__?: {
+                rainbowDiscMatchState(): { selectedReceiver: number };
+              };
+            }
+          ).__UNICORN_VALLEY_DIAGNOSTICS__;
+          return diagnostics?.rainbowDiscMatchState().selectedReceiver;
+        }),
+      )
+      .toBe(0);
     await page.keyboard.press('Space');
 
     await expect
-      .poll(async () => {
-        const snapshot = await getDiagnosticSnapshot(page);
-        return rainbowDiscObject(snapshot, 'rainbow-disc-activity:result')?.text;
-      }, { timeout: 20_000 })
+      .poll(
+        async () => {
+          const snapshot = await getDiagnosticSnapshot(page);
+          return rainbowDiscObject(snapshot, 'rainbow-disc-activity:result')?.text;
+        },
+        { timeout: 20_000 },
+      )
       .toBe('STREAK OVER');
 
     const snapshot = await getDiagnosticSnapshot(page);

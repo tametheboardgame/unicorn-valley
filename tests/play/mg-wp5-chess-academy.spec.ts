@@ -179,10 +179,13 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     expect(playerFeedback).not.toContain('Village reply');
 
     await expect
-      .poll(async () => {
-        const snapshot = await getDiagnosticSnapshot(page);
-        return objectText(snapshot, 'sunbeam-chess:coach-status');
-      }, { timeout: 20_000 })
+      .poll(
+        async () => {
+          const snapshot = await getDiagnosticSnapshot(page);
+          return objectText(snapshot, 'sunbeam-chess:coach-status');
+        },
+        { timeout: 20_000 },
+      )
       .toContain('Your move');
 
     const afterReply = await getDiagnosticSnapshot(page);
@@ -222,10 +225,13 @@ test.describe('MG-WP5 Sunbeam Chess Academy', () => {
     await waitForNamedObject(page, 'ChessPlazaActivityScene', 'sunbeam-chess:piece:w:p:e4');
 
     await expect
-      .poll(async () => {
-        const snapshot = await getDiagnosticSnapshot(page);
-        return objectText(snapshot, 'sunbeam-chess:coach-status');
-      }, { timeout: 20_000 })
+      .poll(
+        async () => {
+          const snapshot = await getDiagnosticSnapshot(page);
+          return objectText(snapshot, 'sunbeam-chess:coach-status');
+        },
+        { timeout: 20_000 },
+      )
       .toContain('Your move');
 
     await page.keyboard.press('Escape');
