@@ -135,6 +135,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         run: node scripts/verification/checkTestImpact.mjs
+      - name: Validate independent stream-state records
+        id: stream-state
+        continue-on-error: true
+        run: node scripts/verification/streamStatePolicy.mjs
+      - name: Enforce product stream ownership at final review
+        id: stream-ownership
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: node scripts/verification/checkStreamOwnership.mjs
       - name: Check performance policy
         id: performance-policy
         continue-on-error: true
@@ -163,11 +174,13 @@ jobs:
           VERIFICATION_POLICY: ${{ steps.verification-policy.outcome }}
           TEST_IMPACT: ${{ steps.test-impact.outcome }}
           PERFORMANCE_POLICY: ${{ steps.performance-policy.outcome }}
+          STREAM_STATE: ${{ steps.stream-state.outcome }}
+          STREAM_OWNERSHIP: ${{ steps.stream-ownership.outcome }}
           TYPECHECK: ${{ steps.typecheck.outcome }}
           PROJECT_CONTRACT: ${{ steps.project-contract.outcome }}
         run: |
           failed=0
-          for check in FORMAT LINT ARCHITECTURE VERIFICATION_POLICY TEST_IMPACT PERFORMANCE_POLICY TYPECHECK PROJECT_CONTRACT; do
+          for check in FORMAT LINT ARCHITECTURE VERIFICATION_POLICY TEST_IMPACT PERFORMANCE_POLICY STREAM_STATE STREAM_OWNERSHIP TYPECHECK PROJECT_CONTRACT; do
             if [ "${!check}" = "failure" ]; then
               echo "::error title=Tier 0 ${check} failed::Inspect the preceding ${check} step and formatter remediation artifact if applicable."
               failed=1

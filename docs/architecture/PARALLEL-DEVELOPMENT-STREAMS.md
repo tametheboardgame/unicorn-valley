@@ -1,6 +1,6 @@
 # Parallel Development Streams — Ownership and Integration
 
-Status: agreed direction, governance baseline; automated merge-freshness and per-stream state enforcement are **planned**, not yet implemented. Tracking [ENG-WP2.5 #306](https://github.com/tametheboardgame/unicorn-valley/issues/306).
+Status: draft implementation in ENG-WP2.5 PR #312. Stream-state validation and non-draft freshness checks are added; GitHub platform branch protection remains unverified. Tracking [ENG-WP2.5 #306](https://github.com/tametheboardgame/unicorn-valley/issues/306).
 
 ## Three concurrent product streams
 
@@ -44,7 +44,7 @@ Changes to the shared reader, Story Library APIs or catalogue generator are **cr
 - Each stream gets a unique work-package branch, draft PR and **branch-specific preview URL**; verify the returned URL and candidate commit correspond to that branch. Never use another PR's preview as evidence or deploy production to show a draft.
 - Fast draft loop remains **change → minimal safe build/smoke → preview → feedback**, without full contract reconciliation on each cosmetic edit. Existing fail-safe current-delta escalation remains.
 - After human visual/functional approval, perform code/documentation review, complete the **WP2** actual-diff test-impact assessment, then mark Ready for review for full **exact-head** qualification.
-- **Merge freshness is a separate requirement from exact-head CI**: a green result for the same PR head may still be stale after another stream merges to `main`. Until the WP2.5 technical gate is implemented/protected, manually verify current `main` immediately before each merge; when it advanced after the candidate's qualification, update/rebase the branch, resolve registry/generated-file integration, and rerun authoritative CI against the updated candidate. Never rely on a green old-base head alone.
+- **Merge freshness is a separate requirement from exact-head CI**: a green result for the same PR head may still be stale after another stream merges to `main`. The WP2.5 authoritative Merge Gate now queries latest `main` and requires it to be an ancestor of the current PR head. If it advanced after candidate qualification, update/rebase the branch, resolve registry/generated-file integration and rerun authoritative CI. Platform branch protection with strict up-to-date checks remains necessary to cover the merge-time race. Never rely on a green old-base head alone.
 - Future WP2.5 automation must reject a stale integration base in the merge gate or use a required up-to-date protected branch/merge queue. It must **not** block draft previews. Configure `Merge Gate` as a platform-required check with repository-admin access.
 - Every stream's new/retired contracts must be reconciled at finalisation, including world and Just Games entry/return for mini-games and Story Library catalogue integrity for books. No stream may remove assertions or skips simply to get green.
 - GitHub CI concurrency is keyed by PR number so a new push to one PR should not cancel another PR's tests; the shared pool of hosted runners may still queue jobs. Do not run needless full qualification on drafts.
@@ -52,3 +52,11 @@ Changes to the shared reader, Story Library APIs or catalogue generator are **cr
 ## Readiness checks (pending technical enforcement)
 
 ENG-WP2.5 will prove two or three concurrent workstream PRs keep separate previews, package state and CI; integration in different merge orders preserves both sides' content; a newer `main` invalidates stale final qualification; and changed-file overlap has a visible owner decision. **Policy adoption alone does not assert those tests or protections already exist.**
+
+## ENG-WP2.5 stream-local source of truth
+
+Stream-local records now reside at `docs/streams/state/world.json`, `just-games.json`, `story-house.json`, and `engineering.json`. For an ordinary product work package, update only its matching record (ID, path, branch, PR, source-main SHA, date and meaningful note). Global `PROJECT_STATE.json` and `STATUS.md` describe the last integration checkpoint and are not transient feature-branch journals. The initial `unclaimed` status means the central record has not yet been adopted by a particular PR; it does **not** assert that no draft PR exists.
+
+A new non-draft product-stream PR is checked against its cumulative changed files: no changing root status or another stream's record. Existing older PRs are grandfathered mechanically while their reviews should use the same practices. Shared `MiniGameCatalogue.ts`, scene keys/manifest and generated Story index receive an explicit coordination warning; the owning workstream must sequence overlaps and regenerate story catalogue after refreshing to current main.
+
+Authoritative Merge Gate now checks the **live** GitHub `main` commit, PR head SHA and their merge-base relationship after the existing required CI results. It also rechecks that `main` did not move during the comparison. Missing API evidence blocks the final check. Drafts retain fast provisional qualification. This in-repo check is not a substitute for GitHub repository-admin strict branch protection or merge queue.

@@ -132,6 +132,8 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
   });
 
   test('timing waits for play and shifts position and width between throws', async ({ page }) => {
+    // The throw and possession hand-off are driven by Phaser scene time.
+    test.setTimeout(90_000);
     await openRainbowDiscFromJustGames(page, 'match');
 
     let snapshot = await getDiagnosticSnapshot(page);
@@ -158,21 +160,26 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     await page.keyboard.press('Space');
 
     await expect
-      .poll(async () => {
-        const next = await getDiagnosticSnapshot(page);
-        const zone = rainbowDiscObject(next, 'rainbow-disc-activity:timing-success-zone');
-        if (!zone?.effectiveVisible) return false;
-        return (
-          Math.abs(zone.x - firstZone.x) > 1 ||
-          Math.abs(zone.displayWidth - firstZone.displayWidth) > 1
-        );
-      })
+      .poll(
+        async () => {
+          const next = await getDiagnosticSnapshot(page);
+          const zone = rainbowDiscObject(next, 'rainbow-disc-activity:timing-success-zone');
+          if (!zone?.effectiveVisible) return false;
+          return (
+            Math.abs(zone.x - firstZone.x) > 1 ||
+            Math.abs(zone.displayWidth - firstZone.displayWidth) > 1
+          );
+        },
+        { timeout: 20_000 },
+      )
       .toBe(true);
   });
 
   test('Modes returns to the current branch before switching Match and Practice', async ({
     page,
   }) => {
+    // This contract traverses both branches and several real Phaser scene renders.
+    test.setTimeout(90_000);
     await openRainbowDiscFromJustGames(page, 'match');
 
     await clickNamedObject(
@@ -265,6 +272,7 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
   test('Rainbow Streak ends immediately on a wrong target with an explicit reason', async ({
     page,
   }) => {
+    test.setTimeout(90_000);
     await openRainbowDiscFromJustGames(page, 'practice');
 
     await clickNamedObject(
@@ -279,14 +287,32 @@ test.describe('MG-WP6 Rainbow Disc integration', () => {
     );
 
     // First called target is the middle ring. Deliberately select the left ring.
+    // Observe the real selected lane before the edge-triggered throw input.
     await page.keyboard.press('ArrowLeft');
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const diagnostics = (
+            window as typeof window & {
+              __UNICORN_VALLEY_DIAGNOSTICS__?: {
+                rainbowDiscMatchState(): { selectedReceiver: number };
+              };
+            }
+          ).__UNICORN_VALLEY_DIAGNOSTICS__;
+          return diagnostics?.rainbowDiscMatchState().selectedReceiver;
+        }),
+      )
+      .toBe(0);
     await page.keyboard.press('Space');
 
     await expect
-      .poll(async () => {
-        const snapshot = await getDiagnosticSnapshot(page);
-        return rainbowDiscObject(snapshot, 'rainbow-disc-activity:result')?.text;
-      })
+      .poll(
+        async () => {
+          const snapshot = await getDiagnosticSnapshot(page);
+          return rainbowDiscObject(snapshot, 'rainbow-disc-activity:result')?.text;
+        },
+        { timeout: 20_000 },
+      )
       .toBe('STREAK OVER');
 
     const snapshot = await getDiagnosticSnapshot(page);

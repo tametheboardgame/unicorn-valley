@@ -254,3 +254,17 @@ Engineering verification maintains the weekly review, monthly ownership-backlog 
 Warnings include 180-second cumulative slow spec duration; two comparable prior complete runs plus both a 30% and 30-second increase for a duration trend; two independent runs with unexpected/flaky status for recurring failures; actual runtime skips; changed inventoried files since the latest eligible `main` evidence; and review age beyond 180 days. For a final PR, the **WP2.2 actual-diff test-impact check remains blocking**, including any added/modified tests not listed in `contracts[]` and any deletion without replacement. New node tests for history selection, SHA/run integrity, and changed test-impact contracts are part of Tier 0.
 
 Neither historical availability nor the report's warning count is a new Merge Gate criterion. Evidence integrity is protected in report generation, while the six static Chromium shards and existing authoritative merge checks remain unchanged.
+
+## ENG-WP2.5 parallel-stream validation
+
+Tier 0 validates the four independent JSON status records in `docs/streams/state/` and runs stream-ownership and merge-freshness regression tests. During final PR review, the changed-file policy blocks new product PRs from editing global root project state or another stream's record; provisional drafts remain fast. The CI concurrency group already keys on PR number, so updating one draft does not cancel another.
+
+The exact-head Merge Gate now also queries current `main`, compares it with the **live** PR head and verifies that latest main is the merge base (zero behind). A stale but previously green PR must integrate current main and rerun its full CI before merging. API errors fail closed. GitHub strict protected branch/merge queue settings must still be configured by a repository administrator to close the remaining merge-time race.
+
+## ENG-WP2.5D — Live conflict visibility and Story catalogue merge-order regression
+
+The `parallelIntegrationPolicy.test.mjs` tests exercise three simultaneous independent World/Just Games/Story PR models, unique current-head deployment URL provenance, changed-file overlap detection, and unresolved collision rejection. The final-only `checkStreamOwnership.mjs` also enumerates other open `main` PRs and their paginated changed-file lists, so overlapping source is discovered from live repository state rather than an old static registry. Pre-rollout PRs remain allowed provisional feedback but must manually reconcile before finalisation.
+
+`parallelStoryGenerator.test.mjs` uses the **real** Story catalogue generator in two independent temporary source trees with reversed book-introduction order. It verifies byte-for-byte deterministic output, all independently published titles retained and successful `--check` validation. These tests do not merge real unapproved content PRs or prove independent live browser accessibility. See ENG-WP2.5D evidence for observed Cloudflare branch-deployment comments and shared-file collision matrix.
+
+For full platform safety, repository administrator must complete [ENG-WP2.5E #313](https://github.com/tametheboardgame/unicorn-valley/issues/313): required strict up-to-date `Merge Gate` or merge queue with no routine direct-push bypass. An in-repo check is not equivalent to a protected branch rule.
