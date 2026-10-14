@@ -168,3 +168,43 @@ test('independent identity reconciliation rejects out-of-range and mixed-count p
     /Duplicate or inconsistent/,
   );
 });
+
+test('independent evidence rejects failed, flaky, forged and missing test statuses', () => {
+  const first = normalisePlaywrightReport(report(), provenance);
+  const otherReport = report();
+  otherReport.suites[0].suites[0].specs[0].title = 'second unique';
+  const second = normalisePlaywrightReport(otherReport, { ...provenance, shard: '2/2' });
+  const manifest = {
+    tests: [{ identity: first.tests[0].identity }, { identity: second.tests[0].identity }],
+  };
+  for (const status of ['unexpected', 'flaky']) {
+    const altered = structuredClone(first);
+    altered.tests[0].status = status;
+    altered.summary.expected = 0;
+    altered.summary[status] = 1;
+    assert.throws(
+      () => reconcilePlaywrightEvidence(manifest, [altered, second]),
+      /non-green shard outcomes/,
+    );
+  }
+  const forged = structuredClone(first);
+  forged.summary.expected = 0;
+  assert.throws(
+    () => reconcilePlaywrightEvidence(manifest, [forged, second]),
+    /status summary disagrees/,
+  );
+  const empty = structuredClone(first);
+  empty.tests = [];
+  empty.summary.tests = 0;
+  empty.summary.expected = 0;
+  assert.throws(
+    () => reconcilePlaywrightEvidence(manifest, [empty, second]),
+    /non-empty execution evidence/,
+  );
+  const unknown = structuredClone(first);
+  unknown.tests[0].status = 'unrecognised';
+  assert.throws(
+    () => reconcilePlaywrightEvidence(manifest, [unknown, second]),
+    /Unrecognised execution status/,
+  );
+});

@@ -176,12 +176,29 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
     ) {
       throw new Error('Duplicate or inconsistent shard identity: ' + p.shard);
     }
+    if (shard.mode !== 'execution' || !Array.isArray(shard.tests) || shard.tests.length === 0) {
+      throw new Error('Missing non-empty execution evidence for shard: ' + p.shard);
+    }
     seenShards.add(p.shard);
+    const statuses = { expected: 0, unexpected: 0, flaky: 0, skipped: 0 };
     for (const test of shard.tests) {
+      if (!Object.hasOwn(statuses, test.status)) {
+        throw new Error('Unrecognised execution status: ' + String(test.status));
+      }
+      statuses[test.status] += 1;
       if (!expected.has(test.identity))
         throw new Error('Unexpected executed test: ' + test.identity);
       if (actual.has(test.identity)) throw new Error('Duplicate executed test: ' + test.identity);
       actual.add(test.identity);
+    }
+    if (
+      shard.summary?.tests !== shard.tests.length ||
+      Object.entries(statuses).some(([status, count]) => shard.summary[status] !== count)
+    ) {
+      throw new Error('Shard status summary disagrees with individual executed tests');
+    }
+    if (statuses.unexpected !== 0 || statuses.flaky !== 0) {
+      throw new Error('Independent reconciliation rejects non-green shard outcomes: ' + p.shard);
     }
   }
   if (seenShards.size !== shardCount) throw new Error('Missing shard evidence');
