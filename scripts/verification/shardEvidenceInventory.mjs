@@ -18,7 +18,10 @@ export function validateShardArtifactNames(names) {
     throw new Error('Mixed or incomplete Chromium shard artifact count');
   }
   const seen = new Set(parsed.map((x) => x.id));
-  if (seen.size !== total || parsed.some((x) => x.name !== 'tier3-chromium-' + x.id + '-of-' + total)) {
+  if (
+    seen.size !== total ||
+    parsed.some((x) => x.name !== 'tier3-chromium-' + x.id + '-of-' + total)
+  ) {
     throw new Error('Duplicated, missing or misnamed Chromium shard artifacts');
   }
   return {

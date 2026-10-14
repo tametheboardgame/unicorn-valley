@@ -7,11 +7,31 @@ import { normalisePlaywrightReport } from './playwrightEvidence.mjs';
 
 const COUNTS = new Set([6, 8, 10, 12]);
 
-export function assignedShard({ candidate, discovery, sourceSha, headSha, runId, shard, total = 6 }) {
-  if (!COUNTS.has(total) || !Number.isInteger(Number(shard)) || Number(shard) < 1 || Number(shard) > total) {
+export function assignedShard({
+  candidate,
+  discovery,
+  sourceSha,
+  headSha,
+  runId,
+  shard,
+  total = 6,
+}) {
+  if (
+    !COUNTS.has(total) ||
+    !Number.isInteger(Number(shard)) ||
+    Number(shard) < 1 ||
+    Number(shard) > total
+  ) {
     throw new Error('Expected valid shard within supported 6/8/10/12 total');
   }
-  const list = validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId, count: total });
+  const list = validateManifestCandidate({
+    candidate,
+    discovery,
+    sourceSha,
+    headSha,
+    runId,
+    count: total,
+  });
   const result = list[Number(shard) - 1];
   if (!result || result.id !== Number(shard)) throw new Error('Incorrect shard allocation');
   return result;
@@ -77,7 +97,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       runId: process.env.GITHUB_RUN_ID,
     };
     const total = Number(arg('total') ?? 6);
-    const assigned = assignedShard({ candidate, discovery, ...provenance, shard: arg('shard'), total });
+    const assigned = assignedShard({
+      candidate,
+      discovery,
+      ...provenance,
+      shard: arg('shard'),
+      total,
+    });
     console.log(
       'ENG-WP3.3 manifest shard ' +
         assigned.id +
@@ -101,7 +127,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       console.log(
         'ENG-WP3.3 manifest execution: ' +
           JSON.stringify(
-            verifyManifestShardResult({ candidate, discovery, evidence, shard: assigned.id, total }),
+            verifyManifestShardResult({
+              candidate,
+              discovery,
+              evidence,
+              shard: assigned.id,
+              total,
+            }),
           ),
       );
     } catch (error) {

@@ -232,7 +232,14 @@ test('bounded variable-count trials require an explicit qualification token and 
       const absent = structuredClone(evidence);
       absent.tests.pop();
       assert.throws(
-        () => verifyManifestShardResult({ candidate, discovery: discovered, evidence: absent, shard: id, total }),
+        () =>
+          verifyManifestShardResult({
+            candidate,
+            discovery: discovered,
+            evidence: absent,
+            shard: id,
+            total,
+          }),
         /missing/,
       );
     }

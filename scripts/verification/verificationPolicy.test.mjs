@@ -91,7 +91,9 @@ test('bounded Tier 3 matrix retains six static shards and the aggregate Merge Ga
     ),
   );
   assert.ok(
-    selection.includes('Download independent discovery and candidate evidence for guarded trial only'),
+    selection.includes(
+      'Download independent discovery and candidate evidence for guarded trial only',
+    ),
   );
   assert.ok(
     selection.includes(
@@ -109,5 +111,9 @@ test('bounded Tier 3 matrix retains six static shards and the aggregate Merge Ga
   assert.ok(gate.includes('TIER3_EXECUTION_MODE: ${{ needs.tier3-execution-plan.outputs.mode }}'));
   const evidenceJob = workflow.split('\n  test-evidence:\n')[1]?.split('\n  merge-gate:\n')[0];
   assert.ok(evidenceJob?.includes('pattern: tier3-chromium-*-of-*'));
-  assert.ok(evidenceJob?.includes("continue-on-error: ${{ needs.tier3-execution-plan.outputs.mode == 'static6' }}"));
+  assert.ok(
+    evidenceJob?.includes(
+      "continue-on-error: ${{ needs.tier3-execution-plan.outputs.mode == 'static6' }}",
+    ),
+  );
 });

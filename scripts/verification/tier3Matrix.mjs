@@ -6,7 +6,14 @@ const TRIAL_COUNTS = [8, 10, 12];
 const SUPPORTED_COUNTS = new Set([6, ...TRIAL_COUNTS]);
 const SHA = /^[a-f0-9]{40}$/i;
 
-export function validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId, count = 6 }) {
+export function validateManifestCandidate({
+  candidate,
+  discovery,
+  sourceSha,
+  headSha,
+  runId,
+  count = 6,
+}) {
   if (!SUPPORTED_COUNTS.has(count)) throw new Error('Unsupported manifest shard count');
   if (
     !SHA.test(sourceSha ?? '') ||

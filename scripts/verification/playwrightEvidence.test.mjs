@@ -152,11 +152,19 @@ test('independent identity reconciliation rejects out-of-range and mixed-count p
     tests: [{ identity: first.tests[0].identity }, { identity: second.tests[0].identity }],
   };
   assert.throws(
-    () => reconcilePlaywrightEvidence(manifest, [first, { ...second, provenance: { ...second.provenance, shard: '3/2' } }]),
+    () =>
+      reconcilePlaywrightEvidence(manifest, [
+        first,
+        { ...second, provenance: { ...second.provenance, shard: '3/2' } },
+      ]),
     /Duplicate or inconsistent/,
   );
   assert.throws(
-    () => reconcilePlaywrightEvidence(manifest, [first, { ...second, provenance: { ...second.provenance, shard: '2/8' } }]),
+    () =>
+      reconcilePlaywrightEvidence(manifest, [
+        first,
+        { ...second, provenance: { ...second.provenance, shard: '2/8' } },
+      ]),
     /Duplicate or inconsistent/,
   );
 });

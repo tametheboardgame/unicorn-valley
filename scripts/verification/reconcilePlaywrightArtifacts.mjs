@@ -29,7 +29,10 @@ try {
     if (report.mode !== 'execution') {
       throw new Error('Shard evidence is not an execution report: ' + name);
     }
-    const expectedShard = name.match(/chromium-(\d+)-of-(\d+)$/)?.slice(1).join('/');
+    const expectedShard = name
+      .match(/chromium-(\d+)-of-(\d+)$/)
+      ?.slice(1)
+      .join('/');
     if (report.provenance.shard !== expectedShard) {
       throw new Error('Shard identity conflicts with its artifact directory: ' + name);
     }
@@ -39,7 +42,8 @@ try {
     throw new Error('Independent full-suite discovery manifest is invalid');
   }
   const completeness = reconcilePlaywrightEvidence(manifest, shards);
-  if (completeness.shards !== total) throw new Error('Reconciled shard count differs from artifacts');
+  if (completeness.shards !== total)
+    throw new Error('Reconciled shard count differs from artifacts');
   const files = new Map();
   for (const shard of shards) {
     for (const file of shard.files) {

@@ -164,7 +164,9 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
     ) {
       throw new Error('Mismatched SHA or run identity across shards');
     }
-    const [id, total] = String(p.shard ?? '').split('/').map(Number);
+    const [id, total] = String(p.shard ?? '')
+      .split('/')
+      .map(Number);
     if (
       !/^\d+\/\d+$/.test(String(p.shard ?? '')) ||
       total !== shardCount ||

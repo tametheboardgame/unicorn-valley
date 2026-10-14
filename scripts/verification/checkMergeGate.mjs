@@ -60,7 +60,9 @@ try {
         comparison.status,
     );
   }
-  const trialEvidenceRequired = /^manifest(?:8|10|12)$/.test(process.env.TIER3_EXECUTION_MODE ?? '');
+  const trialEvidenceRequired = /^manifest(?:8|10|12)$/.test(
+    process.env.TIER3_EXECUTION_MODE ?? '',
+  );
   const result = evaluateMergeGate({
     planResult: process.env.PLAN_RESULT,
     changeClass: process.env.PLAN_CLASS,
