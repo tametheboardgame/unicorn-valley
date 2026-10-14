@@ -132,3 +132,24 @@ test('manual non-six mode is still blocked without multiple independently accept
   assert.equal(candidate.summary.recommendedCount, 6);
   assert.equal(candidate.summary.nonSixActivationEligible, false);
 });
+
+test('no number of clean historical reports can bypass the candidate-only safety lock', () => {
+  const candidate = plan({
+    history: [health('80'), health('81'), health('82'), health('83')],
+    activate: true, allowMeasuredNonSix: true,
+  });
+  assert.equal(candidate.summary.cleanHistoryRuns, 4);
+  assert.equal(candidate.summary.recommendedCount, 6);
+  assert.equal(candidate.summary.nonSixActivationEligible, false);
+});
+
+test('path traversal and forged execution file references fail closed', () => {
+  const bad = discovery();
+  bad.tests[0].file = 'tests/play/../../unexpected.spec.ts';
+  assert.throws(() => plan({ discovery: bad }), /invalid/);
+  const input = discovery();
+  const candidate = plan();
+  const shards = executionFromPlan(candidate, input);
+  shards[0].tests[0].file = paths[1];
+  assert.throws(() => verifyAdaptiveExecution({ discovery: input, candidate, shards }), /wrongly assigned/);
+});

@@ -39,7 +39,8 @@ export function indexDiscovery(discovery, expected) {
   const files = new Map();
   const ids = new Set();
   for (const item of discovery.tests) {
-    if (!SPEC.test(item.file ?? '') || typeof item.identity !== 'string' ||
+    if ((!SPEC.test(item.file ?? '') || item.file.includes('/../') || item.file.includes('/./')) ||
+      typeof item.identity !== 'string' ||
       !item.identity || item.status !== 'discovered' || ids.has(item.identity)) {
       throw new Error('Discovery has duplicate, missing or invalid test identities/specs');
     }
@@ -153,11 +154,13 @@ export function buildAdaptiveCandidate({
   }
   if (!plans[6]) throw new Error('Fewer than six test spec files: static fallback unavailable');
   // Never authorise non-six execution on estimated timings alone.
-  const measuredProof = activate && allowMeasuredNonSix && historical.accepted.length >= 3;
-  const choice = measuredProof
-    ? [...COUNTS].filter((count) => plans[count]).sort(
-        (a, b) => plans[a].maxPredictedMs - plans[b].maxPredictedMs || a - b)[0]
-    : 6;
+  // Safety lock for the candidate-only phase: observations and a flag do not prove
+  // wall-clock improvement, runner cost, correct execution or safe rollback.
+  // WP3.3 activation must add an independently qualified approval contract.
+  void activate;
+  void allowMeasuredNonSix;
+  const measuredProof = false;
+  const choice = 6;
   return {
     schemaVersion: 1,
     mode: 'candidate-only-static-six-remains-live',
@@ -194,6 +197,7 @@ export function verifyAdaptiveExecution({ discovery, candidate, shards }) {
   const actual = new Map(shards.map((shard) => [shard.provenance?.shard, shard]));
   if (actual.size !== count) throw new Error('Missing or duplicate execution shards');
   const covered = new Set();
+  const identitiesToFile = new Map(discovery.tests.map((test) => [test.identity, test.file]));
   for (const assigned of planned) {
     const id = assigned.id + '/' + count;
     const shard = actual.get(id);
@@ -202,7 +206,8 @@ export function verifyAdaptiveExecution({ discovery, candidate, shards }) {
     const intended = new Set(assigned.identities);
     const found = new Set();
     for (const item of shard.tests ?? []) {
-      if (!intended.has(item.identity) || found.has(item.identity) ||
+      if (!intended.has(item.identity) || item.file !== identitiesToFile.get(item.identity) ||
+          found.has(item.identity) ||
           !['expected', 'skipped'].includes(item.status)) {
         throw new Error('Unexpected, failed, repeated or wrongly assigned test identity');
       }
