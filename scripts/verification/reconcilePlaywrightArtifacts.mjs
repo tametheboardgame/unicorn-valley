@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { reconcilePlaywrightEvidence } from './playwrightEvidence.mjs';
+import { validateShardArtifactNames } from './shardEvidenceInventory.mjs';
 
 function arg(name) {
   return process.argv.find((value) => value.startsWith('--' + name + '='))?.slice(name.length + 3);
@@ -18,13 +19,11 @@ try {
     throw new Error('Expected --manifest, --shards and --output');
   }
   const manifest = parse(discoveryPath);
-  const directories = readdirSync(shardRoot, { withFileTypes: true })
-    .filter((item) => item.isDirectory() && /^tier3-chromium-[1-6]-of-6$/.test(item.name))
-    .map((item) => item.name)
-    .sort();
-  if (directories.length !== 6) {
-    throw new Error('Expected exactly six static Chromium evidence directories');
-  }
+  const { total, names: directories } = validateShardArtifactNames(
+    readdirSync(shardRoot, { withFileTypes: true })
+      .filter((item) => item.isDirectory())
+      .map((item) => item.name),
+  );
   const shards = directories.map((name) => {
     const report = parse(join(shardRoot, name, 'test-evidence.json'));
     if (report.mode !== 'execution') {
@@ -40,6 +39,7 @@ try {
     throw new Error('Independent full-suite discovery manifest is invalid');
   }
   const completeness = reconcilePlaywrightEvidence(manifest, shards);
+  if (completeness.shards !== total) throw new Error('Reconciled shard count differs from artifacts');
   const files = new Map();
   for (const shard of shards) {
     for (const file of shard.files) {
