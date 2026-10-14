@@ -7,8 +7,8 @@ depends_on: [ENG-WP3.1, ENG-WP2.4, ENG-WP2.5]
 parallel_safe: false
 human_gate: none
 mini_game_platform_impact: none
-test_impact_stage: provisional
-test_impact_scope: Observational Chromium duration planning, verified suite-health history and integration close-out policy; no scheduling authority
+test_impact_stage: reviewed
+test_impact_scope: Reviewed full PR diff: shadow duration planning, historical evidence parsing, mandatory integration close-out policy, and robust world movement performance regressions; no scheduling authority
 ---
 
 # ENG-WP3.2 — Duration-Aware Scheduler (Shadow Mode)
@@ -39,4 +39,6 @@ Bad duration history can propose imbalance; observational-only mode ensures it c
 
 ## Progress
 
-Opened 2026-10-13 from merged ENG-WP2.5 commit `b43934a0464d67fb87c4ef67f87d6f0862c062fa`; implementation underway.
+Opened 2026-10-13 from merged ENG-WP2.5 commit `b43934a0464d67fb87c4ef67f87d6f0862c062fa`. Initial Tier 0, unit, build and smoke qualified on draft CI #38407906137; its cross-browser performance p95 test subsequently revealed a 12-frame nearest-rank sampling problem. Increased only the observation window to 60 frames while retaining the original p95/worst guardrails, corrected a malformed comment hiding the frame-count constant, and added unit tests verifying sustained slow frames still fail. The shadow history reader now uses WP2.4's actual flat JSON array, not the nonexistent `.reports` property.
+
+Full actual-diff code, documentation and test-impact review completed 2026-10-14. Affected tests: `scripts/verification/integrationCloseoutPolicy.test.mjs`, `scripts/verification/shadowShardPlanner.test.mjs`, `src/game/performance/FramePerformance.test.ts`, and `tests/play/r6.5-wp19h3.11-r3.4-mobile-movement-performance.spec.ts`. Tier 0 and build were green at CI #38525695056; final authoritative non-draft exact-head qualification and real report inspection are required before marking complete. No production deployment or scheduler activation.
