@@ -164,7 +164,14 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
     ) {
       throw new Error('Mismatched SHA or run identity across shards');
     }
-    if (Number(p.shard.split('/')[1]) !== shardCount || seenShards.has(p.shard)) {
+    const [id, total] = String(p.shard ?? '').split('/').map(Number);
+    if (
+      !/^\\d+\\/\\d+$/.test(String(p.shard ?? '')) ||
+      total !== shardCount ||
+      id < 1 ||
+      id > shardCount ||
+      seenShards.has(p.shard)
+    ) {
       throw new Error('Duplicate or inconsistent shard identity: ' + p.shard);
     }
     seenShards.add(p.shard);

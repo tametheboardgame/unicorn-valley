@@ -180,3 +180,116 @@ test('skipped tests remain required and must be reported exactly once', () => {
     skipped.tests.length,
   );
 });
+
+test('bounded variable-count trials require an explicit qualification token and preserve exact cover', () => {
+  for (const total of [8, 10, 12]) {
+    assert.throws(
+      () => selectTier3Matrix({ ...options, candidate, discovery: discovered, trialCount: total }),
+      /authorised/,
+    );
+    const selected = selectTier3Matrix({
+      ...options,
+      candidate,
+      discovery: discovered,
+      trialCount: total,
+      trialAuthorised: true,
+    });
+    assert.equal(selected.mode, 'manifest' + total);
+    assert.deepEqual(
+      selected.matrix.include.map((row) => row.shard),
+      Array.from({ length: total }, (_, i) => i + 1),
+    );
+    assert.ok(selected.matrix.include.every((row) => row.total === total));
+    const all = new Set();
+    for (let id = 1; id <= total; id++) {
+      const assigned = assignedShard({
+        candidate,
+        discovery: discovered,
+        ...options,
+        total,
+        shard: id,
+      });
+      const evidence = {
+        mode: 'execution',
+        provenance: { ...options, shard: id + '/' + total },
+        tests: assigned.identities.map((identity) => ({
+          identity,
+          file: discovered.tests.find((item) => item.identity === identity).file,
+          status: 'expected',
+        })),
+        summary: { tests: assigned.identities.length, unexpected: 0, flaky: 0 },
+      };
+      if (id === 1) evidence.tests[0].status = 'skipped';
+      assert.equal(
+        verifyManifestShardResult({ candidate, discovery: discovered, evidence, shard: id, total })
+          .identities,
+        assigned.identities.length,
+      );
+      for (const identity of assigned.identities) {
+        assert.ok(!all.has(identity), 'duplicate planned identity');
+        all.add(identity);
+      }
+      const absent = structuredClone(evidence);
+      absent.tests.pop();
+      assert.throws(
+        () => verifyManifestShardResult({ candidate, discovery: discovered, evidence: absent, shard: id, total }),
+        /missing/,
+      );
+    }
+    assert.equal(all.size, discovered.tests.length);
+  }
+});
+
+test('unapproved, unsupported and stale variable-count trials fail closed', () => {
+  for (const trialCount of [6, 7, 9, 14, -1, NaN]) {
+    assert.throws(
+      () =>
+        selectTier3Matrix({
+          ...options,
+          candidate,
+          discovery: discovered,
+          trialCount,
+          trialAuthorised: true,
+        }),
+      /authorised/,
+    );
+  }
+  assert.throws(
+    () =>
+      selectTier3Matrix({
+        ...options,
+        candidate,
+        discovery: discovered,
+        trialCount: 8,
+        trialAuthorised: true,
+        canary: true,
+      }),
+    /authorised/,
+  );
+  const missing = structuredClone(candidate);
+  missing.plans[10].shards.pop();
+  assert.throws(
+    () =>
+      selectTier3Matrix({
+        ...options,
+        candidate: missing,
+        discovery: discovered,
+        trialCount: 10,
+        trialAuthorised: true,
+      }),
+    /Missing/,
+  );
+  const stale = structuredClone(candidate);
+  stale.provenance.runId = '888';
+  assert.throws(
+    () =>
+      selectTier3Matrix({
+        ...options,
+        candidate: stale,
+        discovery: discovered,
+        trialCount: 12,
+        trialAuthorised: true,
+      }),
+    /stale/,
+  );
+});

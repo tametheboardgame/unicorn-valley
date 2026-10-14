@@ -142,3 +142,21 @@ test('supports Playwright 1.55 rootDir-relative files and discovery without resu
     /Invalid Playwright/,
   );
 });
+
+test('independent identity reconciliation rejects out-of-range and mixed-count provenance', () => {
+  const first = normalisePlaywrightReport(report(), provenance);
+  const otherReport = report();
+  otherReport.suites[0].suites[0].specs[0].title = 'second unique';
+  const second = normalisePlaywrightReport(otherReport, { ...provenance, shard: '2/2' });
+  const manifest = {
+    tests: [{ identity: first.tests[0].identity }, { identity: second.tests[0].identity }],
+  };
+  assert.throws(
+    () => reconcilePlaywrightEvidence(manifest, [first, { ...second, provenance: { ...second.provenance, shard: '3/2' } }]),
+    /Duplicate or inconsistent/,
+  );
+  assert.throws(
+    () => reconcilePlaywrightEvidence(manifest, [first, { ...second, provenance: { ...second.provenance, shard: '2/8' } }]),
+    /Duplicate or inconsistent/,
+  );
+});

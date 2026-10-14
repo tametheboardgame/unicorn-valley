@@ -121,3 +121,20 @@ test('required skips and plan failure are hard failures', () => {
   assert.equal(result.passed, false);
   assert.equal(result.failures.length, 2);
 });
+
+test('variable-count qualification requires independent reconciliation as an additional gate', () => {
+  const withTrial = {
+    ...full,
+    required: { ...full.required, evidence: true },
+    outcomes: { ...full.outcomes, evidence: 'success' },
+  };
+  assert.equal(evaluateMergeGate(withTrial).passed, true);
+  for (const outcome of ['failure', 'cancelled', 'skipped', 'missing']) {
+    const result = evaluateMergeGate({
+      ...withTrial,
+      outcomes: { ...withTrial.outcomes, evidence: outcome },
+    });
+    assert.equal(result.passed, false);
+    assert.match(result.failures.join(' '), /evidence: required check/);
+  }
+});
