@@ -313,6 +313,20 @@ jobs:
         env:
           TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
         run: node scripts/verification/playwrightEvidence.mjs --input=playwright-discovery.json --output=discovery-manifest.json --discovery
+      # WP3.3 startup: candidate evidence only. The actual runners remain the
+      # six already-qualified static shards until separate explicit activation.
+      - name: Load bounded healthy duration history (candidate only)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/verification/fetchSuiteHealthHistory.mjs --output=wp33-history.json --metadata=wp33-history-metadata.json
+      - name: Generate SHA-bound full-inventory candidate (no execution authority)
+        if: always()
+        continue-on-error: true
+        env:
+          TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+        run: node scripts/verification/adaptiveShardPlan.mjs --discovery=discovery-manifest.json --history=wp33-history.json --output=adaptive-candidate.json
       - name: Upload complete discovery manifest
         if: always()
         uses: actions/upload-artifact@v4
@@ -321,6 +335,8 @@ jobs:
           path: |
             playwright-discovery.json
             discovery-manifest.json
+            adaptive-candidate.json
+            wp33-history-metadata.json
           if-no-files-found: warn
           retention-days: 14
 
