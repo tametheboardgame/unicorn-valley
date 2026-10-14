@@ -1,26 +1,22 @@
 # Project Status
 
-Last updated: 2026-10-13
+Last updated: 2026-10-14
 
-## Integrated mainline — authoritative hand-off
+## Accepted integrated main — ENG-WP3.2 closed
 
-- Main SHA at work-package start: `b43934a0464d67fb87c4ef67f87d6f0862c062fa` — [ENG-WP2.5 PR #312](https://github.com/tametheboardgame/unicorn-valley/pull/312), final [CI #38374304240](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38374304240) green after one WebKit retry.
-- ENG-WP1 and WP1.11, WP2.1, WP2.2, WP2.3A, WP2.4, WP2.5 and WP3.1 are **merged**. The six static Chromium shards, seven cross-browser profiles, complete unit/build/smoke checks, reviewed test impact and exact-head/latest-main Merge Gate remain the accepted baseline.
-- The [Protect Main ruleset](https://github.com/tametheboardgame/unicorn-valley/rules/24999228) is **active** and requires PRs, strict up-to-date `Merge Gate`, no force pushes or branch deletion, and has no bypass actors. Configuration and GitHub Actions check-source binding verified. [WP2.5E issue #313](https://github.com/tametheboardgame/unicorn-valley/issues/313) stays open pending a non-destructive stale-but-otherwise-green PR mergeability negative test.
-- WP2.1 inventory initially observed 82 historically unowned browser spec files, retained and visible in suite health. Do not assume this number is permanent or omit existing coverage. No production deployment authorised.
+- Accepted merged `main` integration SHA: `748d797b4c6298dd923cb410686a50898f14d663` from [ENG-WP3.2 PR #314](https://github.com/tametheboardgame/unicorn-valley/pull/314). Final exact-head [CI #38526137461](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38526137461) passed Tier 0, unit, build, whole-game smoke, six of six Chromium shards, seven cross-browser profiles, test-evidence reconciliation and required Merge Gate.
+- ENG-WP1/1.11, ENG-WP2.1, 2.2, 2.3A, 2.4, 2.5, and ENG-WP3.1–3.2 are merged. WP3.2 provides **shadow-only** duration-aware file allocations for 6/8/10/12 shards, with historical evidence provenance and conservative unknown-duration handling. Static-six execution and Merge Gate authority remain unchanged.
+- WP3.2 final suite-health report observed **110/110 browser files, 311 tests**, three actual skips and **one valid independent historical run**. A second independent comparable run is needed before asserting multi-run speed improvement; estimates are not measured job-wall time.
+- `AGENTS.md` now requires integration close-out reconciliation, and Tier 0 enforces engineering integration package state files plus independent product stream state. This follow-up PR remedies the post-merge root-state lag.
+- The [Protect Main ruleset](https://github.com/tametheboardgame/unicorn-valley/rules/24999228) is active with strict up-to-date GitHub Actions Merge Gate, pull requests and no ordinary bypasses. [ENG-WP2.5E issue #313](https://github.com/tametheboardgame/unicorn-valley/issues/313) remains open pending safe stale-otherwise-green PR rejection evidence. Do not claim it closed.
+- Suite health retains historical debt: 82 existing unowned browser spec files in the last observed inventory, not deleted or weakened. No production deployment authorised.
 
-## Current work — ENG-WP3.2 Shadow Scheduler
+## Next bounded package
 
-[ENG-WP3.2](docs/work-packages/ENG-WP3.2-DURATION-AWARE-SHADOW-SCHEDULER.md) is the active engineering package, branch `agent/eng-wp3-2-shadow-scheduler`. Implement duration-aware **observational** plans for 6/8/10/12 shards using the WP3.1 per-file evidence and eligible clean history; compare projected critical-path/test-work and runner cost to the existing static-six baseline. Include deterministic negative tests, SHA/run provenance, multiple-run comparison when history exists, and honest no-history reporting.
+**[ENG-WP3.3 — Activate Adaptive Tier 3](docs/work-packages/ENG-WP3.3-ADAPTIVE-SCHEDULING-ACTIVATION.md)** is next. Do not activate a non-static configuration based on a single historical run. Implement a full, SHA-bound, deterministic manifest-based planner, bounded dynamic matrix, independent completeness checking, negative tests and an explicit independently reversible **static-six fallback**. Prove the candidate against representative healthy evidence before enabling any non-six assignment; preserve exact-head Merge Gate and fast draft previews. Parent [ENG-WP3 roadmap](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md).
 
-**Do not activate** the proposed scheduler or modify the six-shard GitHub matrix, test inventory authority, merge rules or gameplay in WP3.2. [ENG-WP3.3](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md) is the next separately qualified activation checkpoint. WP3.4 compatibility optimisation remains optional; WP3.5 is operational handover.
+Independent World, Just Games and Story House PRs retain their own stream-state and draft preview contracts. Open drafts include [MG-WP7 PR #289](https://github.com/tametheboardgame/unicorn-valley/pull/289) and [Story House Alice PR #261](https://github.com/tametheboardgame/unicorn-valley/pull/261); older open PRs #230/#176 need conflict/latest-main review.
 
-## Parallel streams and close-out discipline
+## Delivery and handoff
 
-- World, Just Games, Story House and Engineering have independent records in `docs/streams/state/`. Their draft branches and previews remain isolated; product PRs do **not** all rewrite root state.
-- [Just Games MG-WP7 PR #289](https://github.com/tametheboardgame/unicorn-valley/pull/289), [Story House Alice PR #261](https://github.com/tametheboardgame/unicorn-valley/pull/261) and historic open PRs #230/#176 need latest-main reconciliation before final integration.
-- Every completed engineering/integration work package must reconcile `AGENTS.md`, `PROJECT_STATE.json`, `STATUS.md` and its work-package status. A product-stream package updates its own state and leaves a clear integration-summary checkpoint; do not create overlapping root-state edits in every product PR. The completion check is enforced on final engineering integration PRs and documented for other streams.
-
-## Delivery
-
-Current ENG-WP3.2 PR is **draft / in progress** until code, documentation and TEST_IMPACT_V1 review plus authoritative exact-head full CI are green. No merge or production deployment implied by an observational shadow report.
+The WP3.2 close-out PR is a documentation/status integration correction and does not change the runner matrix, tests or game code. On its merge, record the resulting integration SHA in the **next** bounded WP3.3 status checkpoint; do not fabricate a future merge commit. ENG-WP3.4 (optional cross-browser split) and ENG-WP3.5 (handover) remain later.
