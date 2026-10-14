@@ -2,10 +2,12 @@ import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { indexDiscovery } from './adaptiveShardPlan.mjs';
 
-const SIX = [1, 2, 3, 4, 5, 6];
+const TRIAL_COUNTS = [8, 10, 12];
+const SUPPORTED_COUNTS = new Set([6, ...TRIAL_COUNTS]);
 const SHA = /^[a-f0-9]{40}$/i;
 
-export function validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId }) {
+export function validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId, count = 6 }) {
+  if (!SUPPORTED_COUNTS.has(count)) throw new Error('Unsupported manifest shard count');
   if (
     !SHA.test(sourceSha ?? '') ||
     !SHA.test(headSha ?? '') ||
@@ -29,8 +31,10 @@ export function validateManifestCandidate({ candidate, discovery, sourceSha, hea
   ) {
     throw new Error('Candidate is stale, incomplete or non-six activation is unqualified');
   }
-  const shards = candidate.plans?.[6]?.shards;
-  if (!Array.isArray(shards) || shards.length !== 6) throw new Error('Missing six canary shards');
+  const shards = candidate.plans?.[count]?.shards;
+  if (!Array.isArray(shards) || shards.length !== count) {
+    throw new Error('Missing complete bounded manifest shards');
+  }
   const expectedPaths = new Set(files.keys());
   const assignedPaths = new Set();
   const assignedIds = new Set();
@@ -71,22 +75,34 @@ export function validateManifestCandidate({ candidate, discovery, sourceSha, hea
 
 export function selectTier3Matrix({
   canary = false,
+  trialCount = 0,
+  trialAuthorised = false,
   candidate,
   discovery,
   sourceSha,
   headSha,
   runId,
 }) {
-  const mode = canary ? 'manifest6' : 'static6';
-  if (canary) validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId });
+  if (trialCount !== 0 && (!TRIAL_COUNTS.includes(trialCount) || !trialAuthorised || canary)) {
+    throw new Error('Variable-count trial is not explicitly authorised');
+  }
+  const count = trialCount || 6;
+  const mode = trialCount ? 'manifest' + count : canary ? 'manifest6' : 'static6';
+  if (mode !== 'static6') {
+    validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId, count });
+  }
   return {
     schemaVersion: 1,
     mode,
     provenance: { sourceSha, headSha, runId: String(runId) },
-    matrix: { include: SIX.map((shard) => ({ shard, total: 6, mode })) },
-    reason: canary
-      ? 'Isolated six-way file-manifest canary, independently checked against full discovery'
-      : 'Previously qualified Playwright --shard static-six fallback',
+    matrix: {
+      include: Array.from({ length: count }, (_, i) => ({ shard: i + 1, total: count, mode })),
+    },
+    reason: trialCount
+      ? 'Explicitly restricted non-merging ' + count + '-way full-inventory trial'
+      : canary
+        ? 'Isolated six-way file-manifest canary, independently checked against full discovery'
+        : 'Previously qualified Playwright --shard static-six fallback',
   };
 }
 
@@ -98,9 +114,14 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       throw new Error('Expected --output and GitHub job output');
     }
     const canary = process.env.WP33_CANARY === 'true';
+    const trialCount = Number(process.env.WP33_TRIAL_COUNT ?? 0);
+    const trialAuthorised = process.env.WP33_TRIAL_AUTHORISED === 'true';
+    const requiresEvidence = canary || trialCount !== 0;
     const plan = selectTier3Matrix({
+      trialCount,
+      trialAuthorised,
       canary,
-      ...(canary
+      ...(requiresEvidence
         ? {
             candidate: JSON.parse(readFileSync(arg('candidate'), 'utf8')),
             discovery: JSON.parse(readFileSync(arg('discovery'), 'utf8')),

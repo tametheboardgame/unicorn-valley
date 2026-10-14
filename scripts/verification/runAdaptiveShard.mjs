@@ -5,23 +5,26 @@ import { indexDiscovery } from './adaptiveShardPlan.mjs';
 import { validateManifestCandidate } from './tier3Matrix.mjs';
 import { normalisePlaywrightReport } from './playwrightEvidence.mjs';
 
-const NUM = /^[1-6]$/;
+const COUNTS = new Set([6, 8, 10, 12]);
 
-export function assignedShard({ candidate, discovery, sourceSha, headSha, runId, shard }) {
-  if (!NUM.test(String(shard ?? ''))) throw new Error('Expected shard 1–6');
-  const list = validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId });
+export function assignedShard({ candidate, discovery, sourceSha, headSha, runId, shard, total = 6 }) {
+  if (!COUNTS.has(total) || !Number.isInteger(Number(shard)) || Number(shard) < 1 || Number(shard) > total) {
+    throw new Error('Expected valid shard within supported 6/8/10/12 total');
+  }
+  const list = validateManifestCandidate({ candidate, discovery, sourceSha, headSha, runId, count: total });
   const result = list[Number(shard) - 1];
   if (!result || result.id !== Number(shard)) throw new Error('Incorrect shard allocation');
   return result;
 }
 
-export function verifyManifestShardResult({ candidate, discovery, evidence, shard }) {
+export function verifyManifestShardResult({ candidate, discovery, evidence, shard, total = 6 }) {
   const p = candidate.provenance;
   const assigned = assignedShard({
     candidate,
     discovery,
     ...p,
     shard,
+    total,
   });
   const files = indexDiscovery(discovery, p);
   const report = evidence;
@@ -30,7 +33,7 @@ export function verifyManifestShardResult({ candidate, discovery, evidence, shar
     report.provenance?.sourceSha !== p.sourceSha ||
     report.provenance?.headSha !== p.headSha ||
     report.provenance?.runId !== p.runId ||
-    report.provenance?.shard !== shard + '/6'
+    report.provenance?.shard !== shard + '/' + total
   ) {
     throw new Error('Stale or mismatched manifest shard execution evidence');
   }
@@ -73,7 +76,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       headSha: process.env.TEST_EVIDENCE_HEAD_SHA,
       runId: process.env.GITHUB_RUN_ID,
     };
-    const assigned = assignedShard({ candidate, discovery, ...provenance, shard: arg('shard') });
+    const total = Number(arg('total') ?? 6);
+    const assigned = assignedShard({ candidate, discovery, ...provenance, shard: arg('shard'), total });
     console.log(
       'ENG-WP3.3 manifest shard ' +
         assigned.id +
@@ -92,12 +96,12 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       const report = JSON.parse(readFileSync('playtest-artifacts/playwright-results.json', 'utf8'));
       const evidence = normalisePlaywrightReport(report, {
         ...provenance,
-        shard: assigned.id + '/6',
+        shard: assigned.id + '/' + total,
       });
       console.log(
         'ENG-WP3.3 manifest execution: ' +
           JSON.stringify(
-            verifyManifestShardResult({ candidate, discovery, evidence, shard: assigned.id }),
+            verifyManifestShardResult({ candidate, discovery, evidence, shard: assigned.id, total }),
           ),
       );
     } catch (error) {
