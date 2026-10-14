@@ -120,7 +120,9 @@ Hard stop unless explicitly authorised for the specific action. Includes product
 5. **Product-stream exception:** World, Just Games and Story House **must** update their *own* `docs/streams/state/<stream>.json` and work-package evidence on completion; they must **not** independently modify root state or global agent rules in concurrent feature PRs. The responsible integration checkpoint after merge reconciles root status/agent rules, with any missing global change recorded as an actionable follow-up. This preserves WP2.5 collision protection.
 6. Before ending an execution window, leave a resumable commit, explicit blockers and next step; if the integration summary cannot be updated on that branch, record the stream-local checkpoint instead.
 
-This is a **reviewed close-out contract**, not permission to weaken final CI, manufacture unknown merge SHAs or edit `main` directly. See ENG-WP3.2 and its positive/negative completion-policy tests.
+This is a **reviewed close-out contract**, not permission to weaken final CI, manufacture unknown merge SHAs or edit `main` directly.
+
+**Staged infrastructure activation rule (ENG-WP3.3):** A successful experimental scheduler canary and a rollback trial do not make a new shard count or scheduling default qualified. Keep the package `in_progress` and record the actually shipped safe mode when a reviewed, mergeable **foundation checkpoint** precedes full activation. Treat current-source discovery as authoritative for manifest-driven execution, but preserve the independent complete static-six path when observational discovery or history is unavailable; never weaken the exact-head Merge Gate. A later count/mode change requires its own complete-source negative tests, real end-to-end and cost measurements, rollback evidence and reviewed exact-head CI. See ENG-WP3.2 and its positive/negative completion-policy tests.
 
 ## Work-package loop
 
