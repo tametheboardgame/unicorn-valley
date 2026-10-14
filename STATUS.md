@@ -2,21 +2,28 @@
 
 Last updated: 2026-10-14
 
-## Accepted integrated main — ENG-WP3.2 closed
+## Integrated main and engineering owner
 
-- Accepted merged `main` integration SHA: `748d797b4c6298dd923cb410686a50898f14d663` from [ENG-WP3.2 PR #314](https://github.com/tametheboardgame/unicorn-valley/pull/314). Final exact-head [CI #38526137461](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38526137461) passed Tier 0, unit, build, whole-game smoke, six of six Chromium shards, seven cross-browser profiles, test-evidence reconciliation and required Merge Gate.
-- ENG-WP1/1.11, ENG-WP2.1, 2.2, 2.3A, 2.4, 2.5, and ENG-WP3.1–3.2 are merged. WP3.2 provides **shadow-only** duration-aware file allocations for 6/8/10/12 shards, with historical evidence provenance and conservative unknown-duration handling. Static-six execution and Merge Gate authority remain unchanged.
-- WP3.2 final suite-health report observed **110/110 browser files, 311 tests**, three actual skips and **one valid independent historical run**. A second independent comparable run is needed before asserting multi-run speed improvement; estimates are not measured job-wall time.
-- `AGENTS.md` now requires integration close-out reconciliation, and Tier 0 enforces engineering integration package state files plus independent product stream state. This follow-up PR remedies the post-merge root-state lag.
-- The [Protect Main ruleset](https://github.com/tametheboardgame/unicorn-valley/rules/24999228) is active with strict up-to-date GitHub Actions Merge Gate, pull requests and no ordinary bypasses. [ENG-WP2.5E issue #313](https://github.com/tametheboardgame/unicorn-valley/issues/313) remains open pending safe stale-otherwise-green PR rejection evidence. Do not claim it closed.
-- Suite health retains historical debt: 82 existing unowned browser spec files in the last observed inventory, not deleted or weakened. No production deployment authorised.
+- Authoritative integrated `main` is **`7fc457c78dc4e3e3d0b3aa695860e5ffc40dcb32`**, merged from the ENG-WP3.2 close-out [PR #315](https://github.com/tametheboardgame/unicorn-valley/pull/315). Its full pre-merge [CI #38538955816](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38538955816) passed the Merge Gate, six Chromium shards and all required checks.
+- ENG-WP3.1 and WP3.2 have merged; WP3.2 [PR #314](https://github.com/tametheboardgame/unicorn-valley/pull/314) was merged as `748d797b4c6298dd923cb410686a50898f14d663`, with [CI #38526137461](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38526137461) green. The duration-aware WP3.2 proposals for 6/8/10/12 shards are observational.
+- **ENG-WP3.3 remains `in_progress`.** Its owning [draft PR #316](https://github.com/tametheboardgame/unicorn-valley/pull/316) is a reviewed **safe foundation checkpoint**, not completed adaptive-count activation. The main branch **still uses the original static-six Playwright runner**. Product/gameplay/test assertions and production deployment are unchanged.
 
-## Next bounded package
+## ENG-WP3.3 verified foundation
 
-**[ENG-WP3.3 — Activate Adaptive Tier 3](docs/work-packages/ENG-WP3.3-ADAPTIVE-SCHEDULING-ACTIVATION.md)** is next. Do not activate a non-static configuration based on a single historical run. Implement a full, SHA-bound, deterministic manifest-based planner, bounded dynamic matrix, independent completeness checking, negative tests and an explicit independently reversible **static-six fallback**. Prove the candidate against representative healthy evidence before enabling any non-six assignment; preserve exact-head Merge Gate and fast draft previews. Parent [ENG-WP3 roadmap](docs/work-packages/ENG-WP3-ADAPTIVE-TEST-ARCHITECTURE.md).
+- The source/head/run-bound current discovery and healthy-history planner provides exact-cover whole-file proposals for 6/8/10/12, conservatively includes new/unknown files, and **cannot authorise non-six activation**. On PR #316 only, the six-manifest canary executed every assignment with independent per-shard result verification.
+- Manifest-six [CI #38547129599](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38547129599) **passed** all six Chromium shards, seven compatibility profiles, smoke, unit/build and Merge Gate. WP3.1 independent reconciliation: **311 discovered = 311 recorded; 308 passed, 3 genuine skips, no unexpected/flaky results**.
+- Rollback proof [PR #317](https://github.com/tametheboardgame/unicorn-valley/pull/317) is **closed without merging**. Its correctly main-targeted [CI #38559848055](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38559848055) **passed on retry**: actual selector `static6, jobs=6`, six of six original Playwright shards, seven browser profiles, 311/311 independent reconciliation, and required exact-head Merge Gate. A first-attempt 45-second WebKit-tablet `page.evaluate()` timeout cleared without weakening a test or increasing timeouts.
+- A review found and corrected a dependency issue in the proposed static-six selector: it must still emit static-six if observational discovery/history is unavailable. The manifest-six canary instead fails closed without its independent discovery evidence. **The correction is pending new CI qualification on the latest PR #316 head.**
 
-Independent World, Just Games and Story House PRs retain their own stream-state and draft preview contracts. Open drafts include [MG-WP7 PR #289](https://github.com/tametheboardgame/unicorn-valley/pull/289) and [Story House Alice PR #261](https://github.com/tametheboardgame/unicorn-valley/pull/261); older open PRs #230/#176 need conflict/latest-main review.
+## Performance decision
 
-## Delivery and handoff
+Observed time to workflow completion: manifest-six **14m48s** in one full green run; static-six **17m33s, 19m42s and 21m30s** in three prior full green runs. Longest Chromium job: manifest-six ~**12.7m** vs static-six ~**15.5–17.8m**. Summed Chromium job elapsed: manifest-six ~**69.1 runner-minutes** vs static-six ~**61.7–71.9** (rough occupancy proxy, **not billed cost**). One canary run and non-contemporaneous comparators are insufficient to prove repeatable end-to-end or runner-cost benefit.
 
-The WP3.2 close-out PR is a documentation/status integration correction and does not change the runner matrix, tests or game code. On its merge, record the resulting integration SHA in the **next** bounded WP3.3 status checkpoint; do not fabricate a future merge commit. ENG-WP3.4 (optional cross-browser split) and ENG-WP3.5 (handover) remain later.
+**Decision:** Additional real, comparable end-to-end measurements **are required before changing the main default to manifest-six or enabling 8/10/12 shards**. No count activation is approved. Preserve static-six main behaviour through the integration of the foundation and plan the remaining WP3.3 activation as a subsequent independently qualified step in the same roadmap.
+
+## Integration and next action
+
+- Commit reconciled `AGENTS.md`, `PROJECT_STATE.json`, `STATUS.md`, `TESTING.md` and WP3.3/parent records with final reviewed `TEST_IMPACT_V1` on PR #316. Mark that PR Ready for review only after code review and documented boundaries are complete; run **new full exact-head Tier 0/1/build/whole-game/Tier 3/Tier 4/Merge Gate** before any merge decision.
+- Root state is the integrated main summary, not a per-product-PR branch pointer; record the eventual **actual** PR #316 merge SHA and CI on the mandatory next integration checkpoint. Do not invent a future merge SHA or mark WP3.3 complete on a foundation-only PR.
+- The strict [Protect Main ruleset](https://github.com/tametheboardgame/unicorn-valley/rules/24999228) remains active; [ENG-WP2.5E #313](https://github.com/tametheboardgame/unicorn-valley/issues/313) is still open, pending separately confirmed stale-otherwise-green rejection. Existing unowned-browser ownership debt (82 historic) remains visible.
+- World, Just Games and Story House maintain separate stream state/PRs. No production deployment is authorised.
