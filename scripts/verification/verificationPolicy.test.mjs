@@ -75,11 +75,13 @@ test('bounded Tier 3 matrix retains six static shards and the aggregate Merge Ga
   const shardRef = '${{ matrix.shard }}';
   assert.ok(tier3.includes('matrix: ${{ fromJSON(needs.tier3-execution-plan.outputs.matrix) }}'));
   assert.ok(tier3.includes('needs: [plan, tier0, tier1, tier3-execution-plan]'));
-  assert.ok(tier3.includes('name: Tier 3 - full Chromium (' + shardRef + '/6)'));
+  assert.ok(tier3.includes('name: Tier 3 - full Chromium (' + shardRef + '/${{ matrix.total }})'));
   assert.ok(tier3.includes("if: matrix.mode == 'static6'"));
   assert.ok(tier3.includes('run: npm run test:play -- --shard=' + shardRef + '/6'));
-  assert.ok(tier3.includes("if: matrix.mode == 'manifest6'"));
-  assert.ok(tier3.includes('name: tier3-chromium-' + shardRef + '-of-6'));
+  assert.ok(tier3.includes("if: matrix.mode != 'static6'"));
+  assert.ok(tier3.includes('name: tier3-chromium-' + shardRef + '-of-${{ matrix.total }}'));
+  assert.ok(tier3.includes('TEST_EVIDENCE_SHARD: ${{ matrix.shard }}/${{ matrix.total }}'));
+  assert.ok(tier3.includes('--total=${{ matrix.total }}'));
   assert.ok(tier3.includes('fail-fast: false'));
   assert.ok(tier3.includes('timeout-minutes: 45'));
   assert.ok(selection.includes('needs: [plan, tier0, test-discovery]'));
@@ -89,16 +91,23 @@ test('bounded Tier 3 matrix retains six static shards and the aggregate Merge Ga
     ),
   );
   assert.ok(
-    selection.includes('Download independent discovery and candidate evidence for canary only'),
+    selection.includes('Download independent discovery and candidate evidence for guarded trial only'),
   );
   assert.ok(
     selection.includes(
-      "if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 316 }}",
+      "if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 319 }}",
     ),
   );
-  assert.ok(selection.includes('github.event.pull_request.number == 316'));
+  assert.ok(selection.includes('github.event.pull_request.number == 319'));
+  assert.ok(selection.includes('WP33_TRIAL_COUNT:'));
+  assert.ok(selection.includes('WP33_TRIAL_AUTHORISED:'));
   const gate = workflow.split('\n  merge-gate:\n')[1];
   assert.ok(gate, 'Merge Gate must remain present');
   assert.match(gate, /^\s+needs: \[.*\btier3\b.*\]$/m);
   assert.ok(gate.includes('RESULT_TIER3: ${{ needs.tier3.result }}'));
+  assert.ok(gate.includes('RESULT_RECONCILIATION: ${{ needs.test-evidence.result }}'));
+  assert.ok(gate.includes('TIER3_EXECUTION_MODE: ${{ needs.tier3-execution-plan.outputs.mode }}'));
+  const evidenceJob = workflow.split('\n  test-evidence:\n')[1]?.split('\n  merge-gate:\n')[0];
+  assert.ok(evidenceJob?.includes('pattern: tier3-chromium-*-of-*'));
+  assert.ok(evidenceJob?.includes("continue-on-error: ${{ needs.tier3-execution-plan.outputs.mode == 'static6' }}"));
 });

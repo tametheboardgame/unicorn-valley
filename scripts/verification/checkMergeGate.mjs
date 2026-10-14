@@ -60,6 +60,7 @@ try {
         comparison.status,
     );
   }
+  const trialEvidenceRequired = /^manifest(?:8|10|12)$/.test(process.env.TIER3_EXECUTION_MODE ?? '');
   const result = evaluateMergeGate({
     planResult: process.env.PLAN_RESULT,
     changeClass: process.env.PLAN_CLASS,
@@ -74,6 +75,7 @@ try {
       smoke: flag('RUN_TIER3'),
       tier3: flag('RUN_TIER3'),
       tier4: flag('RUN_TIER4'),
+      ...(trialEvidenceRequired ? { evidence: true } : {}),
     },
     outcomes: {
       tier0: process.env.RESULT_TIER0,
@@ -83,6 +85,7 @@ try {
       smoke: process.env.RESULT_SMOKE,
       tier3: process.env.RESULT_TIER3,
       tier4: process.env.RESULT_TIER4,
+      ...(trialEvidenceRequired ? { evidence: process.env.RESULT_RECONCILIATION } : {}),
     },
   });
 

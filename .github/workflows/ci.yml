@@ -354,8 +354,8 @@ jobs:
       mode: ${{ steps.choose.outputs.mode }}
     steps:
       - uses: actions/checkout@v6
-      - name: Download independent discovery and candidate evidence for canary only
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 316 }}
+      - name: Download independent discovery and candidate evidence for guarded trial only
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 319 }}
         uses: actions/download-artifact@v4
         with:
           name: chromium-test-discovery
@@ -364,7 +364,11 @@ jobs:
         id: choose
         env:
           TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
-          WP33_CANARY: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 316 }}
+          WP33_CANARY: false
+          # PR #319 is the only authorised experimental entry; start with 8.
+          # Further 10/12 trials require a separately reviewed head and new full CI.
+          WP33_TRIAL_COUNT: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 319 && github.event.pull_request.head.ref == 'agent/eng-wp3-3-variable-count-trials' && 8 || 0 }}
+          WP33_TRIAL_AUTHORISED: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 319 && github.event.pull_request.head.ref == 'agent/eng-wp3-3-variable-count-trials' }}
         run: node scripts/verification/tier3Matrix.mjs --candidate=discovery-evidence/adaptive-candidate.json --discovery=discovery-evidence/discovery-manifest.json --output=tier3-execution-plan.json
       - name: Upload auditable execution choice
         if: always()
@@ -376,7 +380,7 @@ jobs:
           retention-days: 14
 
   tier3:
-    name: Tier 3 - full Chromium (${{ matrix.shard }}/6)
+    name: Tier 3 - full Chromium (${{ matrix.shard }}/${{ matrix.total }})
     needs: [plan, tier0, tier1, tier3-execution-plan]
     if: needs.plan.outputs.run_tier3 == 'true'
     runs-on: ubuntu-latest
@@ -394,7 +398,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Download independent discovery for manifest canary
-        if: matrix.mode == 'manifest6'
+        if: matrix.mode != 'static6'
         uses: actions/download-artifact@v4
         with:
           name: chromium-test-discovery
@@ -403,10 +407,10 @@ jobs:
         if: matrix.mode == 'static6'
         run: npm run test:play -- --shard=${{ matrix.shard }}/6
       - name: Run manifest-six canary and verify actual test identities
-        if: matrix.mode == 'manifest6'
+        if: matrix.mode != 'static6'
         env:
           TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
-        run: node scripts/verification/runAdaptiveShard.mjs --candidate=discovery-evidence/adaptive-candidate.json --discovery=discovery-evidence/discovery-manifest.json --shard=${{ matrix.shard }}
+        run: node scripts/verification/runAdaptiveShard.mjs --candidate=discovery-evidence/adaptive-candidate.json --discovery=discovery-evidence/discovery-manifest.json --shard=${{ matrix.shard }} --total=${{ matrix.total }}
       - name: Summarise automated findings
         if: always()
         run: node scripts/summarisePlaytest.mjs
@@ -415,13 +419,13 @@ jobs:
         continue-on-error: true
         env:
           TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
-          TEST_EVIDENCE_SHARD: ${{ matrix.shard }}/6
+          TEST_EVIDENCE_SHARD: ${{ matrix.shard }}/${{ matrix.total }}
         run: node scripts/verification/playwrightEvidence.mjs --input=playtest-artifacts/playwright-results.json --output=playtest-artifacts/test-evidence.json
       - name: Upload playtest report and screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tier3-chromium-${{ matrix.shard }}-of-6
+          name: tier3-chromium-${{ matrix.shard }}-of-${{ matrix.total }}
           path: playtest-artifacts
           if-no-files-found: warn
           retention-days: 14
@@ -464,8 +468,8 @@ jobs:
           retention-days: 14
 
   test-evidence:
-    name: WP3.1 - reconcile Chromium evidence (observational)
-    needs: [plan, tier3, test-discovery]
+    name: WP3.1 - reconcile Chromium evidence (trial-authoritative)
+    needs: [plan, tier3, test-discovery, tier3-execution-plan]
     if: ${{ always() && needs.plan.outputs.run_tier3 == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -480,13 +484,15 @@ jobs:
         with:
           name: chromium-test-discovery
           path: discovery-evidence
-      - name: Download six shard reports
+      - name: Download complete bounded shard reports
         uses: actions/download-artifact@v4
         with:
-          pattern: tier3-chromium-*-of-6
+          pattern: tier3-chromium-*-of-*
           path: shard-evidence
       - name: Reconcile discovered and recorded identities
-        continue-on-error: true
+        # Preserve historic observational static-six semantics; an experimental
+        # non-six trial instead needs a required, independently complete result.
+        continue-on-error: ${{ needs.tier3-execution-plan.outputs.mode == 'static6' }}
         run: node scripts/verification/reconcilePlaywrightArtifacts.mjs --manifest=discovery-evidence/discovery-manifest.json --shards=shard-evidence --output=reconciliation-report.json
       - name: Upload reconciliation evidence
         if: always()
@@ -526,7 +532,7 @@ jobs:
 
   merge-gate:
     name: Merge Gate
-    needs: [plan, tier0, tier1, build-performance, tier2, whole-game-smoke, tier3, tier4]
+    needs: [plan, tier0, tier1, build-performance, tier2, whole-game-smoke, tier3, tier4, test-evidence, tier3-execution-plan]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -555,4 +561,6 @@ jobs:
           RESULT_SMOKE: ${{ needs.whole-game-smoke.result }}
           RESULT_TIER3: ${{ needs.tier3.result }}
           RESULT_TIER4: ${{ needs.tier4.result }}
+          TIER3_EXECUTION_MODE: ${{ needs.tier3-execution-plan.outputs.mode }}
+          RESULT_RECONCILIATION: ${{ needs.test-evidence.result }}
         run: node scripts/verification/checkMergeGate.mjs
