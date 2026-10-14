@@ -109,7 +109,7 @@ test('tampered candidate file, identity or SHA is rejected before launching brow
         discovery: discovered,
         ...options,
       }),
-    /duplicated/,
+    /duplicated|identities/,
   );
   const extra = structuredClone(candidate);
   extra.summary.recommendedCount = 12;

@@ -61,11 +61,16 @@ test('bounded Tier 3 matrix retains six static shards and the aggregate Merge Ga
   assert.ok(tier3, 'Tier 3 job must remain');
   assert.ok(selection, 'A source-checked matrix selector is mandatory');
   const fallback = selectTier3Matrix({
-    sourceSha: 'a'.repeat(40), headSha: 'b'.repeat(40),
-    runId: '123', canary: false,
+    sourceSha: 'a'.repeat(40),
+    headSha: 'b'.repeat(40),
+    runId: '123',
+    canary: false,
   });
   assert.equal(fallback.mode, 'static6');
-  assert.deepEqual(fallback.matrix.include.map((row) => row.shard), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(
+    fallback.matrix.include.map((row) => row.shard),
+    [1, 2, 3, 4, 5, 6],
+  );
   assert.ok(fallback.matrix.include.every((row) => row.total === 6 && row.mode === 'static6'));
   const shardRef = '${{ matrix.shard }}';
   assert.ok(tier3.includes('matrix: ${{ fromJSON(needs.tier3-execution-plan.outputs.matrix) }}'));
