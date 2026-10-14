@@ -340,19 +340,47 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-  tier3:
-    name: Tier 3 - full Chromium (${{ matrix.shard }}/6)
-    needs: [plan, tier0, tier1]
+  # PR #316-only execution canary; protected main and other PRs retain static-six.
+  tier3-execution-plan:
+    name: WP3.3 - select protected Tier 3 mode
+    needs: [plan, tier0, test-discovery]
     if: needs.plan.outputs.run_tier3 == 'true'
     runs-on: ubuntu-latest
-    # Shard 2 exceeded the former 25m limit after 84 passing browser cases.
-    # Keep an explicit safety limit without prematurely cancelling qualification.
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.choose.outputs.matrix }}
+      mode: ${{ steps.choose.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download independent discovery and candidate evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: chromium-test-discovery
+          path: discovery-evidence
+      - name: Select static-six or isolated manifest-six
+        id: choose
+        env:
+          TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+          WP33_CANARY: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 316 }}
+        run: node scripts/verification/tier3Matrix.mjs --candidate=discovery-evidence/adaptive-candidate.json --discovery=discovery-evidence/discovery-manifest.json --output=tier3-execution-plan.json
+      - name: Upload auditable execution choice
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wp33-tier3-execution-plan
+          path: tier3-execution-plan.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  tier3:
+    name: Tier 3 - full Chromium (${{ matrix.shard }}/6)
+    needs: [plan, tier0, tier1, tier3-execution-plan]
+    if: needs.plan.outputs.run_tier3 == 'true'
+    runs-on: ubuntu-latest
     timeout-minutes: 45
-    # Matrix is one required Tier 3 aggregate: any shard failure blocks Merge Gate.
     strategy:
       fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6]
+      matrix: ${{ fromJSON(needs.tier3-execution-plan.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -362,8 +390,20 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run full Chromium playtest shard
+      - name: Download independent discovery for manifest canary
+        if: matrix.mode == 'manifest6'
+        uses: actions/download-artifact@v4
+        with:
+          name: chromium-test-discovery
+          path: discovery-evidence
+      - name: Run qualified static-six Playwright shard
+        if: matrix.mode == 'static6'
         run: npm run test:play -- --shard=${{ matrix.shard }}/6
+      - name: Run manifest-six canary and verify actual test identities
+        if: matrix.mode == 'manifest6'
+        env:
+          TEST_EVIDENCE_HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
+        run: node scripts/verification/runAdaptiveShard.mjs --candidate=discovery-evidence/adaptive-candidate.json --discovery=discovery-evidence/discovery-manifest.json --shard=${{ matrix.shard }}
       - name: Summarise automated findings
         if: always()
         run: node scripts/summarisePlaytest.mjs
