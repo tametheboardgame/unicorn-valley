@@ -166,7 +166,7 @@ export function reconcilePlaywrightEvidence(manifest, shards) {
     }
     const [id, total] = String(p.shard ?? '').split('/').map(Number);
     if (
-      !/^\\d+\\/\\d+$/.test(String(p.shard ?? '')) ||
+      !/^\d+\/\d+$/.test(String(p.shard ?? '')) ||
       total !== shardCount ||
       id < 1 ||
       id > shardCount ||
