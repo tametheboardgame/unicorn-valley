@@ -29,7 +29,7 @@ try {
     if (report.mode !== 'execution') {
       throw new Error('Shard evidence is not an execution report: ' + name);
     }
-    const expectedShard = name.match(/chromium-(\d)-of-6$/)?.[1] + '/6';
+    const expectedShard = name.match(/chromium-(\d+)-of-(\d+)$/)?.slice(1).join('/');
     if (report.provenance.shard !== expectedShard) {
       throw new Error('Shard identity conflicts with its artifact directory: ' + name);
     }
