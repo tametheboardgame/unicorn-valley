@@ -30,18 +30,28 @@ function expectSource(provenance, label, sourceSha, headSha, runId) {
 /** Discovery is authoritative: historical health must never choose which specs exist. */
 export function indexDiscovery(discovery, expected) {
   const provenance = discovery?.provenance;
-  if (discovery?.schemaVersion !== 1 || discovery.mode !== 'discovery' ||
-    provenance?.shard !== 'all/6' || !Array.isArray(discovery.tests) ||
-    discovery.tests.length === 0) {
+  if (
+    discovery?.schemaVersion !== 1 ||
+    discovery.mode !== 'discovery' ||
+    provenance?.shard !== 'all/6' ||
+    !Array.isArray(discovery.tests) ||
+    discovery.tests.length === 0
+  ) {
     throw new Error('Missing or invalid full discovery evidence');
   }
   expectSource(provenance, 'Discovery', expected.sourceSha, expected.headSha, expected.runId);
   const files = new Map();
   const ids = new Set();
   for (const item of discovery.tests) {
-    if ((!SPEC.test(item.file ?? '') || item.file.includes('/../') || item.file.includes('/./')) ||
+    if (
+      !SPEC.test(item.file ?? '') ||
+      item.file.includes('/../') ||
+      item.file.includes('/./') ||
       typeof item.identity !== 'string' ||
-      !item.identity || item.status !== 'discovered' || ids.has(item.identity)) {
+      !item.identity ||
+      item.status !== 'discovered' ||
+      ids.has(item.identity)
+    ) {
       throw new Error('Discovery has duplicate, missing or invalid test identities/specs');
     }
     ids.add(item.identity);
@@ -49,9 +59,11 @@ export function indexDiscovery(discovery, expected) {
     group.push(item.identity);
     files.set(item.file, group);
   }
-  if (discovery.summary?.tests !== ids.size ||
+  if (
+    discovery.summary?.tests !== ids.size ||
     discovery.summary?.files !== files.size ||
-    discovery.files?.length !== files.size) {
+    discovery.files?.length !== files.size
+  ) {
     throw new Error('Discovery summary or file identity inventory disagrees');
   }
   for (const summary of discovery.files) {
@@ -75,8 +87,9 @@ function healthyHistory(history, files, runId) {
       ids.add(id);
       const known = new Map(records.map((x) => [x.path, x]));
       // Historical removal/addition is allowed: current manifest is always complete.
-      const comparable = [...files].filter(([path, identity]) =>
-        known.has(path) && known.get(path).tests === identity.length).length;
+      const comparable = [...files].filter(
+        ([path, identity]) => known.has(path) && known.get(path).tests === identity.length,
+      ).length;
       if (!comparable) throw new Error('No comparable files');
       accepted.push({ runId: id, records: known, comparable });
     } catch (error) {
@@ -88,19 +101,31 @@ function healthyHistory(history, files, runId) {
 
 function fileWeights(files, history) {
   const positive = history.accepted.flatMap((run) =>
-    [...run.records.values()].filter((x) => x.durationMs > 0).map((x) => x.durationMs));
+    [...run.records.values()].filter((x) => x.durationMs > 0).map((x) => x.durationMs),
+  );
   positive.sort((a, b) => a - b);
   const unknownMs = positive.length
-    ? Math.max(60_000, positive[Math.min(positive.length - 1, Math.ceil(positive.length * 0.9) - 1)])
+    ? Math.max(
+        60_000,
+        positive[Math.min(positive.length - 1, Math.ceil(positive.length * 0.9) - 1)],
+      )
     : 120_000;
   const weighted = [...files].map(([path, identities]) => {
-    const samples = history.accepted.map((run) => run.records.get(path))
+    const samples = history.accepted
+      .map((run) => run.records.get(path))
       .filter((record) => record?.tests === identities.length && record.durationMs > 0)
       .map((record) => record.durationMs);
-    return { path, durationMs: samples.length ? median(samples) : unknownMs,
-      historicalSamples: samples.length };
+    return {
+      path,
+      durationMs: samples.length ? median(samples) : unknownMs,
+      historicalSamples: samples.length,
+    };
   });
-  return { weighted, unknownMs, unknownFiles: weighted.filter((x) => x.historicalSamples === 0).length };
+  return {
+    weighted,
+    unknownMs,
+    unknownFiles: weighted.filter((x) => x.historicalSamples === 0).length,
+  };
 }
 
 function exactPartition(files, shards) {
@@ -110,7 +135,8 @@ function exactPartition(files, shards) {
   for (const shard of shards) {
     if (!shard.files?.length) throw new Error('Empty shard in candidate manifest');
     for (const file of shard.files) {
-      if (!expected.has(file) || assigned.has(file)) throw new Error('Missing, duplicated or foreign allocated file');
+      if (!expected.has(file) || assigned.has(file))
+        throw new Error('Missing, duplicated or foreign allocated file');
       assigned.add(file);
       for (const identity of files.get(file)) {
         if (identities.has(identity)) throw new Error('Duplicate assigned identity');
@@ -118,19 +144,29 @@ function exactPartition(files, shards) {
       }
     }
   }
-  if (assigned.size !== expected.size ||
-    identities.size !== [...files.values()].reduce((sum, items) => sum + items.length, 0)) {
+  if (
+    assigned.size !== expected.size ||
+    identities.size !== [...files.values()].reduce((sum, items) => sum + items.length, 0)
+  ) {
     throw new Error('Candidate assignment loses discovered tests or files');
   }
 }
 
 /** A phase-one candidate only. CI's known-good static-six runners remain authoritative. */
 export function buildAdaptiveCandidate({
-  discovery, history = [], sourceSha, headSha, runId, activate = false,
+  discovery,
+  history = [],
+  sourceSha,
+  headSha,
+  runId,
+  activate = false,
   allowMeasuredNonSix = false,
 }) {
-  if (!SHA.test(sourceSha ?? '') || !SHA.test(headSha ?? '') ||
-      !/^\d+$/.test(String(runId ?? ''))) {
+  if (
+    !SHA.test(sourceSha ?? '') ||
+    !SHA.test(headSha ?? '') ||
+    !/^\d+$/.test(String(runId ?? ''))
+  ) {
     throw new Error('Expected complete source/head SHA and run ID');
   }
   const files = indexDiscovery(discovery, { sourceSha, headSha, runId: String(runId) });
@@ -146,7 +182,8 @@ export function buildAdaptiveCandidate({
       maxPredictedMs: Math.max(...shards.map((x) => x.durationMs)) + ASSUMED_SETUP_MS,
       totalPredictedRunnerMs: shards.reduce((sum, x) => sum + x.durationMs + ASSUMED_SETUP_MS, 0),
       shards: shards.map((entry) => ({
-        id: entry.id, durationMs: entry.durationMs,
+        id: entry.id,
+        durationMs: entry.durationMs,
         files: entry.files,
         identities: entry.files.flatMap((file) => files.get(file)).sort(),
       })),
@@ -170,16 +207,22 @@ export function buildAdaptiveCandidate({
       discoveredIdentities: discovery.tests.length,
       cleanHistoryRuns: historical.accepted.length,
       rejectedHistory: historical.rejected,
-      unknownFiles, conservativeUnknownDurationMs: unknownMs,
+      unknownFiles,
+      conservativeUnknownDurationMs: unknownMs,
       recommendedCount: choice,
       nonSixActivationEligible: measuredProof,
-      activationSafetyNote: 'Non-six activation needs independent measured Merge Gate and cost evidence; never infer proof from modelled durations.',
+      activationSafetyNote:
+        'Non-six activation needs independent measured Merge Gate and cost evidence; never infer proof from modelled durations.',
     },
     plans,
     // This can support a future bounded GitHub fromJSON matrix after independently qualified activation.
-    proposedMatrix: { include: plans[choice].shards.map((shard) => ({
-      shard: shard.id, total: choice, artifact: 'tier3-chromium-' + shard.id + '-of-' + choice,
-    })) },
+    proposedMatrix: {
+      include: plans[choice].shards.map((shard) => ({
+        shard: shard.id,
+        total: choice,
+        artifact: 'tier3-chromium-' + shard.id + '-of-' + choice,
+      })),
+    },
   };
 }
 
@@ -189,8 +232,12 @@ export function verifyAdaptiveExecution({ discovery, candidate, shards }) {
   const files = indexDiscovery(discovery, provenance);
   const count = candidate?.summary?.recommendedCount;
   const planned = candidate?.plans?.[count]?.shards;
-  if (!Array.isArray(planned) || planned.length !== count ||
-      !Array.isArray(shards) || shards.length !== count) {
+  if (
+    !Array.isArray(planned) ||
+    planned.length !== count ||
+    !Array.isArray(shards) ||
+    shards.length !== count
+  ) {
     throw new Error('Missing planned or reported shard evidence');
   }
   exactPartition(files, planned);
@@ -202,13 +249,22 @@ export function verifyAdaptiveExecution({ discovery, candidate, shards }) {
     const id = assigned.id + '/' + count;
     const shard = actual.get(id);
     if (!shard || shard.mode !== 'execution') throw new Error('Required execution shard missing');
-    expectSource(shard.provenance, 'Execution', provenance.sourceSha, provenance.headSha, provenance.runId);
+    expectSource(
+      shard.provenance,
+      'Execution',
+      provenance.sourceSha,
+      provenance.headSha,
+      provenance.runId,
+    );
     const intended = new Set(assigned.identities);
     const found = new Set();
     for (const item of shard.tests ?? []) {
-      if (!intended.has(item.identity) || item.file !== identitiesToFile.get(item.identity) ||
-          found.has(item.identity) ||
-          !['expected', 'skipped'].includes(item.status)) {
+      if (
+        !intended.has(item.identity) ||
+        item.file !== identitiesToFile.get(item.identity) ||
+        found.has(item.identity) ||
+        !['expected', 'skipped'].includes(item.status)
+      ) {
         throw new Error('Unexpected, failed, repeated or wrongly assigned test identity');
       }
       found.add(item.identity);
@@ -216,14 +272,17 @@ export function verifyAdaptiveExecution({ discovery, candidate, shards }) {
     }
     if (found.size !== intended.size) throw new Error('Missing test identity in execution shard');
   }
-  if (covered.size !== discovery.tests.length) throw new Error('Incomplete executed test inventory');
+  if (covered.size !== discovery.tests.length)
+    throw new Error('Incomplete executed test inventory');
   return { complete: true, identities: covered.size, shards: count };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
-    const arg = (name) => process.argv.find((part) => part.startsWith('--' + name + '='))?.slice(name.length + 3);
-    if (!arg('discovery') || !arg('history') || !arg('output')) throw new Error('Expected --discovery, --history and --output');
+    const arg = (name) =>
+      process.argv.find((part) => part.startsWith('--' + name + '='))?.slice(name.length + 3);
+    if (!arg('discovery') || !arg('history') || !arg('output'))
+      throw new Error('Expected --discovery, --history and --output');
     const candidate = buildAdaptiveCandidate({
       discovery: JSON.parse(readFileSync(arg('discovery'), 'utf8')),
       history: JSON.parse(readFileSync(arg('history'), 'utf8')),
