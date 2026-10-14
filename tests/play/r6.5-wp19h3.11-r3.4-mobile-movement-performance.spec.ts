@@ -52,7 +52,10 @@ const SCENE_KEY = 'MoonflowerGladeScene';
 const PLAYER_NAME = 'world-player-unicorn';
 const START_X = 1600;
 const START_Y = 900;
-// At 12 frames the nearest-rank 95th percentile is the maximum, not a stable\n// tail measurement. Sixty samples distinguish sustained slow frames from a\n// single CI-runner scheduling stall while the existing worst-frame guard stays.\nconst PERFORMANCE_SAMPLE_FRAMES = 60;
+// With only 12 frames, the nearest-rank p95 is the maximum, not a stable tail sample.
+// Sixty frames distinguish sustained poor timing from a single CI scheduling stall;
+// the existing worst-frame guard continues to check outliers.
+const PERFORMANCE_SAMPLE_FRAMES = 60;
 const WALK_SPEED_TARGET = 300;
 const GALLOP_SPEED_TARGET = WALK_SPEED_TARGET * 1.6;
 const SETTLED_SPEED_FRACTION = 0.95;
