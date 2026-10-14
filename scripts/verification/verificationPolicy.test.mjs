@@ -83,6 +83,9 @@ test('bounded Tier 3 matrix retains six static shards and the aggregate Merge Ga
   assert.ok(tier3.includes('fail-fast: false'));
   assert.ok(tier3.includes('timeout-minutes: 45'));
   assert.ok(selection.includes('needs: [plan, tier0, test-discovery]'));
+  assert.ok(selection.includes("always() && needs.plan.outputs.run_tier3 == 'true' && needs.tier0.result == 'success'"));
+  assert.ok(selection.includes('Download independent discovery and candidate evidence for canary only'));
+  assert.ok(selection.includes("if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 316 }}"));
   assert.ok(selection.includes('github.event.pull_request.number == 316'));
   const gate = workflow.split('\n  merge-gate:\n')[1];
   assert.ok(gate, 'Merge Gate must remain present');

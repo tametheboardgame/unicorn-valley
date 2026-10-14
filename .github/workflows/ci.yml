@@ -344,7 +344,9 @@ jobs:
   tier3-execution-plan:
     name: WP3.3 - select protected Tier 3 mode
     needs: [plan, tier0, test-discovery]
-    if: needs.plan.outputs.run_tier3 == 'true'
+    # An observational discovery failure must not prevent the qualified static-six fallback.
+    # The isolated manifest-six canary fails closed if its required evidence is absent.
+    if: ${{ always() && needs.plan.outputs.run_tier3 == 'true' && needs.tier0.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -352,7 +354,8 @@ jobs:
       mode: ${{ steps.choose.outputs.mode }}
     steps:
       - uses: actions/checkout@v6
-      - name: Download independent discovery and candidate evidence
+      - name: Download independent discovery and candidate evidence for canary only
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 316 }}
         uses: actions/download-artifact@v4
         with:
           name: chromium-test-discovery
