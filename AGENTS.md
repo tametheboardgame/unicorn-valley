@@ -109,6 +109,19 @@ If an Amber gate blocks one stream, continue independent eligible Green work onl
 
 Hard stop unless explicitly authorised for the specific action. Includes production deployment, destructive data operations, irreversible migration, spending, unsafe secret handling and external publication outside an approved procedure.
 
+## Mandatory completion and integrated-state reconciliation (ENG-WP3.2 governance)
+
+**Work is not finished when code merely lands.** Before an **engineering/integration** work package is marked `complete` or made Ready for review for a completing PR:
+
+1. Reconcile and commit **`AGENTS.md`** with any new/changed operational contract, including an explicit reviewed-and-unchanged note in the PR if its existing rules remain sufficient. Never insert meaningless churn simply to touch a file.
+2. Reconcile and commit **`PROJECT_STATE.json`** with the real integrated package status, currently active/next work and valid branch/commit/evidence pointers. A completed package must not remain the misleading current active package after hand-off.
+3. Reconcile and commit **`STATUS.md`** and the work-package front-matter/status. Record the merge SHA and final CI evidence after merging in the *next integration checkpoint* if those values are not yet known on the pre-merge branch.
+4. The cumulative final engineering/integration PR **must include** `AGENTS.md`, `PROJECT_STATE.json`, `STATUS.md` and a matching bounded `docs/work-packages/ENG-WP*.md` completion record when asserting package completion. Tier 0 validates this at Ready for review; provisional draft previews are exempt.
+5. **Product-stream exception:** World, Just Games and Story House **must** update their *own* `docs/streams/state/<stream>.json` and work-package evidence on completion; they must **not** independently modify root state or global agent rules in concurrent feature PRs. The responsible integration checkpoint after merge reconciles root status/agent rules, with any missing global change recorded as an actionable follow-up. This preserves WP2.5 collision protection.
+6. Before ending an execution window, leave a resumable commit, explicit blockers and next step; if the integration summary cannot be updated on that branch, record the stream-local checkpoint instead.
+
+This is a **reviewed close-out contract**, not permission to weaken final CI, manufacture unknown merge SHAs or edit `main` directly. See ENG-WP3.2 and its positive/negative completion-policy tests.
+
 ## Work-package loop
 
 1. Confirm metadata, scope, dependencies, non-goals and invariants.

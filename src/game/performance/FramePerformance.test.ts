@@ -23,4 +23,20 @@ describe('summariseFrameDurations', () => {
 
     expect(summariseFrameDurations([10, 20, 30], 15).longFrameCount).toBe(2);
   });
+
+  it('keeps p95 and worst frame independent over an adequately sized window', () => {
+    const frames = [...Array.from({ length: 59 }, () => 33), 187];
+    const summary = summariseFrameDurations(frames);
+
+    expect(summary.sampleCount).toBe(60);
+    expect(summary.p95FrameMs).toBe(33);
+    expect(summary.worstFrameMs).toBe(187);
+    expect(summary.longFrameCount).toBe(1);
+
+    const sustainedSlowFrames = [...Array.from({ length: 55 }, () => 33), ...Array(5).fill(187)];
+    const sustained = summariseFrameDurations(sustainedSlowFrames);
+    expect(sustained.p95FrameMs).toBe(187);
+    expect(sustained.worstFrameMs).toBe(187);
+    expect(sustained.longFrameCount).toBe(5);
+  });
 });

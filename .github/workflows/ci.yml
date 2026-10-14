@@ -447,6 +447,10 @@ jobs:
         if: always()
         continue-on-error: true
         run: node scripts/verification/suiteHealth.mjs --reconciliation=reconciliation-report.json --shards=shard-evidence --history=suite-health-history.json --output=suite-health.json --markdown=suite-health.md
+      - name: Propose ENG-WP3.2 shadow shard allocations (observational only)
+        if: always()
+        continue-on-error: true
+        run: node scripts/verification/shadowShardPlanner.mjs --health=suite-health.json --shards=shard-evidence --history=suite-health-history.json --output=shadow-shards.json --markdown=shadow-shards.md
       - name: Upload WP2.4 suite health report
         if: always()
         uses: actions/upload-artifact@v4
@@ -456,6 +460,8 @@ jobs:
             suite-health.json
             suite-health.md
             suite-health-history-metadata.json
+            shadow-shards.json
+            shadow-shards.md
           if-no-files-found: warn
           retention-days: 14
 

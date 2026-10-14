@@ -3,14 +3,14 @@
   "template_initialised": true,
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
-  "phase": "R6.5 - ENG-WP2.5 Parallel Development and Merge Safety",
-  "current_work_package": "ENG-WP2.5",
-  "current_work_package_path": "docs/work-packages/ENG-WP2.5-PARALLEL-DEVELOPMENT-MERGE-SAFETY.md",
+  "phase": "R6.5 - ENG-WP3.2 Duration-Aware Shadow Scheduling",
+  "current_work_package": "ENG-WP3.2",
+  "current_work_package_path": "docs/work-packages/ENG-WP3.2-DURATION-AWARE-SHADOW-SCHEDULER.md",
   "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
-  "branch": "agent/eng-wp2-5-parallel-merge-safety",
-  "latest_commit": "715959e469638af379003368d8d2fde595047dea",
+  "branch": "agent/eng-wp3-2-shadow-scheduler",
+  "latest_commit": "b43934a0464d67fb87c4ef67f87d6f0862c062fa",
   "ci_state": "unknown",
   "technical_validation_state": "pending",
   "human_acceptance_state": "not_required",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-12",
-  "updated_at": "2026-10-12"
+  "last_activity_at": "2026-10-13",
+  "updated_at": "2026-10-13"
 }
