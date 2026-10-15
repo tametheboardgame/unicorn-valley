@@ -317,3 +317,11 @@ The World origin package must register a new game in the existing catalogue and 
 Before any final merge, check overlapping changed files and integrate/requalify against latest `main`, particularly if another stream merged after the candidate's exact-head CI run. **Current CI guarantees exact PR head, but not freshness relative to changed main.** ENG-WP2.5 [#306](https://github.com/tametheboardgame/unicorn-valley/issues/306) owns machine enforcement and per-stream state migration. None of these governance improvements should slow ordinary draft preview iteration or weaken end-of-package test review.
 
 See `docs/architecture/PARALLEL-DEVELOPMENT-STREAMS.md`.
+
+## UV-D030 - Conclude adaptive shard trials and review CI health before deterioration
+
+Status: Accepted, 2026-10-15.
+
+The user explicitly closed ENG-WP3.3 as an evaluated decision: retain original static-six Chromium, do not merge the eight-way experiment or continue with ten/twelve shards without evidence of worthwhile end-to-end gain. Existing observability, test lifecycle/contract integrity and complete independent coverage must remain. A full green eight-way canary completed in 14m20s versus an unpaired six-manifest 14m48s, with higher Chromium runner occupancy, insufficient for activation.
+
+**Hard preventative caveat:** monthly engineering review, recorded quarterly review (first 15 January 2027), and an immediate early assessment when 374 discovered test identities, 3/5 full clean runs at 25+ minutes, 3/10 full qualification runs requiring retry, a reproducible deterministic gate blocker, or 3/5 clean Tier 4 jobs at 15+ minutes. See `AGENTS.md`, `TESTING.md` and [CI-health review issue #320](https://github.com/tametheboardgame/unicorn-valley/issues/320). The thresholds trigger review and root-cause action, not an automatic performance optimisation, test relaxation or preview blockage.

@@ -3,14 +3,14 @@
   "template_initialised": true,
   "project_id": "unicorn-valley",
   "display_name": "Unicorn Valley",
-  "phase": "R6.5 - ENG-WP3.3 safe six-shard foundation merged; 8/10/12 activation unqualified",
-  "current_work_package": "ENG-WP3.3",
-  "current_work_package_path": "docs/work-packages/ENG-WP3.3-ADAPTIVE-SCHEDULING-ACTIVATION.md",
+  "phase": "R6.5 - ENG-WP3 evaluated closed; static-six CI and standing health reviews",
+  "current_work_package": null,
+  "current_work_package_path": null,
   "status": "in_progress",
   "autonomy_state": "green",
   "agent_state": "active",
   "branch": "main",
-  "latest_commit": "2aa705128c66deda21751ec853aba0f867c7991e",
+  "latest_commit": "6074a8ed3238ccaf29d412be9bb592838d509aac",
   "ci_state": "passing",
   "technical_validation_state": "passing",
   "human_acceptance_state": "not_required",
@@ -21,6 +21,6 @@
   "night_shift_state": "not_configured",
   "chat_disposition": "keep",
   "delivery_mode": "pr_required",
-  "last_activity_at": "2026-10-14",
-  "updated_at": "2026-10-14"
+  "last_activity_at": "2026-10-15",
+  "updated_at": "2026-10-15"
 }

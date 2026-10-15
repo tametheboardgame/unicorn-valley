@@ -1,7 +1,7 @@
 ---
 id: ENG-WP3.3
 title: Activate Bounded Adaptive Tier 3 Chromium
-status: in_progress
+status: complete
 autonomy: green
 depends_on: [ENG-WP3.2, ENG-WP2.5]
 parallel_safe: false
@@ -73,3 +73,13 @@ An observed 14m48s manifest-six workflow is **not enough** to claim a stable red
 2. Mark the foundation PR Ready for review only with the reviewed impact block. **Run the full exact-head Tier 0/unit/build/whole-game smoke/six Chromium/seven-browser/Merge Gate after the last substantive commit.** No green evidence from an older head authorises merging.
 3. Merge only once the protected checks are fully green and the intended output is explicitly a **foundation**, not activated non-six behaviour. Record actual merged SHA and successful CI in the next mandatory integration checkpoint before resuming WP3.3 activation.
 
+
+## Close-out decision — 15 October 2026 (supersedes pending activation text above)
+
+**Complete as an evidence-led evaluation, not activated scheduling.** The user approved stopping variable-count trials and retaining static-six on `main`, with a hard preventive review rule for growth. ENG-WP3.3 does not require implementation of 10/12-shard activation to close, as that optimisation was explicitly rejected for insufficient net benefit.
+
+- Foundation PR #316 merged `2aa705128c66deda21751ec853aba0f867c7991e`; root reconciliation PR #318 merged `6074a8ed3238ccaf29d412be9bb592838d509aac`.
+- Experimental [PR #319](https://github.com/tametheboardgame/unicorn-valley/pull/319) had unchanged gameplay-test failures on first eight-way attempt, passing after one bounded failed-job retry. The fresh independent full [CI #38609186912](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38609186912) passed on attempt 1: **8/8 Chromium, 311/311 identities** (308 expected, 3 deliberate skipped), seven cross-browser profiles and Merge Gate. It must close **without merging**.
+- Eight-way full workflow **14m20s**, slowest Chromium **~10m11s**, Chromium runner occupancy **~76.1 job-min**. Six-manifest clean comparison **14m48s** and **~69.1 job-min**. The 28-second isolated overall difference is not a proven repeatable payoff. Compatibility work is already ~12m21s in the eight-way trial.
+- Retain only isolated stronger independent reconciliation of bad/non-green status evidence via the close-out PR; keep original static-six runner and all test contracts. Optional WP3.4 split deferred.
+- Proactive follow-up via [issue #320](https://github.com/tametheboardgame/unicorn-valley/issues/320) and the **monthly / quarterly / early-trigger** policy in `AGENTS.md` and `TESTING.md`, first quarterly review due 15 January 2027. Any later scheduler experiment is a *new* separately accepted package. No production deployment.

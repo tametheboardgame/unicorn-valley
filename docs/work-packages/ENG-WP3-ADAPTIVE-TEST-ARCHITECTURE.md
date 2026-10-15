@@ -1,7 +1,7 @@
 ---
 id: ENG-WP3
 title: Adaptive Test Execution and Qualification Architecture
-status: in_progress
+status: complete
 autonomy: green
 depends_on: [ENG-WP2]
 parallel_safe: false
@@ -126,3 +126,9 @@ Exit: stable runbook, measurable multi-run performance and cost evidence, separa
 ## Completion
 
 **WP3.1 complete (12 October 2026).** PR #309 merged as `118669255e42890092a7ad1ac2862ecfc2aaecd3` after all required checks and independent 311/311 six-shard identity reconciliation passed in CI #38269906778. This adds observational SHA-bound discovery/result/duration artifacts, not a new scheduler or Merge Gate dependency. WP3.2 completed and merged on 14 October 2026 in PR #314 (merge `748d797b4c6298dd923cb410686a50898f14d663`, full CI #38526137461). Shadow-only allocations for 6/8/10/12 shards are available, with one comparable historical run and no proven wall-clock saving yet. WP3.3 is now **in progress**, with a reviewed source-bound planner and a validated **manifest-six canary** (PR #316, CI #38547129599, 311/311 actual identities) and closed/non-merging **static-six fallback proof** (PR #317, CI #38559848055 attempt 2, green exact-head Merge Gate). The proposed foundation remains **static-six-only by default**: non-six 8/10/12 execution and cost/latency proof remain explicitly unqualified and require a further activation checkpoint. A single 14m48s canary alongside static baselines of 17m33s/19m42s/21m30s is not sufficient to authorise a default mode change; independent runner occupancy also showed no clear reduction. Optional WP3.4 and WP3.5 remain later. Static-six remains the accepted execution configuration.
+
+## Engineering programme close-out — 15 October 2026
+
+**ENG-WP3 complete as evaluated and handed over, not as activation of an adaptive non-six scheduler.** WP3.1 instrumentation, WP3.2 observation and WP3.3 six-only safety foundation remain integrated. One full eight-shard CI #38609186912 was green, but 14m20s total versus six-manifest 14m48s, with greater runner-job occupancy (~76.1m vs ~69.1m), does not establish useful repeatable benefit. Experimental [PR #319](https://github.com/tametheboardgame/unicorn-valley/pull/319) closes unmerged; planned ten/twelve-way trials are cancelled. Optional WP3.4 compatibility splitting is deferred; WP3.5 maintenance objective is delivered by the policy and tracked review in `AGENTS.md`, `TESTING.md` and [issue #320](https://github.com/tametheboardgame/unicorn-valley/issues/320).
+
+Revisit through a *new* bounded engineering review if test identities reach 374+, 3/5 clean full Merge Gates exceed 25 minutes, 3/10 full runs require retries, a reproducible required-test blocker appears or 3/5 Tier 4 jobs exceed 15 minutes; in any case do monthly checks and a formal quarterly review next due **15 January 2027**. Preserve complete coverage and static-six fallback. Previous proposed activation sections above are historical, superseded by this recorded no-activation decision.
