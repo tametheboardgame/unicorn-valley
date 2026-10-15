@@ -188,19 +188,25 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19SH1 - Story House Illustrated Classics Programme
 
-State: **planned parallel content stream; starts after R6.5-WP19H3.11-R4 is accepted and may then run concurrently with H3.11.5+ world/interior work**.
+State: **17-title illustrated-classics implementation delivered; final SH1.7 consolidation planned before programme close-out.** Alice (PR #291), Peter Rabbit (PR #295), Jemima Puddle-Duck (PR #297) and the original *Lantern at the Edge of the Woods* (PR #298) are human-approved and merged. The published catalogue has 17 titles; the main SH1 documentation preserves historical checkpoints.
 
-Path: `docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`
+Canonical programme: `docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`
 
-SH1 is a separate Story House content programme for reillustrating selected existing classics with
-ChatGPT-generated artwork using the permanent Drive → Workload Identity Federation → GitHub Actions
-materialisation pipeline. It is intentionally parallel-safe with the main world/interior stream
-when work remains confined to Story House content, generated-asset manifests and Story House
-documentation.
+Next bounded clean-up: **SH1.7A-E**, `docs/work-packages/R6.5-WP19SH1.7-STORY-HOUSE-CONSOLIDATION.md`. This audits old open PRs #230/#261, redundant generated art, Drive staging, source/illustration rights, old authoring-cover guidance and regressions. No cleanup has yet been executed merely by adopting this roadmap.
 
-The initial sequence is: generated-classics foundation/audit → The Lion and the Mouse pilot →
-quick-read classics → mid-length fairy tales → long-form retellings → later dual-edition
-reillustration for Alice/Peter Rabbit/Jemima while preserving their historic source-art sets.
+### R6.5-WP19SH2 - Story House Library Expansion (Next Ten Titles)
+
+State: **roadmap approved 15 October 2026; title production not started.** Dependency: SH1.7 completed, then SH2.0 editorial/source-rights foundation. Independent Story House stream, safe alongside Main World and Just Games under separate branches/PRs.
+
+Canonical roadmap: `docs/work-packages/R6.5-WP19SH2-STORY-HOUSE-LIBRARY-EXPANSION.md`
+
+- **SH2.0:** verify exact source/translation/illustration rights, manuscript/edition strategy, visual bibles and per-title delivery plan.
+- **SH2.1-5, short books:** *The Tale of Benjamin Bunny*, *Goldilocks and the Three Bears*, *The Velveteen Rabbit*, *Little Red Riding Hood*, *The Emperor's New Clothes*. Target catalogue: 22 titles.
+- **SH2.6-8, longer classics:** *The Snow Queen*, *The Wind in the Willows*, *The Secret Garden*. Target catalogue: 25 titles.
+- **SH2.9-10, original Valley tales:** *The Missing Moonflower* and *The Rainbow Meadow Mystery* (working titles; Quill's Valley Tales Books 2-3). Target catalogue: 27 titles.
+- **SH2.11:** catalogue, series, rights, accessibility, reading-progress, performance and complete-programme acceptance.
+
+Each title uses its own manuscript/rights, character-anchor, illustration-batch, preview/human-approval and final-merge checkpoints. All ten are an agreed **planning slate**, not source clearance, finished books or permission to publish.
 
 ### R6.5-WP19H1+ - Open-Ended Area-by-Area Final Polish Programme
 
