@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "story-house",
-  "status": "unclaimed",
-  "workPackage": null,
-  "workPackagePath": null,
-  "branch": null,
-  "prNumber": null,
-  "baseMainSha": null,
+  "status": "in_progress",
+  "workPackage": "R6.5-WP19SH1.7",
+  "workPackagePath": "docs/work-packages/R6.5-WP19SH1.7-STORY-HOUSE-CONSOLIDATION.md",
+  "branch": "agent/sh1.7-story-house-consolidation",
+  "prNumber": 324,
+  "baseMainSha": "17e228e361e84354f10d98b1f1581072f0006d01",
   "updatedOn": "2026-10-15",
-  "note": "SH1 illustration delivery is integrated; SH1.7A-E cleanup and SH2.0-SH2.11 ten-title expansion have been planned in dedicated work packages. Stream remains unclaimed until an execution PR formally starts SH1.7. No book production or cleanup has started."
+  "note": "SH1.7A-E consolidation is active in draft PR #324: catalogue and legacy PR audit underway; Alice's approved historical visual bible has been recovered. No Story House content or rights-sensitive assets have been deleted. SH2 starts only after reviewed SH1.7 close-out."
 }
