@@ -1,5 +1,16 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-15 Story House transition: SH1.7 closeout then SH2 expansion
+
+The existing **17-title Story House library** and SH1 illustration deliveries are integrated. **SH1.7A-E** is the outstanding, bounded clean-up: content/rights inventory, legacy open PRs #230/#261, generated-asset manifests/staging, authoring-cover guidance, selected regressions and handover. This work is **planned, not completed**. The Lantern's completed **PR #298 merged on 10 October 2026**; any earlier authorisation-only entries below are historic checkpoints.
+
+The accepted proposed next-title slate is recorded in **SH2.0-SH2.11**: editorial/source-rights foundation; Benjamin Bunny, Goldilocks, Velveteen Rabbit, Little Red Riding Hood, Emperor's New Clothes; Snow Queen, Wind in the Willows, Secret Garden; then two original Quill's Valley Tales, **The Missing Moonflower** and **The Rainbow Meadow Mystery** (working titles); followed by a 27-book library acceptance checkpoint. Each title still requires separate rights/editorial, art and preview approval. Parallel World and Just Games development is not blocked by this Story House content planning.
+
+Canonical plans:
+- `docs/work-packages/R6.5-WP19SH1.7-STORY-HOUSE-CONSOLIDATION.md`
+- `docs/work-packages/R6.5-WP19SH2-STORY-HOUSE-LIBRARY-EXPANSION.md`
+
+
 ## 2026-10-10 SH1.8 Lantern human-approved for merge
 
 **The Lantern at the Edge of the Woods** is complete and human-approved. All 12 generated reader
