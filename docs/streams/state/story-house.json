@@ -7,6 +7,6 @@
   "branch": null,
   "prNumber": null,
   "baseMainSha": null,
-  "updatedOn": "2026-10-12",
-  "note": "Initial integrated stream record; draft work remains in its own PR until the stream claims this record."
+  "updatedOn": "2026-10-15",
+  "note": "SH1 illustration delivery is integrated; SH1.7A-E cleanup and SH2.0-SH2.11 ten-title expansion have been planned in dedicated work packages. Stream remains unclaimed until an execution PR formally starts SH1.7. No book production or cleanup has started."
 }
