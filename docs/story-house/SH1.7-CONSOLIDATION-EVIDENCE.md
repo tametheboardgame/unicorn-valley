@@ -1,0 +1,50 @@
+# SH1.7 — Illustrated Classics consolidation: evidence ledger
+
+**Started:** 15 October 2026  
+**Owner/branch:** Story House, `agent/sh1.7-story-house-consolidation`  
+**Draft PR:** [#324](https://github.com/tametheboardgame/unicorn-valley/pull/324)  
+**Baseline:** `main` at SH2 roadmap merge `17e228e361e84354f10d98b1f1581072f0006d01`
+
+This is a checkpoint ledger, **not** a completed SH1.7 sign-off. Any unknown rights, branch review, external Drive deletion or final reader gate remains explicitly open. Counts below refer to the baseline commit and need revalidation against the final PR head.
+
+## A — Library and legacy PR inventory
+
+- Repo tree and book manifest pass: **18** `public/stories/<id>/book.json` files, of which **17 published**, one hidden `story-house-sampler`. `public/stories/catalogue.json` contains the 17 published entries.
+- Across all 18 manifests, enumerated **1,082 `path` fields ending in Markdown/image file extensions**, resolving each relative to its book folder and matching paths to GitHub's current full recursive tree: **zero missing**. These path references include chapters and images; do not present 1,082 as an illustration count.
+- The catalogue holds both single- and multi-edition books; existing classic/modern cover sets and alternate editions were inspected at manifest level. Existing reader/saved progress behaviour still requires regression validation, not merely static path checks.
+- **PR #230 — Lion and Mouse pilot:** original visual bible, four generated image manifests and four generated WebPs are **byte-identical at Git blob SHA** to `main`. Main book manifest has a newer modern-cover-set declaration and clarified curator note. No unique outstanding artwork. **Closed as superseded** with an explanatory audit comment; did not merge.
+- **PR #261 — early Alice illustration planning:** uniquely included the 340-line historical Alice character/location/style visual bible absent from `main`. Recovered the full text to `docs/story-house/visual-bibles/alices-adventures-in-wonderland.md` with an explicit historic-state banner. Final accepted Alice reader assets are separately merged through PR #291. **Keep #261 open until recovered archive lands on main**, then close with a supersession comment.
+- **SH1.2B title access:** PR #244 is merged (`581c371fe7bd73bf24a3878b9a83d0f7ffc6eab5`); corrected stale work-package status from in-progress to complete.
+- **SH1.8 Lantern:** merged via PR #298 on 10 October 2026; previously reconciled in SH1 programme planning PR #323.
+
+## B — Generated assets and Drive staging
+
+- Recursive tree includes **149** `public/stories/*/illustrations/generated/*.webp` files. **148** are directly referenced by book manifest art paths; the single candidate unused image is `public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-cover-cropped.webp`.
+- The candidate's R4 manifest is `generated-assets/manifests/story-alices-adventures-in-wonderland-cover.json`. It points to Google Drive source ID `1XwgT6w-IXV_vbzPtEJCGcZocYMvG23B7`; verified its accessible Drive metadata, actual filename `alice-cover-cropped.webp`, and parent staging folder ID `1tAy3sb661zrfVnbQ1VkGFZ_Of3rM6ikA`.
+- Drive folder lookup confirmed `Unicorn Valley > Generated Asset Staging`; a direct first-batch listing displayed approved story source images and some duplicate staging names with distinct IDs (e.g. prior Lantern revisions). **This listing is not an exhaustive Drive residue inventory**, and duplicate filenames alone do not prove the older source can be deleted.
+- Reviewed the GitHub Actions `generated-asset-materialisation.yml`: it authenticates with Google Workload Identity Federation, takes a specific manifest path and an existing non-main branch on manual dispatch, materialises and verifies WebPs, and commits generated art on that feature branch. The automatic manifest push trigger uses `agent/story-house-*` branches; `agent/sh-*` work may need manual `workflow_dispatch`. **No live round-trip replacement was run during the audit.**
+- **No deletion performed** on GitHub or Drive. The Alice unused-cover WebP/manifests should be removed only after a wider reference/code-history check plus explicit clean-up acceptance; Drive sources should remain until separately approved.
+
+## C — Rights, metadata, cover convention
+
+- `docs/story-library-authoring.md` now treats reuse of one **human-approved reader illustration** as the canonical modern-cover rule, with an approved dedicated-cover exception where the crop genuinely fails. It explicitly retains the accepted dedicated Lion/Mouse pilot cover and source-art sets.
+- `the-duck-bread-baker/book.json` credits the author, describes the source as supplied production PDFs, and marks `rights.illustrations.status` and `rights.edition.status` as **`unknown`**. **Do not rewrite those to original or clear for publication without provenance/permission evidence from the rights holder.** Record this as an unresolved metadata acceptance question.
+- Rights for classic works require checking their actual **edition-level wording/translation, historic illustrations and modern assets** separately. A lack of top-level `rights` on a v2 manifest is not proof that its per-edition rights are absent; deeper targeted metadata validation remains on the finalisation checklist.
+
+## D — Regression checks (not yet signed off)
+
+Before moving the PR to Ready for review, re-run the published catalogue generation/check, Story Library discovery, edition/cover switching, independent saved progress, image-path integrity, and representative desktop/mobile reading checks as selected by the diff. The package currently changes documentation and stream state, not reader source, image bytes or story manuscripts. The required exact-head protected checks are **not yet qualified for PR #324**.
+
+## E — Handover (not yet signed off)
+
+Keep `docs/streams/state/story-house.json` in-progress while this branch is active. After rights/asset decisions, evidence and approval, finish SH1.7 and then assign SH2.0 in an integration checkpoint. Do not independently edit root `PROJECT_STATE.json`, `STATUS.md` or `AGENTS.md` in this product-stream branch.
+
+## Open decisions / risk register
+
+| Ref | Action | Owner/gate | Current disposition |
+| --- | --- | --- | --- |
+| SH1.7-01 | Merge recovered Alice visual bible, then close superseded PR #261 with traceable link | Story House; after new PR integration | Pending |
+| SH1.7-02 | Assess Alice unused-cover file and source manifest references, then decide removal | Human cleanup review | Keep for now |
+| SH1.7-03 | Review Drive duplicate and staging residue after source-ID/active-manifest mapping | Human approval before any Drive delete | Keep for now |
+| SH1.7-04 | Confirm The Duck Bread Baker image and edition rights from original materials/rights holder | Rights holder/editorial gate | Unknown, no invented rights |
+| SH1.7-05 | Revalidate catalogue and browser/saved-progress contracts, then pass CI/Merge Gate | Story House and merge gate | Pending |
