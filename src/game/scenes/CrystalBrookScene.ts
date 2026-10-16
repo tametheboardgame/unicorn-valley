@@ -27,13 +27,17 @@ import {
   CRYSTAL_BROOK_MEADOW_GORGE,
   CRYSTAL_BROOK_LOCAL_TRAILS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
-  CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPSTREAM_CASCADE,
   CRYSTAL_BROOK_WATER_GLINTS,
   CRYSTAL_BROOK_WATERCOURSE,
   type CrystalBrookWatercoursePoint,
 } from '../world/CrystalBrookMap';
 import { createCrystalBrookBoundaryPresentation } from '../world/CrystalBrookBoundaryPresentation';
+import {
+  createCrystalBrookDistrictPresentation,
+  createCrystalBrookGrottoPresentation,
+  createCrystalBrookReflectionPoolPresentation,
+} from '../world/CrystalBrookDistrictPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
@@ -404,9 +408,6 @@ export class CrystalBrookScene extends Phaser.Scene {
   private createEnvironment(): void {
     const map = CRYSTAL_BROOK_MAP;
     this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xa8e0bd).setDepth(0);
-    this.add.circle(760, 510, 610, 0xc8edbf, 0.48).setDepth(1);
-    this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
-    this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
     const pathEdges = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.84);
     const pathSurfaces = this.add.graphics().setName('crystal-brook:path-surfaces').setDepth(2.86);
@@ -452,11 +453,12 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.zone(2490, 1060, 2, 2).setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
+    createCrystalBrookDistrictPresentation(this);
+    createCrystalBrookGrottoPresentation(this);
     this.createMeadowGorge();
     createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
     this.createGrottoTrailCues();
-    this.createBanks();
     this.createNpcVisitPoints();
     this.createAmbientSparkles();
   }
@@ -497,39 +499,7 @@ export class CrystalBrookScene extends Phaser.Scene {
       0.72,
     );
 
-    this.add
-      .ellipse(
-        CRYSTAL_BROOK_REFLECTION_POOL.x,
-        CRYSTAL_BROOK_REFLECTION_POOL.y,
-        292,
-        138,
-        0x579da4,
-        0.62,
-      )
-      .setName('crystal-brook:reflection-pool-outer')
-      .setDepth(3);
-    this.add
-      .ellipse(
-        CRYSTAL_BROOK_REFLECTION_POOL.x,
-        CRYSTAL_BROOK_REFLECTION_POOL.y,
-        232,
-        102,
-        0x78cbd0,
-        0.86,
-      )
-      .setName('crystal-brook:reflection-pool-inner')
-      .setDepth(3.03);
-    this.add
-      .ellipse(
-        CRYSTAL_BROOK_REFLECTION_POOL.x,
-        CRYSTAL_BROOK_REFLECTION_POOL.y,
-        118,
-        48,
-        0x438f9d,
-        0.56,
-      )
-      .setName('crystal-brook:reflection-pool-deep')
-      .setDepth(3.06);
+    createCrystalBrookReflectionPoolPresentation(this);
 
     const cascade = this.add.graphics().setName('crystal-brook:upstream-cascade').setDepth(3.08);
     const cascadeX = CRYSTAL_BROOK_UPSTREAM_CASCADE.x;
@@ -959,28 +929,6 @@ export class CrystalBrookScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setAlpha(0.5)
         .setDepth(worldDepthForY(point.y, 0.2));
-    }
-  }
-
-  private createBanks(): void {
-    const clumps = [
-      [520, 520],
-      [700, 1700],
-      [1670, 410],
-      [1890, 1770],
-      [2440, 510],
-      [3170, 560],
-    ] as const;
-    for (const [x, y] of clumps) {
-      const depth = worldDepthForY(y, 0.15);
-      this.add.ellipse(x, y, 180, 100, 0x6eaa76, 0.86).setDepth(depth);
-      this.add.ellipse(x + 70, y + 10, 150, 90, 0x7eba7d, 0.82).setDepth(depth);
-      for (let offset = -50; offset <= 50; offset += 25) {
-        this.add
-          .rectangle(x + offset, y - 70, 7, 54, 0x579064, 0.85)
-          .setAngle(offset / 8)
-          .setDepth(depth + 0.1);
-      }
     }
   }
 

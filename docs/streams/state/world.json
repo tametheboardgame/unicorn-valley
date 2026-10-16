@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "world",
-  "status": "unclaimed",
-  "workPackage": null,
-  "workPackagePath": null,
-  "branch": null,
+  "status": "active",
+  "workPackage": "R6.5-WP19H6.5A",
+  "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
+  "branch": "agent/world-h6.5a-crystal-brook-art",
   "prNumber": null,
-  "baseMainSha": null,
-  "updatedOn": "2026-10-12",
-  "note": "Initial integrated stream record; draft work remains in its own PR until the stream claims this record."
+  "baseMainSha": "e73fca9d2b59fbd49f7ba776678b4eea0da83f2a",
+  "updatedOn": "2026-10-16",
+  "note": "H6.5 merged; H6.5A visual polish requested after screenshots, human approval pending. H6.6 not started."
 }

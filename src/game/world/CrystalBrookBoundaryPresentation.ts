@@ -132,8 +132,8 @@ function createBoundaryRock(scene: Phaser.Scene, rock: CrystalBrookBoundaryRock)
     .setPosition(rock.x, rock.y)
     .setAngle(rock.angle)
     .setName(`crystal-brook:boundary:rock:${rock.kind}:${rock.id}`)
-    // The existing east woodland container sits at 6.2. Keep its trunks/canopies in front
-    // so these rocks read as a subtle root-line/boulder mix rather than a stone wall.
+    // East woodland is split into trunks at 5.85 and canopies at 6.45.
+    // Boundary rocks sit between the two independent visual layers.
     .setDepth(underEastWoodland ? 6.05 : worldDepthForY(rock.y + rock.height * 0.42, 0.18));
 
   fillRockBody(graphics, rock);
