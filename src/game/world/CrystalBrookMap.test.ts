@@ -195,16 +195,12 @@ describe('Crystal Brook map', () => {
   it('tapers the feeder inside the main river instead of leaving a severed bank end', () => {
     const points = CRYSTAL_BROOK_REFLECTION_FEEDER.points;
     const mouth = points[0];
-    expect(CRYSTAL_BROOK_WATERCOURSE).toContainEqual(
-      expect.objectContaining(mouth),
-    );
+    expect(CRYSTAL_BROOK_WATERCOURSE).toContainEqual(expect.objectContaining(mouth));
     expect(points[1].y).toBeGreaterThan(mouth.y);
     expect(points[2].y).toBeGreaterThan(points[1].y);
     const mouthToBankDistance = Math.hypot(points[2].x - mouth.x, points[2].y - mouth.y);
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength).toBeGreaterThan(90);
-    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength).toBeLessThan(
-      mouthToBankDistance,
-    );
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength).toBeLessThan(mouthToBankDistance);
     // Downstream anchor and stepping-stone crossing are unchanged.
     expect(points).toContainEqual({ x: 2040, y: 1565 });
     expect(points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);

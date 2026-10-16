@@ -106,15 +106,15 @@ function fillConfluenceRibbon(
   let travelled = 0;
   const widths = smoothed.map((point, index) => {
     if (index > 0) {
-      travelled += Math.hypot(
-        point.x - smoothed[index - 1].x,
-        point.y - smoothed[index - 1].y,
-      );
+      travelled += Math.hypot(point.x - smoothed[index - 1].x, point.y - smoothed[index - 1].y);
     }
     return (width / 2) * Math.min(1, travelled / taperLength);
   });
   graphics.fillStyle(colour, alpha);
-  graphics.fillPoints(buildRibbonPolygon(smoothed, (index) => widths[index]), true);
+  graphics.fillPoints(
+    buildRibbonPolygon(smoothed, (index) => widths[index]),
+    true,
+  );
 }
 
 function smoothPoints(
