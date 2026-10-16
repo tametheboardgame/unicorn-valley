@@ -31,11 +31,11 @@ This is a checkpoint ledger, **not** a completed SH1.7 sign-off. Any unknown rig
 - `docs/story-library-authoring.md` now treats reuse of one **human-approved reader illustration** as the canonical modern-cover rule, with an approved dedicated-cover exception where the crop genuinely fails. It explicitly retains the accepted dedicated Lion/Mouse pilot cover and source-art sets.
 - `the-duck-bread-baker/book.json` credits the author, describes the source as supplied production PDFs, and marks `rights.illustrations.status` and `rights.edition.status` as **`unknown`**. **Do not rewrite those to original or clear for publication without provenance/permission evidence from the rights holder.** Record this as an unresolved metadata acceptance question.
 - **Deeper targeted metadata inspection completed for all 18 books:** the **12 published v2 multi-edition titles** specify text, illustration and edition status independently on **each** Story House and Full Classic edition and give `classic`/`modern` covers their own rights statuses. The lack of top-level rights on these books is intentional schema design, **not** evidence of missing metadata. The remaining published single-edition stories include explicit original or public-domain rights, with **The Duck Bread Baker** the single published book retaining `unknown` for illustration and edition status. This verifies that status fields exist; it does **not** recheck every historical source's legal authenticity or grant rights.
-- No rights claim was silently upgraded. Preserve the existing Duck rights values pending source-production PDF provenance/permission confirmation.
+- No rights claim was silently upgraded. Preserve the existing Duck rights values pending source-production PDF provenance/permission confirmation. The rights-holder evidence request is now [issue #326](https://github.com/tametheboardgame/unicorn-valley/issues/326), which must be resolved before asserting rights clearance for broader distribution. This is **not** permission to invent a licence or to change the imported artwork.
 
-## D — Regression checks (not yet signed off)
+## D — Regression checks (draft CI passed; final qualification pending)
 
-Before moving the PR to Ready for review, re-run the published catalogue generation/check, Story Library discovery, edition/cover switching, independent saved progress, image-path integrity, and representative desktop/mobile reading checks as selected by the diff. The package currently changes documentation and stream state, not reader source, image bytes or story manuscripts. The required exact-head protected checks are **not yet qualified for PR #324**.
+Before moving the PR to Ready for review, re-run the published catalogue generation/check, Story Library discovery, edition/cover switching, independent saved progress, image-path integrity, and representative desktop/mobile reading checks as selected by the diff. The package currently changes documentation and stream state, not reader source, image bytes or story manuscripts. Draft CI run [#38857808036](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38857808036) on replacement PR #325 passed the verification plan, Tier 0 checks, and its policy-selected draft Merge Gate. **Full exact-head final qualification remains pending**; selected Tier 1 and Chromium suites were skipped as intended for this documentation-only draft.
 
 ## E — Handover (not yet signed off)
 
@@ -46,7 +46,16 @@ Keep `docs/streams/state/story-house.json` in-progress while this branch is acti
 | Ref | Action | Owner/gate | Current disposition |
 | --- | --- | --- | --- |
 | SH1.7-01 | Merge recovered Alice visual bible, then close superseded PR #261 with traceable link | Story House; after new PR integration | Pending |
-| SH1.7-02 | Assess Alice unused-cover file and source manifest references, then decide removal | Human cleanup review | Keep for now |
+| SH1.7-02 | Alice unused-cover WebP and source manifest: one known manifest destination, no current book reference; wider code/history reuse not exhaustively disproved | Human approval before deletion | Retained intentionally; no reader breakage introduced |
 | SH1.7-03 | Five duplicate Lantern Drive filenames: active IDs mapped, prior versions still to verify against every historical manifest | Human approval before any Drive delete | Preserve all source files for now |
-| SH1.7-04 | Confirm The Duck Bread Baker image and edition rights from original materials/rights holder | Rights holder/editorial gate | Unknown, no invented rights |
-| SH1.7-05 | Revalidate catalogue and browser/saved-progress contracts, then pass CI/Merge Gate | Story House and merge gate | Pending |
+| SH1.7-04 | Confirm The Duck Bread Baker image and edition rights from original materials/rights holder ([issue #326](https://github.com/tametheboardgame/unicorn-valley/issues/326)) | Rights holder/editorial gate, before any new distribution claim | Unknown; existing material retained, no invented rights |
+| SH1.7-05 | Revalidate catalogue and reader contracts; complete full exact-head CI/Merge Gate on final PR | Story House and merge gate | Draft Tier 0 green; final qualification pending |
+
+## Non-destructive closeout recommendation (16 October 2026)
+
+1. **Preserve** the unused Alice cropped cover and R4 manifest: harmless repository residue is safer than losing a potentially referenced production source. The audit has identified it and assigned the prospective deletion a separate human gate. It must not be represented as deleted.
+2. **Preserve** all 157 Drive staging sources, including the five duplicate-name Lantern versions, unless a future explicit source-provenance and deletion review establishes safety. Their existence does not impair the reader.
+3. **Preserve** `unknown` Duck Bread Baker image/edition rights and progress the evidence/permissions question as [issue #326](https://github.com/tametheboardgame/unicorn-valley/issues/326). This is a separate publication/rightsholder prerequisite; it must not silently become `original`.
+4. Subject to final qualifying checks, merge the safe retrospective documentation/archival changes, close legacy Alice PR #261 only **after** its recovered visual bible lands on main, and reconcile the Story House stream to SH2.0 in an integration checkpoint. Keep any legal or destructive follow-up open and visible.
+
+This recommendation deliberately **does not** assert that content copyright licences were independently validated or that any image/source files were removed.
