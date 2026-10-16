@@ -168,17 +168,13 @@ describe('Crystal Brook map', () => {
   });
 
   it('breaks the painted Grotto trail at the stream and keeps stepping stones exposed', () => {
-    const north = CRYSTAL_BROOK_LOCAL_TRAILS.find(
-      ({ id }) => id === 'crystal-grotto-approach',
-    );
+    const north = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-grotto-approach');
     const south = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-grotto');
     const crossing = CRYSTAL_BROOK_REFLECTION_STONES[1];
     expect(north?.points).toEqual(CRYSTAL_BROOK_GROTTO_APPROACH_TRAIL);
     expect(south?.points).toEqual(CRYSTAL_BROOK_GROTTO_LANDING_TRAIL);
     expect(north?.points[0]).toEqual(CRYSTAL_BROOK_LAYOUT.routes.crystalGrotto[0]);
-    expect(south?.points.at(-1)).toEqual(
-      CRYSTAL_BROOK_LAYOUT.thresholds.crystalGrotto.position,
-    );
+    expect(south?.points.at(-1)).toEqual(CRYSTAL_BROOK_LAYOUT.thresholds.crystalGrotto.position);
 
     // Account for each sandy path's rounded edge cap, not just its centreline.
     const halfPaintedWidth = ((north?.width ?? 0) + 18) / 2;
@@ -198,9 +194,7 @@ describe('Crystal Brook map', () => {
 
   it('joins the feeder at the riverbank without starting beneath the deep channel', () => {
     const mouth = CRYSTAL_BROOK_REFLECTION_FEEDER.points[0];
-    const riverCentre = CRYSTAL_BROOK_WATERCOURSE.find(
-      ({ x, y }) => x === 2600 && y === 1320,
-    );
+    const riverCentre = CRYSTAL_BROOK_WATERCOURSE.find(({ x, y }) => x === 2600 && y === 1320);
     expect(riverCentre).toBeDefined();
     const distanceToCentre = Math.hypot(
       mouth.x - (riverCentre?.x ?? 0),
