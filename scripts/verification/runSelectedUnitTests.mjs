@@ -45,5 +45,5 @@ if (selectedFilters.length > 0) {
 }
 
 if (relatedFiles.length > 0) {
-  run('npx', ['vitest', 'related', '--run', ...relatedFiles]);
+  // Related source discovery must stay within Vitest's src-only unit suite.\n  // Without this, Vitest tries to execute Playwright tests/play/*.spec.ts as unit specs.\n  run('npx', ['vitest', 'related', '--run', '--dir', 'src', ...relatedFiles]);
 }
