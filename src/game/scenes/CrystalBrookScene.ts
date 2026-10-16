@@ -27,13 +27,18 @@ import {
   CRYSTAL_BROOK_MEADOW_GORGE,
   CRYSTAL_BROOK_LOCAL_TRAILS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
-  CRYSTAL_BROOK_REFLECTION_POOL,
+  CRYSTAL_BROOK_REFLECTION_STONES,
   CRYSTAL_BROOK_UPSTREAM_CASCADE,
   CRYSTAL_BROOK_WATER_GLINTS,
   CRYSTAL_BROOK_WATERCOURSE,
   type CrystalBrookWatercoursePoint,
 } from '../world/CrystalBrookMap';
 import { createCrystalBrookBoundaryPresentation } from '../world/CrystalBrookBoundaryPresentation';
+import {
+  createCrystalBrookDistrictPresentation,
+  createCrystalBrookGrottoPresentation,
+  createCrystalBrookReflectionPoolPresentation,
+} from '../world/CrystalBrookDistrictPresentation';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const COLLISION_TEXTURE_KEY = 'crystal-brook-collision-pixel';
@@ -85,16 +90,29 @@ function fillVariableRibbon(
   );
 }
 
-function fillConstantRibbon(
+function fillConfluenceRibbon(
   graphics: Phaser.GameObjects.Graphics,
   points: readonly { x: number; y: number }[],
   width: number,
   colour: number,
   alpha: number,
+  taperLength: number,
 ): void {
+  // Follow the same smoothed river shape as the main course. The tributary
+  // begins at zero width *inside* the main river and widens to its normal
+  // banks after reaching open ground. This eliminates the squared-off mouth
+  // without leaving a doubled strip of translucent water in the river.
+  const smoothed = smoothPoints(points);
+  let travelled = 0;
+  const widths = smoothed.map((point, index) => {
+    if (index > 0) {
+      travelled += Math.hypot(point.x - smoothed[index - 1].x, point.y - smoothed[index - 1].y);
+    }
+    return (width / 2) * Math.min(1, travelled / taperLength);
+  });
   graphics.fillStyle(colour, alpha);
   graphics.fillPoints(
-    buildRibbonPolygon(points, () => width / 2),
+    buildRibbonPolygon(smoothed, (index) => widths[index]),
     true,
   );
 }
@@ -404,9 +422,6 @@ export class CrystalBrookScene extends Phaser.Scene {
   private createEnvironment(): void {
     const map = CRYSTAL_BROOK_MAP;
     this.add.rectangle(map.width / 2, map.height / 2, map.width, map.height, 0xa8e0bd).setDepth(0);
-    this.add.circle(760, 510, 610, 0xc8edbf, 0.48).setDepth(1);
-    this.add.circle(1950, 1560, 730, 0x91d1ab, 0.28).setDepth(1);
-    this.add.circle(3050, 740, 650, 0xbde7c1, 0.38).setDepth(1);
 
     const pathEdges = this.add.graphics().setName('crystal-brook:main-path').setDepth(2.84);
     const pathSurfaces = this.add.graphics().setName('crystal-brook:path-surfaces').setDepth(2.86);
@@ -452,11 +467,12 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.add.zone(2490, 1060, 2, 2).setName('crystal-brook:crystal-cup-spur');
 
     this.createWater();
+    createCrystalBrookDistrictPresentation(this);
+    createCrystalBrookGrottoPresentation(this);
     this.createMeadowGorge();
     createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
     this.createGrottoTrailCues();
-    this.createBanks();
     this.createNpcVisitPoints();
     this.createAmbientSparkles();
   }
@@ -481,55 +497,27 @@ export class CrystalBrookScene extends Phaser.Scene {
     const reflectionFeeder = this.add
       .graphics()
       .setName('crystal-brook:reflection-feeder')
-      .setDepth(3.01);
-    fillConstantRibbon(
+      // Taper the mouth inside the river, behind its main water layers.
+      .setDepth(2.99);
+    fillConfluenceRibbon(
       reflectionFeeder,
       CRYSTAL_BROOK_REFLECTION_FEEDER.points,
       CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth,
       0x579da4,
       0.42,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength,
     );
-    fillConstantRibbon(
+    fillConfluenceRibbon(
       reflectionFeeder,
       CRYSTAL_BROOK_REFLECTION_FEEDER.points,
       CRYSTAL_BROOK_REFLECTION_FEEDER.innerWidth,
       0x78cbd0,
       0.72,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength,
     );
 
-    this.add
-      .ellipse(
-        CRYSTAL_BROOK_REFLECTION_POOL.x,
-        CRYSTAL_BROOK_REFLECTION_POOL.y,
-        292,
-        138,
-        0x579da4,
-        0.62,
-      )
-      .setName('crystal-brook:reflection-pool-outer')
-      .setDepth(3);
-    this.add
-      .ellipse(
-        CRYSTAL_BROOK_REFLECTION_POOL.x,
-        CRYSTAL_BROOK_REFLECTION_POOL.y,
-        232,
-        102,
-        0x78cbd0,
-        0.86,
-      )
-      .setName('crystal-brook:reflection-pool-inner')
-      .setDepth(3.03);
-    this.add
-      .ellipse(
-        CRYSTAL_BROOK_REFLECTION_POOL.x,
-        CRYSTAL_BROOK_REFLECTION_POOL.y,
-        118,
-        48,
-        0x438f9d,
-        0.56,
-      )
-      .setName('crystal-brook:reflection-pool-deep')
-      .setDepth(3.06);
+    createCrystalBrookReflectionPoolPresentation(this);
+    this.createReflectionSteppingStones();
 
     const cascade = this.add.graphics().setName('crystal-brook:upstream-cascade').setDepth(3.08);
     const cascadeX = CRYSTAL_BROOK_UPSTREAM_CASCADE.x;
@@ -567,6 +555,47 @@ export class CrystalBrookScene extends Phaser.Scene {
       glints.moveTo(glint.x - dx, glint.y - dy);
       glints.lineTo(glint.x + dx, glint.y + dy);
       glints.strokePath();
+    }
+  }
+
+  private createReflectionSteppingStones(): void {
+    for (const [index, point] of CRYSTAL_BROOK_REFLECTION_STONES.entries()) {
+      const stone = this.add
+        .graphics()
+        .setPosition(point.x, point.y)
+        .setName(`crystal-brook:reflection-stepping-stone:${index}`)
+        .setDepth(3.43);
+      stone.fillStyle(0x416e79, 0.32);
+      stone.fillEllipse(4, 7, 48, 28);
+      stone.fillStyle(0x98c6cf, 1);
+      stone.fillPoints(
+        [
+          [-21, 4],
+          [-18, -8],
+          [-4, -14],
+          [16, -10],
+          [23, 2],
+          [12, 12],
+          [-12, 11],
+        ].map(([x, y]) => new Phaser.Math.Vector2(x, y)),
+        true,
+      );
+      stone.fillStyle(0xe5faff, 0.65);
+      stone.fillPoints(
+        [
+          [-17, -6],
+          [-3, -11],
+          [15, -8],
+          [4, -3],
+          [-13, -1],
+        ].map(([x, y]) => new Phaser.Math.Vector2(x, y)),
+        true,
+      );
+      stone.lineStyle(2, 0xffffff, 0.55);
+      stone.beginPath();
+      stone.moveTo(-12, 2);
+      stone.lineTo(8, 5);
+      stone.strokePath();
     }
   }
 
@@ -959,28 +988,6 @@ export class CrystalBrookScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setAlpha(0.5)
         .setDepth(worldDepthForY(point.y, 0.2));
-    }
-  }
-
-  private createBanks(): void {
-    const clumps = [
-      [520, 520],
-      [700, 1700],
-      [1670, 410],
-      [1890, 1770],
-      [2440, 510],
-      [3170, 560],
-    ] as const;
-    for (const [x, y] of clumps) {
-      const depth = worldDepthForY(y, 0.15);
-      this.add.ellipse(x, y, 180, 100, 0x6eaa76, 0.86).setDepth(depth);
-      this.add.ellipse(x + 70, y + 10, 150, 90, 0x7eba7d, 0.82).setDepth(depth);
-      for (let offset = -50; offset <= 50; offset += 25) {
-        this.add
-          .rectangle(x + offset, y - 70, 7, 54, 0x579064, 0.85)
-          .setAngle(offset / 8)
-          .setDepth(depth + 0.1);
-      }
     }
   }
 

@@ -152,20 +152,6 @@ function addStorybookFlower(
   container.add([stem, glow, ...petals, centre]);
 }
 
-function addCrystalCluster(
-  scene: Phaser.Scene,
-  container: Phaser.GameObjects.Container,
-  x: number,
-  y: number,
-  colour: number,
-): void {
-  const glow = scene.add.circle(x, y - 18, 54, colour, 0.08);
-  const left = scene.add.triangle(x - 22, y, 0, 42, 18, 0, 36, 42, colour, 0.62);
-  const centre = scene.add.triangle(x, y - 8, 0, 54, 22, 0, 44, 54, 0xe8ffff, 0.72);
-  const right = scene.add.triangle(x + 24, y + 2, 0, 38, 17, 0, 34, 38, colour, 0.5);
-  container.add([glow, left, centre, right]);
-}
-
 function createMoonflowerGladeProduction(scene: Phaser.Scene): void {
   const environment = 'moonflower-glade';
   const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
@@ -302,14 +288,6 @@ export function createSunbeamVillageProductionPresentation(scene: Phaser.Scene):
 
 function createCrystalBrookProduction(scene: Phaser.Scene): void {
   const environment = 'crystal-brook';
-  const background = nameObject(scene.add.graphics().setDepth(1.55), environment, 'background');
-  background.fillStyle(0xc8f1d1, 0.22);
-  background.fillEllipse(650, 480, 1300, 760);
-  background.fillStyle(0xb9e9eb, 0.22);
-  background.fillEllipse(1950, 1320, 1540, 760);
-  background.fillStyle(0xd9f4c7, 0.18);
-  background.fillEllipse(3030, 520, 1120, 660);
-
   const signature = nameObject(scene.add.container(0, 0), environment, 'signature');
   for (const [x, y, width] of [
     [1280, 505, 110],
@@ -330,13 +308,8 @@ function createCrystalBrookProduction(scene: Phaser.Scene): void {
     });
     signature.add(glint);
   }
-  addCrystalCluster(scene, signature, 610, 790, 0x74d7df);
-  addCrystalCluster(scene, signature, 760, 1430, 0x8fdfe4);
-  addCrystalCluster(scene, signature, 1040, 1370, 0x7bcad8);
-  signature.setDepth(7.6);
-
-  createLeafCluster(scene, environment, 310, 1830, [0x4e9271, 0x71b28a, 0x665546]);
-  createLeafCluster(scene, environment, 3290, 1810, [0x4b8c6d, 0x7cba8e, 0x665546], true);
+  // Crystal Brook's geological detail now belongs to its own district renderer.
+  // Retain only the ambient water light from the cross-area production pass.
 
   addAmbientMotes(
     scene,

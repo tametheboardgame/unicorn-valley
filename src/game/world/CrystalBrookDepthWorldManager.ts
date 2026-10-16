@@ -350,15 +350,17 @@ export class CrystalBrookDepthWorldManager {
     open: boolean,
   ): void {
     const grotto = CRYSTAL_BROOK_GROTTO_THRESHOLD.position;
-    const rock = scene.add
-      .ellipse(grotto.x, grotto.y - 40, 310, 230, 0x63848b, 1)
-      .setStrokeStyle(8, 0x45646d, 0.95)
-      .setDepth(7);
-    const door = scene.add
-      .ellipse(grotto.x, grotto.y - 5, 150, 170, open ? 0x365d70 : 0x506f76, 1)
-      .setDepth(8)
+    // The permanent rock arch and portal are now painted once by CrystalBrookScene.
+    // This manager owns only the unlock-state glimmer, not duplicate cave geometry.
+    const marker = scene.add
+      .graphics()
+      .setPosition(grotto.x, grotto.y)
       .setName('brook-depth:crystal-grotto-entrance');
-    objects.push(rock, door);
+    marker.fillStyle(open ? 0xd5faff : 0xc7a7e5, open ? 0.78 : 0.36);
+    marker.fillCircle(0, -151, open ? 9 : 5);
+    marker.lineStyle(2, 0xf1e3ff, open ? 0.8 : 0.35);
+    marker.strokeCircle(0, -151, open ? 17 : 12);
+    objects.push(marker);
     if (open) {
       objects.push(
         scene.add

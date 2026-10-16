@@ -48,21 +48,6 @@ function drawRoundedPath(
   draw(innerWidth, innerColour, 0.98);
 }
 
-function addRock(
-  scene: Phaser.Scene,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  depth: number,
-  colour = 0x6f7d82,
-): Phaser.GameObjects.Ellipse {
-  return scene.add
-    .ellipse(x, y, width, height, colour, 1)
-    .setStrokeStyle(4, 0x526168, 0.9)
-    .setDepth(depth);
-}
-
 function addFacetedRock(
   scene: Phaser.Scene,
   x: number,
@@ -375,7 +360,13 @@ function createWoodlandThreshold(
 }
 
 function createBrookEastWoodland(scene: Phaser.Scene): void {
-  const woodland = name(scene.add.container(0, 0).setDepth(6.2), 'crystal-brook:east-woodland');
+  // Keep trunks behind the rock perimeter and canopy above it; a single
+  // woodland container cannot interleave both correctly.
+  const woodlandTrunks = name(
+    scene.add.container(0, 0).setDepth(5.85),
+    'crystal-brook:east-woodland-trunks',
+  );
+  const woodland = name(scene.add.container(0, 0).setDepth(6.45), 'crystal-brook:east-woodland');
 
   const treePositions = [
     [3345, 430, 0.78],
@@ -413,11 +404,13 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     const lean = index % 2 === 0 ? -5 : 4;
     const spread = 0.9 + (index % 5) * 0.05;
 
-    woodland.add([
+    woodlandTrunks.add(
       scene.add
         .rectangle(x, y, trunkWidth, trunkHeight, 0x544638, 1)
         .setStrokeStyle(3, 0x3f372f, 0.84)
         .setAngle(lean),
+    );
+    woodland.add([
       scene.add.ellipse(
         x - 42 * scale,
         y - 82 * scale,
@@ -450,24 +443,12 @@ function createBrookEastWoodland(scene: Phaser.Scene): void {
     [3440, 1850, 118, 58, -5],
     [3610, 1890, 130, 62, 9],
   ] as const) {
-    woodland.add([
+    woodlandTrunks.add([
       scene.add.ellipse(x, y, width, height, 0x4f8057, 0.86).setAngle(angle),
       scene.add
         .ellipse(x + 30, y - 10, width * 0.72, height * 0.8, 0x5d9361, 0.78)
         .setAngle(-angle),
     ]);
-  }
-
-  for (const [x, y, scale] of [
-    [3370, 820, 0.42],
-    [3540, 1130, 0.5],
-    [3460, 1810, 0.46],
-  ] as const) {
-    woodland.add(
-      scene.add
-        .triangle(x, y, 0, 34 * scale, 13 * scale, 0, 26 * scale, 34 * scale, 0xa9eaf0, 0.72)
-        .setStrokeStyle(2, 0xf0ffff, 0.62),
-    );
   }
 
   const woodsSign = scene.add
@@ -1037,23 +1018,6 @@ function decorateBrook(scene: Phaser.Scene): void {
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.x,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.y,
   );
-  const cliffs = name(scene.add.container(0, 0).setDepth(7.45), 'crystal-brook:production-upgrade');
-  for (const [x, y, width, height] of [
-    [520, 410, 360, 190],
-    [880, 350, 300, 170],
-    [2350, 310, 340, 190],
-  ] as const) {
-    cliffs.add(addRock(scene, x, y, width, height, 7.45, 0x748985));
-    cliffs.add(addRock(scene, x, y - height * 0.16, width * 0.76, height * 0.52, 7.46, 0x8aa09a));
-  }
-  for (const [x, y, scale] of [
-    [430, 470, 1.1],
-    [720, 455, 0.8],
-    [2260, 420, 1],
-    [2460, 410, 0.78],
-  ] as const) {
-    cliffs.add(addCrystal(scene, x, y, scale, 7.6));
-  }
 }
 
 function decorateWoods(scene: Phaser.Scene): void {
