@@ -2,7 +2,7 @@
 
 **Started:** 15 October 2026  
 **Owner/branch:** Story House, `agent/story-house-sh1.7-consolidation`  
-**Draft PR:** new correctly named Story House draft PR (number to be recorded)  
+**Draft PR:** [#325](https://github.com/tametheboardgame/unicorn-valley/pull/325)  
 **Baseline:** `main` at SH2 roadmap merge `17e228e361e84354f10d98b1f1581072f0006d01`
 
 This is a checkpoint ledger, **not** a completed SH1.7 sign-off. Any unknown rights, branch review, external Drive deletion or final reader gate remains explicitly open. Counts below refer to the baseline commit and need revalidation against the final PR head.
