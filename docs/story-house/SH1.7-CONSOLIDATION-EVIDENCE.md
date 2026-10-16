@@ -1,8 +1,8 @@
 # SH1.7 — Illustrated Classics consolidation: evidence ledger
 
-**Started:** 15 October 2026  
+**Started:** 15 October 2026; **resumed:** 16 October 2026  
 **Owner/branch:** Story House, `agent/story-house-sh1.7-consolidation`  
-**Draft PR:** [#325](https://github.com/tametheboardgame/unicorn-valley/pull/325)  
+**Active draft PR:** [#325](https://github.com/tametheboardgame/unicorn-valley/pull/325)  
 **Baseline:** `main` at SH2 roadmap merge `17e228e361e84354f10d98b1f1581072f0006d01`
 
 This is a checkpoint ledger, **not** a completed SH1.7 sign-off. Any unknown rights, branch review, external Drive deletion or final reader gate remains explicitly open. Counts below refer to the baseline commit and need revalidation against the final PR head.
@@ -21,7 +21,8 @@ This is a checkpoint ledger, **not** a completed SH1.7 sign-off. Any unknown rig
 
 - Recursive tree includes **149** `public/stories/*/illustrations/generated/*.webp` files. **148** are directly referenced by book manifest art paths; the single candidate unused image is `public/stories/alices-adventures-in-wonderland/illustrations/generated/alice-cover-cropped.webp`.
 - The candidate's R4 manifest is `generated-assets/manifests/story-alices-adventures-in-wonderland-cover.json`. It points to Google Drive source ID `1XwgT6w-IXV_vbzPtEJCGcZocYMvG23B7`; verified its accessible Drive metadata, actual filename `alice-cover-cropped.webp`, and parent staging folder ID `1tAy3sb661zrfVnbQ1VkGFZ_Of3rM6ikA`.
-- Drive folder lookup confirmed `Unicorn Valley > Generated Asset Staging`; a direct first-batch listing displayed approved story source images and some duplicate staging names with distinct IDs (e.g. prior Lantern revisions). **This listing is not an exhaustive Drive residue inventory**, and duplicate filenames alone do not prove the older source can be deleted.
+- Drive folder lookup confirmed `Unicorn Valley > Generated Asset Staging`; a 400-item-capacity listing returned **157 files (152 distinct filenames)**. Exactly **five pairs** have duplicated names: `lantern-01-village-lanterns.png`, `lantern-03-first-glimmer.png`, `lantern-04-path-that-moved.png`, `lantern-05-chasing-the-light.png`, `lantern-06-walking-at-their-pace.png`. Each pair has two distinct Drive IDs. The five **currently referenced** R4 manifests were inspected and point respectively to `1T8mWE_aFeSI8jcGSA2oPFtwi1PIGIGik`, `1YUH6EFgpAXxQBr6pQrVoeUVgudEG8JS7`, `1J6cWbprNtXzGO45g2aUGqngAroWjGBGr`, `1M-crx8cRsgLhVZdxhamCba4Wy0dly-KT`, and `1siRr_bkm1nidnMWb5dT0ymYWQsdQ2Pyq`. The alternate IDs are **candidates** for retired staging versions, not verified safe deletions until every manifest/history use is checked. Do not remove any source under this pass.
+- Exactly **37 Alice source PNGs**, **11 Peter Rabbit PNGs**, **11 Jemima PNGs** and **17 Lantern PNGs** appear in the staging folder. These counts represent current named Drive files, not approved illustration counts (the five Lantern duplicates inflate its 12-image source set).
 - Reviewed the GitHub Actions `generated-asset-materialisation.yml`: it authenticates with Google Workload Identity Federation, takes a specific manifest path and an existing non-main branch on manual dispatch, materialises and verifies WebPs, and commits generated art on that feature branch. The automatic manifest push trigger uses `agent/story-house-*` branches; `agent/sh-*` work may need manual `workflow_dispatch`. **No live round-trip replacement was run during the audit.**
 - **No deletion performed** on GitHub or Drive. The Alice unused-cover WebP/manifests should be removed only after a wider reference/code-history check plus explicit clean-up acceptance; Drive sources should remain until separately approved.
 
@@ -29,7 +30,8 @@ This is a checkpoint ledger, **not** a completed SH1.7 sign-off. Any unknown rig
 
 - `docs/story-library-authoring.md` now treats reuse of one **human-approved reader illustration** as the canonical modern-cover rule, with an approved dedicated-cover exception where the crop genuinely fails. It explicitly retains the accepted dedicated Lion/Mouse pilot cover and source-art sets.
 - `the-duck-bread-baker/book.json` credits the author, describes the source as supplied production PDFs, and marks `rights.illustrations.status` and `rights.edition.status` as **`unknown`**. **Do not rewrite those to original or clear for publication without provenance/permission evidence from the rights holder.** Record this as an unresolved metadata acceptance question.
-- Rights for classic works require checking their actual **edition-level wording/translation, historic illustrations and modern assets** separately. A lack of top-level `rights` on a v2 manifest is not proof that its per-edition rights are absent; deeper targeted metadata validation remains on the finalisation checklist.
+- **Deeper targeted metadata inspection completed for all 18 books:** the **12 published v2 multi-edition titles** specify text, illustration and edition status independently on **each** Story House and Full Classic edition and give `classic`/`modern` covers their own rights statuses. The lack of top-level rights on these books is intentional schema design, **not** evidence of missing metadata. The remaining published single-edition stories include explicit original or public-domain rights, with **The Duck Bread Baker** the single published book retaining `unknown` for illustration and edition status. This verifies that status fields exist; it does **not** recheck every historical source's legal authenticity or grant rights.
+- No rights claim was silently upgraded. Preserve the existing Duck rights values pending source-production PDF provenance/permission confirmation.
 
 ## D — Regression checks (not yet signed off)
 
@@ -45,6 +47,6 @@ Keep `docs/streams/state/story-house.json` in-progress while this branch is acti
 | --- | --- | --- | --- |
 | SH1.7-01 | Merge recovered Alice visual bible, then close superseded PR #261 with traceable link | Story House; after new PR integration | Pending |
 | SH1.7-02 | Assess Alice unused-cover file and source manifest references, then decide removal | Human cleanup review | Keep for now |
-| SH1.7-03 | Review Drive duplicate and staging residue after source-ID/active-manifest mapping | Human approval before any Drive delete | Keep for now |
+| SH1.7-03 | Five duplicate Lantern Drive filenames: active IDs mapped, prior versions still to verify against every historical manifest | Human approval before any Drive delete | Preserve all source files for now |
 | SH1.7-04 | Confirm The Duck Bread Baker image and edition rights from original materials/rights holder | Rights holder/editorial gate | Unknown, no invented rights |
 | SH1.7-05 | Revalidate catalogue and browser/saved-progress contracts, then pass CI/Merge Gate | Story House and merge gate | Pending |
