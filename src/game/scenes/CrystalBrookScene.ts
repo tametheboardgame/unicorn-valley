@@ -90,18 +90,31 @@ function fillVariableRibbon(
   );
 }
 
-function fillConstantRibbon(
+function fillConfluenceRibbon(
   graphics: Phaser.GameObjects.Graphics,
   points: readonly { x: number; y: number }[],
   width: number,
   colour: number,
   alpha: number,
+  taperLength: number,
 ): void {
+  // Follow the same smoothed river shape as the main course. The tributary
+  // begins at zero width *inside* the main river and widens to its normal
+  // banks after reaching open ground. This eliminates the squared-off mouth
+  // without leaving a doubled strip of translucent water in the river.
+  const smoothed = smoothPoints(points);
+  let travelled = 0;
+  const widths = smoothed.map((point, index) => {
+    if (index > 0) {
+      travelled += Math.hypot(
+        point.x - smoothed[index - 1].x,
+        point.y - smoothed[index - 1].y,
+      );
+    }
+    return (width / 2) * Math.min(1, travelled / taperLength);
+  });
   graphics.fillStyle(colour, alpha);
-  graphics.fillPoints(
-    buildRibbonPolygon(points, () => width / 2),
-    true,
-  );
+  graphics.fillPoints(buildRibbonPolygon(smoothed, (index) => widths[index]), true);
 }
 
 function smoothPoints(
@@ -484,21 +497,23 @@ export class CrystalBrookScene extends Phaser.Scene {
     const reflectionFeeder = this.add
       .graphics()
       .setName('crystal-brook:reflection-feeder')
-      // Render the small confluence beneath all three main-river water layers.
+      // Taper the mouth inside the river, behind its main water layers.
       .setDepth(2.99);
-    fillConstantRibbon(
+    fillConfluenceRibbon(
       reflectionFeeder,
       CRYSTAL_BROOK_REFLECTION_FEEDER.points,
       CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth,
       0x579da4,
       0.42,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength,
     );
-    fillConstantRibbon(
+    fillConfluenceRibbon(
       reflectionFeeder,
       CRYSTAL_BROOK_REFLECTION_FEEDER.points,
       CRYSTAL_BROOK_REFLECTION_FEEDER.innerWidth,
       0x78cbd0,
       0.72,
+      CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength,
     );
 
     createCrystalBrookReflectionPoolPresentation(this);

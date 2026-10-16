@@ -366,9 +366,11 @@ export const CRYSTAL_BROOK_WATERCOURSE = [
 
 export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
   points: [
-    // Start just outside the main river's south bank, not at its centreline.
-    // The overlapping mouth lies beneath the main river layers, without a
-    // second translucent feeder ribbon visible through the river.
+    // Anchor inside the main river's centreline and flare towards its south
+    // bank; the renderer tapers the first section rather than exposing a
+    // straight-cut tributary end beside the river.
+    { x: 2600, y: 1320 },
+    { x: 2538, y: 1379 },
     { x: 2510, y: 1414 },
     { x: 2440, y: 1437 },
     { x: 2300, y: 1480 },
@@ -379,6 +381,7 @@ export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
   ] as const satisfies readonly MapPoint[],
   outerWidth: 58,
   innerWidth: 34,
+  mouthTaperLength: 125,
 } as const;
 
 export const CRYSTAL_BROOK_WATER_GLINTS = [

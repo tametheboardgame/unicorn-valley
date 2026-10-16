@@ -121,7 +121,7 @@ describe('Crystal Brook map', () => {
       expect(point.deepWidth).toBeGreaterThan(0);
     }
 
-    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2510, y: 1414 });
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2600, y: 1320 });
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
@@ -192,18 +192,22 @@ describe('Crystal Brook map', () => {
     );
   });
 
-  it('joins the feeder at the riverbank without starting beneath the deep channel', () => {
-    const mouth = CRYSTAL_BROOK_REFLECTION_FEEDER.points[0];
-    const riverCentre = CRYSTAL_BROOK_WATERCOURSE.find(({ x, y }) => x === 2600 && y === 1320);
-    expect(riverCentre).toBeDefined();
-    const distanceToCentre = Math.hypot(
-      mouth.x - (riverCentre?.x ?? 0),
-      mouth.y - (riverCentre?.y ?? 0),
+  it('tapers the feeder inside the main river instead of leaving a severed bank end', () => {
+    const points = CRYSTAL_BROOK_REFLECTION_FEEDER.points;
+    const mouth = points[0];
+    expect(CRYSTAL_BROOK_WATERCOURSE).toContainEqual(
+      expect.objectContaining(mouth),
     );
-    // The mouth is outside the deep river and near its outer bank.
-    expect(distanceToCentre).toBeGreaterThan(110);
-    expect(distanceToCentre).toBeLessThan(160);
-    expect(mouth.y).toBeGreaterThan(1390);
+    expect(points[1].y).toBeGreaterThan(mouth.y);
+    expect(points[2].y).toBeGreaterThan(points[1].y);
+    const mouthToBankDistance = Math.hypot(points[2].x - mouth.x, points[2].y - mouth.y);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength).toBeGreaterThan(90);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.mouthTaperLength).toBeLessThan(
+      mouthToBankDistance,
+    );
+    // Downstream anchor and stepping-stone crossing are unchanged.
+    expect(points).toContainEqual({ x: 2040, y: 1565 });
+    expect(points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
   });
 
   it('uses one continuous west-bank trail through the gorge and into Crystal Brook', () => {
