@@ -140,6 +140,7 @@ export interface CrystalBrookLocalTrail {
     | 'woods-pass'
     | 'crystal-cup'
     | 'crystal-grotto'
+    | 'crystal-grotto-approach'
     | 'reflection-pool';
   points: readonly MapPoint[];
   width: number;
@@ -212,6 +213,19 @@ export const CRYSTAL_BROOK_MAIN_ROUTE = [
   ...CRYSTAL_BROOK_WOODS_ROUTE,
 ] as const;
 
+// The full Grotto route remains continuous for navigation. Its *painted* surface
+// stops before the feeder and resumes after the stepping stones so no sand path
+// shows through translucent water at the crossing.
+export const CRYSTAL_BROOK_GROTTO_APPROACH_TRAIL = [
+  CRYSTAL_BROOK_GROTTO_ROUTE[0],
+  { x: 2040, y: 1470 },
+] as const satisfies readonly MapPoint[];
+
+export const CRYSTAL_BROOK_GROTTO_LANDING_TRAIL = [
+  { x: 2040, y: 1660 },
+  ...CRYSTAL_BROOK_GROTTO_ROUTE.slice(2),
+] as const satisfies readonly MapPoint[];
+
 export const CRYSTAL_BROOK_REFLECTION_ROUTE = [
   { x: 2040, y: 1710 },
   { x: 2000, y: 1724 },
@@ -240,8 +254,13 @@ export const CRYSTAL_BROOK_LOCAL_TRAILS = [
     width: 72,
   },
   {
+    id: 'crystal-grotto-approach',
+    points: CRYSTAL_BROOK_GROTTO_APPROACH_TRAIL,
+    width: 62,
+  },
+  {
     id: 'crystal-grotto',
-    points: CRYSTAL_BROOK_GROTTO_ROUTE,
+    points: CRYSTAL_BROOK_GROTTO_LANDING_TRAIL,
     width: 62,
   },
   {
@@ -347,8 +366,11 @@ export const CRYSTAL_BROOK_WATERCOURSE = [
 
 export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
   points: [
-    { x: 2550, y: 1290 },
-    { x: 2440, y: 1390 },
+    // Start just outside the main river's south bank, not at its centreline.
+    // The overlapping mouth lies beneath the main river layers, without a
+    // second translucent feeder ribbon visible through the river.
+    { x: 2510, y: 1414 },
+    { x: 2440, y: 1437 },
     { x: 2300, y: 1480 },
     { x: 2150, y: 1540 },
     { x: 2040, y: 1565 },

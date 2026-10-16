@@ -108,6 +108,8 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:east-crossing');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:crystal-cup-spur');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:path:crystal-grotto-approach');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:path:crystal-grotto');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-pool-outer');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:upstream-cascade');
   await waitForObject(
@@ -176,6 +178,11 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   ).toHaveLength(10);
   expect(objects.some(({ name }) => name === 'crystal-brook:grotto:authored-arch')).toBe(true);
   expect(objects.some(({ name }) => name === 'crystal-brook:crystal-district-floors')).toBe(true);
+  const feederDepth = objects.find(({ name }) => name === 'crystal-brook:reflection-feeder')?.depth;
+  const riverDepth = objects.find(({ name }) => name === 'crystal-brook:watercourse-outer')?.depth;
+  expect(feederDepth).toBeDefined();
+  expect(riverDepth).toBeDefined();
+  expect(feederDepth ?? 100).toBeLessThan(riverDepth ?? 0);
   for (const index of [0, 1, 2]) {
     expect(
       objects.some(({ name }) => name === `crystal-brook:reflection-stepping-stone:${index}`),

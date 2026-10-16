@@ -484,7 +484,8 @@ export class CrystalBrookScene extends Phaser.Scene {
     const reflectionFeeder = this.add
       .graphics()
       .setName('crystal-brook:reflection-feeder')
-      .setDepth(3.01);
+      // Render the small confluence beneath all three main-river water layers.
+      .setDepth(2.99);
     fillConstantRibbon(
       reflectionFeeder,
       CRYSTAL_BROOK_REFLECTION_FEEDER.points,

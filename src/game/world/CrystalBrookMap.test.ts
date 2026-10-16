@@ -15,6 +15,8 @@ import {
   CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   CRYSTAL_BROOK_NORTH_BRIDGE,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
+  CRYSTAL_BROOK_GROTTO_APPROACH_TRAIL,
+  CRYSTAL_BROOK_GROTTO_LANDING_TRAIL,
   CRYSTAL_BROOK_REFLECTION_STONES,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPPER_POOL,
@@ -119,7 +121,7 @@ describe('Crystal Brook map', () => {
       expect(point.deepWidth).toBeGreaterThan(0);
     }
 
-    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2550, y: 1290 });
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2510, y: 1414 });
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
   });
@@ -152,7 +154,7 @@ describe('Crystal Brook map', () => {
     const reflectionTrail = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'reflection-pool');
     const pool = CRYSTAL_BROOK_REFLECTION_POOL;
     expect(pool.x + 165).toBeLessThan(2040 - 30);
-    expect(reflectionTrail?.points[0]).toEqual(grottoTrail?.points[2]);
+    expect(reflectionTrail?.points[0]).toEqual(grottoTrail?.points[1]);
     expect(reflectionTrail?.points.at(-1)?.x).toBeGreaterThan(pool.x + 150);
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(pool);
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points).toContainEqual({ x: 2040, y: 1565 });
@@ -163,6 +165,51 @@ describe('Crystal Brook map', () => {
     }
     const crystalarium = CRYSTAL_BROOK_ACTIVITY_POCKETS[0];
     expect(crystalarium.centre.x + crystalarium.radiusX + 20).toBeLessThan(pool.x - 158);
+  });
+
+  it('breaks the painted Grotto trail at the stream and keeps stepping stones exposed', () => {
+    const north = CRYSTAL_BROOK_LOCAL_TRAILS.find(
+      ({ id }) => id === 'crystal-grotto-approach',
+    );
+    const south = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-grotto');
+    const crossing = CRYSTAL_BROOK_REFLECTION_STONES[1];
+    expect(north?.points).toEqual(CRYSTAL_BROOK_GROTTO_APPROACH_TRAIL);
+    expect(south?.points).toEqual(CRYSTAL_BROOK_GROTTO_LANDING_TRAIL);
+    expect(north?.points[0]).toEqual(CRYSTAL_BROOK_LAYOUT.routes.crystalGrotto[0]);
+    expect(south?.points.at(-1)).toEqual(
+      CRYSTAL_BROOK_LAYOUT.thresholds.crystalGrotto.position,
+    );
+
+    // Account for each sandy path's rounded edge cap, not just its centreline.
+    const halfPaintedWidth = ((north?.width ?? 0) + 18) / 2;
+    expect((north?.points.at(-1)?.y ?? 9999) + halfPaintedWidth).toBeLessThan(
+      crossing.y - CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth / 2,
+    );
+    expect((south?.points[0].y ?? 0) - halfPaintedWidth).toBeGreaterThan(
+      crossing.y + CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth / 2,
+    );
+    expect(CRYSTAL_BROOK_GROTTO_APPROACH_TRAIL.at(-1)?.y).toBeLessThan(
+      CRYSTAL_BROOK_REFLECTION_STONES[0].y,
+    );
+    expect(CRYSTAL_BROOK_GROTTO_LANDING_TRAIL[0].y).toBeGreaterThan(
+      CRYSTAL_BROOK_REFLECTION_STONES.at(-1)?.y ?? 0,
+    );
+  });
+
+  it('joins the feeder at the riverbank without starting beneath the deep channel', () => {
+    const mouth = CRYSTAL_BROOK_REFLECTION_FEEDER.points[0];
+    const riverCentre = CRYSTAL_BROOK_WATERCOURSE.find(
+      ({ x, y }) => x === 2600 && y === 1320,
+    );
+    expect(riverCentre).toBeDefined();
+    const distanceToCentre = Math.hypot(
+      mouth.x - (riverCentre?.x ?? 0),
+      mouth.y - (riverCentre?.y ?? 0),
+    );
+    // The mouth is outside the deep river and near its outer bank.
+    expect(distanceToCentre).toBeGreaterThan(110);
+    expect(distanceToCentre).toBeLessThan(160);
+    expect(mouth.y).toBeGreaterThan(1390);
   });
 
   it('uses one continuous west-bank trail through the gorge and into Crystal Brook', () => {
