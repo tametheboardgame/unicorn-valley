@@ -6,7 +6,7 @@
   "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
   "branch": "agent/world-h6.5a-crystal-brook-art",
   "prNumber": 328,
-  "baseMainSha": "e73fca9d2b59fbd49f7ba776678b4eea0da83f2a",
+  "baseMainSha": "d45859a69dd0bb89cb32f1d7d44d401a486fe2e9",
   "updatedOn": "2026-10-16",
-  "note": "H6.5A visual polish in draft PR #328; scoped preview available, visual acceptance pending; H6.6 not started."
+  "note": "H6.5A visually approved 2026-10-16; final code/docs/test review reconciled. PR #328 awaiting exact-head CI and merge; next H6.6 Crystal Cup Race Hub."
 }

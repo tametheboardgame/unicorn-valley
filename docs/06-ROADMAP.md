@@ -1,5 +1,9 @@
 # Unicorn Valley - Development Roadmap
 
+## 2026-10-16 SH1.7 illustrated-classics consolidation merged — SH1 complete
+
+The 17-title Story House illustrated-classics programme is closed. The non-destructive SH1.7A–E audit and archive [PR #325](https://github.com/tametheboardgame/unicorn-valley/pull/325) merged as `e73fca9d2b59fbd49f7ba776678b4eea0da83f2a`, with exact-head full [CI #38858442488](https://github.com/tametheboardgame/unicorn-valley/actions/runs/38858442488) green (six Chromium shards, cross-browser, all required gates). PRs #230 and #261 closed without merging; uniquely approved Alice visual-design history was recovered to the repository. Rights metadata and source-art provenance were audited without deleting images, altering story content or making new publication-rights claims. Unverified Duck Bread Baker illustration/edition permissions remain tracked in [issue #326](https://github.com/tametheboardgame/unicorn-valley/issues/326). **Next Story House package: SH2.0**, the ten-title programme's editorial/rights foundation; not started. The 15 October entry below is retained as planning history.
+
 ## 2026-10-15 Story House transition: SH1.7 closeout then SH2 expansion
 
 The existing **17-title Story House library** and SH1 illustration deliveries are integrated. **SH1.7A-E** is the outstanding, bounded clean-up: content/rights inventory, legacy open PRs #230/#261, generated-asset manifests/staging, authoring-cover guidance, selected regressions and handover. This work is **planned, not completed**. The Lantern's completed **PR #298 merged on 10 October 2026**; any earlier authorisation-only entries below are historic checkpoints.
