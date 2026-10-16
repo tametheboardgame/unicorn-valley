@@ -188,15 +188,15 @@ H0.5 cleared the final technical and visual gate for H1.
 
 ### R6.5-WP19SH1 - Story House Illustrated Classics Programme
 
-State: **17-title illustrated-classics implementation delivered; final SH1.7 consolidation planned before programme close-out.** Alice (PR #291), Peter Rabbit (PR #295), Jemima Puddle-Duck (PR #297) and the original *Lantern at the Edge of the Woods* (PR #298) are human-approved and merged. The published catalogue has 17 titles; the main SH1 documentation preserves historical checkpoints.
+State: **COMPLETE 16 October 2026 — 17-title illustrated-classics programme and SH1.7A–E consolidated.** Alice (PR #291), Peter Rabbit (PR #295), Jemima Puddle-Duck (PR #297) and the original *Lantern at the Edge of the Woods* (PR #298) are human-approved and merged. The published catalogue has 17 titles; the main SH1 documentation preserves historical checkpoints.
 
 Canonical programme: `docs/work-packages/R6.5-WP19SH1-STORY-HOUSE-ILLUSTRATED-CLASSICS.md`
 
-Next bounded clean-up: **SH1.7A-E**, `docs/work-packages/R6.5-WP19SH1.7-STORY-HOUSE-CONSOLIDATION.md`. This audits old open PRs #230/#261, redundant generated art, Drive staging, source/illustration rights, old authoring-cover guidance and regressions. No cleanup has yet been executed merely by adopting this roadmap.
+Completed non-destructive handover: **SH1.7A–E**, `docs/work-packages/R6.5-WP19SH1.7-STORY-HOUSE-CONSOLIDATION.md`, merged [PR #325](https://github.com/tametheboardgame/unicorn-valley/pull/325) as `e73fca9d2b59fbd49f7ba776678b4eea0da83f2a`; full CI #38858442488 green. Old PRs #230/#261 are closed; Alice's design archive preserved. An unused cover and prior Drive source variants remain deliberately retained. Duck Bread Baker illustration/edition rights require confirmation under [issue #326](https://github.com/tametheboardgame/unicorn-valley/issues/326), independently of this closeout.
 
 ### R6.5-WP19SH2 - Story House Library Expansion (Next Ten Titles)
 
-State: **roadmap approved 15 October 2026; title production not started.** Dependency: SH1.7 completed, then SH2.0 editorial/source-rights foundation. Independent Story House stream, safe alongside Main World and Just Games under separate branches/PRs.
+State: **roadmap approved 15 October 2026; SH1.7 dependency complete 16 October; SH2.0 next, not yet started.** The next bounded package is the editorial/source-rights foundation, not title-production activation. Independent Story House stream, safe alongside Main World and Just Games under separate branches/PRs.
 
 Canonical roadmap: `docs/work-packages/R6.5-WP19SH2-STORY-HOUSE-LIBRARY-EXPANSION.md`
 
