@@ -134,7 +134,13 @@ export const CRYSTAL_BROOK_ICE_BRIDGES = [
 export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
 
 export interface CrystalBrookLocalTrail {
-  id: 'meadow-south-bank' | 'bridge-link' | 'woods-pass' | 'crystal-cup' | 'crystal-grotto' | 'reflection-pool';
+  id:
+    | 'meadow-south-bank'
+    | 'bridge-link'
+    | 'woods-pass'
+    | 'crystal-cup'
+    | 'crystal-grotto'
+    | 'reflection-pool';
   points: readonly MapPoint[];
   width: number;
 }

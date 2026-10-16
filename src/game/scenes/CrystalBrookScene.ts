@@ -554,15 +554,24 @@ export class CrystalBrookScene extends Phaser.Scene {
       stone.fillStyle(0x98c6cf, 1);
       stone.fillPoints(
         [
-          [-21, 4], [-18, -8], [-4, -14], [16, -10],
-          [23, 2], [12, 12], [-12, 11],
+          [-21, 4],
+          [-18, -8],
+          [-4, -14],
+          [16, -10],
+          [23, 2],
+          [12, 12],
+          [-12, 11],
         ].map(([x, y]) => new Phaser.Math.Vector2(x, y)),
         true,
       );
       stone.fillStyle(0xe5faff, 0.65);
       stone.fillPoints(
         [
-          [-17, -6], [-3, -11], [15, -8], [4, -3], [-13, -1],
+          [-17, -6],
+          [-3, -11],
+          [15, -8],
+          [4, -3],
+          [-13, -1],
         ].map(([x, y]) => new Phaser.Math.Vector2(x, y)),
         true,
       );
