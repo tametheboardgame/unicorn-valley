@@ -1,9 +1,12 @@
 import Phaser from 'phaser';
-import { CRYSTAL_BROOK_GROTTO_THRESHOLD, CRYSTAL_BROOK_REFLECTION_POOL } from './CrystalBrookMap';
+import {
+  CRYSTAL_BROOK_CRYSTAL_SITES,
+  CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  CRYSTAL_BROOK_REFLECTION_POOL,
+} from './CrystalBrookMap';
 import { worldDepthForY } from './WorldDepth';
 
-// H6.5A: the Brook owns its own decorative crystal geology. These are scenery,
-// not collision, collectables or extra interaction targets.
+// H6.5A: crystals share area-owned positions with their base collision footprints.
 type CrystalDistrict = 'gorge' | 'opal' | 'mirror' | 'prism' | 'upstream';
 interface CrystalPalette {
   face: number;
@@ -18,25 +21,6 @@ const PALETTES: Record<CrystalDistrict, CrystalPalette> = {
   prism: { face: 0xd2a5f1, light: 0xffedff, shadow: 0x9473c2, glimmer: 0xffd4ed },
   upstream: { face: 0x8bdac8, light: 0xeaffeb, shadow: 0x529995, glimmer: 0xc4f7d9 },
 };
-
-export const CRYSTAL_BROOK_CRYSTAL_SITES = [
-  { id: 'gorge-shelf', district: 'gorge', x: 570, y: 660, scale: 0.88 },
-  { id: 'western-ridge', district: 'gorge', x: 1110, y: 425, scale: 0.98 },
-  { id: 'opal-high-bank', district: 'opal', x: 1710, y: 540, scale: 1.08 },
-  { id: 'song-terrace', district: 'opal', x: 2180, y: 845, scale: 0.78 },
-  { id: 'reflection-north', district: 'mirror', x: 1850, y: 1640, scale: 0.7 },
-  { id: 'reflection-south', district: 'mirror', x: 2220, y: 1910, scale: 0.62 },
-  { id: 'prism-west-shoulder', district: 'prism', x: 2145, y: 2010, scale: 0.96 },
-  { id: 'prism-east-shoulder', district: 'prism', x: 2720, y: 1980, scale: 1.02 },
-  { id: 'cascade-terrace', district: 'upstream', x: 3035, y: 625, scale: 0.96 },
-  { id: 'woodland-ridge', district: 'upstream', x: 3160, y: 1750, scale: 0.76 },
-] as const satisfies readonly {
-  id: string;
-  district: CrystalDistrict;
-  x: number;
-  y: number;
-  scale: number;
-}[];
 
 function polygon(
   graphics: Phaser.GameObjects.Graphics,

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   CRYSTAL_BROOK_ACTIVITY_POCKETS,
+  CRYSTAL_BROOK_CRYSTAL_COLLIDERS,
+  CRYSTAL_BROOK_CRYSTAL_SITES,
   CRYSTAL_BROOK_BOUNDARY_OPENINGS,
   CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION,
   CRYSTAL_BROOK_DISTRICTS,
@@ -13,6 +15,7 @@ import {
   CRYSTAL_BROOK_MEADOW_WATER_EXIT,
   CRYSTAL_BROOK_NORTH_BRIDGE,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
+  CRYSTAL_BROOK_REFLECTION_STONES,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_UPPER_POOL,
   CRYSTAL_BROOK_LOWER_POOL,
@@ -119,6 +122,47 @@ describe('Crystal Brook map', () => {
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points[0]).toEqual({ x: 2550, y: 1290 });
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(CRYSTAL_BROOK_REFLECTION_POOL);
     expect(CRYSTAL_BROOK_REFLECTION_FEEDER.outerWidth).toBeLessThan(70);
+  });
+
+  it('grounds all faceted formations with small, visible-base collision footprints', () => {
+    expect(CRYSTAL_BROOK_CRYSTAL_SITES).toHaveLength(10);
+    expect(CRYSTAL_BROOK_CRYSTAL_COLLIDERS).toHaveLength(10);
+    for (const site of CRYSTAL_BROOK_CRYSTAL_SITES) {
+      const collider = CRYSTAL_BROOK_CRYSTAL_COLLIDERS.find(
+        ({ id }) => id === `collision:brook-crystal:${site.id}`,
+      );
+      expect(collider).toBeDefined();
+      expect(collider?.x).toBe(site.x);
+      expect(collider?.y).toBeCloseTo(site.y + 10 * site.scale);
+      expect(collider?.width).toBeLessThan(170 * site.scale);
+      expect(collider?.height).toBeLessThan(45 * site.scale);
+      expect(CRYSTAL_BROOK_MAP.colliders).toContainEqual(collider);
+    }
+    for (const trail of CRYSTAL_BROOK_LOCAL_TRAILS) {
+      for (const point of trail.points) {
+        expect(isPointBlocked(point, CRYSTAL_BROOK_CRYSTAL_COLLIDERS, PLAYER_CLEARANCE)).toBe(
+          false,
+        );
+      }
+    }
+  });
+
+  it('places Reflection Pool west of the path with a clear feeder crossing', () => {
+    const grottoTrail = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'crystal-grotto');
+    const reflectionTrail = CRYSTAL_BROOK_LOCAL_TRAILS.find(({ id }) => id === 'reflection-pool');
+    const pool = CRYSTAL_BROOK_REFLECTION_POOL;
+    expect(pool.x + 165).toBeLessThan(2040 - 30);
+    expect(reflectionTrail?.points[0]).toEqual(grottoTrail?.points[2]);
+    expect(reflectionTrail?.points.at(-1)?.x).toBeGreaterThan(pool.x + 150);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points.at(-1)).toEqual(pool);
+    expect(CRYSTAL_BROOK_REFLECTION_FEEDER.points).toContainEqual({ x: 2040, y: 1565 });
+    expect(CRYSTAL_BROOK_REFLECTION_STONES).toHaveLength(3);
+    expect(CRYSTAL_BROOK_REFLECTION_STONES[1]).toEqual({ x: 2040, y: 1565 });
+    for (const point of CRYSTAL_BROOK_REFLECTION_STONES) {
+      expect(isPointBlocked(point, CRYSTAL_BROOK_MAP.colliders, PLAYER_CLEARANCE)).toBe(false);
+    }
+    const crystalarium = CRYSTAL_BROOK_ACTIVITY_POCKETS[0];
+    expect(crystalarium.centre.x + crystalarium.radiusX + 20).toBeLessThan(pool.x - 158);
   });
 
   it('uses one continuous west-bank trail through the gorge and into Crystal Brook', () => {

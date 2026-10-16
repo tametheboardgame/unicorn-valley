@@ -27,6 +27,7 @@ import {
   CRYSTAL_BROOK_MEADOW_GORGE,
   CRYSTAL_BROOK_LOCAL_TRAILS,
   CRYSTAL_BROOK_REFLECTION_FEEDER,
+  CRYSTAL_BROOK_REFLECTION_STONES,
   CRYSTAL_BROOK_UPSTREAM_CASCADE,
   CRYSTAL_BROOK_WATER_GLINTS,
   CRYSTAL_BROOK_WATERCOURSE,
@@ -500,6 +501,7 @@ export class CrystalBrookScene extends Phaser.Scene {
     );
 
     createCrystalBrookReflectionPoolPresentation(this);
+    this.createReflectionSteppingStones();
 
     const cascade = this.add.graphics().setName('crystal-brook:upstream-cascade').setDepth(3.08);
     const cascadeX = CRYSTAL_BROOK_UPSTREAM_CASCADE.x;
@@ -537,6 +539,38 @@ export class CrystalBrookScene extends Phaser.Scene {
       glints.moveTo(glint.x - dx, glint.y - dy);
       glints.lineTo(glint.x + dx, glint.y + dy);
       glints.strokePath();
+    }
+  }
+
+  private createReflectionSteppingStones(): void {
+    for (const [index, point] of CRYSTAL_BROOK_REFLECTION_STONES.entries()) {
+      const stone = this.add
+        .graphics()
+        .setPosition(point.x, point.y)
+        .setName(`crystal-brook:reflection-stepping-stone:${index}`)
+        .setDepth(3.43);
+      stone.fillStyle(0x416e79, 0.32);
+      stone.fillEllipse(4, 7, 48, 28);
+      stone.fillStyle(0x98c6cf, 1);
+      stone.fillPoints(
+        [
+          [-21, 4], [-18, -8], [-4, -14], [16, -10],
+          [23, 2], [12, 12], [-12, 11],
+        ].map(([x, y]) => new Phaser.Math.Vector2(x, y)),
+        true,
+      );
+      stone.fillStyle(0xe5faff, 0.65);
+      stone.fillPoints(
+        [
+          [-17, -6], [-3, -11], [15, -8], [4, -3], [-13, -1],
+        ].map(([x, y]) => new Phaser.Math.Vector2(x, y)),
+        true,
+      );
+      stone.lineStyle(2, 0xffffff, 0.55);
+      stone.beginPath();
+      stone.moveTo(-12, 2);
+      stone.lineTo(8, 5);
+      stone.strokePath();
     }
   }
 

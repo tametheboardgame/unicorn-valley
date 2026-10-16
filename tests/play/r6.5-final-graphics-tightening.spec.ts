@@ -176,6 +176,11 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   ).toHaveLength(10);
   expect(objects.some(({ name }) => name === 'crystal-brook:grotto:authored-arch')).toBe(true);
   expect(objects.some(({ name }) => name === 'crystal-brook:crystal-district-floors')).toBe(true);
+  for (const index of [0, 1, 2]) {
+    expect(
+      objects.some(({ name }) => name === `crystal-brook:reflection-stepping-stone:${index}`),
+    ).toBe(true);
+  }
   expect(objects.some(({ name }) => name.includes('wp18f-world-experience:crystal-cluster'))).toBe(
     false,
   );

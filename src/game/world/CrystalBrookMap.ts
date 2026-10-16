@@ -134,7 +134,7 @@ export const CRYSTAL_BROOK_ICE_BRIDGES = [
 export const CRYSTAL_BROOK_CRYSTAL_CUP_JUNCTION = { x: 2490, y: 1060 } as const;
 
 export interface CrystalBrookLocalTrail {
-  id: 'meadow-south-bank' | 'bridge-link' | 'woods-pass' | 'crystal-cup' | 'crystal-grotto';
+  id: 'meadow-south-bank' | 'bridge-link' | 'woods-pass' | 'crystal-cup' | 'crystal-grotto' | 'reflection-pool';
   points: readonly MapPoint[];
   width: number;
 }
@@ -206,6 +206,12 @@ export const CRYSTAL_BROOK_MAIN_ROUTE = [
   ...CRYSTAL_BROOK_WOODS_ROUTE,
 ] as const;
 
+export const CRYSTAL_BROOK_REFLECTION_ROUTE = [
+  { x: 2040, y: 1710 },
+  { x: 2000, y: 1724 },
+  { x: 1945, y: 1745 },
+] as const satisfies readonly MapPoint[];
+
 export const CRYSTAL_BROOK_LOCAL_TRAILS = [
   {
     id: 'meadow-south-bank',
@@ -231,6 +237,11 @@ export const CRYSTAL_BROOK_LOCAL_TRAILS = [
     id: 'crystal-grotto',
     points: CRYSTAL_BROOK_GROTTO_ROUTE,
     width: 62,
+  },
+  {
+    id: 'reflection-pool',
+    points: CRYSTAL_BROOK_REFLECTION_ROUTE,
+    width: 42,
   },
 ] as const satisfies readonly CrystalBrookLocalTrail[];
 
@@ -331,10 +342,12 @@ export const CRYSTAL_BROOK_WATERCOURSE = [
 export const CRYSTAL_BROOK_REFLECTION_FEEDER = {
   points: [
     { x: 2550, y: 1290 },
-    { x: 2480, y: 1390 },
-    { x: 2370, y: 1485 },
-    { x: 2240, y: 1565 },
-    { x: 2150, y: 1650 },
+    { x: 2440, y: 1390 },
+    { x: 2300, y: 1480 },
+    { x: 2150, y: 1540 },
+    { x: 2040, y: 1565 },
+    { x: 1920, y: 1610 },
+    { x: 1780, y: 1680 },
   ] as const satisfies readonly MapPoint[],
   outerWidth: 58,
   innerWidth: 34,
@@ -348,14 +361,19 @@ export const CRYSTAL_BROOK_WATER_GLINTS = [
   { x: 1380, y: 590, width: 118, angle: -5 },
   { x: 990, y: 975, width: 72, angle: -12 },
   { x: 470, y: 995, width: 82, angle: -10 },
-  { x: 2260, y: 1550, width: 46, angle: -26 },
+  { x: 2070, y: 1540, width: 44, angle: -18 },
 ] as const;
 
 export const CRYSTAL_BROOK_RIPPLE_OVERLOOK = { x: 1720, y: 830 } as const;
 export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2800, y: 1400 } as const;
 export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3320, y: 845 } as const;
 export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3320, y: 770 } as const;
-export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 2150, y: 1650 } as const;
+export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 1780, y: 1680 } as const;
+export const CRYSTAL_BROOK_REFLECTION_STONES = [
+  { x: 2040, y: 1520 },
+  { x: 2040, y: 1565 },
+  { x: 2040, y: 1610 },
+] as const satisfies readonly MapPoint[];
 export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1110 } as const;
 export const CRYSTAL_BROOK_SINGING_CRYSTALS = { x: 2440, y: 1110 } as const;
 export const CRYSTAL_BROOK_SHELL_SPARKLE = { x: 1760, y: 980 } as const;
@@ -376,6 +394,28 @@ export const CRYSTAL_BROOK_DISTRICTS = [
   { id: 'upstream-cascade', centre: { x: 3180, y: 870 }, radiusX: 500, radiusY: 440 },
   { id: 'grotto-bank', centre: { x: 2440, y: 1840 }, radiusX: 430, radiusY: 330 },
 ] as const;
+
+// Area-owned crystal positions also define the small physical footprints at their bases.
+export const CRYSTAL_BROOK_CRYSTAL_SITES = [
+  { id: 'gorge-shelf', district: 'gorge', x: 570, y: 660, scale: 0.88 },
+  { id: 'western-ridge', district: 'gorge', x: 1110, y: 425, scale: 0.98 },
+  { id: 'opal-high-bank', district: 'opal', x: 1710, y: 540, scale: 1.08 },
+  { id: 'song-terrace', district: 'opal', x: 2180, y: 845, scale: 0.78 },
+  { id: 'reflection-north', district: 'mirror', x: 1700, y: 1440, scale: 0.7 },
+  { id: 'reflection-south', district: 'mirror', x: 1850, y: 1920, scale: 0.62 },
+  { id: 'prism-west-shoulder', district: 'prism', x: 2145, y: 2010, scale: 0.96 },
+  { id: 'prism-east-shoulder', district: 'prism', x: 2720, y: 1980, scale: 1.02 },
+  { id: 'cascade-terrace', district: 'upstream', x: 3035, y: 625, scale: 0.96 },
+  { id: 'woodland-ridge', district: 'upstream', x: 3160, y: 1750, scale: 0.76 },
+] as const;
+
+export const CRYSTAL_BROOK_CRYSTAL_COLLIDERS = CRYSTAL_BROOK_CRYSTAL_SITES.map((site) => ({
+  id: `collision:brook-crystal:${site.id}`,
+  x: site.x,
+  y: site.y + 10 * site.scale,
+  width: 142 * site.scale,
+  height: 35 * site.scale,
+})) satisfies readonly CollisionRectangle[];
 
 export const CRYSTAL_BROOK_BOUNDARY_ROCKS = [
   // North rim: smaller overlapping formations create one low rocky edge while keeping
@@ -1132,10 +1172,10 @@ export const CRYSTAL_BROOK_BOUNDARY_OPENINGS = [
 export const CRYSTAL_BROOK_ACTIVITY_POCKETS = [
   {
     id: 'crystalarium',
-    centre: { x: 1450, y: 1640 },
+    centre: { x: 1330, y: 1770 },
     approach: { x: 1450, y: 1450 },
-    radiusX: 330,
-    radiusY: 250,
+    radiusX: 270,
+    radiusY: 190,
   },
   {
     id: 'crystal-checkers',
@@ -1170,6 +1210,7 @@ export const CRYSTAL_BROOK_LAYOUT = {
     watercourse: CRYSTAL_BROOK_WATERCOURSE,
     reflectionFeeder: CRYSTAL_BROOK_REFLECTION_FEEDER,
     reflectionPool: CRYSTAL_BROOK_REFLECTION_POOL,
+    reflectionStones: CRYSTAL_BROOK_REFLECTION_STONES,
     bridges: CRYSTAL_BROOK_ICE_BRIDGES,
   },
   landmarks: {
@@ -1281,6 +1322,7 @@ export const CRYSTAL_BROOK_MAP = {
     { id: 'collision:brook-lower-deep-water', x: 2740, y: 1280, width: 180, height: 76 },
     { id: 'collision:brook-upstream-cascade', x: 3320, y: 790, width: 120, height: 170 },
     ...CRYSTAL_BROOK_PERIMETER_COLLIDERS,
+    ...CRYSTAL_BROOK_CRYSTAL_COLLIDERS,
   ] satisfies readonly CollisionRectangle[],
 } as const;
 
