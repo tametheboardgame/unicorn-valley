@@ -52,10 +52,9 @@ The Story House shelf supports an independent global cover-style choice. A title
 Cover-set ids are currently `classic` and `modern`. Titles without a modern set simply fall back
 to their classic/legacy cover when the library is in Modern Covers mode.
 
-Dedicated modern covers should be **3:4 portrait**, targeting **900 × 1200 px**. Keep important
-characters and focal action centre-safe and do not bake the title into generated artwork; the shelf
-renders the title treatment itself. Existing approved modern reader art may be used as an interim
-cover when its composition survives the 3:4 crop.
+**Canonical modern-cover rule (SH1.6 onward):** use an image from the title's **human-approved modern reader-illustration set** as its catalogue cover. Choose the strongest approved scene after illustration acceptance; check its normal centred **3:4 portrait crop** at shelf size (including small screens), keeping characters and focal action centre-safe. The shelf adds its own title treatment: do not bake book titles, captions or logos into generated reader artwork. Reuse the same approved image path and rights metadata rather than commissioning a cover-only duplicate.
+
+A **dedicated modern cover** is an explicit, human-approved exception where the reader-art crop genuinely does not work; document the reason and rights/source separately in that title's visual bible or package. The older Lion and Mouse pilot has an accepted generated-cover exception and should not be regenerated merely to conform. If an original book has only one illustrated edition, do not manufacture a historic/Classic Covers control for it. Keep every legitimate historic Classic cover and source-art edition independent from modern reader art.
 
 
 ## Add a book
