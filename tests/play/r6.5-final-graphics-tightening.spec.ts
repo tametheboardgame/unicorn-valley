@@ -191,7 +191,12 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   ).toBe(false);
   const trunks = objects.find(({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland-trunks');
   const canopy = objects.find(({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland');
-  const eastRock = objects.find(({ name }) => name.startsWith('crystal-brook:boundary:rock:') && object.x >= 3310 && object.y >= 250);
+  const eastRock = objects.find(
+    (object) =>
+      object.name.startsWith('crystal-brook:boundary:rock:') &&
+      object.x >= 3310 &&
+      object.y >= 250,
+  );
   expect(trunks).toBeDefined();
   expect(canopy).toBeDefined();
   expect(eastRock).toBeDefined();

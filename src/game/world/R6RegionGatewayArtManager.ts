@@ -48,21 +48,6 @@ function drawRoundedPath(
   draw(innerWidth, innerColour, 0.98);
 }
 
-function addRock(
-  scene: Phaser.Scene,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  depth: number,
-  colour = 0x6f7d82,
-): Phaser.GameObjects.Ellipse {
-  return scene.add
-    .ellipse(x, y, width, height, colour, 1)
-    .setStrokeStyle(4, 0x526168, 0.9)
-    .setDepth(depth);
-}
-
 function addFacetedRock(
   scene: Phaser.Scene,
   x: number,
