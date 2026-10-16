@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "story-house",
-  "status": "unclaimed",
-  "workPackage": null,
-  "workPackagePath": null,
+  "status": "in_progress",
+  "workPackage": "R6.5-WP19SH1.7",
+  "workPackagePath": "docs/work-packages/R6.5-WP19SH1.7-STORY-HOUSE-CONSOLIDATION.md",
   "branch": "agent/story-house-sh1.7-consolidation",
-  "prNumber": null,
-  "baseMainSha": null,
-  "updatedOn": "2026-10-15",
-  "note": "SH1.7 execution was moved to a valid Story House branch; temporary unclaimed state until replacement PR number is recorded. The original audit and documents are preserved, with all rights-sensitive actions still gated."
+  "prNumber": 325,
+  "baseMainSha": "17e228e361e84354f10d98b1f1581072f0006d01",
+  "updatedOn": "2026-10-16",
+  "note": "SH1.7A-E consolidation active on stream-compliant branch and draft PR #325. Alice archive restored, Lion/Mouse legacy PR closed, catalogue/Drive audit under review. Rights-sensitive deletions and unverified Duck Bread Baker rights remain gated."
 }
