@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "world",
-  "status": "active",
+  "status": "in_progress",
   "workPackage": "R6.5-WP19H6.5A",
   "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
   "branch": "agent/world-h6.5a-crystal-brook-art",
-  "prNumber": null,
+  "prNumber": 328,
   "baseMainSha": "e73fca9d2b59fbd49f7ba776678b4eea0da83f2a",
   "updatedOn": "2026-10-16",
-  "note": "H6.5 merged; H6.5A visual polish requested after screenshots, human approval pending. H6.6 not started."
+  "note": "H6.5A visual polish in draft PR #328; scoped preview available, visual acceptance pending; H6.6 not started."
 }

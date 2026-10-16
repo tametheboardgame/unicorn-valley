@@ -1018,7 +1018,6 @@ function decorateBrook(scene: Phaser.Scene): void {
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.x,
     CRYSTAL_BROOK_CRYSTAL_CUP_THRESHOLD.position.y,
   );
-
 }
 
 function decorateWoods(scene: Phaser.Scene): void {

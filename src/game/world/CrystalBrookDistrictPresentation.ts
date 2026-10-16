@@ -42,7 +42,10 @@ function polygon(
   graphics: Phaser.GameObjects.Graphics,
   points: readonly (readonly [number, number])[],
 ): void {
-  graphics.fillPoints(points.map(([x, y]) => new Phaser.Math.Vector2(x, y)), true);
+  graphics.fillPoints(
+    points.map(([x, y]) => new Phaser.Math.Vector2(x, y)),
+    true,
+  );
 }
 
 function crystalShard(
@@ -136,10 +139,45 @@ function createCrystalDistrictFloors(scene: Phaser.Scene): void {
     .setName('crystal-brook:crystal-district-floors')
     .setDepth(1.24);
   for (const [colour, points] of [
-    [0xb6dce8, [[100, 350], [960, 310], [1320, 710], [1100, 1060], [250, 900]]],
-    [0xd6c4e8, [[1100, 310], [2290, 260], [2640, 710], [2150, 1110], [1430, 1000]]],
-    [0xa9dfe4, [[1600, 1510], [1950, 1440], [2520, 1590], [2800, 2070], [1740, 2060]]],
-    [0xb8e9d3, [[2740, 250], [3490, 230], [3470, 1410], [2950, 1250]]],
+    [
+      0xb6dce8,
+      [
+        [100, 350],
+        [960, 310],
+        [1320, 710],
+        [1100, 1060],
+        [250, 900],
+      ],
+    ],
+    [
+      0xd6c4e8,
+      [
+        [1100, 310],
+        [2290, 260],
+        [2640, 710],
+        [2150, 1110],
+        [1430, 1000],
+      ],
+    ],
+    [
+      0xa9dfe4,
+      [
+        [1600, 1510],
+        [1950, 1440],
+        [2520, 1590],
+        [2800, 2070],
+        [1740, 2060],
+      ],
+    ],
+    [
+      0xb8e9d3,
+      [
+        [2740, 250],
+        [3490, 230],
+        [3470, 1410],
+        [2950, 1250],
+      ],
+    ],
   ] as const) {
     ground.fillStyle(colour, 0.13);
     polygon(ground, points);
@@ -165,21 +203,39 @@ export function createCrystalBrookGrottoPresentation(scene: Phaser.Scene): void 
   graphics.fillEllipse(0, 20, 360, 105);
   graphics.fillStyle(0x6a8486, 1);
   polygon(graphics, [
-    [-176, 37], [-163, -77], [-121, -168], [-47, -204],
-    [45, -200], [124, -147], [166, -57], [176, 38],
+    [-176, 37],
+    [-163, -77],
+    [-121, -168],
+    [-47, -204],
+    [45, -200],
+    [124, -147],
+    [166, -57],
+    [176, 38],
   ]);
   graphics.fillStyle(0x8da7a2, 0.66);
   polygon(graphics, [
-    [-163, -77], [-121, -168], [-47, -204], [-68, -152], [-121, -85],
+    [-163, -77],
+    [-121, -168],
+    [-47, -204],
+    [-68, -152],
+    [-121, -85],
   ]);
   graphics.fillStyle(0x263c50, 1);
   polygon(graphics, [
-    [-92, 34], [-89, -55], [-59, -108], [0, -137],
-    [65, -103], [93, -47], [98, 34],
+    [-92, 34],
+    [-89, -55],
+    [-59, -108],
+    [0, -137],
+    [65, -103],
+    [93, -47],
+    [98, 34],
   ]);
   graphics.fillStyle(0x46617c, 0.52);
   polygon(graphics, [
-    [-81, 27], [-65, -57], [-40, -90], [0, -113],
+    [-81, 27],
+    [-65, -57],
+    [-40, -90],
+    [0, -113],
     [0, 32],
   ]);
   graphics.lineStyle(7, 0xbcdddc, 0.7);
@@ -204,36 +260,60 @@ export function createCrystalBrookGrottoPresentation(scene: Phaser.Scene): void 
 
 export function createCrystalBrookReflectionPoolPresentation(scene: Phaser.Scene): void {
   const { x, y } = CRYSTAL_BROOK_REFLECTION_POOL;
-  const outer = scene.add.graphics()
+  const outer = scene.add
+    .graphics()
     .setPosition(x, y)
     .setName('crystal-brook:reflection-pool-outer')
     .setDepth(3);
   outer.fillStyle(0x5c9299, 0.78);
   polygon(outer, [
-    [-158, 0], [-125, -53], [-68, -76], [28, -70],
-    [115, -48], [162, -9], [128, 41], [56, 69], [-61, 65], [-135, 38],
+    [-158, 0],
+    [-125, -53],
+    [-68, -76],
+    [28, -70],
+    [115, -48],
+    [162, -9],
+    [128, 41],
+    [56, 69],
+    [-61, 65],
+    [-135, 38],
   ]);
-  const inner = scene.add.graphics()
+  const inner = scene.add
+    .graphics()
     .setPosition(x, y)
     .setName('crystal-brook:reflection-pool-inner')
     .setDepth(3.03);
   inner.fillStyle(0x9ce1e1, 0.79);
   polygon(inner, [
-    [-134, -3], [-100, -42], [-42, -58], [35, -54],
-    [125, -26], [130, 1], [89, 43], [12, 53], [-75, 46],
+    [-134, -3],
+    [-100, -42],
+    [-42, -58],
+    [35, -54],
+    [125, -26],
+    [130, 1],
+    [89, 43],
+    [12, 53],
+    [-75, 46],
   ]);
-  const deep = scene.add.graphics()
+  const deep = scene.add
+    .graphics()
     .setPosition(x, y)
     .setName('crystal-brook:reflection-pool-deep')
     .setDepth(3.06);
   deep.fillStyle(0x579ca6, 0.34);
   polygon(deep, [
-    [-65, 12], [-38, -24], [31, -31], [73, -5],
-    [52, 24], [0, 37],
+    [-65, 12],
+    [-38, -24],
+    [31, -31],
+    [73, -5],
+    [52, 24],
+    [0, 37],
   ]);
   deep.lineStyle(4, 0xedffff, 0.47);
   for (const [fromX, fromY, toX, toY] of [
-    [-98, -14, -35, -22], [10, 6, 80, 1], [-33, 29, 25, 24],
+    [-98, -14, -35, -22],
+    [10, 6, 80, 1],
+    [-33, 29, 25, 24],
   ] as const) {
     deep.beginPath();
     deep.moveTo(fromX, fromY);

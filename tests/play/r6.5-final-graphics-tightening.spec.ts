@@ -174,28 +174,22 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   expect(
     objects.filter(({ name }) => name.startsWith('crystal-brook:crystal-grove:')),
   ).toHaveLength(10);
-  expect(
-    objects.some(({ name }) => name === 'crystal-brook:grotto:authored-arch'),
-  ).toBe(true);
-  expect(
-    objects.some(({ name }) => name === 'crystal-brook:crystal-district-floors'),
-  ).toBe(true);
-  expect(
-    objects.some(({ name }) => name.includes('wp18f-world-experience:crystal-cluster')),
-  ).toBe(false);
-  expect(
-    objects.some(({ name }) => name.includes('prism-grotto-rock')),
-  ).toBe(false);
-  expect(
-    objects.some(({ name }) => name.includes('crystal-brook:production-upgrade')),
-  ).toBe(false);
-  const trunks = objects.find(({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland-trunks');
-  const canopy = objects.find(({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland');
+  expect(objects.some(({ name }) => name === 'crystal-brook:grotto:authored-arch')).toBe(true);
+  expect(objects.some(({ name }) => name === 'crystal-brook:crystal-district-floors')).toBe(true);
+  expect(objects.some(({ name }) => name.includes('wp18f-world-experience:crystal-cluster'))).toBe(
+    false,
+  );
+  expect(objects.some(({ name }) => name.includes('prism-grotto-rock'))).toBe(false);
+  expect(objects.some(({ name }) => name.includes('crystal-brook:production-upgrade'))).toBe(false);
+  const trunks = objects.find(
+    ({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland-trunks',
+  );
+  const canopy = objects.find(
+    ({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland',
+  );
   const eastRock = objects.find(
     (object) =>
-      object.name.startsWith('crystal-brook:boundary:rock:') &&
-      object.x >= 3310 &&
-      object.y >= 250,
+      object.name.startsWith('crystal-brook:boundary:rock:') && object.x >= 3310 && object.y >= 250,
   );
   expect(trunks).toBeDefined();
   expect(canopy).toBeDefined();
