@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
 import { RAINBOW_RUN_HUB_LAYOUT } from '../../src/game/world/RainbowRunHubMap';
+import { CRYSTAL_BROOK_GROTTO_THRESHOLD } from '../../src/game/world/CrystalBrookMap';
 
 interface DiagnosticObject {
   name: string;
@@ -146,11 +147,14 @@ test.describe('R6.5-WP18F visual evidence', () => {
     await page.goto('/?diagnostics=1');
     await waitForDiagnostics(page);
     await startScene(page, 'CrystalBrookScene');
+    // The legacy WP18F grotto mouth and generic cluster were intentionally
+    // replaced by single Brook-owned Grotto architecture and faceted crystals.
     await expectObjects(page, 'CrystalBrookScene', [
-      'wp18f-world-experience:prism-grotto-mouth',
-      'wp18f-world-experience:crystal-cluster:2980:1650',
+      'crystal-brook:grotto:authored-arch',
+      'crystal-brook:crystal-grove:prism-east-shoulder',
     ]);
-    await movePlayer(page, 'CrystalBrookScene', 3020, 1780);
+    const { x, y } = CRYSTAL_BROOK_GROTTO_THRESHOLD.approach;
+    await movePlayer(page, 'CrystalBrookScene', x, y);
     await page.screenshot({ path: `${ARTIFACT_DIR}/crystal-brook-prism-grotto.png` });
   });
 

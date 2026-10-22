@@ -108,6 +108,8 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:east-crossing');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:crystal-cup-spur');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:path:crystal-grotto-approach');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:path:crystal-grotto');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-pool-outer');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:upstream-cascade');
   await waitForObject(
@@ -166,11 +168,46 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   ).toBe(false);
   expect(objects.some((object) => object.name === 'brook-depth:cascade-memory')).toBe(false);
 
-  const largeBackdropCircles = objects.filter(
+  // H6.5A retires the old giant colour blobs and all competing crystal/cave producers.
+  const giantBackdropCircles = objects.filter(
     (object) => object.type === 'Arc' && object.depth === 1 && object.displayWidth > 1200,
   );
-  expect(largeBackdropCircles.length).toBeGreaterThanOrEqual(3);
-  expect(Math.max(...largeBackdropCircles.map((object) => object.alpha))).toBeLessThanOrEqual(0.16);
+  expect(giantBackdropCircles).toHaveLength(0);
+  expect(
+    objects.filter(({ name }) => name.startsWith('crystal-brook:crystal-grove:')),
+  ).toHaveLength(10);
+  expect(objects.some(({ name }) => name === 'crystal-brook:grotto:authored-arch')).toBe(true);
+  expect(objects.some(({ name }) => name === 'crystal-brook:crystal-district-floors')).toBe(true);
+  const feederDepth = objects.find(({ name }) => name === 'crystal-brook:reflection-feeder')?.depth;
+  const riverDepth = objects.find(({ name }) => name === 'crystal-brook:watercourse-outer')?.depth;
+  expect(feederDepth).toBeDefined();
+  expect(riverDepth).toBeDefined();
+  expect(feederDepth ?? 100).toBeLessThan(riverDepth ?? 0);
+  for (const index of [0, 1, 2]) {
+    expect(
+      objects.some(({ name }) => name === `crystal-brook:reflection-stepping-stone:${index}`),
+    ).toBe(true);
+  }
+  expect(objects.some(({ name }) => name.includes('wp18f-world-experience:crystal-cluster'))).toBe(
+    false,
+  );
+  expect(objects.some(({ name }) => name.includes('prism-grotto-rock'))).toBe(false);
+  expect(objects.some(({ name }) => name.includes('crystal-brook:production-upgrade'))).toBe(false);
+  const trunks = objects.find(
+    ({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland-trunks',
+  );
+  const canopy = objects.find(
+    ({ name }) => name === 'r6-region-gateway-art:crystal-brook:east-woodland',
+  );
+  const eastRock = objects.find(
+    (object) =>
+      object.name.startsWith('crystal-brook:boundary:rock:') && object.x >= 3310 && object.y >= 250,
+  );
+  expect(trunks).toBeDefined();
+  expect(canopy).toBeDefined();
+  expect(eastRock).toBeDefined();
+  expect(trunks?.depth ?? 999).toBeLessThan(eastRock?.depth ?? 0);
+  expect(eastRock?.depth ?? 999).toBeLessThan(canopy?.depth ?? 0);
 });
 
 test('Nova tutorial race uses the unified modern Nova presentation', async ({ page }) => {

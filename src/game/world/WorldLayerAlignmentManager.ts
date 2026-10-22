@@ -50,12 +50,6 @@ function createWoodsTree(
     .setDepth(worldDepthForY(y, 0.32));
 }
 
-function alignBrook(scene: Phaser.Scene): void {
-  findNamedContainer(scene, 'r6-region-gateway-art:crystal-brook:production-upgrade')?.setDepth(
-    worldDepthForY(520, 0.22),
-  );
-}
-
 function alignWoods(scene: Phaser.Scene): void {
   const production = findNamedContainer(
     scene,
@@ -109,13 +103,10 @@ export class WorldLayerAlignmentManager {
       return;
     }
     for (const scene of this.game.scene.getScenes(true)) {
-      if (scene.scene.key === 'CrystalBrookScene') {
-        alignBrook(scene);
-      } else if (scene.scene.key === 'WhisperingWoodsScene') {
-        alignWoods(scene);
-      } else {
+      if (scene.scene.key !== 'WhisperingWoodsScene') {
         continue;
       }
+      alignWoods(scene);
 
       if (!scene.children.getByName(ALIGNMENT_ANCHOR)) {
         scene.add.zone(-64, -64, 2, 2).setName(ALIGNMENT_ANCHOR).setVisible(false);

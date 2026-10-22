@@ -37,7 +37,9 @@ const REGIONS = [
     route: 'brook',
     sceneKey: 'CrystalBrookScene',
     environment: 'crystal-brook',
-    layers: ['background', 'signature', 'foreground', 'ambient'],
+    // The H6 area pass deliberately retired the generic background/foreground
+    // producers in favour of local district geology and correct tree/rock depth.
+    layers: ['signature', 'ambient'],
   },
   {
     route: 'woods',
@@ -153,6 +155,29 @@ for (const region of REGIONS) {
       );
       expect(object, `${region.environment} should expose its ${layer} layer`).toBeTruthy();
       expect(object?.interactive).toBe(false);
+    }
+    if (region.environment === 'crystal-brook') {
+      for (const areaObjectName of [
+        'crystal-brook:crystal-district-floors',
+        'crystal-brook:crystal-grove:gorge-shelf',
+        'r6-region-gateway-art:crystal-brook:east-woodland',
+      ]) {
+        // Region-gateway decoration is attached after the production anchor,
+        // by the scene presentation manager's next update. Wait rather than
+        // relying on timing of the first diagnostic snapshot.
+        await waitForObject(page, region.sceneKey, areaObjectName);
+        const refreshed = (await snapshot(page)).scenes.find(({ key }) => key === region.sceneKey);
+        const object = refreshed?.objects.find(({ name }) => name === areaObjectName);
+        expect(object, `Brook should own ${areaObjectName}`).toBeTruthy();
+        expect(object?.interactive).toBe(false);
+      }
+      for (const retiredLayer of ['background', 'foreground']) {
+        expect(
+          scene.objects.some(
+            ({ name }) => name === `environment-production:crystal-brook:${retiredLayer}`,
+          ),
+        ).toBe(false);
+      }
     }
   });
 }

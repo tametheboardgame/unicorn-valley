@@ -1,37 +1,8 @@
 import Phaser from 'phaser';
-import { CRYSTAL_BROOK_GROTTO_THRESHOLD } from '../world/CrystalBrookMap';
 import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { worldDepthForY } from '../world/WorldDepth';
 
 const ROOT_NAME = 'wp18f-world-experience';
-
-function addCrystalCluster(
-  scene: Phaser.Scene,
-  x: number,
-  y: number,
-  scale: number,
-  colours: readonly [number, number, number],
-): void {
-  const depth = worldDepthForY(y, 0.12);
-  const glow = scene.add.circle(0, 4, 54 * scale, colours[1], 0.13);
-  const base = scene.add.ellipse(0, 22 * scale, 100 * scale, 35 * scale, 0x738c83, 0.72);
-  const left = scene.add
-    .triangle(-24 * scale, 0, 0, 42, 15, 0, 29, 42, colours[0], 0.96)
-    .setStrokeStyle(3 * scale, 0x507685, 0.8);
-  const centre = scene.add
-    .triangle(0, -18 * scale, 0, 62, 22, 0, 44, 62, colours[1], 1)
-    .setStrokeStyle(3 * scale, 0x507685, 0.82);
-  const right = scene.add
-    .triangle(29 * scale, 4 * scale, 0, 38, 14, 0, 28, 38, colours[2], 0.95)
-    .setStrokeStyle(2.5 * scale, 0x507685, 0.76);
-  const shine = scene.add
-    .rectangle(3 * scale, -3 * scale, 5 * scale, 34 * scale, 0xffffff, 0.42)
-    .setAngle(19);
-  scene.add
-    .container(x, y, [glow, base, left, centre, right, shine])
-    .setName(`${ROOT_NAME}:crystal-cluster:${x}:${y}`)
-    .setDepth(depth);
-}
 
 function enhanceShellCove(scene: Phaser.Scene): void {
   if (scene.children.getByName(`${ROOT_NAME}:shell-cove`)) {
@@ -96,55 +67,6 @@ function createUnicornSandcastle(scene: Phaser.Scene, x: number, y: number): voi
     .container(x, y, [tail, body, neck, mane, head, horn, eye, shellCrown])
     .setName(`${ROOT_NAME}:unicorn-sandcastle`)
     .setDepth(worldDepthForY(y, 0.28));
-}
-
-function enhanceCrystalBrook(scene: Phaser.Scene): void {
-  if (scene.children.getByName(`${ROOT_NAME}:crystal-brook`)) {
-    return;
-  }
-  scene.add.container(0, 0).setName(`${ROOT_NAME}:crystal-brook`).setVisible(false);
-
-  addCrystalCluster(scene, 820, 810, 0.8, [0x8ad8ec, 0xc7f3ff, 0xbfa9eb]);
-  addCrystalCluster(scene, 1690, 790, 0.92, [0x8bcde8, 0xd1f4ff, 0xa99be7]);
-  addCrystalCluster(scene, 2510, 760, 0.85, [0x92d6e8, 0xc4f0f4, 0xc19de8]);
-  addCrystalCluster(scene, 2980, 1650, 1.02, [0x84c8dc, 0xd4f6ff, 0xc5a2ef]);
-
-  const grotto = CRYSTAL_BROOK_GROTTO_THRESHOLD.position;
-  const grottoDepth = worldDepthForY(grotto.y + 90, -0.8);
-  scene.add
-    .ellipse(grotto.x + 60, grotto.y + 20, 410, 285, 0x647377, 0.98)
-    .setName(`${ROOT_NAME}:prism-grotto-rock`)
-    .setStrokeStyle(13, 0x82999a, 0.86)
-    .setDepth(grottoDepth);
-  scene.add
-    .ellipse(grotto.x + 60, grotto.y + 52, 250, 205, 0x273f4a, 1)
-    .setName(`${ROOT_NAME}:prism-grotto-mouth`)
-    .setStrokeStyle(8, 0x9ed4d5, 0.62)
-    .setDepth(grottoDepth + 0.08);
-  for (const [dx, dy, scale] of [
-    [-155, -70, 0.72],
-    [142, -62, 0.78],
-    [-102, -132, 0.62],
-    [95, -128, 0.66],
-  ] as const) {
-    addCrystalCluster(
-      scene,
-      grotto.x + 60 + dx,
-      grotto.y + 20 + dy,
-      scale,
-      [0x83cfe3, 0xcaf4fa, 0xc0a4ec],
-    );
-  }
-  scene.add
-    .text(grotto.x + 60, grotto.y - 80, '✦', {
-      color: '#e8ffff',
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '42px',
-      fontStyle: 'bold',
-    })
-    .setOrigin(0.5)
-    .setAlpha(0.72)
-    .setDepth(grottoDepth + 0.3);
 }
 
 function enhanceWhisperingWoods(scene: Phaser.Scene): void {
@@ -226,8 +148,6 @@ export class R65WorldExperiencePresentationManager {
     for (const scene of this.game.scene.getScenes(true)) {
       if (scene.scene.key === 'StarlightBeachScene') {
         enhanceShellCove(scene);
-      } else if (scene.scene.key === 'CrystalBrookScene') {
-        enhanceCrystalBrook(scene);
       } else if (scene.scene.key === 'WhisperingWoodsScene') {
         enhanceWhisperingWoods(scene);
       }
