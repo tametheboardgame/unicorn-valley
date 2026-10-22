@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "stream": "world",
   "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.7A",
+  "workPackage": "R6.5-WP19H6.7B",
   "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
-  "branch": "agent/world-h6-7a-brook-treasures-ripple",
-  "prNumber": 331,
-  "baseMainSha": "b374aea19ae03a98a303d4a5ee0f972b0616ee57",
+  "branch": "agent/world-h6-7b-echo-crystal-song",
+  "prNumber": 332,
+  "baseMainSha": "412f7bd5edf10fc174331768b3a68aea1d6c23eb",
   "updatedOn": "2026-10-22",
-  "note": "H6.7A human visual approval recorded 2026-10-22 on Cloudflare build bb202c6; draft targeted CI #39761146389 passed. PR #331 is stacked on PR #330 pending qualified integration, then exact-head final CI and merge. Next planned H6.7B (Echo); racing deferred."
+  "note": "H6.7A visually approved PR #331 is the stacked prerequisite. H6.7B PR #332 implements Echo's single moving resident Crystal Song dialogue, canonical Grotto route and duplicate-note retirement. Await draft CI and human visual approval; no racing changes."
 }
