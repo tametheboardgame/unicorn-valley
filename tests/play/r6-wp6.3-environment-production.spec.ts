@@ -166,9 +166,7 @@ for (const region of REGIONS) {
         // by the scene presentation manager's next update. Wait rather than
         // relying on timing of the first diagnostic snapshot.
         await waitForObject(page, region.sceneKey, areaObjectName);
-        const refreshed = (await snapshot(page)).scenes.find(
-          ({ key }) => key === region.sceneKey,
-        );
+        const refreshed = (await snapshot(page)).scenes.find(({ key }) => key === region.sceneKey);
         const object = refreshed?.objects.find(({ name }) => name === areaObjectName);
         expect(object, `Brook should own ${areaObjectName}`).toBeTruthy();
         expect(object?.interactive).toBe(false);
