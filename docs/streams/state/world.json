@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "world",
-  "status": "complete",
-  "workPackage": null,
-  "workPackagePath": null,
-  "branch": null,
-  "prNumber": null,
-  "baseMainSha": null,
+  "status": "in_progress",
+  "workPackage": "R6.5-WP19H6.7A",
+  "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
+  "branch": "agent/world-h6-7a-brook-treasures-ripple",
+  "prNumber": 331,
+  "baseMainSha": "b374aea19ae03a98a303d4a5ee0f972b0616ee57",
   "updatedOn": "2026-10-22",
-  "note": "H6.5A human-approved and merged by PR #328 at b374aea19ae03a98a303d4a5ee0f972b0616ee57; World stream released for next independent H6.7 work. H6.6 racing hub polish deferred after area reviews."
+  "note": "H6.7A drafted in PR #331, stacked onto pending integration PR #330. Four grounded treasures, engraved Grotto marker, shared production Ripple and retirement of obsolete floating visit glyphs. Visual approval pending; racing deferred."
 }
