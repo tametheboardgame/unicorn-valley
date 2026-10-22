@@ -26,6 +26,21 @@ Historical mini-game work remains recorded in the roadmap where it actually happ
 
 Initial platform sequence: **MG-WP0 platform foundation -> MG-WP1 existing-game migration -> MG-WP2 sandbox/persistence isolation -> MG-WP3 Just Games shell -> MG-WP4 future-game authoring guardrails**, followed by independent improvement passes for Chess, Rainbow Disc, Pond Leap, Wobbly Cake, Firefly Lantern, Coral Beachcombing and Rainbow Run Racing.
 
+## Consolidated Racing Programme — gated after exploration-area reviews
+
+**Decision approved 16 October 2026; global navigation recorded 22 October 2026.** Finish, review and accept the remaining exploration areas before expanding any race hub or the shared race system. Existing functional entry, return and unlock behaviour must be maintained and repaired only if regressed in an area review. In particular, **R6.5-WP19H5 Rainbow Run final area/race-hub pass and H6.6 Crystal Cup hub maturity are deferred**, not the next slice of their regions. **H6.7 Crystal Brook environment, residents and interaction remediation follows H6.5A.**
+
+After all exploration areas are accepted, open one staged racing programme with joint World/Just Games coordination:
+
+- **RACE-WP0 — inventory and baseline:** inspect all existing race hubs, courses, race IDs, tutorial, progression, persistence and entry/return topology; record current tests and outstanding risks.
+- **RACE-WP1 — race hubs:** mature Rainbow Run, Crystal Cup and any other established hub under one coherent spatial, signage, accessibility and NPC presentation contract.
+- **RACE-WP2 — courses and controls:** review all five regular races and tutorial experience together, including gameplay balance, controls and consistent world-to-race transitions.
+- **RACE-WP3 — progression and outcomes:** assess championships, rewards, records, repeatability, accessibility and narrative progression without duplicating the race engine.
+- **RACE-WP4 — MG-WP11 coordination:** improve the existing registered Rainbow Run Racing mini-game in its canonical implementation and verify the Just Games launch/session/sandbox/return contract.
+- **RACE-WP5 — integrated acceptance:** check race hub → course → hub → world loops, all required tests, cross-browser responsiveness, player visuals, human approval and final close-out.
+
+These headings define **future planning boundaries**, not permission to begin work while area reviews are unfinished. See `docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md` under *Dedicated racing programme, after area reviews*.
+
 ## Completed releases
 
 - R0 - Foundation and Pre-production: complete.
