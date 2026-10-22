@@ -6,7 +6,7 @@
   "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
   "branch": "agent/world-h6-7b-echo-crystal-song",
   "prNumber": 332,
-  "baseMainSha": "412f7bd5edf10fc174331768b3a68aea1d6c23eb",
+  "baseMainSha": "e90ddef725b9f89c93ba38c939a4b86ad8aa982d",
   "updatedOn": "2026-10-22",
-  "note": "H6.7B draft PR #332 focuses only on Echo's single moving Crystal Song interaction and safe Grotto route; human review pending. User-approved 2026-10-22 design adds one Crystalarium mini-game family: short opening-melody world gate followed by full replay and Just Games in future H6.9A-D; H6.7D final Brook/Grotto acceptance gated on that integration. H6.7A visually approved in PR #331; race hubs deferred."
+  "note": "H6.7A human-approved and merged PR #331 at e90ddef7. H6.7B (#332) moved to main and visually accepted in the 2026-10-22 Echo review; single Echo Talk interaction, canonical Grotto route, unchanged Crystal Song flags. Code/test/doc review reconciled; full exact-head qualification pending. H6.9A (#333) stacked next; new Crystalarium entrance gate in future H6.9B. Racing deferred."
 }
