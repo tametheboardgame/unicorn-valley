@@ -14,7 +14,7 @@
   "ci_state": "passing",
   "technical_validation_state": "passing",
   "human_acceptance_state": "not_required",
-  "next_work_package": "R6.5-WP19H6.7",
+  "next_work_package": "R6.5-WP19H6",
   "next_work_package_path": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
   "human_input_required": false,
   "blocker_reason": null,
