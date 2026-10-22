@@ -107,6 +107,9 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:north-crossing');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ice-bridge:east-crossing');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:crystal-cup-spur');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:treasure:crystal-north-bank');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:treasure:shell-reed-bank');
+  await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:ripple:unicorn');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:reflection-feeder');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:path:crystal-grotto-approach');
   await waitForObject(page, 'CrystalBrookScene', 'crystal-brook:path:crystal-grotto');
@@ -167,6 +170,19 @@ test('Crystal Brook owns one continuous filled water system without legacy repla
     ),
   ).toBe(false);
   expect(objects.some((object) => object.name === 'brook-depth:cascade-memory')).toBe(false);
+
+  // H6.7A grounds former floating emoji rewards and renders Ripple through
+  // the canonical unicorn texture rather than legacy ellipse-body art.
+  for (const id of [
+    'crystal-north-bank',
+    'crystal-stepping-bend',
+    'shell-reed-bank',
+    'shell-lower-pool',
+  ]) {
+    expect(objects.some(({ name }) => name === `crystal-brook:treasure:${id}`)).toBe(true);
+  }
+  expect(objects.some(({ name }) => name === 'crystal-brook:ripple:unicorn')).toBe(true);
+  expect(objects.some(({ name }) => name === 'crystal-brook:secret-route:prism-inlay')).toBe(true);
 
   // H6.5A retires the old giant colour blobs and all competing crystal/cave producers.
   const giantBackdropCircles = objects.filter(
