@@ -3,7 +3,9 @@ import {
   ECHO_CRYSTAL_SONG_ACTIVE_FLAG,
   ECHO_CRYSTAL_SONG_COMPLETE_FLAG,
 } from '../../content/r6CrystalBrookDepthContent';
+import type { CrystalSongResult } from '../story/CrystalGrottoStoryService';
 import { CRYSTAL_BROOK_ECHO_WAYPOINTS } from '../world/CrystalBrookMap';
+import { chooseTalkLine } from './AmbientResidentRoutine';
 import type {
   ResidentPlacementDefinition,
   ResidentTalkVariant,
@@ -18,8 +20,8 @@ export const R6_CRYSTAL_BROOK_RESIDENT_PLACEMENTS = [
     behaviour: 'purposeful-route',
     routeMode: 'ping-pong',
     speedPxPerSecond: 72,
-    interactionRadius: 126,
-    priority: 25,
+    interactionRadius: 150,
+    priority: 80,
     waypoints: CRYSTAL_BROOK_ECHO_WAYPOINTS,
   },
 ] as const satisfies readonly ResidentPlacementDefinition[];
@@ -63,3 +65,18 @@ export const R6_CRYSTAL_BROOK_RESIDENT_TALK_VARIANTS: Partial<
     },
   ],
 };
+
+// The story service owns progression, discovery and quest flags; the ambient
+// resident owns the sole moving interaction and conversation presentation.
+// Once the song is complete, mix its authored conclusion with the existing
+// stateful Echo voice lines rather than permanently repeating one sentence.
+export function resolveEchoCrystalSongLine(
+  result: CrystalSongResult,
+  ambientLines: readonly string[],
+  previousInteractions: number,
+): string {
+  if (result.state === 'complete' && previousInteractions % 2 === 1) {
+    return chooseTalkLine(ambientLines, Math.floor(previousInteractions / 2));
+  }
+  return result.message;
+}

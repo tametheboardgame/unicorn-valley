@@ -9,6 +9,7 @@ import { RefreshThrottle } from '../performance/RefreshThrottle';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { isMarigoldPicnicReady } from '../story/MarigoldPicnicStory';
+import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
 import { WORLD_PLAYER_NAME } from '../world/WorldTraversalPolishManager';
 import { worldDepthForY } from '../world/WorldDepth';
 import {
@@ -43,6 +44,7 @@ import {
   resolveSupportingResidentDisplaySize,
 } from './SupportingResidentArt';
 import { getVillageInteriorOccupancyService } from './VillageInteriorOccupancy';
+import { resolveEchoCrystalSongLine } from './R6CrystalBrookPopulationContent';
 
 const UPDATE_INTERVAL_MS = 90;
 const ROUTE_TIMEOUT_GRACE_MS = 1400;
@@ -130,6 +132,10 @@ function smallActionKind(kind: SmallWorldInteractionDefinition['kind']): Interac
 export class AmbientPopulationWorldManager {
   private readonly saveService = getBrowserSaveService();
   private readonly timeService = getBrowserAtmosphericTimeService(this.saveService);
+  private readonly crystalSong = new CrystalGrottoStoryService(
+    this.saveService,
+    getBrowserQuestEngine(),
+  );
   private readonly throttle = new RefreshThrottle(UPDATE_INTERVAL_MS);
   private readonly states = new Map<string, ScenePopulationRuntime>();
 
@@ -468,14 +474,21 @@ export class AmbientPopulationWorldManager {
       questEngine.notifyCharacterTalked(runtime.resident.characterId);
     }
 
+    // Echo's moving resident is the only Crystal Song entry point. The old
+    // static, disconnected Brook-depth prompt has been retired.
+    const echoSong =
+      runtime.resident.id === 'resident:echo' && state.scene.scene.key === 'CrystalBrookScene'
+        ? this.crystalSong.talkToEcho()
+        : null;
     const configuredVariants = R6_SUPPORTING_RESIDENT_TALK_VARIANTS[runtime.resident.id];
     const talk: ResidentTalkDefinition = {
       ...runtime.resident.talk,
       variants: configuredVariants ?? runtime.resident.talk.variants,
     };
     const lines = resolveResidentTalkLines(talk, this.getContext());
-    const line =
-      questStartedNow && runtime.resident.questIntroLine
+    const line = echoSong
+      ? resolveEchoCrystalSongLine(echoSong, lines, runtime.interactionCount)
+      : questStartedNow && runtime.resident.questIntroLine
         ? runtime.resident.questIntroLine
         : chooseTalkLine(lines, runtime.interactionCount);
     runtime.interactionCount += 1;
