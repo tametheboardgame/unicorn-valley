@@ -151,7 +151,9 @@ export function playOpeningMerge(
   };
 }
 
-export function availableOpeningMerges(state: OpeningMelodyState): readonly (readonly [number, number])[] {
+export function availableOpeningMerges(
+  state: OpeningMelodyState,
+): readonly (readonly [number, number])[] {
   const moves: Array<readonly [number, number]> = [];
   for (let source = 0; source < state.cells.length; source += 1) {
     for (let target = source + 1; target < state.cells.length; target += 1) {

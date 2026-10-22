@@ -22,14 +22,17 @@ describe('H6.9A Crystalarium musical opening foundation', () => {
   });
 
   it('preserves the identical-family and identical-tier merge rule for full replay', () => {
-    expect(combineCrystalPieces({ family: 'low', tier: 0 }, { family: 'low', tier: 0 }))
-      .toEqual({ family: 'low', tier: 1 });
-    expect(combineCrystalPieces({ family: 'low', tier: 1 }, { family: 'low', tier: 0 }))
-      .toBeNull();
-    expect(combineCrystalPieces({ family: 'low', tier: 0 }, { family: 'bell', tier: 0 }))
-      .toBeNull();
-    expect(combineCrystalPieces({ family: 'bright', tier: 5 }, { family: 'bright', tier: 5 }))
-      .toBeNull();
+    expect(combineCrystalPieces({ family: 'low', tier: 0 }, { family: 'low', tier: 0 })).toEqual({
+      family: 'low',
+      tier: 1,
+    });
+    expect(combineCrystalPieces({ family: 'low', tier: 1 }, { family: 'low', tier: 0 })).toBeNull();
+    expect(
+      combineCrystalPieces({ family: 'low', tier: 0 }, { family: 'bell', tier: 0 }),
+    ).toBeNull();
+    expect(
+      combineCrystalPieces({ family: 'bright', tier: 5 }, { family: 'bright', tier: 5 }),
+    ).toBeNull();
     expect(CRYSTAL_TIER_NAMES).toHaveLength(6);
   });
 
@@ -96,7 +99,10 @@ describe('H6.9A Crystalarium musical opening foundation', () => {
       expect(moves.length).toBeGreaterThan(0);
       let outcomes = 0;
       for (const [a, b] of moves) {
-        for (const [source, target] of [[a, b], [b, a]] as const) {
+        for (const [source, target] of [
+          [a, b],
+          [b, a],
+        ] as const) {
           const result = playOpeningMerge(state, source, target);
           expect(result.accepted).toBe(true);
           if (result.accepted) outcomes += visit(result.state);
