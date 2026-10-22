@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { isPointBlocked } from '../world/MapTraversal';
 import { SUNBEAM_VILLAGE_LAYOUT } from '../world/SunbeamVillageLayout';
 import { SUNBEAM_VILLAGE_MAP } from '../world/SunbeamVillageMap';
-import { CRYSTAL_BROOK_MAP, CRYSTAL_BROOK_ECHO_WAYPOINTS, CRYSTAL_BROOK_GROTTO_THRESHOLD } from '../world/CrystalBrookMap';
+import {
+  CRYSTAL_BROOK_MAP,
+  CRYSTAL_BROOK_ECHO_WAYPOINTS,
+  CRYSTAL_BROOK_GROTTO_THRESHOLD,
+} from '../world/CrystalBrookMap';
 import { RAINBOW_MEADOW_MAP } from '../world/RainbowMeadowMap';
 import {
   R6_AMBIENT_RESIDENT_PLACEMENTS,
@@ -29,26 +33,31 @@ describe('R6.5 functional resident placements', () => {
     expect(echo.waypoints).toEqual(CRYSTAL_BROOK_ECHO_WAYPOINTS);
     expect(
       R6_AMBIENT_RESIDENT_PLACEMENTS.filter(
-        (placement) => placement.residentId === 'resident:echo' && placement.sceneKey === 'CrystalBrookScene',
+        (placement) =>
+          placement.residentId === 'resident:echo' && placement.sceneKey === 'CrystalBrookScene',
       ),
     ).toHaveLength(1);
     for (const point of echo.waypoints) {
       expect(isPointBlocked(point, CRYSTAL_BROOK_MAP.colliders, 42)).toBe(false);
-      expect(Math.hypot(
-        point.x - CRYSTAL_BROOK_GROTTO_THRESHOLD.approach.x,
-        point.y - CRYSTAL_BROOK_GROTTO_THRESHOLD.approach.y,
-      )).toBeLessThan(260);
+      expect(
+        Math.hypot(
+          point.x - CRYSTAL_BROOK_GROTTO_THRESHOLD.approach.x,
+          point.y - CRYSTAL_BROOK_GROTTO_THRESHOLD.approach.y,
+        ),
+      ).toBeLessThan(260);
     }
     // Validate mid-segment traversal, not just the three static stop positions.
     for (let index = 1; index < echo.waypoints.length; index += 1) {
       const from = echo.waypoints[index - 1];
       const to = echo.waypoints[index];
       for (let fraction = 0; fraction <= 1; fraction += 0.25) {
-        expect(isPointBlocked(
-          { x: from.x + (to.x - from.x) * fraction, y: from.y + (to.y - from.y) * fraction },
-          CRYSTAL_BROOK_MAP.colliders,
-          42,
-        )).toBe(false);
+        expect(
+          isPointBlocked(
+            { x: from.x + (to.x - from.x) * fraction, y: from.y + (to.y - from.y) * fraction },
+            CRYSTAL_BROOK_MAP.colliders,
+            42,
+          ),
+        ).toBe(false);
       }
     }
   });
