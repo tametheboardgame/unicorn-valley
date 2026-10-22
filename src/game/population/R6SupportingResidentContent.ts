@@ -18,6 +18,7 @@ import type {
   SmallWorldInteractionDefinition,
   SupportingResidentDefinition,
 } from './AmbientPopulationTypes';
+import { R6_CRYSTAL_BROOK_RESIDENT_PLACEMENTS } from './R6CrystalBrookPopulationContent';
 import { R6_MEADOW_RESIDENT_PLACEMENTS } from './R6MeadowPopulationContent';
 
 export const R6_SUPPORTING_RESIDENTS = [
@@ -639,20 +640,7 @@ export const R6_AMBIENT_RESIDENT_PLACEMENTS = [
       { id: 'bean-playground-b', x: 2740, y: 1795, pauseMs: 1700 },
     ],
   },
-  {
-    id: 'resident-placement:echo:crystal-brook-route',
-    residentId: 'resident:echo',
-    sceneKey: 'CrystalBrookScene',
-    behaviour: 'purposeful-route',
-    routeMode: 'ping-pong',
-    speedPxPerSecond: 66,
-    interactionRadius: 150,
-    priority: 60,
-    waypoints: [
-      { id: 'echo-brook-a', x: 2860, y: 1690, pauseMs: 1800 },
-      { id: 'echo-brook-b', x: 2990, y: 1760, pauseMs: 1800 },
-    ],
-  },
+  ...R6_CRYSTAL_BROOK_RESIDENT_PLACEMENTS,
   {
     id: 'resident-placement:fern:woods-route',
     residentId: 'resident:fern',

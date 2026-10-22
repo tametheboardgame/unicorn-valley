@@ -12,7 +12,6 @@ import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
 import {
-  CRYSTAL_BROOK_ECHO_CLUE,
   CRYSTAL_BROOK_GROTTO_THRESHOLD,
   CRYSTAL_BROOK_PEBBLE_STACK,
   CRYSTAL_BROOK_REFLECTION_POOL,
@@ -53,15 +52,6 @@ interface BrookDepthState {
 
 const REGISTRY_OWNER = 'crystal-brook-depth';
 const INTERACTIONS: readonly BrookInteractionDefinition[] = [
-  {
-    id: 'echo-crystal-song',
-    label: 'Echo’s crystal clue',
-    actionLabel: 'Listen with Echo',
-    actionKind: 'talk',
-    position: CRYSTAL_BROOK_ECHO_CLUE,
-    radius: 130,
-    icon: '🎵',
-  },
   {
     id: 'crystal-grotto',
     label: 'Crystal Grotto',
@@ -234,12 +224,6 @@ export class CrystalBrookDepthWorldManager {
 
   private activate(state: BrookDepthState, definition: BrookInteractionDefinition): void {
     switch (definition.id) {
-      case 'echo-crystal-song': {
-        const result = this.story.talkToEcho();
-        this.showFeedback(state, result.message);
-        this.syncPersistent(state, true);
-        return;
-      }
       case 'crystal-grotto':
         if (this.story.isGrottoOpen()) {
           state.scene.scene.start('CrystalGrottoScene');

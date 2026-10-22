@@ -396,7 +396,8 @@ export const CRYSTAL_BROOK_WATER_GLINTS = [
 ] as const;
 
 export const CRYSTAL_BROOK_RIPPLE_OVERLOOK = { x: 1720, y: 830 } as const;
-export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2800, y: 1400 } as const;
+// Shared physical anchor for Echo's first Grotto-bank stop and legacy clue lookups.
+export const CRYSTAL_BROOK_ECHO_CLUE = { x: 2460, y: 1770 } as const;
 export const CRYSTAL_BROOK_WATERFALL_MIST = { x: 3320, y: 845 } as const;
 export const CRYSTAL_BROOK_WATERFALL_PRESENTATION = { x: 3320, y: 770 } as const;
 export const CRYSTAL_BROOK_REFLECTION_POOL = { x: 1780, y: 1680 } as const;
@@ -413,10 +414,13 @@ export const CRYSTAL_BROOK_CASCADE_MEMORY = { x: 2660, y: 1160 } as const;
 
 export const CRYSTAL_BROOK_SHALLOW_STREAM_HINT = { x: 1640, y: 960 } as const;
 export const CRYSTAL_BROOK_GROTTO_CUE = { x: 2400, y: 1690 } as const;
+// Echo circles the accessible south-bank Grotto approach rather than roaming
+// hundreds of pixels east of the doorway. The positions avoid the Prism crystal
+// footprints and keep the unified Talk target physically attached to Echo.
 export const CRYSTAL_BROOK_ECHO_WAYPOINTS = [
-  { id: 'echo-brook-a', x: 2860, y: 1690, pauseMs: 2200 },
-  { id: 'echo-brook-b', x: 2990, y: 1760, pauseMs: 2800 },
-  { id: 'echo-brook-c', x: 3180, y: 1650, pauseMs: 2100 },
+  { id: 'echo-brook-a', ...CRYSTAL_BROOK_ECHO_CLUE, pauseMs: 2400 },
+  { id: 'echo-brook-b', x: 2540, y: 1810, pauseMs: 2200 },
+  { id: 'echo-brook-c', x: 2620, y: 1740, pauseMs: 1900 },
 ] as const;
 
 export const CRYSTAL_BROOK_DISTRICTS = [

@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "stream": "world",
   "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.7A",
+  "workPackage": "R6.5-WP19H6.7B",
   "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
-  "branch": "agent/world-h6-7a-brook-treasures-ripple",
-  "prNumber": 331,
-  "baseMainSha": "b374aea19ae03a98a303d4a5ee0f972b0616ee57",
+  "branch": "agent/world-h6-7b-echo-crystal-song",
+  "prNumber": 332,
+  "baseMainSha": "e90ddef725b9f89c93ba38c939a4b86ad8aa982d",
   "updatedOn": "2026-10-22",
-  "note": "H6.7A human visual approval recorded 2026-10-22 on Cloudflare build bb202c6; draft targeted CI #39761146389 passed. PR #331 is stacked on PR #330 pending qualified integration, then exact-head final CI and merge. Next planned H6.7B (Echo); racing deferred."
+  "note": "H6.7A human-approved and merged PR #331 at e90ddef7. H6.7B (#332) moved to main and visually accepted in the 2026-10-22 Echo review; single Echo Talk interaction, canonical Grotto route, unchanged Crystal Song flags. Code/test/doc review reconciled; full exact-head qualification pending. H6.9A (#333) stacked next; new Crystalarium entrance gate in future H6.9B. Racing deferred."
 }

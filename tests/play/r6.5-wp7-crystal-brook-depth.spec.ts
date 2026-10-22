@@ -72,12 +72,13 @@ test('Crystal Brook exposes repeated non-race curiosity and an Echo resident', a
 
   const brook = await sceneSnapshot(page, 'CrystalBrookScene');
   const depthObjects = brook.objects.filter(({ name }) => name.startsWith('brook-depth:'));
-  expect(depthObjects.some(({ name }) => name === 'brook-depth:echo-crystal-song')).toBe(true);
+  // Echo's body is now the only conversation affordance: no detached lyric marker.
+  expect(depthObjects.some(({ name }) => name === 'brook-depth:echo-crystal-song')).toBe(false);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:crystal-grotto')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:waterfall-mist')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:reflection-pool')).toBe(true);
   expect(depthObjects.some(({ name }) => name === 'brook-depth:singing-crystals')).toBe(true);
-  expect(depthObjects.length).toBeGreaterThanOrEqual(10);
+  expect(depthObjects.length).toBeGreaterThanOrEqual(9);
   expect(brook.objects.some(({ name }) => name === 'supporting-resident:resident:echo')).toBe(true);
 });
 
