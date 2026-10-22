@@ -6,7 +6,7 @@
   "workPackagePath": "docs/work-packages/R6.5-WP19H6.9A-CRYSTALARIUM-FOUNDATION.md",
   "branch": "agent/world-h6-9a-crystalarium-foundation",
   "prNumber": 333,
-  "baseMainSha": "412f7bd5edf10fc174331768b3a68aea1d6c23eb",
+  "baseMainSha": "7153ecaffdf1f09da077687f96b162740f3a7c80",
   "updatedOn": "2026-10-22",
-  "note": "H6.9A authoring and pure-rules draft PR #333 stacked on H6.7B PR #332, whose prerequisite H6.7A PR #331 remains open. Design approved 2026-10-22: one Crystalarium mini-game, deterministic 3-pair/3-note Grotto introductory unlock, optional deeper full replay, explicit old-save migration. H6.9A has no live door/gameplay unlock; H6.9B waits for World integration. Racing deferred."
+  "note": "H6.7A #331 and H6.7B #332 both qualified and merged (latest main 7153ecaf). H6.9A #333 is the active pure rules/design work; its draft unit, build and browser checks passed, with integration/final review pending. H6.9B future playable musical Grotto gate; racing deferred."
 }
