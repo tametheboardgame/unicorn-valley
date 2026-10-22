@@ -35,6 +35,10 @@ import {
 } from '../world/CrystalBrookMap';
 import { createCrystalBrookBoundaryPresentation } from '../world/CrystalBrookBoundaryPresentation';
 import {
+  createCrystalBrookSecretRoutePresentation,
+  createCrystalBrookTreasurePresentation,
+} from '../world/CrystalBrookInteractivePresentation';
+import {
   createCrystalBrookDistrictPresentation,
   createCrystalBrookGrottoPresentation,
   createCrystalBrookReflectionPoolPresentation,
@@ -360,34 +364,10 @@ export class CrystalBrookScene extends Phaser.Scene {
       }
 
       const crystal = spot.discoveryId === BROOK_CRYSTAL_DISCOVERY_ID;
-      const icon = this.add
-        .text(0, 0, crystal ? '💎' : '🐚', {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: crystal ? '44px' : '42px',
-        })
-        .setOrigin(0.5);
-      const glow = this.add.circle(0, 5, 46, crystal ? 0x9fe8ff : 0xffe7b5, 0.2);
-      const sparkle = this.add
-        .text(28, -34, '✦', {
-          color: '#fff8c2',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '20px',
-          fontStyle: 'bold',
-        })
-        .setOrigin(0.5);
-      const container = this.add
-        .container(spot.position.x, spot.position.y, [glow, icon, sparkle])
-        .setDepth(worldDepthForY(spot.position.y, 0.35));
-      this.tweens.add({
-        targets: container,
-        y: spot.position.y - 9,
-        scale: 1.06,
-        duration: 950,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
-      this.treasureObjects.set(spot.id, container);
+      this.treasureObjects.set(
+        spot.id,
+        createCrystalBrookTreasurePresentation(this, spot, crystal),
+      );
     }
   }
 
@@ -395,28 +375,10 @@ export class CrystalBrookScene extends Phaser.Scene {
     if (this.discoveryService?.hasDiscovery(PRISM_GROTTO_DISCOVERY_ID)) {
       return;
     }
-    const route = CRYSTAL_BROOK_MAP.secretRoutes[0];
-    const glow = this.add.circle(0, 0, 62, 0xf7d6ff, 0.14);
-    const sparkle = this.add
-      .text(0, 0, '✦', {
-        color: '#fff2aa',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '34px',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-    this.secretMarker = this.add
-      .container(route.position.x, route.position.y, [glow, sparkle])
-      .setDepth(worldDepthForY(route.position.y, 0.3));
-    this.tweens.add({
-      targets: [glow, sparkle],
-      alpha: { from: 0.28, to: 1 },
-      scale: { from: 0.88, to: 1.18 },
-      duration: 1150,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
+    this.secretMarker = createCrystalBrookSecretRoutePresentation(
+      this,
+      CRYSTAL_BROOK_MAP.secretRoutes[0],
+    );
   }
 
   private createEnvironment(): void {
@@ -472,9 +434,8 @@ export class CrystalBrookScene extends Phaser.Scene {
     this.createMeadowGorge();
     createCrystalBrookBoundaryPresentation(this);
     this.createIceBridges();
-    this.createGrottoTrailCues();
-    this.createNpcVisitPoints();
-    this.createAmbientSparkles();
+    // The grotto arch, path, authored banks and Ripple are the visit cues.
+    // Old always-on floating marker/sparkle glyphs are intentionally retired.
   }
 
   private createWater(): void {
@@ -973,68 +934,6 @@ export class CrystalBrookScene extends Phaser.Scene {
           .rectangle(0, -bridge.deckWidth * 0.12, bridge.length - 54, 4, 0xffffff, 0.34)
           .setAngle(-1),
       );
-    }
-  }
-
-  private createGrottoTrailCues(): void {
-    const route = CRYSTAL_BROOK_MAP.secretRoutes[0];
-    for (const [index, point] of route.trail.entries()) {
-      this.add
-        .text(point.x, point.y - 24, index % 2 === 0 ? '·' : '✦', {
-          color: '#f8e5ff',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: index % 2 === 0 ? '26px' : '17px',
-        })
-        .setOrigin(0.5)
-        .setAlpha(0.5)
-        .setDepth(worldDepthForY(point.y, 0.2));
-    }
-  }
-
-  private createNpcVisitPoints(): void {
-    for (const point of CRYSTAL_BROOK_MAP.npcVisitPoints) {
-      this.add.circle(point.position.x, point.position.y, 26, 0xf7e8bd, 0.26).setDepth(5);
-      this.add
-        .text(point.position.x, point.position.y - 34, '✧', {
-          color: '#fff4bd',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '23px',
-        })
-        .setOrigin(0.5)
-        .setAlpha(0.55)
-        .setDepth(6);
-    }
-  }
-
-  private createAmbientSparkles(): void {
-    const positions = [
-      [820, 820],
-      [1120, 410],
-      [1580, 890],
-      [2050, 720],
-      [2390, 1510],
-      [3020, 920],
-      [3200, 1760],
-    ] as const;
-    for (const [index, [x, y]] of positions.entries()) {
-      const sparkle = this.add
-        .text(x, y, index % 3 === 0 ? '✦' : '·', {
-          color: index % 2 === 0 ? '#e8ffff' : '#fff3ba',
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: index % 3 === 0 ? '18px' : '30px',
-        })
-        .setOrigin(0.5)
-        .setAlpha(0.4)
-        .setDepth(worldDepthForY(y, -0.1));
-      this.tweens.add({
-        targets: sparkle,
-        alpha: { from: 0.22, to: 0.78 },
-        y: y - 12,
-        duration: 1150 + index * 110,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
     }
   }
 

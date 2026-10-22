@@ -9,8 +9,10 @@ import type { SecretDiscoveryDefinition } from '../../content/r4Secrets';
 import { SecretDiscoveryService } from '../discovery/SecretDiscoveryService';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
+import { createResidentAppearanceSprite } from '../population/SupportingResidentArt';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CRYSTAL_BROOK_MAP } from '../world/CrystalBrookMap';
+import { worldDepthForY } from '../world/WorldDepth';
 import { startRippleConversation } from './WorldStoryConversations';
 
 const PRESENTATION_NAME = 'crystal-brook-story-presentation';
@@ -79,24 +81,36 @@ export class CrystalBrookStoryWorldManager {
 
   private createRipple(state: BrookStoryState): void {
     const position = getRipplePosition();
-    const glow = state.scene.add.circle(0, -4, 50, 0x9ee9e8, 0.18);
-    const body = state.scene.add.ellipse(0, 0, 92, 60, 0x8ed8e4, 1);
-    const head = state.scene.add.circle(35, -33, 30, 0xb7edf0, 1);
-    const mane = state.scene.add.ellipse(3, -29, 30, 72, 0x6cb7cf, 0.95).setAngle(20);
-    const horn = state.scene.add.triangle(50, -72, 0, 28, 8, 0, 16, 28, 0xe5f8ff, 1).setAngle(20);
-    const eye = state.scene.add.circle(44, -38, 4, 0x3e6670, 1);
-    const tail = state.scene.add.ellipse(-56, -7, 24, 68, 0xa8e2c8, 0.96).setAngle(-35);
-
+    // Ripple now uses the same production unicorn anatomy, pose and texture
+    // pipeline as all supporting residents. No separate ellipse-body NPC.
+    const ripple = createResidentAppearanceSprite(
+      state.scene,
+      'crystal-brook:ripple:idle',
+      'crystal-brook:ripple:unicorn',
+      {
+        bodyColour: 'sky',
+        eyeColour: 'aqua',
+        maneStyle: 'swept',
+        maneColour: 'aqua',
+        tailStyle: 'swish',
+        tailColour: 'ice',
+        hornStyle: 'crystal',
+        marking: 'sparkles',
+        accessory: 'none',
+      },
+    );
+    const shadow = state.scene.add.ellipse(0, 19, 125, 24, 0x486f65, 0.28);
+    const shimmer = state.scene.add.ellipse(12, -20, 77, 62, 0xb5f8e9, 0.08);
     state.ripple = state.scene.add
-      .container(position.x, position.y, [glow, tail, body, mane, head, horn, eye])
+      .container(position.x, position.y, [shadow, shimmer, ripple])
       .setName(PRESENTATION_NAME)
-      .setDepth(18);
+      .setDepth(worldDepthForY(position.y, 0.46));
 
     state.scene.tweens.add({
-      targets: glow,
-      alpha: { from: 0.1, to: 0.34 },
-      scale: { from: 0.92, to: 1.12 },
-      duration: 1200,
+      targets: shimmer,
+      alpha: { from: 0.05, to: 0.2 },
+      scale: { from: 0.96, to: 1.08 },
+      duration: 1850,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
