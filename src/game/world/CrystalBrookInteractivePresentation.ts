@@ -37,31 +37,88 @@ export function createCrystalBrookTreasurePresentation(
   if (isCrystal) {
     // Cluster rises *from* the stone: a dark foot, faceted body, cold light.
     treasure.fillStyle(0x3b7386, 1);
-    facets(treasure, [[-27, 10], [-24, -18], [-8, -40], [7, -13], [15, 11]]);
+    facets(treasure, [
+      [-27, 10],
+      [-24, -18],
+      [-8, -40],
+      [7, -13],
+      [15, 11],
+    ]);
     treasure.fillStyle(0x7ed8e9, 1);
-    facets(treasure, [[-24, -18], [-8, -40], [-7, 10], [-27, 10]]);
+    facets(treasure, [
+      [-24, -18],
+      [-8, -40],
+      [-7, 10],
+      [-27, 10],
+    ]);
     treasure.fillStyle(0xe4ffff, 0.91);
-    facets(treasure, [[-8, -40], [7, -13], [-7, 10]]);
+    facets(treasure, [
+      [-8, -40],
+      [7, -13],
+      [-7, 10],
+    ]);
     treasure.fillStyle(0x407b96, 1);
-    facets(treasure, [[6, 12], [4, -19], [20, -33], [32, -8], [29, 13]]);
+    facets(treasure, [
+      [6, 12],
+      [4, -19],
+      [20, -33],
+      [32, -8],
+      [29, 13],
+    ]);
     treasure.fillStyle(0xa2eaf1, 0.98);
-    facets(treasure, [[4, -19], [20, -33], [18, 11], [6, 12]]);
+    facets(treasure, [
+      [4, -19],
+      [20, -33],
+      [18, 11],
+      [6, 12],
+    ]);
     treasure.fillStyle(0xedffff, 0.84);
-    facets(treasure, [[20, -33], [32, -8], [18, 11]]);
+    facets(treasure, [
+      [20, -33],
+      [32, -8],
+      [18, 11],
+    ]);
     treasure.fillStyle(0xb8eff1, 0.96);
-    facets(treasure, [[-11, 13], [-7, -14], [5, -27], [15, 13]]);
+    facets(treasure, [
+      [-11, 13],
+      [-7, -14],
+      [5, -27],
+      [15, 13],
+    ]);
     treasure.fillStyle(0xffffff, 0.8);
-    facets(treasure, [[-7, -14], [5, -27], [4, 12]]);
+    facets(treasure, [
+      [-7, -14],
+      [5, -27],
+      [4, 12],
+    ]);
   } else {
     // Ribbed pearly river shell, nestled in its own ochre/silver cobble bed.
     treasure.fillStyle(0x916f65, 0.75);
     treasure.fillEllipse(1, 12, 72, 22);
     treasure.fillStyle(0xf1dcb6, 1);
-    facets(treasure, [[-34, 10], [-28, -14], [-13, -29], [2, -33], [21, -20], [34, 8], [0, 21]]);
+    facets(treasure, [
+      [-34, 10],
+      [-28, -14],
+      [-13, -29],
+      [2, -33],
+      [21, -20],
+      [34, 8],
+      [0, 21],
+    ]);
     treasure.fillStyle(0xfff5d7, 0.92);
-    facets(treasure, [[-28, -14], [2, -33], [3, 10], [-34, 10]]);
+    facets(treasure, [
+      [-28, -14],
+      [2, -33],
+      [3, 10],
+      [-34, 10],
+    ]);
     treasure.fillStyle(0xd3bba2, 0.88);
-    facets(treasure, [[2, -33], [21, -20], [34, 8], [3, 10]]);
+    facets(treasure, [
+      [2, -33],
+      [21, -20],
+      [34, 8],
+      [3, 10],
+    ]);
     treasure.lineStyle(2, 0xb79a8b, 0.67);
     for (const endX of [-23, -13, 0, 14, 25]) {
       treasure.beginPath();
@@ -102,9 +159,23 @@ export function createCrystalBrookSecretRoutePresentation(
   stone.fillStyle(0x516b71, 0.55);
   stone.fillEllipse(4, 8, 84, 30);
   stone.fillStyle(0x83929a, 1);
-  facets(stone, [[-36, 7], [-29, -13], [-10, -23], [25, -17], [39, 5], [20, 17], [-21, 15]]);
+  facets(stone, [
+    [-36, 7],
+    [-29, -13],
+    [-10, -23],
+    [25, -17],
+    [39, 5],
+    [20, 17],
+    [-21, 15],
+  ]);
   stone.fillStyle(0xadc4c3, 0.88);
-  facets(stone, [[-29, -13], [-10, -23], [25, -17], [7, -5], [-22, -3]]);
+  facets(stone, [
+    [-29, -13],
+    [-10, -23],
+    [25, -17],
+    [7, -5],
+    [-22, -3],
+  ]);
   stone.lineStyle(3, 0xd8bdec, 0.78);
   stone.beginPath();
   stone.moveTo(-16, 8);
