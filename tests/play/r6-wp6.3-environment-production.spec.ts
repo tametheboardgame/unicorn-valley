@@ -162,7 +162,14 @@ for (const region of REGIONS) {
         'crystal-brook:crystal-grove:gorge-shelf',
         'r6-region-gateway-art:crystal-brook:east-woodland',
       ]) {
-        const object = scene.objects.find(({ name }) => name === areaObjectName);
+        // Region-gateway decoration is attached after the production anchor,
+        // by the scene presentation manager's next update. Wait rather than
+        // relying on timing of the first diagnostic snapshot.
+        await waitForObject(page, region.sceneKey, areaObjectName);
+        const refreshed = (await snapshot(page)).scenes.find(
+          ({ key }) => key === region.sceneKey,
+        );
+        const object = refreshed?.objects.find(({ name }) => name === areaObjectName);
         expect(object, `Brook should own ${areaObjectName}`).toBeTruthy();
         expect(object?.interactive).toBe(false);
       }
