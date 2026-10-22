@@ -8,5 +8,5 @@
   "prNumber": 331,
   "baseMainSha": "b374aea19ae03a98a303d4a5ee0f972b0616ee57",
   "updatedOn": "2026-10-22",
-  "note": "H6.7A drafted in PR #331, stacked onto pending integration PR #330. Four grounded treasures, engraved Grotto marker, shared production Ripple and retirement of obsolete floating visit glyphs. Visual approval pending; racing deferred."
+  "note": "H6.7A human visual approval recorded 2026-10-22 on Cloudflare build bb202c6; draft targeted CI #39761146389 passed. PR #331 is stacked on PR #330 pending qualified integration, then exact-head final CI and merge. Next planned H6.7B (Echo); racing deferred."
 }
