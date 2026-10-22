@@ -1,6 +1,17 @@
 # Project Status
 
-Last updated: 2026-10-15
+Last updated: 2026-10-22
+
+## Crystal Brook H6.5A integrated and next World stage
+
+- [World PR #328](https://github.com/tametheboardgame/unicorn-valley/pull/328) **merged** with verified `main` integration SHA `b374aea19ae03a98a303d4a5ee0f972b0616ee57`. The human-approved area visuals, faceted crystal colliders, Grotto/Reflection Pool, feeder confluence and stepping-stone crossing are in `main`. Exact PR-head [CI #39755450820](https://github.com/tametheboardgame/unicorn-valley/actions/runs/39755450820) passed Tier 0, unit, build, smoke, all six Chromium shards, seven cross-browser profiles and Merge Gate. This is repository integration verification, **not** a claim of separate production release.
+- **Next World slice:** `R6.5-WP19H6.7` environment, residents and interaction remediation. The World stream is unclaimed between PRs; no H6.7 implementation is started by this documentation checkpoint.
+- **Racing deferral:** H6.6 and Rainbow Run H5 hub polish are explicitly moved with MG-WP11 to one consolidated Racing Programme after **all** exploration areas are accepted; current working race hub entry/return remains supported. See the top-level `ROADMAP.md` for future RACE-WP0–WP5 boundaries.
+- **Parallel safety:** Story House SH2.0 and Just Games MG-WP7 remain separate PRs. This checkpoint has no game source changes or other product stream edits.
+
+## Archived previous engineering checkpoint
+
+Last checkpoint: 2026-10-15
 
 ## Integrated main and ENG-WP3 close-out
 

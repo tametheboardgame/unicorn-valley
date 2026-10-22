@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "world",
-  "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.5A",
-  "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
-  "branch": "agent/world-h6.5a-crystal-brook-art",
-  "prNumber": 328,
-  "baseMainSha": "d45859a69dd0bb89cb32f1d7d44d401a486fe2e9",
-  "updatedOn": "2026-10-16",
-  "note": "H6.5A visually approved 2026-10-16; final code/docs/test review reconciled. PR #328 awaiting exact-head CI and merge; next H6.6 Crystal Cup Race Hub."
+  "status": "complete",
+  "workPackage": null,
+  "workPackagePath": null,
+  "branch": null,
+  "prNumber": null,
+  "baseMainSha": null,
+  "updatedOn": "2026-10-22",
+  "note": "H6.5A human-approved and merged by PR #328 at b374aea19ae03a98a303d4a5ee0f972b0616ee57; World stream released for next independent H6.7 work. H6.6 racing hub polish deferred after area reviews."
 }
