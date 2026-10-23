@@ -29,7 +29,8 @@ class MemorySaveRepository implements SaveRepository {
 }
 
 function createHarness() {
-  const saveService = new SaveService(new MemorySaveRepository());
+  const repository = new MemorySaveRepository();
+  const saveService = new SaveService(repository);
   saveService.save(createDefaultSave('2026-09-02T17:00:00.000Z'));
   const events = new TypedEventBus<GameEventMap>();
   const quests = new QuestEngine(saveService, events, () => '2026-09-02T17:00:00.000Z');
@@ -51,7 +52,7 @@ function createHarness() {
       quests,
       events,
     );
-  return { saveService, quests, story, completeOpening };
+  return { repository, saveService, quests, story, completeOpening };
 }
 
 describe('Crystal Grotto story service', () => {
@@ -88,6 +89,83 @@ describe('Crystal Grotto story service', () => {
     expect(saveService.load()?.inventory.itemQuantities[ECHO_CRYSTAL_CHIME_ITEM_ID]).toBe(1);
     expect(story.talkToEcho().state).toBe('complete');
 
+    quests.destroy();
+  });
+
+  it('retains the first opening, quest step and access after a persisted save reload', () => {
+    const { repository, saveService, quests, story, completeOpening } = createHarness();
+    expect(story.talkToEcho().state).toBe('started');
+    expect(completeOpening()).toBe(true);
+
+    const reloadedSave = new SaveService(repository);
+    const reloadedEvents = new TypedEventBus<GameEventMap>();
+    const reloadedQuests = new QuestEngine(
+      reloadedSave,
+      reloadedEvents,
+      () => '2026-09-02T17:00:00.000Z',
+    );
+    const reloadedStory = new CrystalGrottoStoryService(
+      reloadedSave,
+      reloadedQuests,
+      reloadedEvents,
+    );
+
+    expect(reloadedStory.isGrottoOpen()).toBe(true);
+    expect(reloadedStory.isOpeningMelodyReady()).toBe(false);
+    expect(reloadedQuests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID).currentStepId).toBe(
+      getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 3),
+    );
+    expect(reloadedSave.load()?.world.flags[CRYSTAL_GROTTO_OPEN_FLAG]).toBe(true);
+
+    const before = JSON.stringify(reloadedSave.load());
+    expect(completeOpening()).toBe(false);
+    expect(JSON.stringify(reloadedSave.load())).toBe(before);
+
+    reloadedQuests.destroy();
+    quests.destroy();
+  });
+
+  it('preserves a legacy mid-song save across reload without reopening the tutorial', () => {
+    const { repository, saveService, quests } = createHarness();
+    const current = saveService.load();
+    if (!current) throw new Error('Expected saved profile');
+
+    saveService.save({
+      ...current,
+      quests: {
+        ...current.quests,
+        byQuestId: {
+          ...current.quests.byQuestId,
+          [ECHO_CRYSTAL_SONG_QUEST_ID]: {
+            status: 'active',
+            currentStepId: getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 4),
+            completedAt: null,
+          },
+        },
+      },
+    });
+
+    const reloadedSave = new SaveService(repository);
+    const reloadedEvents = new TypedEventBus<GameEventMap>();
+    const reloadedQuests = new QuestEngine(
+      reloadedSave,
+      reloadedEvents,
+      () => '2026-09-02T17:00:00.000Z',
+    );
+    const reloadedStory = new CrystalGrottoStoryService(
+      reloadedSave,
+      reloadedQuests,
+      reloadedEvents,
+    );
+
+    expect(reloadedStory.isGrottoOpen()).toBe(true);
+    expect(reloadedStory.isOpeningMelodyReady()).toBe(false);
+    expect(reloadedQuests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID).currentStepId).toBe(
+      getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 4),
+    );
+    expect(reloadedSave.load()?.world.flags[CRYSTAL_GROTTO_OPEN_FLAG]).not.toBe(true);
+
+    reloadedQuests.destroy();
     quests.destroy();
   });
 
