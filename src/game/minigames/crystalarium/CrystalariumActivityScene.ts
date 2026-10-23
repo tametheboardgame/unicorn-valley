@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getBrowserAudioSettingsStore } from '../../audio/AudioSettings';
 import { GAME_HEIGHT, GAME_WIDTH } from '../../config/gameConstants';
 import { getBrowserQuestEngine } from '../../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../../save/browserSaveService';
@@ -182,8 +183,10 @@ export class CrystalariumActivityScene extends Phaser.Scene {
 
   private playNote(note: CrystalFamily): void {
     this.cameras.main.flash(120, 177, 224, 255);
-    if (this.quiet) return;
-    // Use the already-created Phaser audio context; no separate audio engine.
+    const settings = getBrowserAudioSettingsStore().load();
+    const peakGain = 0.055 * settings.masterVolume * settings.sfxVolume;
+    if (this.quiet || settings.muted || !settings.sfxEnabled || peakGain <= 0.0001) return;
+    // Honour existing audio preferences; no separate audio engine is created.
     const audio = this.sound as Phaser.Sound.WebAudioSoundManager;
     const context = audio.context;
     if (!context || context.state !== 'running') return;
@@ -194,7 +197,7 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       oscillator.type = note === 'bell' ? 'sine' : 'triangle';
       oscillator.frequency.value = frequencies[note];
       gain.gain.setValueAtTime(0.0001, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.055, context.currentTime + 0.035);
+      gain.gain.exponentialRampToValueAtTime(peakGain, context.currentTime + 0.035);
       gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.42);
       oscillator.connect(gain);
       gain.connect(context.destination);
@@ -415,7 +418,11 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       790,
       660,
       174,
-      this.quiet ? 'Sound: Off' : 'Sound: On',
+      this.quiet
+        ? 'Sound: Off'
+        : getBrowserAudioSettingsStore().load().muted
+          ? 'Sound: Muted'
+          : 'Sound: On',
       'crystalarium-audio',
       () => {
         this.quiet = !this.quiet;
@@ -428,7 +435,7 @@ export class CrystalariumActivityScene extends Phaser.Scene {
         1040,
         660,
         178,
-        this.completedWorldUnlock ? 'Enter Grotto →' : 'Finish →',
+        this.completedWorldUnlock ? 'Return to arch →' : 'Finish →',
         'crystalarium-finish',
         () => this.returnToCaller(),
       );
