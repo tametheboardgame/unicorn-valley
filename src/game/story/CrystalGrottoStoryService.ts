@@ -7,12 +7,13 @@ import {
   CRYSTAL_GROTTO_CHAMBER_DISCOVERY_ID,
   CRYSTAL_GROTTO_GLOWING_FLAG,
   CRYSTAL_GROTTO_LOW_NOTE_DISCOVERY_ID,
-  CRYSTAL_GROTTO_OPEN_FLAG,
   CRYSTAL_GROTTO_SONG_DISCOVERY_ID,
+  ECHO_CRYSTAL_SONG_ACTIVE_FLAG,
   ECHO_CRYSTAL_SONG_COMPLETE_FLAG,
   ECHO_CRYSTAL_SONG_QUEST_ID,
 } from '../../content/r6CrystalBrookDepthContent';
 import { DiscoveryService } from '../discovery/DiscoveryService';
+import { getGrottoGateAccess } from '../minigames/crystalarium/CrystalariumGrottoGate';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../events/GameEventBus';
 import { getQuestStepId, type QuestEngine } from '../quests/QuestEngine';
 import type { SaveService } from '../save/SaveService';
@@ -59,10 +60,20 @@ export class CrystalGrottoStoryService {
     if (progress.status === 'not-started') {
       this.quests.startQuest(ECHO_CRYSTAL_SONG_QUEST_ID);
       this.discoveries.unlockDiscovery(CRYSTAL_GROTTO_CHAMBER_DISCOVERY_ID);
+      const save = this.saveService.load();
+      if (save && save.world.flags[ECHO_CRYSTAL_SONG_ACTIVE_FLAG] !== true) {
+        this.saveService.save({
+          ...save,
+          world: {
+            ...save.world,
+            flags: { ...save.world.flags, [ECHO_CRYSTAL_SONG_ACTIVE_FLAG]: true },
+          },
+        });
+      }
       return {
         state: 'started',
         message:
-          'Echo has found three crystals that answer one another, but not in the right order. The grotto opens beyond the old Prism Grotto trail. “Start with the deepest hum and listen for what answers next.” 💎🎵',
+          'Echo found a musical crystal instrument beside the sealed Grotto arch. Match its twin crystals in order: deep hum, clear ping, soft bell. Then the doorway will sing open! 💎🎵',
       };
     }
 
@@ -75,6 +86,12 @@ export class CrystalGrottoStoryService {
       };
     }
 
+    if (progress.currentStepId === getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 1)) {
+      return {
+        state: 'started',
+        message: '“The arch is listening,” Echo whispers. “Play the opening melody: hum, ping, bell.”',
+      };
+    }
     if (progress.currentStepId === getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 3)) {
       return {
         state: 'find-low-note',
@@ -124,7 +141,16 @@ export class CrystalGrottoStoryService {
   }
 
   public isGrottoOpen(): boolean {
-    return this.saveService.load()?.world.flags[CRYSTAL_GROTTO_OPEN_FLAG] === true;
+    return getGrottoGateAccess(this.saveService.load()).unlocked;
+  }
+
+  public isOpeningMelodyReady(): boolean {
+    const progress = this.quests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID);
+    return (
+      !this.isGrottoOpen() &&
+      progress.status === 'active' &&
+      progress.currentStepId === getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 1)
+    );
   }
 
   public isGrottoGlowing(): boolean {

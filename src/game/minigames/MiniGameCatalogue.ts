@@ -8,6 +8,7 @@ export const MINI_GAME_IDS = {
   fireflyLantern: 'firefly-lantern',
   pondLeap: 'pond-leap',
   coralBeachcombing: 'coral-beachcombing',
+  crystalarium: 'crystalarium',
 } as const;
 
 export type MiniGameId = (typeof MINI_GAME_IDS)[keyof typeof MINI_GAME_IDS];
@@ -144,6 +145,21 @@ export const MINI_GAME_CATALOGUE = [
     group: 'other',
     order: 60,
     variants: [],
+    justGames: { visible: true, availability: 'always' },
+    world: { placement: 'placed' },
+    sandbox: { sideEffects: 'none' },
+  },
+  {
+    id: MINI_GAME_IDS.crystalarium,
+    sceneKey: 'CrystalariumActivityScene',
+    title: 'Crystalarium',
+    description: 'Match musical crystal pairs to make a three-note melody. The deeper patterns are coming soon.',
+    group: 'puzzle',
+    order: 65,
+    variants: [
+      { id: 'opening-melody', title: 'Opening melody', justGamesVisible: false },
+      { id: 'resonance-patterns', title: 'Melody practice', justGamesVisible: true },
+    ],
     justGames: { visible: true, availability: 'always' },
     world: { placement: 'placed' },
     sandbox: { sideEffects: 'none' },

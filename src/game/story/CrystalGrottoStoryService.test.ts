@@ -8,6 +8,8 @@ import {
 } from '../../content/r6CrystalBrookDepthContent';
 import { type GameEventMap, TypedEventBus } from '../events/GameEventBus';
 import { getQuestStepId, QuestEngine } from '../quests/QuestEngine';
+import { createMiniGameSession } from '../minigames/MiniGameSession';
+import { completeCrystalariumOpening } from '../minigames/crystalarium/CrystalariumWorldOutcome';
 import type { SaveRepository } from '../save/SaveRepository';
 import { SaveService } from '../save/SaveService';
 import { createDefaultSave } from '../save/createDefaultSave';
@@ -32,16 +34,40 @@ function createHarness() {
   const events = new TypedEventBus<GameEventMap>();
   const quests = new QuestEngine(saveService, events, () => '2026-09-02T17:00:00.000Z');
   const story = new CrystalGrottoStoryService(saveService, quests, events);
-  return { saveService, quests, story };
+  const completeOpening = () =>
+    completeCrystalariumOpening(
+      createMiniGameSession({
+        gameId: 'crystalarium',
+        source: 'world',
+        variantId: 'opening-melody',
+        returnTarget: { sceneKey: 'CrystalBrookScene', mode: 'resume' },
+        worldContext: {
+          locationId: 'crystal-brook',
+          interactionId: 'crystal-grotto',
+          questContext: ECHO_CRYSTAL_SONG_QUEST_ID,
+        },
+      }),
+      saveService,
+      quests,
+      events,
+    );
+  return { saveService, quests, story, completeOpening };
 }
 
 describe('Crystal Grotto story service', () => {
-  it('opens the grotto and completes the ordered three-note Crystal Song', () => {
-    const { saveService, quests, story } = createHarness();
+  it('keeps the entrance sealed until the opening melody succeeds, then completes the Crystal Song', () => {
+    const { saveService, quests, story, completeOpening } = createHarness();
 
     expect(story.talkToEcho().state).toBe('started');
+    expect(story.isGrottoOpen()).toBe(false);
+    expect(story.isOpeningMelodyReady()).toBe(true);
+    expect(saveService.load()?.world.flags[CRYSTAL_GROTTO_OPEN_FLAG]).not.toBe(true);
+    expect(quests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID).currentStepId).toBe(
+      getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 1),
+    );
+    expect(completeOpening()).toBe(true);
     expect(story.isGrottoOpen()).toBe(true);
-    expect(saveService.load()?.world.flags[CRYSTAL_GROTTO_OPEN_FLAG]).toBe(true);
+    expect(story.isOpeningMelodyReady()).toBe(false);
     expect(quests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID).currentStepId).toBe(
       getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 3),
     );
@@ -71,7 +97,7 @@ describe('Crystal Grotto story service', () => {
 
     expect(story.playCrystalNote('bright')).toBe(false);
     expect(story.playCrystalNote('bell')).toBe(false);
-    expect(story.playCrystalNote('low')).toBe(true);
+    expect(story.playCrystalNote('low')).toBe(false);
     expect(story.playCrystalNote('bell')).toBe(false);
 
     quests.destroy();

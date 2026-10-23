@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import {
-  CRYSTAL_GROTTO_OPEN_FLAG,
   ECHO_CRYSTAL_SONG_COMPLETE_FLAG,
   ECHO_CRYSTAL_SONG_QUEST_ID,
 } from '../../content/r6CrystalBrookDepthContent';
@@ -8,6 +7,8 @@ import { getBrowserAtmosphericTimeService } from '../atmosphere/AtmosphericTimeS
 import { getBrowserMagicalWeatherService } from '../atmosphere/MagicalWeatherService';
 import type { InteractionActionKind, InteractionTarget } from '../interaction/InteractionTarget';
 import { getSceneInteractionRegistry } from '../interaction/SceneInteractionRegistry';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
+import { getGrottoGateAccess } from '../minigames/crystalarium/CrystalariumGrottoGate';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
@@ -55,7 +56,7 @@ const INTERACTIONS: readonly BrookInteractionDefinition[] = [
   {
     id: 'crystal-grotto',
     label: 'Crystal Grotto',
-    actionLabel: 'Go inside',
+    actionLabel: 'Listen at the sealed arch',
     actionKind: 'enter',
     position: CRYSTAL_BROOK_GROTTO_THRESHOLD.position,
     radius: 155,
@@ -211,8 +212,15 @@ export class CrystalBrookDepthWorldManager {
     const targets: InteractionTarget[] = state.interactions.map(({ definition, container }) => ({
       id: `interaction:brook-depth:${definition.id}`,
       label: definition.label,
-      actionLabel: definition.actionLabel,
-      actionKind: definition.actionKind,
+      actionLabel:
+        definition.id === 'crystal-grotto'
+          ? this.story.isGrottoOpen()
+            ? 'Go inside'
+            : this.story.isOpeningMelodyReady()
+              ? 'Play opening melody'
+              : 'Listen at the sealed arch'
+          : definition.actionLabel,
+      actionKind: definition.id === 'crystal-grotto' && !this.story.isGrottoOpen() ? 'interact' : definition.actionKind,
       position: definition.position,
       interactionRadius: definition.radius,
       priority: definition.actionKind === 'talk' ? 30 : definition.actionKind === 'enter' ? 20 : 12,
@@ -227,10 +235,23 @@ export class CrystalBrookDepthWorldManager {
       case 'crystal-grotto':
         if (this.story.isGrottoOpen()) {
           state.scene.scene.start('CrystalGrottoScene');
+        } else if (this.story.isOpeningMelodyReady()) {
+          void launchMiniGame(state.scene, {
+            gameId: 'crystalarium',
+            variantId: 'opening-melody',
+            source: 'world',
+            worldContext: {
+              locationId: 'crystal-brook',
+              interactionId: 'crystal-grotto',
+              questContext: ECHO_CRYSTAL_SONG_QUEST_ID,
+            },
+          }).catch(() => {
+            this.showFeedback(state, 'The crystals went quiet for a moment. Try again.');
+          });
         } else {
           this.showFeedback(
             state,
-            'The Prism Grotto trail ends at a cool crystal doorway. Echo has been listening nearby and may know how to open it.',
+            'The Grotto doorway is sealed by three sleeping crystal notes. Talk to Echo to learn the opening melody.',
           );
         }
         return;
@@ -311,7 +332,8 @@ export class CrystalBrookDepthWorldManager {
   private syncPersistent(state: BrookDepthState, force = false): void {
     const save = this.saveService.load() ?? this.saveService.createNewGame();
     const signature = [
-      save.world.flags[CRYSTAL_GROTTO_OPEN_FLAG] === true ? 'open' : '',
+      getGrottoGateAccess(save).unlocked ? 'open' : '',
+      this.story.isOpeningMelodyReady() ? 'ready' : '',
       save.world.flags[ECHO_CRYSTAL_SONG_COMPLETE_FLAG] === true ? 'song' : '',
     ].join('|');
     if (!force && signature === state.signature) {
@@ -322,6 +344,7 @@ export class CrystalBrookDepthWorldManager {
     state.persistent?.destroy(true);
     const objects: Phaser.GameObjects.GameObject[] = [];
     this.addGrottoEntrance(state.scene, objects, this.story.isGrottoOpen());
+    this.publishTargets(state);
     state.persistent = state.scene.add
       .container(0, 0, objects)
       .setName('brook-depth:persistent-state')
@@ -345,6 +368,20 @@ export class CrystalBrookDepthWorldManager {
     marker.lineStyle(2, 0xf1e3ff, open ? 0.8 : 0.35);
     marker.strokeCircle(0, -151, open ? 17 : 12);
     objects.push(marker);
+    if (!open) {
+      const seal = scene.add.graphics().setPosition(grotto.x, grotto.y).setName('brook-depth:grotto-sealed-resonance');
+      seal.fillStyle(0x9d7cc9, 0.42);
+      seal.fillEllipse(0, -65, 122, 126);
+      seal.lineStyle(3, 0xe0c5ff, 0.92);
+      seal.strokeEllipse(0, -65, 122, 126);
+      for (const [index, colour] of [0x568acc, 0x66d5ba, 0xb99aeb].entries()) {
+        seal.fillStyle(colour, 0.9);
+        seal.fillCircle((index - 1) * 34, -67, 11);
+        seal.lineStyle(2, 0xffffff, 0.75);
+        seal.strokeCircle((index - 1) * 34, -67, 11);
+      }
+      objects.push(seal);
+    }
     if (open) {
       objects.push(
         scene.add

@@ -206,6 +206,13 @@ export const SCENE_MANIFEST = [
     async () => (await import('../activities/PondLeapActivityScene')).PondLeapActivityScene,
   ),
   runtime(
+    'CrystalariumActivityScene',
+    'activity',
+    'on-demand',
+    'feature',
+    async () => (await import('../minigames/crystalarium/CrystalariumActivityScene')).CrystalariumActivityScene,
+  ),
+  runtime(
     'ExplorationHudOverlayScene',
     'hud',
     'on-demand',
