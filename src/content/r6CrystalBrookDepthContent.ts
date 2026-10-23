@@ -7,7 +7,8 @@ export const CRYSTAL_GROTTO_OPEN_FLAG = 'flag:r6-crystal-grotto-open' as const;
 export const CRYSTAL_GROTTO_GLOWING_FLAG = 'flag:r6-crystal-grotto-glowing' as const;
 
 export const CRYSTAL_GROTTO_CHAMBER_DISCOVERY_ID = 'discovery:crystal-grotto-chamber' as const;
-export const CRYSTALARIUM_OPENING_DISCOVERY_ID = 'discovery:crystalarium-opening-resonance' as const;
+export const CRYSTALARIUM_OPENING_DISCOVERY_ID =
+  'discovery:crystalarium-opening-resonance' as const;
 export const CRYSTAL_GROTTO_LOW_NOTE_DISCOVERY_ID = 'discovery:crystal-grotto-low-note' as const;
 export const CRYSTAL_GROTTO_BRIGHT_NOTE_DISCOVERY_ID =
   'discovery:crystal-grotto-bright-note' as const;

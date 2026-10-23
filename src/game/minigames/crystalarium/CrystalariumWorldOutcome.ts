@@ -1,4 +1,7 @@
-import { CRYSTALARIUM_OPENING_DISCOVERY_ID, ECHO_CRYSTAL_SONG_QUEST_ID } from '../../../content/r6CrystalBrookDepthContent';
+import {
+  CRYSTALARIUM_OPENING_DISCOVERY_ID,
+  ECHO_CRYSTAL_SONG_QUEST_ID,
+} from '../../../content/r6CrystalBrookDepthContent';
 import { DiscoveryService } from '../../discovery/DiscoveryService';
 import { type GameEventMap, type TypedEventBus, gameEventBus } from '../../events/GameEventBus';
 import { runMiniGameAdventureEffect } from '../MiniGameOutcomeGateway';

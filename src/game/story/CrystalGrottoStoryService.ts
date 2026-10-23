@@ -89,7 +89,8 @@ export class CrystalGrottoStoryService {
     if (progress.currentStepId === getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 1)) {
       return {
         state: 'started',
-        message: '“The arch is listening,” Echo whispers. “Play the opening melody: hum, ping, bell.”',
+        message:
+          '“The arch is listening,” Echo whispers. “Play the opening melody: hum, ping, bell.”',
       };
     }
     if (progress.currentStepId === getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 3)) {

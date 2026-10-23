@@ -134,7 +134,8 @@ export class CrystalariumActivityScene extends Phaser.Scene {
   private indexAt(x: number, y: number): number | null {
     const col = Math.floor((x - BOARD_LEFT + GAP / 2) / STEP);
     const row = Math.floor((y - BOARD_TOP + GAP / 2) / STEP);
-    if (col < 0 || col >= OPENING_BOARD_COLUMNS || row < 0 || row >= OPENING_BOARD_ROWS) return null;
+    if (col < 0 || col >= OPENING_BOARD_COLUMNS || row < 0 || row >= OPENING_BOARD_ROWS)
+      return null;
     const centerX = BOARD_LEFT + col * STEP + CELL_SIZE / 2;
     const centerY = BOARD_TOP + row * STEP + CELL_SIZE / 2;
     if (Math.abs(x - centerX) > CELL_SIZE / 2 || Math.abs(y - centerY) > CELL_SIZE / 2) return null;
@@ -280,17 +281,32 @@ export class CrystalariumActivityScene extends Phaser.Scene {
     add(this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x192d4c));
     add(this.add.ellipse(640, 350, 1080, 680, 0x4c4f83, 0.32));
     add(this.add.rectangle(640, 360, 1050, 664, 0x283c60, 0.96).setStrokeStyle(4, 0x83c8e0));
-    add(this.add.text(640, 74, '✦ CRYSTALARIUM ✦', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '38px',
-      fontStyle: 'bold',
-      color: '#e5f8ff',
-    }).setOrigin(0.5));
-    add(this.add.text(640, 112, this.session?.source === 'world' ? 'Play the melody to unlock the Grotto' : 'Melody practice • Your adventure is safe', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '18px',
-      color: '#d1edfb',
-    }).setOrigin(0.5));
+    add(
+      this.add
+        .text(640, 74, '✦ CRYSTALARIUM ✦', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '38px',
+          fontStyle: 'bold',
+          color: '#e5f8ff',
+        })
+        .setOrigin(0.5),
+    );
+    add(
+      this.add
+        .text(
+          640,
+          112,
+          this.session?.source === 'world'
+            ? 'Play the melody to unlock the Grotto'
+            : 'Melody practice • Your adventure is safe',
+          {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '18px',
+            color: '#d1edfb',
+          },
+        )
+        .setOrigin(0.5),
+    );
 
     const familyOrder: CrystalFamily[] = [...OPENING_MELODY];
     for (let i = 0; i < familyOrder.length; i += 1) {
@@ -301,12 +317,16 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       const x = 447 + 193 * i;
       const color = played ? 0x4b9c88 : upcoming ? 0x576fa4 : 0x364e70;
       add(this.add.rectangle(x, 164, 179, 55, color).setStrokeStyle(upcoming ? 3 : 1, note.colour));
-      add(this.add.text(x, 164, (played ? '✓ ' : '') + note.symbol + ' ' + note.label, {
-        color: '#ffffff',
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        fontStyle: 'bold',
-      }).setOrigin(0.5));
+      add(
+        this.add
+          .text(x, 164, (played ? '✓ ' : '') + note.symbol + ' ' + note.label, {
+            color: '#ffffff',
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '18px',
+            fontStyle: 'bold',
+          })
+          .setOrigin(0.5),
+      );
     }
 
     for (let index = 0; index < this.state.cells.length; index += 1) {
@@ -318,8 +338,12 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       const selected = this.selected === index;
       const focused = this.cursor === index;
       const background = selected ? 0x547d9c : focused ? 0x385d85 : 0x203653;
-      const tile = this.add.rectangle(x, y, CELL_SIZE, CELL_SIZE, background)
-        .setStrokeStyle(selected ? 5 : focused ? 3 : 2, selected ? 0xffe2a8 : focused ? 0xc5f3ff : 0x6180a8)
+      const tile = this.add
+        .rectangle(x, y, CELL_SIZE, CELL_SIZE, background)
+        .setStrokeStyle(
+          selected ? 5 : focused ? 3 : 2,
+          selected ? 0xffe2a8 : focused ? 0xc5f3ff : 0x6180a8,
+        )
         .setName('crystalarium-cell:' + index)
         .setInteractive({ useHandCursor: true });
       tile.on('pointerdown', () => this.selectCell(index));
@@ -327,12 +351,16 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       if (piece) {
         const note = CRYSTAL_NOTE_PRESENTATION[piece.family];
         add(this.add.circle(x, y, 35, note.colour, piece.tier > 0 ? 0.95 : 0.8));
-        add(this.add.text(x, y - 2, note.symbol, {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '38px',
-          fontStyle: 'bold',
-          color: '#132640',
-        }).setOrigin(0.5));
+        add(
+          this.add
+            .text(x, y - 2, note.symbol, {
+              fontFamily: 'system-ui, sans-serif',
+              fontSize: '38px',
+              fontStyle: 'bold',
+              color: '#132640',
+            })
+            .setOrigin(0.5),
+        );
         if (piece.tier > 0) {
           add(this.add.text(x, y + 33, '✧', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5));
         }
@@ -341,28 +369,69 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       }
     }
 
-    add(this.add.text(640, 594, this.message, {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '18px',
-      fontStyle: 'bold',
-      color: '#e8fcff',
-      align: 'center',
-      wordWrap: { width: 850 },
-    }).setOrigin(0.5).setName('crystalarium-feedback'));
-    add(this.add.text(640, 625, 'Tap or drag a pair • Arrow keys + Enter/Space • R resets • Esc exits', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '14px',
-      color: '#c9e5f2',
-    }).setOrigin(0.5));
+    add(
+      this.add
+        .text(640, 594, this.message, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '18px',
+          fontStyle: 'bold',
+          color: '#e8fcff',
+          align: 'center',
+          wordWrap: { width: 850 },
+        })
+        .setOrigin(0.5)
+        .setName('crystalarium-feedback'),
+    );
+    add(
+      this.add
+        .text(640, 625, 'Tap or drag a pair • Arrow keys + Enter/Space • R resets • Esc exits', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '14px',
+          color: '#c9e5f2',
+        })
+        .setOrigin(0.5),
+    );
 
-    this.createButton(holder, 235, 660, 214, this.session?.source === 'world' ? 'Back to Brook' : 'Back to Games', 'crystalarium-exit', () => this.returnToCaller());
-    this.createButton(holder, 530, 660, 172, this.state.complete ? 'Play again' : 'Reset board', 'crystalarium-reset', () => this.resetBoard());
-    this.createButton(holder, 790, 660, 174, this.quiet ? 'Sound: Off' : 'Sound: On', 'crystalarium-audio', () => {
-      this.quiet = !this.quiet;
-      this.render();
-    });
+    this.createButton(
+      holder,
+      235,
+      660,
+      214,
+      this.session?.source === 'world' ? 'Back to Brook' : 'Back to Games',
+      'crystalarium-exit',
+      () => this.returnToCaller(),
+    );
+    this.createButton(
+      holder,
+      530,
+      660,
+      172,
+      this.state.complete ? 'Play again' : 'Reset board',
+      'crystalarium-reset',
+      () => this.resetBoard(),
+    );
+    this.createButton(
+      holder,
+      790,
+      660,
+      174,
+      this.quiet ? 'Sound: Off' : 'Sound: On',
+      'crystalarium-audio',
+      () => {
+        this.quiet = !this.quiet;
+        this.render();
+      },
+    );
     if (this.state.complete) {
-      this.createButton(holder, 1040, 660, 178, this.completedWorldUnlock ? 'Enter Grotto →' : 'Finish →', 'crystalarium-finish', () => this.returnToCaller());
+      this.createButton(
+        holder,
+        1040,
+        660,
+        178,
+        this.completedWorldUnlock ? 'Enter Grotto →' : 'Finish →',
+        'crystalarium-finish',
+        () => this.returnToCaller(),
+      );
     }
   }
 }

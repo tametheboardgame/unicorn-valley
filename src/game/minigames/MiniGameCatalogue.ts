@@ -153,7 +153,8 @@ export const MINI_GAME_CATALOGUE = [
     id: MINI_GAME_IDS.crystalarium,
     sceneKey: 'CrystalariumActivityScene',
     title: 'Crystalarium',
-    description: 'Match musical crystal pairs to make a three-note melody. The deeper patterns are coming soon.',
+    description:
+      'Match musical crystal pairs to make a three-note melody. The deeper patterns are coming soon.',
     group: 'puzzle',
     order: 65,
     variants: [

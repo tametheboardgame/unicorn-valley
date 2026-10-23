@@ -210,7 +210,9 @@ export const SCENE_MANIFEST = [
     'activity',
     'on-demand',
     'feature',
-    async () => (await import('../minigames/crystalarium/CrystalariumActivityScene')).CrystalariumActivityScene,
+    async () =>
+      (await import('../minigames/crystalarium/CrystalariumActivityScene'))
+        .CrystalariumActivityScene,
   ),
   runtime(
     'ExplorationHudOverlayScene',

@@ -15,9 +15,15 @@ import { completeCrystalariumOpening } from './CrystalariumWorldOutcome';
 
 class MemoryRepository implements SaveRepository {
   private saved: string | null = null;
-  read(): string | null { return this.saved; }
-  write(value: string): void { this.saved = value; }
-  remove(): void { this.saved = null; }
+  read(): string | null {
+    return this.saved;
+  }
+  write(value: string): void {
+    this.saved = value;
+  }
+  remove(): void {
+    this.saved = null;
+  }
 }
 
 function createHarness() {
@@ -52,8 +58,14 @@ describe('H6.9B Crystalarium world outcome boundary', () => {
     expect(win()).toBe(true);
     expect(win()).toBe(false);
     expect(save.load()?.world.flags[CRYSTAL_GROTTO_OPEN_FLAG]).toBe(true);
-    expect(save.load()?.collections.discoveryIds.filter((id) => id === CRYSTALARIUM_OPENING_DISCOVERY_ID)).toHaveLength(1);
-    expect(quests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID).currentStepId).toBe(getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 3));
+    expect(
+      save
+        .load()
+        ?.collections.discoveryIds.filter((id) => id === CRYSTALARIUM_OPENING_DISCOVERY_ID),
+    ).toHaveLength(1);
+    expect(quests.getProgress(ECHO_CRYSTAL_SONG_QUEST_ID).currentStepId).toBe(
+      getQuestStepId(ECHO_CRYSTAL_SONG_QUEST_ID, 3),
+    );
     quests.destroy();
   });
 
@@ -90,7 +102,13 @@ describe('H6.9B Crystalarium world outcome boundary', () => {
     story.talkToEcho();
     const current = save.load();
     if (!current) throw new Error('Expected saved profile');
-    save.save({ ...current, world: { ...current.world, flags: { ...current.world.flags, [CRYSTAL_GROTTO_OPEN_FLAG]: true } } });
+    save.save({
+      ...current,
+      world: {
+        ...current.world,
+        flags: { ...current.world.flags, [CRYSTAL_GROTTO_OPEN_FLAG]: true },
+      },
+    });
     expect(win()).toBe(false);
     quests.destroy();
   });

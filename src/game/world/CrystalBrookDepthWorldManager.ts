@@ -220,7 +220,10 @@ export class CrystalBrookDepthWorldManager {
               ? 'Play opening melody'
               : 'Listen at the sealed arch'
           : definition.actionLabel,
-      actionKind: definition.id === 'crystal-grotto' && !this.story.isGrottoOpen() ? 'interact' : definition.actionKind,
+      actionKind:
+        definition.id === 'crystal-grotto' && !this.story.isGrottoOpen()
+          ? 'interact'
+          : definition.actionKind,
       position: definition.position,
       interactionRadius: definition.radius,
       priority: definition.actionKind === 'talk' ? 30 : definition.actionKind === 'enter' ? 20 : 12,
@@ -369,7 +372,10 @@ export class CrystalBrookDepthWorldManager {
     marker.strokeCircle(0, -151, open ? 17 : 12);
     objects.push(marker);
     if (!open) {
-      const seal = scene.add.graphics().setPosition(grotto.x, grotto.y).setName('brook-depth:grotto-sealed-resonance');
+      const seal = scene.add
+        .graphics()
+        .setPosition(grotto.x, grotto.y)
+        .setName('brook-depth:grotto-sealed-resonance');
       seal.fillStyle(0x9d7cc9, 0.42);
       seal.fillEllipse(0, -65, 122, 126);
       seal.lineStyle(3, 0xe0c5ff, 0.92);
