@@ -112,14 +112,20 @@ test.describe('MG-WP4 reusable Just Games launch/return contract', () => {
   }
 });
 
-test('H6.9B Crystalarium practice finishes the three-note merge without adventure writes', async ({ page }) => {
+test('H6.9B Crystalarium practice finishes the three-note merge without adventure writes', async ({
+  page,
+}) => {
   await openJustGames(page);
   await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-cell:0');
 
-  for (const [a, b] of [[0, 5], [2, 4], [1, 6]] as const) {
+  for (const [a, b] of [
+    [0, 5],
+    [2, 4],
+    [1, 6],
+  ] as const) {
     await clickNamedObject(page, 'CrystalariumActivityScene', `crystalarium-cell:${a}`);
     await clickNamedObject(page, 'CrystalariumActivityScene', `crystalarium-cell:${b}`);
   }
