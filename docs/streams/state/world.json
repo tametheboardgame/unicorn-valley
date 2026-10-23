@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "stream": "world",
   "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.7B",
-  "workPackagePath": "docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md",
-  "branch": "agent/world-h6-7b-echo-crystal-song",
-  "prNumber": 332,
-  "baseMainSha": "e90ddef725b9f89c93ba38c939a4b86ad8aa982d",
+  "workPackage": "R6.5-WP19H6.9A",
+  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9A-CRYSTALARIUM-FOUNDATION.md",
+  "branch": "agent/world-h6-9a-crystalarium-foundation",
+  "prNumber": 333,
+  "baseMainSha": "7153ecaffdf1f09da077687f96b162740f3a7c80",
   "updatedOn": "2026-10-22",
-  "note": "H6.7A human-approved and merged PR #331 at e90ddef7. H6.7B (#332) moved to main and visually accepted in the 2026-10-22 Echo review; single Echo Talk interaction, canonical Grotto route, unchanged Crystal Song flags. Code/test/doc review reconciled; full exact-head qualification pending. H6.9A (#333) stacked next; new Crystalarium entrance gate in future H6.9B. Racing deferred."
+  "note": "H6.7A #331 and H6.7B #332 both qualified and merged (latest main 7153ecaf). H6.9A #333 is the active pure rules/design work; its draft unit, build and browser checks passed, with integration/final review pending. H6.9B future playable musical Grotto gate; racing deferred."
 }
