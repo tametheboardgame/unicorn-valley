@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "world",
-  "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.9A",
-  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9A-CRYSTALARIUM-FOUNDATION.md",
-  "branch": "agent/world-h6-9a-crystalarium-foundation",
-  "prNumber": 333,
-  "baseMainSha": "7153ecaffdf1f09da077687f96b162740f3a7c80",
-  "updatedOn": "2026-10-22",
-  "note": "H6.7A #331 and H6.7B #332 both qualified and merged (latest main 7153ecaf). H6.9A #333 is the active pure rules/design work; its draft unit, build and browser checks passed, with integration/final review pending. H6.9B future playable musical Grotto gate; racing deferred."
+  "status": "unclaimed",
+  "workPackage": null,
+  "workPackagePath": null,
+  "branch": null,
+  "prNumber": null,
+  "baseMainSha": null,
+  "updatedOn": "2026-10-23",
+  "note": "H6.9A Crystalarium authoring/pure-rules foundation merged via PR #333 at dffc7e66626538f09fe5603301dcde896adc1e8b; exact-head CI #39786475661 and successful main CI #39944675286 verified. H6.8 Mini Games MG-WP0–WP4 readiness revalidated PASS on main (2026-10-23), with required atomic Just Games registration clarified for H6.9B. World stream is free; next H6.9B playable Grotto gate, visual and save safety approval still required. H6.6 racing deferred."
 }
