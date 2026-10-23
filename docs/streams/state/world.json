@@ -8,5 +8,5 @@
   "prNumber": 335,
   "baseMainSha": "bb18f9d8e36fed98d4df4ebe56d2bcabbcce41d3",
   "updatedOn": "2026-10-23",
-  "note": "H6.9A #333 and H6.8 readiness #334 are integrated. H6.9B first-pass canonical Crystalarium gameplay, world-only Grotto unlock and minimal sandboxed Just Games mode on draft PR #335; tests, old-save/browser qualification and human visual review outstanding. MG-WP7 #289 shares catalogue ownership; recheck before merge. Racing deferred."
+  "note": "H6.9B first-entry Crystalarium accepted by David on 23 October, with draft Tier 0/unit/build/browser checks passing on prior head and added persisted unlock and legacy mid-song reload tests. One canonical world/Just Games scene and strict world-only opening outcome retained. H6.9C has an explicitly proposed larger persistent merge-game work package awaiting design approval; do not implement in H6.9B. Full exact-head CI/merge permission remain outstanding; MG-WP7 #289 catalogue overlap still requires sequencing."
 }
