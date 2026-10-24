@@ -379,6 +379,8 @@ export function startFreshCrystalariumBoard(state: CrystalariumFullState): Cryst
     completed: state.completed,
     merges: state.merges,
     offers: state.offers,
+    washes: state.washes,
+    harmonies: state.harmonies,
     discovered: state.discovered,
   };
 }
