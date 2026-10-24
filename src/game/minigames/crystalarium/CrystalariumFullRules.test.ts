@@ -94,5 +94,4 @@ describe('H6.9C Crystalarium deep merge mechanics', () => {
     expect(reset.completed).toBe(22);
     expect(reset.harmonies).toBe(1);
   });
-
 });
