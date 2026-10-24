@@ -125,9 +125,9 @@ test('H6.9C Crystalarium full-game pattern persists in Just Games without advent
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:1');
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-offer');
 
-  const progress = await page.evaluate(() =>
+  const progress = (await page.evaluate(() =>
     JSON.parse(localStorage.getItem('unicorn-valley:just-games:crystalarium:v1') ?? '{}'),
-  ) as { completed?: number };
+  )) as { completed?: number };
   expect(progress.completed).toBe(1);
   expect(await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY)).toBeNull();
 
@@ -138,8 +138,12 @@ test('H6.9C Crystalarium full-game pattern persists in Just Games without advent
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
 
-  expect(await page.evaluate(() =>
-    JSON.parse(localStorage.getItem('unicorn-valley:just-games:crystalarium:v1') ?? '{}').completed,
-  )).toBe(1);
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem('unicorn-valley:just-games:crystalarium:v1') ?? '{}')
+          .completed,
+    ),
+  ).toBe(1);
   expect(await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY)).toBeNull();
 });
