@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "story-house",
-  "status": "complete",
-  "workPackage": null,
-  "workPackagePath": null,
-  "branch": null,
-  "prNumber": null,
-  "baseMainSha": null,
+  "status": "in_progress",
+  "workPackage": "R6.5-WP19SH2.0",
+  "workPackagePath": "docs/work-packages/R6.5-WP19SH2.0-EDITORIAL-RIGHTS-ILLUSTRATION-FOUNDATION.md",
+  "branch": "agent/story-house-sh2-0-editorial-foundation",
+  "prNumber": 329,
+  "baseMainSha": "d45859a69dd0bb89cb32f1d7d44d401a486fe2e9",
   "updatedOn": "2026-10-16",
-  "note": "SH1.7A-E and parent SH1 completed via PR #325, merged as e73fca9d2b59fbd49f7ba776678b4eea0da83f2a with full required CI #38858442488 green. Stream is free for a new SH2.0 claim; rights inquiry #326 remains open and approved assets/Drive staging remain untouched."
+  "note": "SH2.0 editorial, precise source-rights and illustration foundation started in draft PR #329. Ten existing-free planned titles, rights/edition decisions and continuity briefs are under investigation. No manuscripts or artwork are published, and final title source/visual approval remains a human gate. Existing independent rights question #326 stays open."
 }
