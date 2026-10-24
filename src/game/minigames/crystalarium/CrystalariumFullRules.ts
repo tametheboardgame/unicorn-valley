@@ -222,6 +222,9 @@ export function chooseCrystalSource(
   return accepted({ ...state, selectedFamily: family }, 'Crystal vein selected.');
 }
 export function spawnCrystal(state: CrystalariumFullState): FullActionResult {
+  if (!unlockedCrystalFamilies(state).includes(state.selectedFamily)) {
+    return rejected(state, 'That crystal vein is still sleeping.');
+  }
   const index = state.cells.indexOf(null);
   if (index < 0)
     return rejected(state, 'The board is full. Use Brook Wash or move a crystal to the shelf.');
@@ -239,6 +242,39 @@ export function spawnCrystal(state: CrystalariumFullState): FullActionResult {
     'A new shard joins the board.',
   );
 }
+/** Optional free advanced vein: reduces late-game repetition without replacing tier-zero shards. */
+export function refinedSourceTier(state: CrystalariumFullState): CrystalTier | null {
+  if (state.completed < 20) return null;
+  return state.completed >= 40 ? 2 : 1;
+}
+
+export function spawnRefinedCrystal(state: CrystalariumFullState): FullActionResult {
+  const tier = refinedSourceTier(state);
+  if (tier === null) {
+    return rejected(state, 'Restore the Singing Pools before using the refined crystal vein.');
+  }
+  if (!unlockedCrystalFamilies(state).includes(state.selectedFamily)) {
+    return rejected(state, 'That crystal vein is still sleeping.');
+  }
+  const index = state.cells.indexOf(null);
+  if (index < 0) {
+    return rejected(state, 'The board is full. Use Brook Wash or free a shelf space.');
+  }
+  const cells = [...state.cells];
+  cells[index] = makeCrystalPiece(state.selectedFamily, tier);
+  const discovery = state.selectedFamily + ':' + tier;
+  return accepted(
+    {
+      ...state,
+      cells,
+      discovered: state.discovered.includes(discovery)
+        ? state.discovered
+        : [...state.discovered, discovery],
+    },
+    'A refined crystal joins the board. The original shard source is still available.',
+  );
+}
+
 export function moveOrMergeCrystal(
   state: CrystalariumFullState,
   source: number,
