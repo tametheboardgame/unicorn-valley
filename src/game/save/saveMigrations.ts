@@ -222,6 +222,20 @@ const migrateV8ToV9: SaveMigration = (save) => {
   };
 };
 
+const migrateV9ToV10: SaveMigration = (save) => {
+  const timestamp =
+    typeof save.createdAt === 'string' ? save.createdAt : '1970-01-01T00:00:00.000Z';
+  const defaults = createDefaultSave(timestamp);
+  return {
+    ...save,
+    schemaVersion: 10,
+    activities: {
+      ...mergeRecord(defaults.activities, save.activities),
+      crystalarium: null,
+    },
+  };
+};
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
@@ -231,6 +245,7 @@ export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [6, migrateV6ToV7],
   [7, migrateV7ToV8],
   [8, migrateV8ToV9],
+  [9, migrateV9ToV10],
 ]);
 
 export function migrateSaveRecord(

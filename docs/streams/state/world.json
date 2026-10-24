@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "stream": "world",
   "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.9B",
-  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9B-CRYSTALARIUM-PLAYABLE-GROTTO-GATE.md",
-  "branch": "agent/world-h6-9b-crystalarium-opening",
-  "prNumber": 335,
-  "baseMainSha": "bb18f9d8e36fed98d4df4ebe56d2bcabbcce41d3",
+  "workPackage": "R6.5-WP19H6.9C",
+  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9C-CRYSTALARIUM-FULL-GAME.md",
+  "branch": "agent/world-h6-9c-crystalarium-full-game",
+  "prNumber": 337,
+  "baseMainSha": "473506e229b7710e6f6f42e079e808825279c1e4",
   "updatedOn": "2026-10-24",
-  "note": "H6.9B first-entry Crystalarium visual and interaction approval recorded from David on 23 October; save reload safety tests, strict world-only opening outcome and Just Games sandbox checks included. Final qualification and Merge Gate are required before merge; PR #335 now includes reviewed PR-wide test-impact metadata. World is the sole integration owner of Crystalarium catalogue and manifest. Historical stale PR #176 closed unmerged, Pond Leap PR #289 safely sequenced as draft against H6.9B pending subsequent integration. H6.9C large persistent five-chapter expansion explicitly approved 24 October but development belongs on a separate post-merge branch."
+  "note": "H6.9B integrated via PR #335 at 473506e229b7710e6f6f42e079e808825279c1e4. H6.9C first full playable Crystalarium is committed to World draft PR #337: 7x6 board, 50 patterns, harmonies, polishing, free tiered generators, version-10 world and independent Just Games persistence, separate Brook nursery, responsive evidence and tests. Pre-refinement full CI #40094338361 and refined-source targeted CI #40098722519 passed. Reviewed desktop/phone screenshots: PHONE PORTRAIT IS NOT LEGIBLE under existing fixed 1280x720 canvas, so H6.9C5 responsive composition, final full exact-head CI and human visual acceptance remain blockers; do not merge. Initial/title/first playable gzip 551.2 KiB/560 limit; preserve budget. Just Games Pond Leap PR #289 is independently preserved and temporarily stacked behind #337 for shared catalogue sequencing."
 }

@@ -6,6 +6,8 @@ import { getBrowserSaveService } from '../../save/browserSaveService';
 import { returnFromMiniGame } from '../MiniGameLauncher';
 import { readMiniGameSession, type MiniGameSession } from '../MiniGameSession';
 import { completeCrystalariumOpening } from './CrystalariumWorldOutcome';
+import { CrystalariumFullMode } from './CrystalariumFullMode';
+import { isFullCrystalariumSession } from './CrystalariumFullPersistence';
 import {
   CRYSTALARIUM_FULL_VARIANT_ID,
   CRYSTALARIUM_OPENING_VARIANT_ID,
@@ -48,6 +50,7 @@ export class CrystalariumActivityScene extends Phaser.Scene {
   private message = '';
   private quiet = false;
   private completedWorldUnlock = false;
+  private fullMode: CrystalariumFullMode | null = null;
 
   public constructor() {
     super('CrystalariumActivityScene');
@@ -70,6 +73,16 @@ export class CrystalariumActivityScene extends Phaser.Scene {
       this.session.source !== 'world'
     ) {
       this.returnToCaller();
+      return;
+    }
+
+    if (this.session.variantId === CRYSTALARIUM_FULL_VARIANT_ID) {
+      if (!isFullCrystalariumSession(this.session)) {
+        this.returnToCaller();
+        return;
+      }
+      this.fullMode = new CrystalariumFullMode(this, this.session, () => this.returnToCaller());
+      this.fullMode.start();
       return;
     }
 

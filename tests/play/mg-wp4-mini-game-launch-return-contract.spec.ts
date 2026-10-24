@@ -51,7 +51,7 @@ const JUST_GAMES_LAUNCH_RETURN_CASES: readonly JustGamesLaunchReturnCase[] = [
     gameId: 'crystalarium',
     variantId: 'resonance-patterns',
     sceneKey: 'CrystalariumActivityScene',
-    readyObjectName: 'crystalarium-cell:0',
+    readyObjectName: 'crystalarium-full-cell:0',
   },
 ];
 
@@ -112,27 +112,38 @@ test.describe('MG-WP4 reusable Just Games launch/return contract', () => {
   }
 });
 
-test('H6.9B Crystalarium practice finishes the three-note merge without adventure writes', async ({
+test('H6.9C Crystalarium full-game pattern persists in Just Games without adventure writes', async ({
   page,
 }) => {
   await openJustGames(page);
   await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
-  await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-cell:0');
+  await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
 
-  for (const [a, b] of [
-    [0, 5],
-    [2, 4],
-    [1, 6],
-  ] as const) {
-    await clickNamedObject(page, 'CrystalariumActivityScene', `crystalarium-cell:${a}`);
-    await clickNamedObject(page, 'CrystalariumActivityScene', `crystalarium-cell:${b}`);
-  }
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:1');
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-offer');
 
-  await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-finish');
+  const progress = (await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('unicorn-valley:just-games:crystalarium:v1') ?? '{}'),
+  )) as { completed?: number };
+  expect(progress.completed).toBe(1);
   expect(await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY)).toBeNull();
-  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-finish');
+
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-exit');
   await waitForScene(page, 'JustGamesScene');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
+
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem('unicorn-valley:just-games:crystalarium:v1') ?? '{}')
+          .completed,
+    ),
+  ).toBe(1);
   expect(await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY)).toBeNull();
 });

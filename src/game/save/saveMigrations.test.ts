@@ -293,6 +293,22 @@ describe('migrateSaveRecord', () => {
     });
   });
 
+  it('upgrades a version-nine adventure without changing other progress', () => {
+    const save = createR4LongRunningSaveFixture();
+    const historical = {
+      ...save,
+      schemaVersion: 9,
+      activities: { ...save.activities, crystalarium: undefined },
+    };
+    const migrated = migrateSaveRecord(historical);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) throw new Error('Expected v10 adventure');
+    expect(migrated.activities.crystalarium).toBeNull();
+    expect(migrated.quests).toEqual(save.quests);
+    expect(migrated.inventory).toEqual(save.inventory);
+    expect(migrated.world).toEqual(save.world);
+  });
+
   it('applies migrations sequentially', () => {
     const toVersionOne: SaveMigration = (save) => ({
       ...save,
@@ -341,6 +357,11 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 9,
       ninthMigration: true,
     });
+    const toVersionTen: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 10,
+      tenthMigration: true,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
@@ -351,6 +372,7 @@ describe('migrateSaveRecord', () => {
       [6, toVersionSeven],
       [7, toVersionEight],
       [8, toVersionNine],
+      [9, toVersionTen],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
@@ -364,6 +386,7 @@ describe('migrateSaveRecord', () => {
       seventhMigration: true,
       eighthMigration: true,
       ninthMigration: true,
+      tenthMigration: true,
     });
   });
 
