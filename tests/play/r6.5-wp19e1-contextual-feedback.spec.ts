@@ -139,7 +139,7 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
     await waitForScene(page, 'CrystalBrookScene');
   });
 
-  test('closed Prism Grotto uses lower non-modal guidance without covering the top HUD', async ({
+  test('sealed Crystal Grotto uses lower non-modal guidance without covering the top HUD', async ({
     page,
   }) => {
     await positionPlayer(page, 'CrystalBrookScene', GROTTO_APPROACH.x, GROTTO_APPROACH.y);
@@ -147,7 +147,7 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
     await page.keyboard.press('KeyE');
 
     const guidance = await visibleObject(page, 'CrystalBrookScene', 'world-feedback-guidance-text');
-    expect(guidance.text).toContain('Prism Grotto trail');
+    expect(guidance.text).toContain('Grotto doorway is sealed');
     expect(guidance.scrollFactorX).toBe(0);
     expect(guidance.y).toBeGreaterThan(500);
 
@@ -158,7 +158,7 @@ test.describe('R6.5-WP19E1 contextual feedback placement', () => {
           object.effectiveVisible &&
           object.scrollFactorX === 0 &&
           object.y < 190 &&
-          (object.text?.includes('Prism Grotto trail') ?? false),
+          (object.text?.includes('Grotto doorway is sealed') ?? false),
       ),
     ).toBe(false);
     expect(
