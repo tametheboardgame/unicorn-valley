@@ -14,6 +14,7 @@ import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService } from '../story/CrystalGrottoStoryService';
 import {
   CRYSTAL_BROOK_GROTTO_THRESHOLD,
+  CRYSTAL_BROOK_CRYSTALARIUM_NURSERY,
   CRYSTAL_BROOK_PEBBLE_STACK,
   CRYSTAL_BROOK_REFLECTION_POOL,
   CRYSTAL_BROOK_SHALLOW_RIPPLE,
@@ -53,6 +54,15 @@ interface BrookDepthState {
 
 const REGISTRY_OWNER = 'crystal-brook-depth';
 const INTERACTIONS: readonly BrookInteractionDefinition[] = [
+  {
+    id: 'crystalarium-nursery',
+    label: 'Crystalarium Nursery',
+    actionLabel: 'Play Crystalarium',
+    actionKind: 'interact',
+    position: CRYSTAL_BROOK_CRYSTALARIUM_NURSERY,
+    radius: 160,
+    icon: '🎼',
+  },
   {
     id: 'crystal-grotto',
     label: 'Crystal Grotto',
@@ -235,6 +245,19 @@ export class CrystalBrookDepthWorldManager {
 
   private activate(state: BrookDepthState, definition: BrookInteractionDefinition): void {
     switch (definition.id) {
+      case 'crystalarium-nursery':
+        void launchMiniGame(state.scene, {
+          gameId: 'crystalarium',
+          variantId: 'resonance-patterns',
+          source: 'world',
+          worldContext: {
+            locationId: 'crystal-brook',
+            interactionId: 'crystalarium-nursery',
+          },
+        }).catch(() => {
+          this.showFeedback(state, 'The crystal nursery is quiet for now. Try again.');
+        });
+        return;
       case 'crystal-grotto':
         if (this.story.isGrottoOpen()) {
           state.scene.scene.start('CrystalGrottoScene');
@@ -338,6 +361,7 @@ export class CrystalBrookDepthWorldManager {
       getGrottoGateAccess(save).unlocked ? 'open' : '',
       this.story.isOpeningMelodyReady() ? 'ready' : '',
       save.world.flags[ECHO_CRYSTAL_SONG_COMPLETE_FLAG] === true ? 'song' : '',
+      Math.min(5, Math.floor((save.activities.crystalarium?.completed ?? 0) / 10)),
     ].join('|');
     if (!force && signature === state.signature) {
       return;
@@ -347,6 +371,7 @@ export class CrystalBrookDepthWorldManager {
     state.persistent?.destroy(true);
     const objects: Phaser.GameObjects.GameObject[] = [];
     this.addGrottoEntrance(state.scene, objects, this.story.isGrottoOpen());
+    this.addNurseryRestoration(state.scene, objects, save.activities.crystalarium?.completed ?? 0);
     this.publishTargets(state);
     state.persistent = state.scene.add
       .container(0, 0, objects)
@@ -399,6 +424,41 @@ export class CrystalBrookDepthWorldManager {
           })
           .setOrigin(0.5)
           .setDepth(9),
+      );
+    }
+  }
+
+  private addNurseryRestoration(
+    scene: Phaser.Scene,
+    objects: Phaser.GameObjects.GameObject[],
+    patternsCompleted: number,
+  ): void {
+    const { x, y } = CRYSTAL_BROOK_CRYSTALARIUM_NURSERY;
+    const chapters = Math.min(5, Math.floor(patternsCompleted / 10));
+    const garden = scene.add.graphics().setName('brook-depth:crystalarium-garden');
+    garden.fillStyle(0x375c7e, 0.42);
+    garden.fillEllipse(x, y - 6, 140, 54);
+    const colours = [0x568acc, 0x66d5ba, 0xb99aeb, 0xffdba4, 0xd8fff5];
+    for (let i = 0; i < 5; i += 1) {
+      const angle = -Math.PI + (Math.PI * i) / 4;
+      const px = x + Math.cos(angle) * 52;
+      const py = y + Math.sin(angle) * 32 - 17;
+      const grown = i < chapters;
+      garden.fillStyle(colours[i], grown ? 0.9 : 0.3);
+      garden.fillTriangle(px, py - (grown ? 45 : 18), px - 13, py + 9, px + 13, py + 9);
+      garden.lineStyle(2, grown ? 0xf0f9ff : 0x89a9c4, grown ? 0.85 : 0.3);
+      garden.strokeTriangle(px, py - (grown ? 45 : 18), px - 13, py + 9, px + 13, py + 9);
+    }
+    objects.push(garden);
+    if (chapters > 0) {
+      objects.push(
+        scene.add.text(x, y - 96, '✦ ' + chapters + ' / 5 restored ✦', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          color: '#e5faff',
+          backgroundColor: '#294d70dd',
+          padding: { x: 7, y: 3 },
+        }).setOrigin(0.5).setName('brook-depth:crystalarium-restoration-label'),
       );
     }
   }
