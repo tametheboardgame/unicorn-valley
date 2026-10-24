@@ -153,8 +153,7 @@ export const MINI_GAME_CATALOGUE = [
     id: MINI_GAME_IDS.crystalarium,
     sceneKey: 'CrystalariumActivityScene',
     title: 'Crystalarium',
-    description:
-      'Grow, merge and tune crystals through five chapters of musical patterns.',
+    description: 'Grow, merge and tune crystals through five chapters of musical patterns.',
     group: 'puzzle',
     order: 65,
     variants: [
