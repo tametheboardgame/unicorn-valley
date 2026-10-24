@@ -1,10 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import {
-  RESONANCE_CHAPTERS, RESONANCE_PATTERNS, FULL_CELL_COUNT,
-  createCrystalariumFullState, isCrystalariumFullState,
-  moveOrMergeCrystal, spawnCrystal, washCrystal, shelveCrystal,
-  restoreCrystal, canOfferPattern, offerResonancePattern,
-  unlockedCrystalFamilies, chooseCrystalSource, createHarmony,
+  RESONANCE_CHAPTERS,
+  RESONANCE_PATTERNS,
+  FULL_CELL_COUNT,
+  createCrystalariumFullState,
+  isCrystalariumFullState,
+  moveOrMergeCrystal,
+  spawnCrystal,
+  washCrystal,
+  shelveCrystal,
+  restoreCrystal,
+  canOfferPattern,
+  offerResonancePattern,
+  unlockedCrystalFamilies,
+  chooseCrystalSource,
+  createHarmony,
 } from './CrystalariumFullRules';
 
 describe('H6.9C Crystalarium deep merge mechanics', () => {
