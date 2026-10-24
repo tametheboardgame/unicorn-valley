@@ -16,6 +16,8 @@ import {
   offerResonancePattern,
   polishCrystal,
   restoreCrystal,
+  refinedSourceTier,
+  spawnRefinedCrystal,
   shelveCrystal,
   spawnCrystal,
   startFreshCrystalariumBoard,
@@ -485,7 +487,14 @@ export class CrystalariumFullMode {
       this.polishSelected(),
     );
 
-    this.addText(holder, 701, 372, 'CRYSTAL VEINS', 16, '#a8e9f5');
+    this.addText(
+      holder,
+      701,
+      372,
+      'CRYSTAL VEINS • ' + this.state.selectedFamily + ' selected',
+      16,
+      '#a8e9f5',
+    );
     CRYSTAL_FAMILIES.forEach((family: CrystalFamily, index) => {
       const note = CRYSTAL_NOTE_PRESENTATION[family];
       const unlocked = unlockedCrystalFamilies(this.state).includes(family);
@@ -500,24 +509,55 @@ export class CrystalariumFullMode {
         unlocked,
       );
     });
-    this.button(
-      holder,
-      699,
-      458,
-      203,
-      'Grow ' + this.state.selectedFamily + ' shard',
-      'crystalarium-full-grow',
-      () => this.apply(spawnCrystal(this.state)),
-    );
-    this.button(
-      holder,
-      910,
-      458,
-      193,
-      this.resetArmed ? 'Confirm reset' : 'Fresh board',
-      'crystalarium-full-fresh',
-      () => this.freshBoard(),
-    );
+    const refinedTier = refinedSourceTier(this.state);
+    if (refinedTier === null) {
+      this.button(
+        holder,
+        699,
+        458,
+        203,
+        'Grow ' + this.state.selectedFamily + ' shard',
+        'crystalarium-full-grow',
+        () => this.apply(spawnCrystal(this.state)),
+      );
+      this.button(
+        holder,
+        910,
+        458,
+        193,
+        this.resetArmed ? 'Confirm reset' : 'Fresh board',
+        'crystalarium-full-fresh',
+        () => this.freshBoard(),
+      );
+    } else {
+      this.button(
+        holder,
+        698,
+        458,
+        133,
+        'Grow shard',
+        'crystalarium-full-grow',
+        () => this.apply(spawnCrystal(this.state)),
+      );
+      this.button(
+        holder,
+        836,
+        458,
+        133,
+        refinedTier === 2 ? 'Grow crystal' : 'Grow polished',
+        'crystalarium-full-grow-refined',
+        () => this.apply(spawnRefinedCrystal(this.state)),
+      );
+      this.button(
+        holder,
+        974,
+        458,
+        133,
+        this.resetArmed ? 'Confirm reset' : 'Fresh board',
+        'crystalarium-full-fresh',
+        () => this.freshBoard(),
+      );
+    }
     this.addText(
       holder,
       702,
