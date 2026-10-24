@@ -117,7 +117,7 @@ async function showReferenceGuidance(page: Page, portraitDomAction: boolean): Pr
         (object) => object.name === 'world-feedback-guidance-text' && object.effectiveVisible,
       )?.text;
     })
-    .toContain('Prism Grotto trail');
+    .toContain('Grotto doorway is sealed');
 }
 
 async function captureGuidanceEvidence(
@@ -140,7 +140,7 @@ async function captureGuidanceEvidence(
         object.effectiveVisible &&
         object.scrollFactorX === 0 &&
         object.y < 190 &&
-        (object.text?.includes('Prism Grotto trail') ?? false),
+        (object.text?.includes('Grotto doorway is sealed') ?? false),
     ),
   ).toBe(false);
 

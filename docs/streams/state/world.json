@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "stream": "world",
-  "status": "unclaimed",
-  "workPackage": null,
-  "workPackagePath": null,
-  "branch": null,
-  "prNumber": null,
-  "baseMainSha": null,
-  "updatedOn": "2026-10-23",
-  "note": "H6.9A Crystalarium authoring/pure-rules foundation merged via PR #333 at dffc7e66626538f09fe5603301dcde896adc1e8b; exact-head CI #39786475661 and successful main CI #39944675286 verified. H6.8 Mini Games MG-WP0–WP4 readiness revalidated PASS on main (2026-10-23), with required atomic Just Games registration clarified for H6.9B. World stream is free; next H6.9B playable Grotto gate, visual and save safety approval still required. H6.6 racing deferred."
+  "status": "in_progress",
+  "workPackage": "R6.5-WP19H6.9B",
+  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9B-CRYSTALARIUM-PLAYABLE-GROTTO-GATE.md",
+  "branch": "agent/world-h6-9b-crystalarium-opening",
+  "prNumber": 335,
+  "baseMainSha": "bb18f9d8e36fed98d4df4ebe56d2bcabbcce41d3",
+  "updatedOn": "2026-10-24",
+  "note": "H6.9B first-entry Crystalarium visual and interaction approval recorded from David on 23 October; save reload safety tests, strict world-only opening outcome and Just Games sandbox checks included. Final qualification and Merge Gate are required before merge; PR #335 now includes reviewed PR-wide test-impact metadata. World is the sole integration owner of Crystalarium catalogue and manifest. Historical stale PR #176 closed unmerged, Pond Leap PR #289 safely sequenced as draft against H6.9B pending subsequent integration. H6.9C large persistent five-chapter expansion explicitly approved 24 October but development belongs on a separate post-merge branch."
 }

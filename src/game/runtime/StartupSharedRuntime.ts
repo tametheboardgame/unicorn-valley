@@ -57,6 +57,7 @@ export const SCENE_KEYS = [
   'RainbowDiscActivityScene',
   'ChessPlazaActivityScene',
   'PondLeapActivityScene',
+  'CrystalariumActivityScene',
   'ExplorationHudOverlayScene',
 ] as const;
 

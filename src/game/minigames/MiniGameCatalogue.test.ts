@@ -90,7 +90,16 @@ describe('MiniGameCatalogue', () => {
       MINI_GAME_IDS.wobblyCake,
       MINI_GAME_IDS.fireflyLantern,
       MINI_GAME_IDS.pondLeap,
+      MINI_GAME_IDS.crystalarium,
       MINI_GAME_IDS.coralBeachcombing,
+    ]);
+  });
+
+  it('exposes only Crystalarium practice in Just Games and keeps the story intro world-only', () => {
+    const game = getJustGamesDefinitions().find((definition) => definition.id === 'crystalarium');
+    expect(game?.sceneKey).toBe('CrystalariumActivityScene');
+    expect(game?.variants.filter((v) => v.justGamesVisible).map((v) => v.id)).toEqual([
+      'resonance-patterns',
     ]);
   });
 

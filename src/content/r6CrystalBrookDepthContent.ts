@@ -7,6 +7,8 @@ export const CRYSTAL_GROTTO_OPEN_FLAG = 'flag:r6-crystal-grotto-open' as const;
 export const CRYSTAL_GROTTO_GLOWING_FLAG = 'flag:r6-crystal-grotto-glowing' as const;
 
 export const CRYSTAL_GROTTO_CHAMBER_DISCOVERY_ID = 'discovery:crystal-grotto-chamber' as const;
+export const CRYSTALARIUM_OPENING_DISCOVERY_ID =
+  'discovery:crystalarium-opening-resonance' as const;
 export const CRYSTAL_GROTTO_LOW_NOTE_DISCOVERY_ID = 'discovery:crystal-grotto-low-note' as const;
 export const CRYSTAL_GROTTO_BRIGHT_NOTE_DISCOVERY_ID =
   'discovery:crystal-grotto-bright-note' as const;
@@ -37,6 +39,14 @@ export const R6_CRYSTAL_BROOK_DEPTH_DISCOVERIES = [
       'A cool little cave beyond Prism Grotto where crystal points glow around a shallow singing pool.',
     icon: '💎',
     undiscoveredHint: 'Echo keeps listening near the far Grotto Clearing.',
+  },
+  {
+    id: CRYSTALARIUM_OPENING_DISCOVERY_ID,
+    name: 'Crystalarium Opening Resonance',
+    description: 'A low hum, a clear ping and a soft bell answered the Grotto doorway.',
+    kind: 'secret',
+    icon: '🎶',
+    undiscoveredHint: 'Echo has found a musical crystal instrument beside the sealed arch.',
   },
   {
     id: CRYSTAL_GROTTO_LOW_NOTE_DISCOVERY_ID,
@@ -104,8 +114,8 @@ export const R6_CRYSTAL_BROOK_DEPTH_QUESTS = [
     name: 'Echo and the Crystal Song',
     steps: [
       { type: 'unlock-discovery', discoveryId: CRYSTAL_GROTTO_CHAMBER_DISCOVERY_ID },
+      { type: 'unlock-discovery', discoveryId: CRYSTALARIUM_OPENING_DISCOVERY_ID },
       { type: 'set-world-flag', flagId: CRYSTAL_GROTTO_OPEN_FLAG, value: true },
-      { type: 'set-world-flag', flagId: ECHO_CRYSTAL_SONG_ACTIVE_FLAG, value: true },
       { type: 'unlock-discovery', discoveryId: CRYSTAL_GROTTO_LOW_NOTE_DISCOVERY_ID },
       { type: 'unlock-discovery', discoveryId: CRYSTAL_GROTTO_BRIGHT_NOTE_DISCOVERY_ID },
       { type: 'unlock-discovery', discoveryId: CRYSTAL_GROTTO_BELL_NOTE_DISCOVERY_ID },
