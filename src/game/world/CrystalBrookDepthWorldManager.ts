@@ -452,13 +452,16 @@ export class CrystalBrookDepthWorldManager {
     objects.push(garden);
     if (chapters > 0) {
       objects.push(
-        scene.add.text(x, y - 96, '✦ ' + chapters + ' / 5 restored ✦', {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          color: '#e5faff',
-          backgroundColor: '#294d70dd',
-          padding: { x: 7, y: 3 },
-        }).setOrigin(0.5).setName('brook-depth:crystalarium-restoration-label'),
+        scene.add
+          .text(x, y - 96, '✦ ' + chapters + ' / 5 restored ✦', {
+            fontFamily: 'system-ui, sans-serif',
+            fontSize: '16px',
+            color: '#e5faff',
+            backgroundColor: '#294d70dd',
+            padding: { x: 7, y: 3 },
+          })
+          .setOrigin(0.5)
+          .setName('brook-depth:crystalarium-restoration-label'),
       );
     }
   }
