@@ -7,6 +7,6 @@
   "branch": "agent/world-h6-9b-crystalarium-opening",
   "prNumber": 335,
   "baseMainSha": "bb18f9d8e36fed98d4df4ebe56d2bcabbcce41d3",
-  "updatedOn": "2026-10-23",
-  "note": "H6.9B first-entry Crystalarium accepted by David on 23 October, with draft Tier 0/unit/build/browser checks passing on prior head and added persisted unlock and legacy mid-song reload tests. One canonical world/Just Games scene and strict world-only opening outcome retained. H6.9C has an explicitly proposed larger persistent merge-game work package awaiting design approval; do not implement in H6.9B. Full exact-head CI/merge permission remain outstanding; MG-WP7 #289 catalogue overlap still requires sequencing."
+  "updatedOn": "2026-10-24",
+  "note": "H6.9B first-entry Crystalarium visual and interaction approval recorded from David on 23 October; save reload safety tests, strict world-only opening outcome and Just Games sandbox checks included. Final qualification and Merge Gate are required before merge; PR #335 now includes reviewed PR-wide test-impact metadata. World is the sole integration owner of Crystalarium catalogue and manifest. Historical stale PR #176 closed unmerged, Pond Leap PR #289 safely sequenced as draft against H6.9B pending subsequent integration. H6.9C large persistent five-chapter expansion explicitly approved 24 October but development belongs on a separate post-merge branch."
 }
