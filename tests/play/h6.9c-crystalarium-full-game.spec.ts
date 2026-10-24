@@ -1,8 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
+import { createDefaultSave } from '../../src/game/save/createDefaultSave';
+import { CRYSTAL_BROOK_CRYSTALARIUM_NURSERY } from '../../src/game/world/CrystalBrookMap';
 import {
   clickNamedObject,
   getDiagnosticSnapshot,
   openDiagnostics,
+  setArcadeSpritePosition,
   waitForNamedObject,
   waitForScene,
 } from '../support/browserDiagnostics';
@@ -86,4 +89,43 @@ test.describe('H6.9C portrait touch evidence', () => {
     await page.keyboard.press('Escape');
     await waitForScene(page, 'JustGamesScene');
   });
+});
+
+test('H6.9C Crystal Brook nursery saves world progress and returns without reopening the Grotto', async ({
+  page,
+}) => {
+  await page.addInitScript(
+    ({ key, save }) => localStorage.setItem(key, JSON.stringify(save)),
+    { key: 'unicorn-valley.save', save: createDefaultSave('2026-10-24T11:00:00.000Z') },
+  );
+  await openDiagnostics(page, '/?scene=brook&diagnostics=1');
+  await waitForScene(page, 'CrystalBrookScene');
+  await setArcadeSpritePosition(
+    page, 'CrystalBrookScene', 'world-player-unicorn',
+    CRYSTAL_BROOK_CRYSTALARIUM_NURSERY.x,
+    CRYSTAL_BROOK_CRYSTALARIUM_NURSERY.y + 50,
+  );
+  await expect.poll(async () => {
+    const snapshot = await getDiagnosticSnapshot(page);
+    return snapshot.scenes.find((s) => s.key === 'CrystalBrookScene')
+      ?.objects.find((o) => o.name === 'exploration-tablet-hint' && o.visible)?.text;
+  }).toBe('Crystalarium Nursery');
+
+  await page.keyboard.press('KeyE');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+
+  const save = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'),
+  );
+  expect(save.activities.crystalarium.completed).toBe(1);
+  expect(save.world.flags['flag:r6-crystal-grotto-open']).not.toBe(true);
+  expect(await page.evaluate(() =>
+    localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+  )).toBeNull();
+
+  await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
+  await waitForScene(page, 'CrystalBrookScene');
 });
