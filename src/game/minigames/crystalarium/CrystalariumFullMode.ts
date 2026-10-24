@@ -530,14 +530,8 @@ export class CrystalariumFullMode {
         () => this.freshBoard(),
       );
     } else {
-      this.button(
-        holder,
-        698,
-        458,
-        133,
-        'Grow shard',
-        'crystalarium-full-grow',
-        () => this.apply(spawnCrystal(this.state)),
+      this.button(holder, 698, 458, 133, 'Grow shard', 'crystalarium-full-grow', () =>
+        this.apply(spawnCrystal(this.state)),
       );
       this.button(
         holder,
