@@ -371,6 +371,30 @@ export function createHarmony(state: CrystalariumFullState): FullActionResult {
     'A musical harmony was crafted from all three voices.',
   );
 }
+/** Polishing trades one crafted three-voice harmony for a single tier advance. */
+export function polishCrystal(
+  state: CrystalariumFullState,
+  index: number,
+): FullActionResult {
+  if (state.completed < 20) {
+    return rejected(state, 'Unlock the Prism Workshop by restoring the Singing Pools.');
+  }
+  if (!indexOK(index, FULL_CELL_COUNT)) return rejected(state, 'Select a crystal to polish.');
+  const piece = state.cells[index];
+  if (!piece) return rejected(state, 'Choose a crystal on the board.');
+  if (piece.tier === 5) return rejected(state, 'That rare formation is already perfect.');
+  if (state.harmonies < 1) return rejected(state, 'Craft one three-voice harmony to power the basin.');
+  const result = makeCrystalPiece(piece.family, (piece.tier + 1) as CrystalTier);
+  const cells = [...state.cells];
+  cells[index] = result;
+  const discovery = result.family + ':' + result.tier;
+  return accepted({
+    ...state, cells, harmonies: state.harmonies - 1,
+    discovered: state.discovered.includes(discovery)
+      ? state.discovered : [...state.discovered, discovery],
+  }, 'The polishing basin refined a crystal using one crafted harmony.');
+}
+
 /** Never overwrites campaign achievements: use only for a fresh board on request. */
 export function startFreshCrystalariumBoard(state: CrystalariumFullState): CrystalariumFullState {
   const fresh = createCrystalariumFullState();
