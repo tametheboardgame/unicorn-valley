@@ -154,12 +154,12 @@ export const MINI_GAME_CATALOGUE = [
     sceneKey: 'CrystalariumActivityScene',
     title: 'Crystalarium',
     description:
-      'Match musical crystal pairs to make a three-note melody. The deeper patterns are coming soon.',
+      'Grow, merge and tune crystals through five chapters of musical patterns.',
     group: 'puzzle',
     order: 65,
     variants: [
       { id: 'opening-melody', title: 'Opening melody', justGamesVisible: false },
-      { id: 'resonance-patterns', title: 'Melody practice', justGamesVisible: true },
+      { id: 'resonance-patterns', title: 'Resonance garden', justGamesVisible: true },
     ],
     justGames: { visible: true, availability: 'always' },
     world: { placement: 'placed' },
