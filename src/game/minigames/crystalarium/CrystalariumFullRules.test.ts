@@ -110,14 +110,15 @@ describe('H6.9C Crystalarium deep merge mechanics', () => {
     const before = JSON.stringify(initial);
     expect(polishCrystal(initial, 0).accepted).toBe(false);
     expect(JSON.stringify(initial)).toBe(before);
-    const workshop = { ...initial, completed: 22, harmonies: 1 };
+    expect(polishCrystal({ ...initial, completed: 20, harmonies: 1 }, 0).accepted).toBe(false);
+    const workshop = { ...initial, completed: 32, harmonies: 1 };
     const result = polishCrystal(workshop, 0);
     expect(result.accepted).toBe(true);
     expect(result.state.cells[0]).toEqual({ family: 'low', tier: 1 });
     expect(result.state.harmonies).toBe(0);
     expect(polishCrystal(result.state, 1).accepted).toBe(false);
     const reset = startFreshCrystalariumBoard(workshop);
-    expect(reset.completed).toBe(22);
+    expect(reset.completed).toBe(32);
     expect(reset.harmonies).toBe(1);
   });
 });
