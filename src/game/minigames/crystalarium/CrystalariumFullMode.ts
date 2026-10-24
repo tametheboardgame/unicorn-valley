@@ -69,7 +69,40 @@ export class CrystalariumFullMode {
     this.render();
   }
 
-  private apply(result: FullActionResult): void {
+  private playResonanceTone(family: CrystalFamily): void {
+    const settings = getBrowserAudioSettingsStore().load();
+    const volume = 0.065 * settings.masterVolume * settings.sfxVolume;
+    if (settings.muted || !settings.sfxEnabled || volume <= 0.0001) return;
+    const audio = this.scene.sound as Phaser.Sound.WebAudioSoundManager;
+    const context = audio.context;
+    if (!context || context.state !== 'running') return;
+    const frequencies: Record<CrystalFamily, number> = {
+      low: 196,
+      bright: 392,
+      bell: 659.25,
+    };
+    try {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = family === 'bell' ? 'sine' : 'triangle';
+      oscillator.frequency.value = frequencies[family];
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(volume, context.currentTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.35);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.36);
+      oscillator.onended = () => {
+        oscillator.disconnect();
+        gain.disconnect();
+      };
+    } catch {
+      // Crystals retain visible glyphs, tier changes and status feedback when muted.
+    }
+  }
+
+  private apply(result: FullActionResult, note?: CrystalFamily): void {
     if (!result.accepted) {
       this.message = result.reason;
       this.render();
@@ -82,11 +115,15 @@ export class CrystalariumFullMode {
     }
     const merged = result.state.merges > this.state.merges;
     const completed = result.state.completed > this.state.completed;
+    const craftedHarmony = result.state.harmonies > this.state.harmonies;
     this.state = result.state;
     this.message = result.message;
     this.washArmed = false;
     this.resetArmed = false;
-    if (merged || completed) this.scene.cameras.main.flash(110, 160, 225, 255, false);
+    if (merged || completed || craftedHarmony) {
+      this.scene.cameras.main.flash(110, 160, 225, 255, false);
+      this.playResonanceTone(note ?? (completed ? 'bell' : 'bright'));
+    }
     this.render();
   }
 
@@ -176,9 +213,10 @@ export class CrystalariumFullMode {
       this.render();
       return;
     }
+    const note = this.state.cells[this.selected]?.family;
     const result = moveOrMergeCrystal(this.state, this.selected, index);
     this.selected = null;
-    this.apply(result);
+    this.apply(result, note);
   }
 
   private shelveSelected(): void {
