@@ -409,7 +409,7 @@ export function createHarmony(state: CrystalariumFullState): FullActionResult {
 }
 /** Polishing trades one crafted three-voice harmony for a single tier advance. */
 export function polishCrystal(state: CrystalariumFullState, index: number): FullActionResult {
-  if (state.completed < 20) {
+  if (state.completed < 30) {
     return rejected(state, 'Unlock the Prism Workshop by restoring the Singing Pools.');
   }
   if (!indexOK(index, FULL_CELL_COUNT)) return rejected(state, 'Select a crystal to polish.');
