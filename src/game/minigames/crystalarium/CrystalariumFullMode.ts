@@ -14,6 +14,7 @@ import {
   createHarmony,
   moveOrMergeCrystal,
   offerResonancePattern,
+  polishCrystal,
   restoreCrystal,
   shelveCrystal,
   spawnCrystal,
@@ -132,6 +133,9 @@ export class CrystalariumFullMode {
       case 'KeyH':
         this.apply(createHarmony(this.state));
         return;
+      case 'KeyP':
+        this.polishSelected();
+        return;
       case 'Escape':
         this.onExit();
         return;
@@ -203,6 +207,17 @@ export class CrystalariumFullMode {
     const source = this.selected;
     this.selected = null;
     this.apply(washCrystal(this.state, source));
+  }
+
+  private polishSelected(): void {
+    if (this.selected === null) {
+      this.message = 'Select a crystal before using the polishing basin.';
+      this.render();
+      return;
+    }
+    const result = polishCrystal(this.state, this.selected);
+    if (result.accepted) this.selected = null;
+    this.apply(result);
   }
 
   private freshBoard(): void {
@@ -405,15 +420,18 @@ export class CrystalariumFullMode {
     );
     this.button(
       holder,
-      700,
+      698,
       301,
-      196,
+      145,
       canOfferPattern(this.state) ? 'Offer pattern ✓' : 'Offer pattern',
       'crystalarium-full-offer',
       () => this.apply(offerResonancePattern(this.state)),
     );
-    this.button(holder, 905, 301, 202, 'Craft harmony ♫', 'crystalarium-full-harmony', () =>
+    this.button(holder, 850, 301, 145, 'Harmony ♫', 'crystalarium-full-harmony', () =>
       this.apply(createHarmony(this.state)),
+    );
+    this.button(holder, 1002, 301, 145, 'Polish ✧', 'crystalarium-full-polish', () =>
+      this.polishSelected(),
     );
 
     this.addText(holder, 701, 372, 'CRYSTAL VEINS', 16, '#a8e9f5');
@@ -470,7 +488,7 @@ export class CrystalariumFullMode {
       holder,
       691,
       666,
-      'N grow • 1–3 veins • O offer • H harmony • S shelf • W wash • Esc exit',
+      'N grow • 1–3 veins • O offer • H harmony • P polish • S shelf • W wash • Esc exit',
       13,
       '#bfd6ec',
       465,
