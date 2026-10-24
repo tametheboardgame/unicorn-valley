@@ -12,9 +12,15 @@ import {
 
 class MemoryRepository implements SaveRepository {
   public value: string | null = null;
-  public read(): string | null { return this.value; }
-  public write(value: string): void { this.value = value; }
-  public remove(): void { this.value = null; }
+  public read(): string | null {
+    return this.value;
+  }
+  public write(value: string): void {
+    this.value = value;
+  }
+  public remove(): void {
+    this.value = null;
+  }
 }
 function harness() {
   const repo = new MemoryRepository();
@@ -23,7 +29,9 @@ function harness() {
   const values = new Map<string, string>();
   const storage = {
     getItem: (key: string) => values.get(key) ?? null,
-    setItem: (key: string, value: string) => { values.set(key, value); },
+    setItem: (key: string, value: string) => {
+      values.set(key, value);
+    },
   };
   const world = createMiniGameSession({
     gameId: 'crystalarium',
@@ -65,12 +73,28 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     const progress = createCrystalariumFullState();
     const original = JSON.stringify(saves.load());
     expect(saveCrystalariumProgress(null, progress, saves, storage)).toBe(false);
-    expect(saveCrystalariumProgress({
-      ...sandbox, sideEffectPolicy: 'world',
-    }, progress, saves, storage)).toBe(false);
-    expect(saveCrystalariumProgress({
-      ...sandbox, variantId: 'opening-melody',
-    }, progress, saves, storage)).toBe(false);
+    expect(
+      saveCrystalariumProgress(
+        {
+          ...sandbox,
+          sideEffectPolicy: 'world',
+        },
+        progress,
+        saves,
+        storage,
+      ),
+    ).toBe(false);
+    expect(
+      saveCrystalariumProgress(
+        {
+          ...sandbox,
+          variantId: 'opening-melody',
+        },
+        progress,
+        saves,
+        storage,
+      ),
+    ).toBe(false);
     expect(JSON.stringify(saves.load())).toBe(original);
   });
   it('treats corrupt sandbox records as fresh without deleting adventure progress', () => {
@@ -84,11 +108,13 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     const { saves, sandbox } = harness();
     const brokenStorage = {
       getItem: (_key: string) => null,
-      setItem: (_key: string, _value: string): void => { throw new Error('quota'); },
+      setItem: (_key: string, _value: string): void => {
+        throw new Error('quota');
+      },
     };
-    expect(saveCrystalariumProgress(
-      sandbox, createCrystalariumFullState(), saves, brokenStorage,
-    )).toBe(false);
+    expect(
+      saveCrystalariumProgress(sandbox, createCrystalariumFullState(), saves, brokenStorage),
+    ).toBe(false);
     expect(saves.load()?.activities.crystalarium).toBeNull();
   });
 });
