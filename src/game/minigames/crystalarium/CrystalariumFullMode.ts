@@ -36,7 +36,6 @@ const CELL = 56;
 const STEP = 62;
 const LEFT = 174;
 const TOP = 181;
-const PANEL_X = 820;
 const FONT = 'system-ui, sans-serif';
 
 export class CrystalariumFullMode {
@@ -47,6 +46,7 @@ export class CrystalariumFullMode {
   private message = 'Choose a crystal vein to grow shards, then merge matching pairs.';
   private washArmed = false;
   private resetArmed = false;
+  private quiet = false;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -72,7 +72,7 @@ export class CrystalariumFullMode {
   private playResonanceTone(family: CrystalFamily): void {
     const settings = getBrowserAudioSettingsStore().load();
     const volume = 0.065 * settings.masterVolume * settings.sfxVolume;
-    if (settings.muted || !settings.sfxEnabled || volume <= 0.0001) return;
+    if (this.quiet || settings.muted || !settings.sfxEnabled || volume <= 0.0001) return;
     const audio = this.scene.sound as Phaser.Sound.WebAudioSoundManager;
     const context = audio.context;
     if (!context || context.state !== 'running') return;
@@ -265,12 +265,12 @@ export class CrystalariumFullMode {
       this.render();
       return;
     }
+    this.selected = null;
     this.apply({
       accepted: true,
       state: startFreshCrystalariumBoard(this.state),
       message: 'Fresh board ready. Your songbook progress is safe.',
     });
-    this.selected = null;
   }
 
   private addText(
@@ -339,6 +339,19 @@ export class CrystalariumFullMode {
         ? 'Just Games: separate saved songbook'
         : 'Crystal Brook: adventure songbook';
     this.addText(holder, 94, 75, savedLabel, 16, '#bce8e5');
+    const audioSettings = getBrowserAudioSettingsStore().load();
+    this.button(
+      holder,
+      985,
+      71,
+      162,
+      this.quiet ? 'Sound: Off' : audioSettings.muted ? 'Sound: Muted' : 'Sound: On',
+      'crystalarium-full-sound',
+      () => {
+        this.quiet = !this.quiet;
+        this.render();
+      },
+    );
     const chapter = activeResonancePattern(this.state);
     this.addText(
       holder,
