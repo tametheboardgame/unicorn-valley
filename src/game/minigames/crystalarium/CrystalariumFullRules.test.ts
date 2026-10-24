@@ -7,6 +7,8 @@ import {
   isCrystalariumFullState,
   moveOrMergeCrystal,
   spawnCrystal,
+  spawnRefinedCrystal,
+  refinedSourceTier,
   washCrystal,
   shelveCrystal,
   restoreCrystal,
@@ -78,6 +80,30 @@ describe('H6.9C Crystalarium deep merge mechanics', () => {
     const result = createHarmony({ ...initial, completed: 10, cells });
     expect(result.accepted).toBe(true);
     expect(result.state.harmonies).toBe(1);
+  });
+  it('reduces late-game generator tapping without blocking lower-tier harmony recipes', () => {
+    const original = createCrystalariumFullState();
+    expect(refinedSourceTier(original)).toBeNull();
+    expect(spawnRefinedCrystal(original).accepted).toBe(false);
+
+    const pools = { ...original, completed: 20 };
+    expect(refinedSourceTier(pools)).toBe(1);
+    const polished = spawnRefinedCrystal(pools);
+    expect(polished.accepted).toBe(true);
+    expect(polished.state.cells[2]).toEqual({ family: 'low', tier: 1 });
+    expect(spawnCrystal(polished.state).state.cells[3]).toEqual({ family: 'low', tier: 0 });
+
+    const garden = { ...original, completed: 40 };
+    expect(refinedSourceTier(garden)).toBe(2);
+    const refined = spawnRefinedCrystal(garden);
+    expect(refined.state.cells[2]).toEqual({ family: 'low', tier: 2 });
+    expect(refined.state.discovered).toContain('low:2');
+    expect(isCrystalariumFullState(refined.state)).toBe(true);
+
+    const forged = { ...original, selectedFamily: 'bell' as const };
+    expect(spawnCrystal(forged).accepted).toBe(false);
+    expect(spawnRefinedCrystal({ ...forged, completed: 20 }).accepted).toBe(true);
+    expect(spawnRefinedCrystal({ ...forged, completed: 0 }).accepted).toBe(false);
   });
   it('spends a crafted harmony to polish only after the workshop unlocks', () => {
     const initial = createCrystalariumFullState();
