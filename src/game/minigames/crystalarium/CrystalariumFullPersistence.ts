@@ -5,13 +5,9 @@ import {
   isCrystalariumFullState,
   type CrystalariumFullState,
 } from './CrystalariumFullRules';
-import {
-  CRYSTALARIUM_FULL_VARIANT_ID,
-  CRYSTALARIUM_GAME_ID,
-} from './CrystalariumOpeningRules';
+import { CRYSTALARIUM_FULL_VARIANT_ID, CRYSTALARIUM_GAME_ID } from './CrystalariumOpeningRules';
 
-export const CRYSTALARIUM_SANDBOX_STORAGE_KEY =
-  'unicorn-valley:just-games:crystalarium:v1';
+export const CRYSTALARIUM_SANDBOX_STORAGE_KEY = 'unicorn-valley:just-games:crystalarium:v1';
 
 export interface CrystalariumProgressStorage {
   getItem(key: string): string | null;
@@ -25,14 +21,17 @@ function browserStorage(): CrystalariumProgressStorage | null {
   }
 }
 export function isFullCrystalariumSession(session: MiniGameSession | null): boolean {
-  return Boolean(session &&
-    session.gameId === CRYSTALARIUM_GAME_ID &&
-    session.variantId === CRYSTALARIUM_FULL_VARIANT_ID &&
-    ((session.source === 'just-games' && session.sideEffectPolicy === 'sandbox') ||
-     (session.source === 'world' && session.sideEffectPolicy === 'world' &&
-      session.returnTarget.sceneKey === 'CrystalBrookScene' &&
-      session.worldContext?.locationId === 'crystal-brook' &&
-      session.worldContext.interactionId === 'crystalarium-nursery')));
+  return Boolean(
+    session &&
+      session.gameId === CRYSTALARIUM_GAME_ID &&
+      session.variantId === CRYSTALARIUM_FULL_VARIANT_ID &&
+      ((session.source === 'just-games' && session.sideEffectPolicy === 'sandbox') ||
+        (session.source === 'world' &&
+          session.sideEffectPolicy === 'world' &&
+          session.returnTarget.sceneKey === 'CrystalBrookScene' &&
+          session.worldContext?.locationId === 'crystal-brook' &&
+          session.worldContext.interactionId === 'crystalarium-nursery')),
+  );
 }
 /** Invalid or future-version sandbox records never contaminate adventure state. */
 export function loadCrystalariumProgress(
