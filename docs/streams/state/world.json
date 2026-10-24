@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "stream": "world",
   "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.9B",
-  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9B-CRYSTALARIUM-PLAYABLE-GROTTO-GATE.md",
-  "branch": "agent/world-h6-9b-crystalarium-opening",
-  "prNumber": 335,
+  "workPackage": "R6.5-WP19H6.9C",
+  "workPackagePath": "docs/work-packages/R6.5-WP19H6.9C-CRYSTALARIUM-FULL-GAME.md",
+  "branch": "agent/world-h6-9c-crystalarium-full-game",
+  "prNumber": 337,
   "baseMainSha": "bb18f9d8e36fed98d4df4ebe56d2bcabbcce41d3",
   "updatedOn": "2026-10-24",
-  "note": "H6.9B first-entry Crystalarium visual and interaction approval recorded from David on 23 October; save reload safety tests, strict world-only opening outcome and Just Games sandbox checks included. Final qualification and Merge Gate are required before merge; PR #335 now includes reviewed PR-wide test-impact metadata. World is the sole integration owner of Crystalarium catalogue and manifest. Historical stale PR #176 closed unmerged, Pond Leap PR #289 safely sequenced as draft against H6.9B pending subsequent integration. H6.9C large persistent five-chapter expansion explicitly approved 24 October but development belongs on a separate post-merge branch."
+  "note": "Approved H6.9C full Crystalarium implementation is in stacked draft PR #337, based on H6.9B #335. Engine/42-cell board/50 patterns, v10 world save, independent Just Games sandbox, first full-mode UI and Brook nursery have source implementations with tests. Initial draft static/production build checks passed prior to additional changes; browser and complete CI review are not yet qualified, human visual acceptance required. H6.9B remains open pending WebKit/performance full qualification and must integrate first. Pond Leap #289 is a separately preserved draft."
 }
