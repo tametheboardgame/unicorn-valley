@@ -78,7 +78,7 @@ export class CrystalariumFullMode {
         this.quiet = !this.quiet;
         this.render();
       },
-      exit: this.onExit,
+      exit: () => this.leave(),
     });
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);
@@ -91,6 +91,14 @@ export class CrystalariumFullMode {
       this.portrait = null;
     });
     this.render();
+  }
+
+  private leave(): void {
+    // Hide the native touch surface before returning to the paused caller.
+    // Late pointer events from the same touch must not activate the next scene.
+    this.portrait?.destroy();
+    this.portrait = null;
+    this.onExit();
   }
 
   private playResonanceTone(family: CrystalFamily): void {
@@ -154,7 +162,7 @@ export class CrystalariumFullMode {
   private keyDown(event: KeyboardEvent): void {
     // Native portrait controls handle their own Enter/Space activation.
     if (event.target instanceof HTMLElement && event.target.closest('.crystalarium-portrait')) {
-      if (event.code === 'Escape') this.onExit();
+      if (event.code === 'Escape') this.leave();
       return;
     }
     const row = Math.floor(this.cursor / FULL_COLUMNS);
@@ -203,7 +211,7 @@ export class CrystalariumFullMode {
         this.polishSelected();
         return;
       case 'Escape':
-        this.onExit();
+        this.leave();
         return;
       default:
         return;
@@ -443,7 +451,9 @@ export class CrystalariumFullMode {
       '#d1e7f5',
       490,
     );
-    this.button(holder, 160, 624, 162, '← Leave & save', 'crystalarium-full-exit', this.onExit);
+    this.button(holder, 160, 624, 162, '← Leave & save', 'crystalarium-full-exit', () =>
+      this.leave(),
+    );
     this.button(holder, 330, 624, 144, 'Shelf selected', 'crystalarium-full-shelve', () =>
       this.shelveSelected(),
     );
