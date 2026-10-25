@@ -83,9 +83,10 @@ export class CrystalariumFullMode {
     });
     // On touch portrait the native controls cover the canvas. Phaser's
     // underlying sound/button hit areas must not intercept those same taps.
-    this.portraitQuery = globalThis.matchMedia?.(
-      '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)',
-    ) ?? null;
+    this.portraitQuery =
+      globalThis.matchMedia?.(
+        '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)',
+      ) ?? null;
     this.portraitQuery?.addEventListener('change', this.syncPortraitInput);
     this.syncPortraitInput();
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
