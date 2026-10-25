@@ -9,7 +9,11 @@ import {
   unlockedCrystalFamilies,
   type CrystalariumFullState,
 } from './CrystalariumFullRules';
-import { CRYSTAL_NOTE_PRESENTATION, CRYSTAL_TIER_NAMES, type CrystalFamily } from './CrystalariumOpeningRules';
+import {
+  CRYSTAL_NOTE_PRESENTATION,
+  CRYSTAL_TIER_NAMES,
+  type CrystalFamily,
+} from './CrystalariumOpeningRules';
 import './CrystalariumPortraitView.css';
 
 export interface CrystalariumPortraitActions {
@@ -92,10 +96,12 @@ export class CrystalariumPortraitView {
     // Replacing view nodes is safe because the game mode owns all persistent state.
     // Restore keyboard focus to the same semantic control after a change.
     const active = document.activeElement;
-    const focusKey = active instanceof HTMLElement
-      ? active.dataset.crystalariumAction ?? active.dataset.crystalariumCell
-      : undefined;
-    const focusIsCell = active instanceof HTMLElement && active.dataset.crystalariumCell !== undefined;
+    const focusKey =
+      active instanceof HTMLElement
+        ? (active.dataset.crystalariumAction ?? active.dataset.crystalariumCell)
+        : undefined;
+    const focusIsCell =
+      active instanceof HTMLElement && active.dataset.crystalariumCell !== undefined;
     const { state } = view;
     const pattern = activeResonancePattern(state);
     const header = makeElement('header', 'crystalarium-portrait-header');
@@ -107,27 +113,35 @@ export class CrystalariumPortraitView {
     );
     const intro = makeElement('div', 'crystalarium-portrait-brand');
     intro.append(heading, subtitle);
-    header.append(
-      intro,
-      this.button('Leave', this.actions.exit, 'quiet', false, 'exit'),
-    );
+    header.append(intro, this.button('Leave', this.actions.exit, 'quiet', false, 'exit'));
 
     const task = makeElement('section', 'crystalarium-portrait-pattern');
     task.setAttribute('aria-label', 'Current Resonance Pattern');
     const label = makeElement(
       'p',
       'crystalarium-portrait-eyebrow',
-      pattern ? `${pattern.chapter} • ${state.completed + 1} of ${RESONANCE_PATTERNS.length}`
+      pattern
+        ? `${pattern.chapter} • ${state.completed + 1} of ${RESONANCE_PATTERNS.length}`
         : 'All five chapters restored',
     );
-    const title = makeElement('h2', 'crystalarium-portrait-pattern-title',
-      pattern?.title ?? 'Crystalarium Symphony complete');
-    const goals = makeElement('p', 'crystalarium-portrait-goals',
+    const title = makeElement(
+      'h2',
+      'crystalarium-portrait-pattern-title',
+      pattern?.title ?? 'Crystalarium Symphony complete',
+    );
+    const goals = makeElement(
+      'p',
+      'crystalarium-portrait-goals',
       pattern
-        ? pattern.goals.map((goal) =>
-          `${CRYSTAL_NOTE_PRESENTATION[goal.family].symbol} ${CRYSTAL_TIER_NAMES[goal.tier]} ×${goal.quantity}`
-        ).concat(pattern.harmonies ? [`♫ Harmony ×${pattern.harmonies}`] : []).join('  •  ')
-        : 'You can continue experimenting with the crystals.');
+        ? pattern.goals
+            .map(
+              (goal) =>
+                `${CRYSTAL_NOTE_PRESENTATION[goal.family].symbol} ${CRYSTAL_TIER_NAMES[goal.tier]} ×${goal.quantity}`,
+            )
+            .concat(pattern.harmonies ? [`♫ Harmony ×${pattern.harmonies}`] : [])
+            .join('  •  ')
+        : 'You can continue experimenting with the crystals.',
+    );
     task.append(label, title, goals);
 
     const boardSection = makeElement('section', 'crystalarium-portrait-board-section');
@@ -137,13 +151,19 @@ export class CrystalariumPortraitView {
       makeElement('h2', 'crystalarium-portrait-board-title', 'Crystal board'),
       this.button(
         view.quiet ? 'Sound off' : view.globallyMuted ? 'Muted globally' : 'Sound on',
-        this.actions.sound, 'quiet', false, 'sound',
+        this.actions.sound,
+        'quiet',
+        false,
+        'sound',
       ),
     );
     const scroller = makeElement('div', 'crystalarium-portrait-board-scroll');
     const grid = makeElement('div', 'crystalarium-portrait-grid');
     grid.setAttribute('role', 'group');
-    grid.setAttribute('aria-label', 'Seven columns, six rows. Select two matching crystals to merge.');
+    grid.setAttribute(
+      'aria-label',
+      'Seven columns, six rows. Select two matching crystals to merge.',
+    );
     for (let index = 0; index < FULL_CELL_COUNT; index += 1) {
       const piece = state.cells[index];
       const row = Math.floor(index / FULL_COLUMNS) + 1;
@@ -154,9 +174,12 @@ export class CrystalariumPortraitView {
       button.dataset.family = piece?.family ?? 'empty';
       button.classList.toggle('is-selected', view.selected === index);
       button.setAttribute('aria-pressed', view.selected === index ? 'true' : 'false');
-      button.setAttribute('aria-label',
-        piece ? `${piece.family} ${CRYSTAL_TIER_NAMES[piece.tier]}, row ${row}, column ${col}`
-          : `Empty socket, row ${row}, column ${col}`);
+      button.setAttribute(
+        'aria-label',
+        piece
+          ? `${piece.family} ${CRYSTAL_TIER_NAMES[piece.tier]}, row ${row}, column ${col}`
+          : `Empty socket, row ${row}, column ${col}`,
+      );
       button.textContent = piece
         ? `${CRYSTAL_NOTE_PRESENTATION[piece.family].symbol}\n${piece.tier + 1}`
         : '·';
@@ -184,8 +207,13 @@ export class CrystalariumPortraitView {
       const text = unlocked
         ? `${CRYSTAL_NOTE_PRESENTATION[family].symbol} ${family}`
         : '🔒 ' + family;
-      const button = this.button(text, () => this.actions.source(family), 'source',
-        !unlocked, 'source-' + family);
+      const button = this.button(
+        text,
+        () => this.actions.source(family),
+        'source',
+        !unlocked,
+        'source-' + family,
+      );
       button.setAttribute('aria-pressed', state.selectedFamily === family ? 'true' : 'false');
       button.classList.toggle('is-selected', state.selectedFamily === family);
       sourceRow.append(button);
@@ -195,13 +223,19 @@ export class CrystalariumPortraitView {
     primary.append(this.button('Grow shard', this.actions.grow, 'primary', false, 'grow'));
     const refined = refinedSourceTier(state);
     if (refined !== null) {
-      primary.append(this.button(
-        refined === 2 ? 'Grow crystal' : 'Grow polished',
-        this.actions.growRefined, 'primary', false, 'grow-refined',
-      ));
+      primary.append(
+        this.button(
+          refined === 2 ? 'Grow crystal' : 'Grow polished',
+          this.actions.growRefined,
+          'primary',
+          false,
+          'grow-refined',
+        ),
+      );
     }
-    primary.append(this.button('Offer pattern', this.actions.offer,
-      'offer', !canOfferPattern(state), 'offer'));
+    primary.append(
+      this.button('Offer pattern', this.actions.offer, 'offer', !canOfferPattern(state), 'offer'),
+    );
     primary.classList.add('is-quickbar');
     if (refined !== null) primary.classList.add('is-refined');
 
@@ -209,27 +243,56 @@ export class CrystalariumPortraitView {
     utility.append(
       this.button('Harmony ♫', this.actions.harmony, 'standard', false, 'harmony'),
       this.button('Polish ✧', this.actions.polish, 'standard', state.completed < 30, 'polish'),
-      this.button('Shelf selected', this.actions.shelve, 'standard', view.selected === null, 'shelve'),
-      this.button(view.washArmed ? 'Confirm wash' : 'Brook Wash',
-        this.actions.wash, view.washArmed ? 'warning' : 'standard', view.selected === null, 'wash'),
+      this.button(
+        'Shelf selected',
+        this.actions.shelve,
+        'standard',
+        view.selected === null,
+        'shelve',
+      ),
+      this.button(
+        view.washArmed ? 'Confirm wash' : 'Brook Wash',
+        this.actions.wash,
+        view.washArmed ? 'warning' : 'standard',
+        view.selected === null,
+        'wash',
+      ),
     );
     controls.append(utility);
     const shelf = makeElement('div', 'crystalarium-portrait-shelf');
-    shelf.append(makeElement('p', 'crystalarium-portrait-shelf-heading',
-      `Safe shelf • ${state.harmonies} harmonies`));
+    shelf.append(
+      makeElement(
+        'p',
+        'crystalarium-portrait-shelf-heading',
+        `Safe shelf • ${state.harmonies} harmonies`,
+      ),
+    );
     const shelfSlots = makeElement('div', 'crystalarium-portrait-shelf-slots');
     for (let index = 0; index < state.shelf.length; index += 1) {
       const piece = state.shelf[index];
-      shelfSlots.append(this.button(
-        piece ? `${CRYSTAL_NOTE_PRESENTATION[piece.family].symbol} level ${piece.tier + 1}`
-          : 'Empty',
-        () => this.actions.restore(index), 'shelf', piece === null, 'shelf-' + index,
-      ));
+      shelfSlots.append(
+        this.button(
+          piece
+            ? `${CRYSTAL_NOTE_PRESENTATION[piece.family].symbol} level ${piece.tier + 1}`
+            : 'Empty',
+          () => this.actions.restore(index),
+          'shelf',
+          piece === null,
+          'shelf-' + index,
+        ),
+      );
     }
     shelf.append(shelfSlots);
     controls.append(shelf);
-    controls.append(this.button(view.resetArmed ? 'Confirm fresh board' : 'Fresh board',
-      this.actions.fresh, view.resetArmed ? 'warning' : 'quiet', false, 'fresh'));
+    controls.append(
+      this.button(
+        view.resetArmed ? 'Confirm fresh board' : 'Fresh board',
+        this.actions.fresh,
+        view.resetArmed ? 'warning' : 'quiet',
+        false,
+        'fresh',
+      ),
+    );
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
