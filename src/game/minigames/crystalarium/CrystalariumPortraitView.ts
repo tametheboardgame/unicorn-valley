@@ -76,6 +76,13 @@ export class CrystalariumPortraitView {
     this.root.addEventListener('pointerdown', (event) => event.stopPropagation());
     this.root.addEventListener('pointerup', (event) => event.stopPropagation());
     this.root.addEventListener('pointercancel', (event) => event.stopPropagation());
+    this.root.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.actions.exit();
+      }
+    });
     (document.querySelector('#game-shell') ?? document.body).append(this.root);
   }
 
