@@ -71,6 +71,11 @@ export class CrystalariumPortraitView {
     this.root.dataset.crystalariumPortrait = 'true';
     this.root.setAttribute('role', 'region');
     this.root.setAttribute('aria-label', 'Crystalarium Resonance Garden');
+    // Phaser listens for global pointer input; native portrait actions must
+    // never leak touch-up/down into the canvas or a resumed Just Games scene.
+    this.root.addEventListener('pointerdown', (event) => event.stopPropagation());
+    this.root.addEventListener('pointerup', (event) => event.stopPropagation());
+    this.root.addEventListener('pointercancel', (event) => event.stopPropagation());
     (document.querySelector('#game-shell') ?? document.body).append(this.root);
   }
 
