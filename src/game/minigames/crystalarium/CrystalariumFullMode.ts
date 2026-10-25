@@ -381,16 +381,17 @@ export class CrystalariumFullMode {
   }
 
   private render(): void {
-    if (this.portraitQuery?.matches) this.portrait?.render({
-      state: this.state,
-      selected: this.selected,
-      message: this.message,
-      quiet: this.quiet,
-      globallyMuted: getBrowserAudioSettingsStore().load().muted,
-      washArmed: this.washArmed,
-      resetArmed: this.resetArmed,
-      source: this.session.source,
-    });
+    if (this.portraitQuery?.matches)
+      this.portrait?.render({
+        state: this.state,
+        selected: this.selected,
+        message: this.message,
+        quiet: this.quiet,
+        globallyMuted: getBrowserAudioSettingsStore().load().muted,
+        washArmed: this.washArmed,
+        resetArmed: this.resetArmed,
+        source: this.session.source,
+      });
     this.holder?.destroy(true);
     const holder = this.scene.add.container(0, 0).setDepth(20);
     this.holder = holder;
