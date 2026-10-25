@@ -97,6 +97,16 @@ export class CrystalariumPortraitView {
     button.type = 'button';
     button.disabled = disabled;
     if (name) button.dataset.crystalariumAction = name;
+    if (name === 'exit') {
+      // Touch pointer-up must leave before a subsequent synthetic click can
+      // fall through to a canvas action or act on a removed view.
+      button.addEventListener('pointerup', (event) => {
+        if (event.pointerType === 'mouse') return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (!button.disabled) action();
+      });
+    }
     button.addEventListener('click', (event) => {
       event.stopPropagation();
       if (!button.disabled) action();
