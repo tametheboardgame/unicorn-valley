@@ -112,7 +112,10 @@
     border-radius: 10px;
     background: #2b4b6d;
     color: #f4fcff;
-    font: 900 17px/1.02 "Trebuchet MS", system-ui, sans-serif;
+    font:
+      900 17px / 1.02 "Trebuchet MS",
+      system-ui,
+      sans-serif;
     white-space: pre-line;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -181,7 +184,10 @@
     border-radius: 12px;
     background: #345e83;
     color: #fff;
-    font: 800 15px/1.15 "Trebuchet MS", system-ui, sans-serif;
+    font:
+      800 15px / 1.15 "Trebuchet MS",
+      system-ui,
+      sans-serif;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
