@@ -132,7 +132,10 @@ test.describe('H6.9C portrait touch evidence', () => {
     await expect(offer).toBeEnabled();
     await offer.click();
     expect(
-      await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed, SANDBOX_KEY),
+      await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+        SANDBOX_KEY,
+      ),
     ).toBe(1);
     await portrait.locator('[data-crystalarium-action="exit"]').click();
     await waitForScene(page, 'JustGamesScene');
@@ -198,15 +201,21 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
     const bounds = await cell.boundingBox();
     expect(bounds?.width).toBeGreaterThanOrEqual(48);
     expect(bounds?.height).toBeGreaterThanOrEqual(48);
-    const scroll = await portrait.locator('.crystalarium-portrait-board-scroll').evaluate((node) =>
-      node.scrollWidth > node.clientWidth,
-    );
+    const scroll = await portrait
+      .locator('.crystalarium-portrait-board-scroll')
+      .evaluate((node) => node.scrollWidth > node.clientWidth);
     expect(scroll).toBe(true);
     await expect(grid.locator('button')).toHaveCount(42);
-    await page.screenshot({ path: testInfo.outputPath('h6.9c-narrow-portrait.png'), fullPage: true });
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-narrow-portrait.png'),
+      fullPage: true,
+    });
     await portrait.locator('[data-crystalarium-action="grow"]').click();
     expect(
-      await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length, SANDBOX_KEY),
+      await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length,
+        SANDBOX_KEY,
+      ),
     ).toBe(3);
     await portrait.locator('[data-crystalarium-action="exit"]').click();
     await waitForScene(page, 'JustGamesScene');
