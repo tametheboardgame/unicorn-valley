@@ -111,12 +111,32 @@ test.describe('H6.9C portrait touch evidence', () => {
     expect(
       scene.objects.filter((o) => o.name.startsWith('crystalarium-full-cell:') && o.visible),
     ).toHaveLength(42);
+    const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    await expect(portrait).toBeVisible();
+    const tiles = portrait.locator('[data-crystalarium-cell]');
+    await expect(tiles).toHaveCount(42);
+    const first = tiles.first();
+    const bounds = await first.boundingBox();
+    expect(bounds?.width).toBeGreaterThanOrEqual(48);
+    expect(bounds?.height).toBeGreaterThanOrEqual(48);
+    const initial = await portrait.boundingBox();
+    expect(initial?.width).toBeLessThanOrEqual(390);
     await page.screenshot({
       path: testInfo.outputPath('h6.9c-phone-portrait.png'),
       fullPage: true,
     });
-    await page.keyboard.press('Escape');
+
+    await portrait.locator('[data-crystalarium-cell="0"]').click();
+    await portrait.locator('[data-crystalarium-cell="1"]').click();
+    const offer = portrait.locator('[data-crystalarium-action="offer"]');
+    await expect(offer).toBeEnabled();
+    await offer.click();
+    expect(
+      await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed, SANDBOX_KEY),
+    ).toBe(1);
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
     await waitForScene(page, 'JustGamesScene');
+    await expect(portrait).toHaveCount(0);
   });
 });
 
@@ -162,4 +182,33 @@ test('H6.9C Crystal Brook nursery saves world progress and returns without reope
 
   await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
   await waitForScene(page, 'CrystalBrookScene');
+});
+
+test.describe('H6.9C narrow portrait touch acceptance', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+  test('retains real-size scrollable sockets, readable actions and a saved return', async ({
+    page,
+  }, testInfo) => {
+    await enterResonanceGarden(page);
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await expect(portrait).toBeVisible();
+    const grid = portrait.locator('.crystalarium-portrait-grid');
+    const cell = portrait.locator('[data-crystalarium-cell="0"]');
+    await expect(cell).toBeVisible();
+    const bounds = await cell.boundingBox();
+    expect(bounds?.width).toBeGreaterThanOrEqual(48);
+    expect(bounds?.height).toBeGreaterThanOrEqual(48);
+    const scroll = await portrait.locator('.crystalarium-portrait-board-scroll').evaluate((node) =>
+      node.scrollWidth > node.clientWidth,
+    );
+    expect(scroll).toBe(true);
+    await expect(grid.locator('button')).toHaveCount(42);
+    await page.screenshot({ path: testInfo.outputPath('h6.9c-narrow-portrait.png'), fullPage: true });
+    await portrait.locator('[data-crystalarium-action="grow"]').click();
+    expect(
+      await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length, SANDBOX_KEY),
+    ).toBe(3);
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+  });
 });
