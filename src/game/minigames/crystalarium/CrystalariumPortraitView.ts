@@ -202,7 +202,8 @@ export class CrystalariumPortraitView {
     }
     primary.append(this.button('Offer pattern', this.actions.offer,
       'offer', !canOfferPattern(state), 'offer'));
-    controls.append(primary);
+    primary.classList.add('is-quickbar');
+    if (refined !== null) primary.classList.add('is-refined');
 
     const utility = makeElement('div', 'crystalarium-portrait-secondary-actions');
     utility.append(
@@ -232,7 +233,7 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
-    this.root.replaceChildren(header, task, boardSection, controls, status);
+    this.root.replaceChildren(header, task, primary, boardSection, status, controls);
 
     if (focusKey !== undefined) {
       const selector = focusIsCell
