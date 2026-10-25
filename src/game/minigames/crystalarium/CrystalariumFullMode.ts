@@ -27,6 +27,7 @@ import {
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
+import { CrystalariumPortraitView } from './CrystalariumPortraitView';
 import {
   CRYSTAL_NOTE_PRESENTATION,
   CRYSTAL_TIER_NAMES,
@@ -43,6 +44,7 @@ const FONT = 'system-ui, sans-serif';
 export class CrystalariumFullMode {
   private state: CrystalariumFullState;
   private holder: Phaser.GameObjects.Container | null = null;
+  private portrait: CrystalariumPortraitView | null = null;
   private cursor = 0;
   private selected: number | null = null;
   private message = 'Choose a crystal vein to grow shards, then merge matching pairs.';
@@ -60,6 +62,24 @@ export class CrystalariumFullMode {
 
   public start(): void {
     this.scene.cameras.main.setBackgroundColor('#142944');
+    this.portrait = new CrystalariumPortraitView({
+      cell: (index) => this.pick(index),
+      source: (family) => this.apply(chooseCrystalSource(this.state, family)),
+      grow: () => this.apply(spawnCrystal(this.state)),
+      growRefined: () => this.apply(spawnRefinedCrystal(this.state)),
+      offer: () => this.apply(offerResonancePattern(this.state)),
+      harmony: () => this.apply(createHarmony(this.state)),
+      polish: () => this.polishSelected(),
+      shelve: () => this.shelveSelected(),
+      wash: () => this.washSelected(),
+      fresh: () => this.freshBoard(),
+      restore: (index) => this.apply(restoreCrystal(this.state, index)),
+      sound: () => {
+        this.quiet = !this.quiet;
+        this.render();
+      },
+      exit: this.onExit,
+    });
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);
     this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -67,6 +87,8 @@ export class CrystalariumFullMode {
       this.scene.input.off('pointerup', this.pointerUp, this);
       this.holder?.destroy(true);
       this.holder = null;
+      this.portrait?.destroy();
+      this.portrait = null;
     });
     this.render();
   }
@@ -130,6 +152,11 @@ export class CrystalariumFullMode {
   }
 
   private keyDown(event: KeyboardEvent): void {
+    // Native portrait controls handle their own Enter/Space activation.
+    if (event.target instanceof HTMLElement && event.target.closest('.crystalarium-portrait')) {
+      if (event.code === 'Escape') this.onExit();
+      return;
+    }
     const row = Math.floor(this.cursor / FULL_COLUMNS);
     const col = this.cursor % FULL_COLUMNS;
     switch (event.code) {
@@ -328,6 +355,16 @@ export class CrystalariumFullMode {
   }
 
   private render(): void {
+    this.portrait?.render({
+      state: this.state,
+      selected: this.selected,
+      message: this.message,
+      quiet: this.quiet,
+      globallyMuted: getBrowserAudioSettingsStore().load().muted,
+      washArmed: this.washArmed,
+      resetArmed: this.resetArmed,
+      source: this.session.source,
+    });
     this.holder?.destroy(true);
     const holder = this.scene.add.container(0, 0).setDepth(20);
     this.holder = holder;
