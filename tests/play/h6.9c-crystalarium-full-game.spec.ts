@@ -143,6 +143,32 @@ test.describe('H6.9C portrait touch evidence', () => {
   });
 });
 
+test.describe('H6.9C native-to-canvas rotation contract', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test('changes presentation on rotation and restores a functioning portrait Leave', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    await expect(portrait).toBeVisible();
+
+    await page.setViewportSize({ width: 844, height: 390 });
+    await expect(portrait).toBeHidden();
+    expect(
+      (await fullBoardSnapshot(page)).objects.filter((o) =>
+        o.name.startsWith('crystalarium-full-cell:'),
+      ),
+    ).toHaveLength(42);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(portrait).toBeVisible();
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+    await expect(portrait).toHaveCount(0);
+  });
+});
+
 test('H6.9C Crystal Brook nursery saves world progress and returns without reopening the Grotto', async ({
   page,
 }) => {
