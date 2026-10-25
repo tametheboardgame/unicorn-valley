@@ -158,6 +158,21 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .crystalarium-portrait-primary-actions.is-quickbar {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    padding: 7px;
+    border: 2px solid #8ccde1;
+    border-radius: 15px;
+    background: #1d3658;
+    box-shadow: 0 5px 12px rgb(12 31 51 / 35%);
+  }
+
+  .crystalarium-portrait-primary-actions.is-refined {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .crystalarium-portrait-action {
     min-width: 0;
     min-height: 48px;
