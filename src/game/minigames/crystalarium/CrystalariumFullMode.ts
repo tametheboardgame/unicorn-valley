@@ -45,6 +45,7 @@ export class CrystalariumFullMode {
   private state: CrystalariumFullState;
   private holder: Phaser.GameObjects.Container | null = null;
   private portrait: CrystalariumPortraitView | null = null;
+  private portraitQuery: MediaQueryList | null = null;
   private cursor = 0;
   private selected: number | null = null;
   private message = 'Choose a crystal vein to grow shards, then merge matching pairs.';
@@ -80,9 +81,19 @@ export class CrystalariumFullMode {
       },
       exit: () => this.leave(),
     });
+    // On touch portrait the native controls cover the canvas. Phaser's
+    // underlying sound/button hit areas must not intercept those same taps.
+    this.portraitQuery = globalThis.matchMedia?.(
+      '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)',
+    ) ?? null;
+    this.portraitQuery?.addEventListener('change', this.syncPortraitInput);
+    this.syncPortraitInput();
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);
     this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.portraitQuery?.removeEventListener('change', this.syncPortraitInput);
+      this.portraitQuery = null;
+      this.scene.input.enabled = true;
       this.scene.input.keyboard?.off('keydown', this.keyDown, this);
       this.scene.input.off('pointerup', this.pointerUp, this);
       this.holder?.destroy(true);
@@ -92,6 +103,12 @@ export class CrystalariumFullMode {
     });
     this.render();
   }
+
+  private readonly syncPortraitInput = (): void => {
+    // The same scene is reused on desktop/landscape: never disable Phaser
+    // input outside the native portrait presentation.
+    this.scene.input.enabled = this.portraitQuery?.matches !== true;
+  };
 
   private leave(): void {
     // Hide the native touch surface before returning to the paused caller.
