@@ -222,9 +222,11 @@ test('H6.9C6 Crystal Grotto altar launches and returns to the cave, keeping adve
   });
   await openDiagnostics(page);
   await page.evaluate(() => {
-    const api = (window as typeof window & {
-      __UNICORN_VALLEY_DIAGNOSTICS__?: { startScene(sceneKey: string): void };
-    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: { startScene(sceneKey: string): void };
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
     api?.startScene('CrystalGrottoScene');
   });
   await waitForScene(page, 'CrystalGrottoScene');
