@@ -30,6 +30,7 @@ import {
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
 import { CrystalariumPortraitView } from './CrystalariumPortraitView';
 import { paintCrystalArt } from './CrystalariumCrystalArt';
+import { CrystalariumGuide } from './CrystalariumGuide';
 import {
   CRYSTAL_NOTE_PRESENTATION,
   CRYSTAL_TIER_NAMES,
@@ -45,6 +46,7 @@ const FONT = 'system-ui, sans-serif';
 
 export class CrystalariumFullMode {
   private state: CrystalariumFullState;
+  private readonly guide: CrystalariumGuide;
   private holder: Phaser.GameObjects.Container | null = null;
   private portrait: CrystalariumPortraitView | null = null;
   private portraitQuery: MediaQueryList | null = null;
@@ -65,6 +67,7 @@ export class CrystalariumFullMode {
     private readonly onExit: () => void,
   ) {
     this.state = loadCrystalariumProgress(session, getBrowserSaveService());
+    this.guide = new CrystalariumGuide(session.source, this.state);
   }
 
   public start(): void {
@@ -100,6 +103,11 @@ export class CrystalariumFullMode {
       restore: (index) => this.apply(restoreCrystal(this.state, index)),
       sound: () => {
         this.quiet = !this.quiet;
+        this.render();
+      },
+      guide: () => this.toggleGuide(),
+      skipGuide: () => {
+        this.guide.skip();
         this.render();
       },
       exit: () => this.leave(),
@@ -191,6 +199,7 @@ export class CrystalariumFullMode {
     const merged = result.state.merges > this.state.merges;
     const completed = result.state.completed > this.state.completed;
     const craftedHarmony = result.state.harmonies > this.state.harmonies;
+    this.guide.observe(this.state, result.state);
     this.state = result.state;
     this.message = result.message;
     this.washArmed = false;
@@ -235,6 +244,10 @@ export class CrystalariumFullMode {
         if (family) this.apply(chooseCrystalSource(this.state, family));
         return;
       }
+      case 'F1':
+        event.preventDefault();
+        this.toggleGuide();
+        return;
       case 'KeyN':
         this.apply(spawnCrystal(this.state));
         return;
@@ -260,6 +273,12 @@ export class CrystalariumFullMode {
         return;
     }
     event.preventDefault();
+    this.render();
+  }
+
+  private toggleGuide(): void {
+    if (this.guide.getPrompt()) this.guide.skip();
+    else this.guide.replay(this.state);
     this.render();
   }
 
@@ -460,6 +479,7 @@ export class CrystalariumFullMode {
         washArmed: this.washArmed,
         resetArmed: this.resetArmed,
         source: this.session.source,
+        guide: this.guide.getPrompt(),
       });
     this.holder?.destroy(true);
     const holder = this.scene.add.container(0, 0).setDepth(20);
@@ -474,6 +494,15 @@ export class CrystalariumFullMode {
         ? 'Just Games: separate saved songbook'
         : 'Crystal Brook: adventure songbook';
     this.addText(holder, 94, 75, savedLabel, 16, '#bce8e5');
+    this.button(
+      holder,
+      804,
+      71,
+      170,
+      this.guide.getPrompt() ? 'Skip guide' : 'Show help',
+      'crystalarium-full-guide',
+      () => this.toggleGuide(),
+    );
     const audioSettings = getBrowserAudioSettingsStore().load();
     this.button(
       holder,
@@ -492,9 +521,10 @@ export class CrystalariumFullMode {
       holder,
       94,
       124,
-      chapter
-        ? 'Merge crystals to fulfil the next Resonance Pattern'
-        : 'The Symphony is complete! Keep creating your favourite crystals.',
+      this.guide.getPrompt()?.instruction ??
+        (chapter
+          ? 'Drag matching crystals onto each other, then offer the pictured formation.'
+          : 'The Symphony is complete! Keep creating your favourite crystals.'),
       17,
     );
     holder.add(
@@ -533,7 +563,8 @@ export class CrystalariumFullMode {
       holder,
       173,
       579,
-      'Tap two matching crystals to merge • arrows + Enter to select',
+      this.guide.getPrompt()?.title ??
+        'Drag matching crystals to merge • tap or arrows + Enter also work',
       15,
       '#d1e7f5',
       490,
