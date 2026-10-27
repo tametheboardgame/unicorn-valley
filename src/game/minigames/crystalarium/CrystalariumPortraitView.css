@@ -169,15 +169,12 @@
     scrollbar-color: #83c5df #263c61;
   }
 
-  .crystalarium-portrait[data-crystalarium-celebration="merge"]
-    .crystalarium-portrait-grid {
+  .crystalarium-portrait[data-crystalarium-celebration="merge"] .crystalarium-portrait-grid {
     animation: crystalarium-resonance 540ms ease-out;
   }
 
-  .crystalarium-portrait[data-crystalarium-celebration="offer"]
-    .crystalarium-portrait-pattern,
-  .crystalarium-portrait[data-crystalarium-celebration="harmony"]
-    .crystalarium-portrait-pattern {
+  .crystalarium-portrait[data-crystalarium-celebration="offer"] .crystalarium-portrait-pattern,
+  .crystalarium-portrait[data-crystalarium-celebration="harmony"] .crystalarium-portrait-pattern {
     animation: crystalarium-pattern-glow 650ms ease-out;
   }
 
@@ -410,22 +407,33 @@
 }
 
 @keyframes crystalarium-resonance {
-  0% { box-shadow: 0 0 0 0 rgb(255 243 174 / 0%); }
-  45% { box-shadow: 0 0 0 5px rgb(255 243 174 / 70%); }
-  100% { box-shadow: 0 0 0 0 rgb(255 243 174 / 0%); }
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 243 174 / 0%);
+  }
+  45% {
+    box-shadow: 0 0 0 5px rgb(255 243 174 / 70%);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 243 174 / 0%);
+  }
 }
 
 @keyframes crystalarium-pattern-glow {
-  0% { border-color: #a2cce0; }
-  40% { border-color: #ffecae; background: #3b657b; }
-  100% { border-color: #a2cce0; }
+  0% {
+    border-color: #a2cce0;
+  }
+  40% {
+    border-color: #ffecae;
+    background: #3b657b;
+  }
+  100% {
+    border-color: #a2cce0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .crystalarium-portrait[data-crystalarium-celebration]
-    .crystalarium-portrait-grid,
-  .crystalarium-portrait[data-crystalarium-celebration]
-    .crystalarium-portrait-pattern {
+  .crystalarium-portrait[data-crystalarium-celebration] .crystalarium-portrait-grid,
+  .crystalarium-portrait[data-crystalarium-celebration] .crystalarium-portrait-pattern {
     animation: none;
   }
 }
