@@ -327,6 +327,24 @@ export function restoreCrystal(state: CrystalariumFullState, shelfIndex: number)
   shelf[shelfIndex] = null;
   return accepted({ ...state, cells, shelf }, 'Crystal returned to the board.');
 }
+/** Restoring to an explicit free socket supports true shelf-to-board dragging. */
+export function restoreCrystalToCell(
+  state: CrystalariumFullState,
+  shelfIndex: number,
+  targetIndex: number,
+): FullActionResult {
+  if (!indexOK(shelfIndex, FULL_SHELF_COUNT) || !state.shelf[shelfIndex]) {
+    return rejected(state, 'Choose a crystal on the shelf first.');
+  }
+  if (!indexOK(targetIndex, FULL_CELL_COUNT) || state.cells[targetIndex]) {
+    return rejected(state, 'Drop the shelf crystal into an empty socket.');
+  }
+  const cells = [...state.cells];
+  const shelf = [...state.shelf];
+  cells[targetIndex] = shelf[shelfIndex];
+  shelf[shelfIndex] = null;
+  return accepted({ ...state, cells, shelf }, 'Crystal placed back on the board.');
+}
 export function washCrystal(state: CrystalariumFullState, cellIndex: number): FullActionResult {
   if (!indexOK(cellIndex, FULL_CELL_COUNT) || !state.cells[cellIndex])
     return rejected(state, 'Choose a crystal to wash away.');
