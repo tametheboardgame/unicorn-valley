@@ -52,6 +52,7 @@ export interface CrystalariumPortraitPresentation {
   resetArmed: boolean;
   source: 'world' | 'just-games';
   guide: CrystalariumGuidePrompt | null;
+  celebration: 'merge' | 'offer' | 'harmony' | null;
 }
 
 function makeElement<K extends keyof HTMLElementTagNameMap>(
@@ -142,6 +143,7 @@ export class CrystalariumPortraitView {
 
   public render(view: CrystalariumPortraitPresentation): void {
     this.currentView = view;
+    this.root.dataset.crystalariumCelebration = view.celebration ?? 'none';
     // Replacing view nodes is safe because the game mode owns all persistent state.
     // Restore keyboard focus to the same semantic control after a change.
     const active = document.activeElement;
