@@ -14,7 +14,7 @@
     flex-direction: column;
     gap: 10px;
     padding: max(9px, env(safe-area-inset-top)) max(9px, env(safe-area-inset-right))
-      max(14px, env(safe-area-inset-bottom)) max(9px, env(safe-area-inset-left));
+      135px max(9px, env(safe-area-inset-left));
     overflow: auto;
     overscroll-behavior: contain;
     background: linear-gradient(168deg, #162f50, #213e62 60%, #392c63);
@@ -313,8 +313,28 @@
   }
 
   .crystalarium-portrait-shelf {
+    position: fixed;
+    z-index: 6;
+    right: max(9px, env(safe-area-inset-right));
+    bottom: max(9px, env(safe-area-inset-bottom));
+    left: max(9px, env(safe-area-inset-left));
     display: grid;
-    gap: 7px;
+    gap: 3px;
+    padding: 7px;
+    border: 2px solid #b6e8f7;
+    border-radius: 18px;
+    background: rgb(24 49 78 / 97%);
+    box-shadow: 0 5px 18px rgb(0 0 0 / 40%);
+  }
+
+  .crystalarium-portrait-shelf-slots {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .crystalarium-portrait-shelf-slots .crystalarium-portrait-action {
+    padding: 2px;
+    min-height: 48px;
   }
 
   .crystalarium-portrait-shelf-heading {
@@ -325,7 +345,7 @@
 
   .crystalarium-portrait-status {
     position: sticky;
-    bottom: -14px;
+    bottom: 96px;
     min-height: 48px;
     padding: 12px;
     border: 2px solid #bddfef;
