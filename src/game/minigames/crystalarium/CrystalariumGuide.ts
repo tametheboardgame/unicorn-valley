@@ -1,13 +1,15 @@
 import type { MiniGameLaunchSource } from '../MiniGameSession';
 import { canOfferPattern, type CrystalariumFullState } from './CrystalariumFullRules';
 
-export type CrystalariumGuideStage = 'grow' | 'merge' | 'offer' | 'explore';
+export type CrystalariumGuideStage =
+  | 'grow' | 'merge' | 'offer' | 'explore'
+  | 'shelf' | 'wash' | 'families' | 'harmony' | 'refined' | 'polish';
 
 export interface CrystalariumGuidePrompt {
   readonly stage: CrystalariumGuideStage;
   readonly title: string;
   readonly instruction: string;
-  readonly target: 'grow' | 'cell' | 'offer' | 'none';
+  readonly target: 'grow' | 'cell' | 'offer' | 'none' | 'shelve' | 'wash' | 'source-low' | 'harmony' | 'grow-refined' | 'polish';
 }
 
 interface GuideStorage {
@@ -54,6 +56,18 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
         instruction: 'Look at the crystal picture above. When it matches, tap Offer pattern!',
         target: 'offer',
       };
+    case 'shelf':
+      return { stage, title: 'A safe crystal shelf', instruction: 'Need room? Keep a crystal on the shelf. Drag it back when you need it!', target: 'shelve' };
+    case 'wash':
+      return { stage, title: 'Brook Wash is free', instruction: 'Too many crystals? Select one and recycle it in Brook Wash. There is no penalty.', target: 'wash' };
+    case 'families':
+      return { stage, title: 'A new crystal voice!', instruction: 'Try the new crystal vein. Different colours and shapes make different songs.', target: 'none' };
+    case 'harmony':
+      return { stage, title: 'Three voices sing together', instruction: 'Make one polished shard of each colour. The Harmony button turns them into a musical token.', target: 'harmony' };
+    case 'refined':
+      return { stage, title: 'New crystal growing power', instruction: 'You can now grow a polished crystal directly, or keep growing basic shards whenever you like.', target: 'grow-refined' };
+    case 'polish':
+      return { stage, title: 'Polishing basin unlocked', instruction: 'Select a crystal, then use one Harmony token to polish it to the next shape.', target: 'polish' };
     case 'explore':
       return {
         stage,
@@ -74,6 +88,10 @@ export class CrystalariumGuide {
   private readonly storage: GuideStorage | null;
   private active: boolean;
   private stage: CrystalariumGuideStage;
+  private static readonly MILESTONES = new Map<number, CrystalariumGuideStage>([
+    [2, 'shelf'], [3, 'wash'], [4, 'families'], [7, 'harmony'],
+    [20, 'refined'], [30, 'polish'],
+  ]);
 
   public constructor(
     source: MiniGameLaunchSource,
@@ -90,6 +108,11 @@ export class CrystalariumGuide {
       // Storage may be disabled; the guide remains optional and in-memory.
     }
     this.active = !seen && state.completed === 0;
+    const milestone = CrystalariumGuide.MILESTONES.get(state.completed);
+    if (!this.active && milestone && !this.wasSeen(milestone)) {
+      this.stage = milestone;
+      this.active = true;
+    }
   }
 
   public getPrompt(): CrystalariumGuidePrompt | null {
@@ -106,11 +129,14 @@ export class CrystalariumGuide {
   }
 
   public observe(before: CrystalariumFullState, after: CrystalariumFullState): void {
-    if (!this.active) return;
-    if (after.completed > before.completed) {
-      this.finish();
+    if (after.completed > before.completed && this.active) this.finish();
+    const milestone = CrystalariumGuide.MILESTONES.get(after.completed);
+    if (after.completed > before.completed && milestone && !this.wasSeen(milestone)) {
+      this.stage = milestone;
+      this.active = true;
       return;
     }
+    if (!this.active) return;
     // Advance only after real accepted moves, not rejected actions or mere taps.
     if (after.merges > before.merges) {
       this.stage = 'offer';
@@ -122,10 +148,23 @@ export class CrystalariumGuide {
     }
   }
 
+  private wasSeen(stage: CrystalariumGuideStage): boolean {
+    try {
+      return this.storage?.getItem(this.key + ':' + stage) === 'seen';
+    } catch {
+      return false;
+    }
+  }
+
   private finish(): void {
     this.active = false;
     try {
-      this.storage?.setItem(this.key, 'seen');
+      this.storage?.setItem(
+        this.stage === 'grow' || this.stage === 'merge' || this.stage === 'offer' || this.stage === 'explore'
+          ? this.key
+          : this.key + ':' + this.stage,
+        'seen',
+      );
     } catch {
       // Never block gameplay or persistence because tutorial UI storage failed.
     }
