@@ -36,7 +36,8 @@ describe('H6.9C11B first-play action authorisation foundation', () => {
     const fresh = createCrystalariumFullState();
     expect(feasibleFirstLesson({ ...fresh, completed: 1 })).toBeNull();
     expect(feasibleFirstLesson({ ...fresh, merges: 1 })).toBeNull();
-    const cells = [...fresh.cells].map(() => null);
+    const cells = [...fresh.cells];
+    cells.fill(null);
     cells[0] = { family: 'low' as const, tier: 5 as const };
     cells[1] = { family: 'bright' as const, tier: 5 as const };
     cells[2] = { family: 'bell' as const, tier: 5 as const };
