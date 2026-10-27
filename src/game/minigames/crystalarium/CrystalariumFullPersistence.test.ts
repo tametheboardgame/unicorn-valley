@@ -83,7 +83,10 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     expect(loadCrystalariumProgress(altar, saves, storage).completed).toBe(6);
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
     for (const forged of [
-      { ...altar, returnTarget: { sceneKey: 'CrystalBrookScene' as const, mode: 'resume' as const } },
+      {
+        ...altar,
+        returnTarget: { sceneKey: 'CrystalBrookScene' as const, mode: 'resume' as const },
+      },
       { ...altar, worldContext: { locationId: 'crystal-grotto', interactionId: 'crystal-grotto' } },
       { ...altar, sideEffectPolicy: 'sandbox' as const },
     ]) {
