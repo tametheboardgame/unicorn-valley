@@ -68,6 +68,29 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     expect(JSON.stringify(saves.load()?.inventory)).toBe(beforeInventory);
     expect(new SaveService(repo).load()?.activities.crystalarium?.completed).toBe(3);
   });
+  it('shares adventure progress from the Grotto altar, but rejects forged return routes', () => {
+    const { saves, storage, world, sandbox } = harness();
+    const altar = createMiniGameSession({
+      gameId: 'crystalarium',
+      variantId: 'resonance-patterns',
+      source: 'world',
+      returnTarget: { sceneKey: 'CrystalGrottoScene', mode: 'resume' },
+      worldContext: { locationId: 'crystal-grotto', interactionId: 'crystalarium-altar' },
+    });
+    const progress = { ...createCrystalariumFullState(), completed: 6 };
+    expect(saveCrystalariumProgress(altar, progress, saves, storage)).toBe(true);
+    expect(loadCrystalariumProgress(world, saves, storage).completed).toBe(6);
+    expect(loadCrystalariumProgress(altar, saves, storage).completed).toBe(6);
+    expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
+    for (const forged of [
+      { ...altar, returnTarget: { sceneKey: 'CrystalBrookScene' as const, mode: 'resume' as const } },
+      { ...altar, worldContext: { locationId: 'crystal-grotto', interactionId: 'crystal-grotto' } },
+      { ...altar, sideEffectPolicy: 'sandbox' as const },
+    ]) {
+      expect(saveCrystalariumProgress(forged, progress, saves, storage)).toBe(false);
+    }
+  });
+
   it('refuses forged or wrong-variant persistence sessions', () => {
     const { saves, storage, sandbox } = harness();
     const progress = createCrystalariumFullState();
