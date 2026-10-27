@@ -28,9 +28,12 @@ export function isFullCrystalariumSession(session: MiniGameSession | null): bool
       ((session.source === 'just-games' && session.sideEffectPolicy === 'sandbox') ||
         (session.source === 'world' &&
           session.sideEffectPolicy === 'world' &&
-          session.returnTarget.sceneKey === 'CrystalBrookScene' &&
-          session.worldContext?.locationId === 'crystal-brook' &&
-          session.worldContext.interactionId === 'crystalarium-nursery')),
+          ((session.returnTarget.sceneKey === 'CrystalBrookScene' &&
+            session.worldContext?.locationId === 'crystal-brook' &&
+            session.worldContext.interactionId === 'crystalarium-nursery') ||
+            (session.returnTarget.sceneKey === 'CrystalGrottoScene' &&
+              session.worldContext?.locationId === 'crystal-grotto' &&
+              session.worldContext.interactionId === 'crystalarium-altar')))),
   );
 }
 /** Invalid or future-version sandbox records never contaminate adventure state. */
