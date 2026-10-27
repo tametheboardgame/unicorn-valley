@@ -16,6 +16,7 @@ import {
   offerResonancePattern,
   polishCrystal,
   restoreCrystal,
+  restoreCrystalToCell,
   refinedSourceTier,
   spawnRefinedCrystal,
   shelveCrystal,
@@ -67,6 +68,23 @@ export class CrystalariumFullMode {
     this.scene.cameras.main.setBackgroundColor('#142944');
     this.portrait = new CrystalariumPortraitView({
       cell: (index) => this.pick(index),
+      dragMove: (source, target) => {
+        this.selected = null;
+        this.apply(moveOrMergeCrystal(this.state, source, target));
+      },
+      dragShelve: (source) => {
+        this.selected = null;
+        this.apply(shelveCrystal(this.state, source));
+      },
+      dragWash: (source) => {
+        this.selected = source;
+        this.washSelected();
+      },
+      dragRestore: (slot, target) => this.apply(restoreCrystalToCell(this.state, slot, target)),
+      dragInvalid: () => {
+        this.message = 'Try an empty socket, a matching crystal, the shelf or Brook Wash.';
+        this.render();
+      },
       source: (family) => this.apply(chooseCrystalSource(this.state, family)),
       grow: () => this.apply(spawnCrystal(this.state)),
       growRefined: () => this.apply(spawnRefinedCrystal(this.state)),
