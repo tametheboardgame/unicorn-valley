@@ -1,5 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import { createDefaultSave } from '../../src/game/save/createDefaultSave';
+import {
+  createCrystalariumFullState,
+  type CrystalariumFullState,
+} from '../../src/game/minigames/crystalarium/CrystalariumFullRules';
 import { CRYSTAL_BROOK_CRYSTALARIUM_NURSERY } from '../../src/game/world/CrystalBrookMap';
 import {
   clickNamedObject,
@@ -538,5 +542,83 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
     ).toBe(3);
     await portrait.locator('[data-crystalarium-action="exit"]').click();
     await waitForScene(page, 'JustGamesScene');
+  });
+});
+
+test.describe('H6.9C10 final-chapter 320px experience', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+  test('shows three rare recipes and completes the Symphony without ending free play', async ({
+    page,
+  }, testInfo) => {
+    await enterResonanceGarden(page);
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+
+    // A structurally valid endgame save is injected only into isolated Just Games
+    // for late-UI coverage; the 50-pattern legal-action run is independently
+    // covered by CrystalariumCampaignSolvability.test.ts.
+    const cells: (CrystalariumFullState['cells'][number])[] = Array.from(
+      { length: 42 },
+      () => null,
+    );
+    cells[0] = { family: 'low', tier: 5 };
+    cells[1] = { family: 'bright', tier: 5 };
+    cells[2] = { family: 'bell', tier: 5 };
+    const seeded: CrystalariumFullState = {
+      ...createCrystalariumFullState(),
+      cells,
+      completed: 49,
+      harmonies: 3,
+      selectedFamily: 'bell',
+      discovered: ['low:0', 'low:5', 'bright:5', 'bell:5'],
+    };
+    await page.evaluate(
+      ([key, value]) => localStorage.setItem(key, JSON.stringify(value)),
+      [SANDBOX_KEY, seeded] as const,
+    );
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+    await expect(portrait).toBeVisible();
+    await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
+      'Crystalarium Symphony',
+    );
+    await expect(portrait.locator('.crystalarium-portrait-goal')).toHaveCount(3);
+    for (const [index, family] of ['low', 'bright', 'bell'].entries()) {
+      await expect(
+        portrait.locator('.crystalarium-portrait-goal [data-crystal-art]').nth(index),
+      ).toHaveAttribute('data-crystal-art', family + '-tier-5');
+    }
+    const first = await portrait.locator('[data-crystalarium-cell="0"]').boundingBox();
+    const dock = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
+    if (!first || !dock) throw new Error('Finale board or safe shelf not visible');
+    expect(first.y + first.height).toBeLessThan(dock.y);
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-final-chapter-320.png'),
+      fullPage: true,
+    });
+
+    await portrait.locator('[data-crystalarium-action="offer"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
+      'Crystalarium Symphony complete',
+    );
+    const completed = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(completed.completed).toBe(50);
+    expect(completed.offers).toBe(1);
+    expect(completed.harmonies).toBe(0);
+    await portrait.locator('[data-crystalarium-action="grow-refined"]').click();
+    const freePlay = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(freePlay.completed).toBe(50);
+    expect(freePlay.cells[0]).toEqual({ family: 'bell', tier: 2 });
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
   });
 });
