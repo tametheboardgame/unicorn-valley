@@ -26,6 +26,16 @@ Historical mini-game work remains recorded in the roadmap where it actually happ
 
 Initial platform sequence: **MG-WP0 platform foundation -> MG-WP1 existing-game migration -> MG-WP2 sandbox/persistence isolation -> MG-WP3 Just Games shell -> MG-WP4 future-game authoring guardrails**, followed by independent improvement passes for Chess, Rainbow Disc, Pond Leap, Wobbly Cake, Firefly Lantern, Coral Beachcombing and Rainbow Run Racing.
 
+## Crystalarium H6.9C11–C16 — second-playtest refinement (approved direction 27 October 2026)
+
+**Status: planned on draft World PR #337, implementation not started.** The redesigned Crystalarium has passing selected CI and was considered substantially better in a new player playtest, but still needs a *genuinely locked, spotlight-driven tutorial*, a more polished desktop/phone **Resonance Pattern altar with glowing Offer action** distinct from Crystal Growing and Tools, and staged evaluation of **board-rooted unlockable producers with optional limited advanced charges and Crystalarium Growth Fluid**, including separately approved optional Valley rewards.
+
+**Experience guarantee:** unlimited free basic crystals for every unlocked family, **no mandatory waiting, resource dependency or paywall** to complete any of 50 patterns. Advanced charge capacity/refill, rooted producer location, Fluid awards and any state migration require separate design/architecture/human gates. Preserve the canonical game, 42-cell board by default, adventure/Just Games isolation, original Grotto entrance and Pond Leap separation.
+
+**Sequence:** C11A/B spotlight tutorial storyboard + implementation → C12A/B objective altar, grow/tool separation and readiness glow → C13A/B visual producer placement and optional advanced charge model → C14A/B Growth Fluid and explicitly authorised optional world awards → C15 long-play, Undo and zero-resource solvability → C16 reconciliation → **H6.9D only after human approval**, authoritative 6-shard Chromium, seven-profile cross-browser and live-main Merge Gate.
+
+**Canonical detailed roadmap:** [H6.9C11–C16 second-playtest staged specification](docs/work-packages/R6.5-WP19H6.9C11-C16-CRYSTALARIUM-SECOND-PLAYTEST-ROADMAP.md). Related [Crystal Brook H6 roadmap](docs/work-packages/R6.5-WP19H6-CRYSTAL-BROOK.md) and [H6.9C active work package](docs/work-packages/R6.5-WP19H6.9C-CRYSTALARIUM-FULL-GAME.md). MINIGAMES-ROADMAP.md deliberately remains untouched because Pond Leap PR #289 has independent changes there.
+
 ## Consolidated Racing Programme — gated after exploration-area reviews
 
 **Decision approved 16 October 2026; global navigation recorded 22 October 2026.** Finish, review and accept the remaining exploration areas before expanding any race hub or the shared race system. Existing functional entry, return and unlock behaviour must be maintained and repaired only if regressed in an area review. In particular, **R6.5-WP19H5 Rainbow Run final area/race-hub pass and H6.6 Crystal Cup hub maturity are deferred**, not the next slice of their regions. **H6.7 Crystal Brook environment, residents and interaction remediation follows H6.5A.**
