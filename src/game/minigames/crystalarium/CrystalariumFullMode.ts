@@ -49,6 +49,9 @@ export class CrystalariumFullMode {
   private portrait: CrystalariumPortraitView | null = null;
   private portraitQuery: MediaQueryList | null = null;
   private leaving = false;
+  private dragSource: number | null = null;
+  private dragStart: { x: number; y: number } | null = null;
+  private dragGhost: Phaser.GameObjects.Graphics | null = null;
   private cursor = 0;
   private selected: number | null = null;
   private message = 'Choose a crystal vein to grow shards, then merge matching pairs.';
@@ -111,11 +114,14 @@ export class CrystalariumFullMode {
     this.portraitQuery?.addEventListener('change', this.syncPortraitInput);
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);
+    this.scene.input.on('pointermove', this.pointerMove, this);
     this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.portraitQuery?.removeEventListener('change', this.syncPortraitInput);
       this.portraitQuery = null;
       this.scene.input.keyboard?.off('keydown', this.keyDown, this);
       this.scene.input.off('pointerup', this.pointerUp, this);
+      this.scene.input.off('pointermove', this.pointerMove, this);
+      this.clearDrag();
       this.holder?.destroy(true);
       this.holder = null;
       this.portrait?.destroy();
@@ -257,14 +263,58 @@ export class CrystalariumFullMode {
     this.render();
   }
 
+  private clearDrag(): void {
+    this.dragSource = null;
+    this.dragStart = null;
+    this.dragGhost?.destroy();
+    this.dragGhost = null;
+  }
+
+  private pointerMove(pointer: Phaser.Input.Pointer): void {
+    if (this.dragSource === null || !this.dragStart || this.selected !== this.dragSource) {
+      return;
+    }
+    const dx = pointer.x - this.dragStart.x;
+    const dy = pointer.y - this.dragStart.y;
+    if (!this.dragGhost && Math.hypot(dx, dy) < 10) return;
+    const piece = this.state.cells[this.dragSource];
+    if (!piece) {
+      this.clearDrag();
+      return;
+    }
+    if (!this.dragGhost) this.dragGhost = this.scene.add.graphics().setDepth(400);
+    this.dragGhost.clear();
+    paintCrystalArt(this.dragGhost, piece, pointer.x, pointer.y - 16, 0.92);
+  }
+
   private pointerUp(pointer: Phaser.Input.Pointer): void {
-    // Pointer-down selects a source; lifting over another tile completes a drag.
+    const wasDragging = this.dragGhost !== null;
+    const source = this.dragSource;
+    this.clearDrag();
     if (this.selected === null) return;
     const x = Math.floor((pointer.x - LEFT) / STEP);
     const y = Math.floor((pointer.y - TOP) / STEP);
-    if (x < 0 || x >= FULL_COLUMNS || y < 0 || y >= FULL_ROWS) return;
-    const target = y * FULL_COLUMNS + x;
-    if (target !== this.selected) this.pick(target);
+    if (x >= 0 && x < FULL_COLUMNS && y >= 0 && y < FULL_ROWS) {
+      const target = y * FULL_COLUMNS + x;
+      if (target !== this.selected) this.pick(target);
+      else if (wasDragging) {
+        this.selected = null;
+        this.message = 'Crystal returned to its socket.';
+        this.render();
+      }
+      return;
+    }
+    if (!wasDragging || source === null) return;
+    // The desktop shelf and Brook Wash are physical drop destinations too.
+    if (pointer.x >= 690 && pointer.x <= 1120 && pointer.y >= 535 && pointer.y <= 594) {
+      this.shelveSelected();
+    } else if (pointer.x >= 480 && pointer.x <= 635 && pointer.y >= 620 && pointer.y <= 674) {
+      this.washSelected();
+    } else {
+      this.selected = null;
+      this.message = 'Crystal returned safely. Try a matching shard or empty socket.';
+      this.render();
+    }
   }
 
   private pick(index: number): void {
@@ -465,7 +515,13 @@ export class CrystalariumFullMode {
         )
         .setName('crystalarium-full-cell:' + i)
         .setInteractive({ useHandCursor: true });
-      cell.on('pointerdown', () => this.pick(i));
+      cell.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (this.selected === null && this.state.cells[i]) {
+          this.dragSource = i;
+          this.dragStart = { x: pointer.x, y: pointer.y };
+        }
+        this.pick(i);
+      });
       holder.add(cell);
       if (piece) {
         const illustration = this.scene.add.graphics();
