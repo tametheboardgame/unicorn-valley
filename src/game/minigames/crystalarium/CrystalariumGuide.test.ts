@@ -75,6 +75,36 @@ describe('H6.9C9 optional child-first guide', () => {
     expect(guideStage(completed.state)).toBe('explore');
   });
 
+  it('only introduces shelf, washing, new families and crafting at meaningful milestones', () => {
+    const storage = memoryStorage();
+    const initial = createCrystalariumFullState();
+    const shelfState = { ...initial, completed: 2 };
+    const guide = new CrystalariumGuide('world', shelfState, storage);
+    expect(guide.getPrompt()?.stage).toBe('shelf');
+    guide.skip();
+    expect(new CrystalariumGuide('world', shelfState, storage).getPrompt()).toBeNull();
+    expect(new CrystalariumGuide('just-games', shelfState, storage).getPrompt()?.stage).toBe('shelf');
+    const washState = { ...shelfState, completed: 3 };
+    guide.observe(shelfState, washState);
+    expect(guide.getPrompt()?.stage).toBe('wash');
+    guide.skip();
+    const familiesState = { ...washState, completed: 4 };
+    guide.observe(washState, familiesState);
+    expect(guide.getPrompt()?.stage).toBe('families');
+    guide.skip();
+    const harmonyState = { ...familiesState, completed: 7 };
+    guide.observe(familiesState, harmonyState);
+    expect(guide.getPrompt()?.stage).toBe('harmony');
+    guide.skip();
+    const refinedState = { ...harmonyState, completed: 20 };
+    guide.observe(harmonyState, refinedState);
+    expect(guide.getPrompt()?.stage).toBe('refined');
+    guide.skip();
+    const polishState = { ...refinedState, completed: 30 };
+    guide.observe(refinedState, polishState);
+    expect(guide.getPrompt()?.stage).toBe('polish');
+  });
+
   it('keeps working when the optional guide preference store is unavailable', () => {
     const store = {
       getItem: (_key: string): string | null => {
