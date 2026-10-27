@@ -132,7 +132,7 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
   const byId=(id)=>document.getElementById(id);
   const htmlCrystal=(family)=>{
     const f=families.find((x)=>x.id===family);
-    return "<svg class='crystal' viewBox='0 0 40 46' aria-hidden='true'><path d='M20 2L32 10L38 25L20 43L2 25L8 10Z' fill='"+f.base+"' stroke='"+f.light+"' stroke-width='2'/><path d='M20 2L8 10L16 25L20 43L26 25L32 10Z' fill='"+f.light+"' opacity='.6'/><path d='M2 25L16 25L20 43Z' fill='#183b66' opacity='.6'/><path d='M38 25L26 25L20 43Z' fill='#143759' opacity='.45'/></svg>";
+    return `<svg class='crystal' viewBox='0 0 40 46' aria-hidden='true'><path d='M20 2L32 10L38 25L20 43L2 25L8 10Z' fill='${f.base}' stroke='${f.light}' stroke-width='2'/><path d='M20 2L8 10L16 25L20 43L26 25L32 10Z' fill='${f.light}' opacity='.6'/><path d='M2 25L16 25L20 43Z' fill='#183b66' opacity='.6'/><path d='M38 25L26 25L20 43Z' fill='#143759' opacity='.45'/></svg>`;
   };
   const isLocked=(f)=>progress<f.unlock;
   const isReserved=(i)=>placement==="grid"&&producerIndices.includes(i);
@@ -148,13 +148,13 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
     list.replaceChildren();
     for(const f of families){
       const locked=isLocked(f);
-      const label=locked?"🔒 "+f.name+" • "+f.unlock+" patterns":f.name+" • ready";
+      const label=locked?`🔒 ${f.name} • ${f.unlock} patterns`:`${f.name} • ready`;
       if(placement==="frame"){
         const button=document.createElement("button");
         button.type="button";
-        button.className="root-control"+(selected===f.id?" selected":"")+(locked?" locked":"");
+        button.className=`root-control${selected===f.id?' selected':''}${locked?' locked':''}`;
         button.style.setProperty("--family",f.base);
-        button.innerHTML=htmlCrystal(f.id)+"<strong>"+f.name+"</strong><span>"+(locked?"Unlock at "+f.unlock:"Free growth")+"</span>";
+        button.innerHTML=`${htmlCrystal(f.id)}<strong>${f.name}</strong><span>${locked?`Unlock at ${f.unlock}`:'Free growth'}</span>`;
         button.setAttribute("aria-label",label);
         button.setAttribute("aria-pressed",String(selected===f.id&&!locked));
         button.addEventListener("click",()=>selectFamily(f.id));
@@ -164,14 +164,14 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
       card.type="button";
       card.className="source-card";
       card.setAttribute("aria-pressed",String(selected===f.id&&!locked));
-      card.innerHTML=htmlCrystal(f.id)+"<div><strong>"+label+"</strong><span class='text'>"+f.desc+"</span></div>";
+      card.innerHTML=`${htmlCrystal(f.id)}<div><strong>${label}</strong><span class='text'>${f.desc}</span></div>`;
       card.addEventListener("click",()=>selectFamily(f.id));
       list.append(card);
     }
     const active=families.find(f=>f.id===selected);
-    byId("grow").textContent="✦ Grow free "+active.name+" crystal";
+    byId("grow").textContent=`✦ Grow free ${active.name} crystal`;
     byId("grow").disabled=isLocked(active);
-    byId("unlocks").textContent=families.filter(f=>!isLocked(f)).length+" / 3";
+    byId("unlocks").textContent=`${families.filter(f=>!isLocked(f)).length} / 3`;
   }
   function drawBoard(){
     const board=byId("board");
@@ -180,19 +180,19 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
       const cell=document.createElement("button");
       cell.type="button";
       const reserved=isReserved(i),piece=cells[i];
-      cell.className="cell"+(reserved?" blocked occupied-producer":piece?"":" empty");
+      cell.className=`cell${reserved?' blocked occupied-producer':piece?'':' empty'}`;
       if(reserved){
         const f=families[producerIndices.indexOf(i)];
-        cell.innerHTML=htmlCrystal(f.id)+"<span class='tiny'>WELL</span>";
-        cell.setAttribute("aria-label","Permanent "+f.name+" producer: "+(isLocked(f)?"locked":"unlocked"));
+        cell.innerHTML=`${htmlCrystal(f.id)}<span class='tiny'>WELL</span>`;
+        cell.setAttribute("aria-label",`Permanent ${f.name} producer: ${isLocked(f)?'locked':'unlocked'}`);
         cell.addEventListener("click",()=>selectFamily(f.id));
       }else if(piece){
         cell.innerHTML=htmlCrystal(piece);
-        cell.setAttribute("aria-label","Demo "+piece+" crystal in socket "+(i+1));
+        cell.setAttribute("aria-label",`Demo ${piece} crystal in socket ${i+1}`);
         cell.addEventListener("click",()=>announce("This prototype compares generator placement. Play the actual Crystalarium for merging."));
       }else{
         cell.textContent="·";
-        cell.setAttribute("aria-label","Empty merge socket "+(i+1));
+        cell.setAttribute("aria-label",`Empty merge socket ${i+1}`);
         cell.addEventListener("click",()=>announce("Choose a producer and tap Grow free shard to add a crystal."));
       }
       board.append(cell);
@@ -203,15 +203,15 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
   function announce(value){byId("message").textContent=value;}
   function selectFamily(id){
     const f=families.find(x=>x.id===id);
-    if(isLocked(f)){announce(f.name+" unlocks after "+f.unlock+" completed patterns. Try the progress selector above.");return;}
+    if(isLocked(f)){announce(`${f.name} unlocks after ${f.unlock} completed patterns. Try the progress selector above.`);return;}
     selected=id;
-    announce(f.name+" is selected. Grow a free basic shard when you choose.");
+    announce(`${f.name} is selected. Grow a free basic shard when you choose.`);
     drawSources();
   }
   function redraw(){
     byId("frame-choice").setAttribute("aria-pressed",String(placement==="frame"));
     byId("grid-choice").setAttribute("aria-pressed",String(placement==="grid"));
-    byId("shell").className="board-shell "+(placement==="frame"?"rooted":"occupied");
+    byId("shell").className=`board-shell ${placement==='frame'?'rooted':'occupied'}`;
     byId("comparison").textContent=placement==="frame"
       ?"A: all 42 merge sockets stay usable. Producer wells are rooted into the physical board frame."
       :"B: three producer structures permanently occupy board cells. Only 39 merge sockets remain.";
@@ -225,11 +225,11 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
     if(index<0){announce("There are no free sockets in this illustration. Reset the board to continue.");return;}
     cells[index]=f.id;
     drawBoard();
-    announce("A free "+f.name+" shard grew in socket "+(index+1)+". No charges, fluid or timers were used.");
+    announce(`A free ${f.name} shard grew in socket ${index+1}. No charges, fluid or timers were used.`);
   }
   byId("frame-choice").addEventListener("click",()=>{placement="frame";resetBoard();redraw();announce("Frame-rooted nursery: 42 usable merge cells.");});
   byId("grid-choice").addEventListener("click",()=>{placement="grid";resetBoard();redraw();announce("Board-cell nursery: only 39 cells remain for merging. This is a comparison, not an approved choice.");});
-  document.querySelectorAll("[data-progress]").forEach(button=>button.addEventListener("click",()=>{progress=Number(button.dataset.progress);selected="low";redraw();announce("Previewing "+progress+" completed patterns: "+families.filter(x=>!isLocked(x)).map(x=>x.name).join(", ")+" producers unlocked.");}));
+  document.querySelectorAll("[data-progress]").forEach(button=>button.addEventListener("click",()=>{progress=Number(button.dataset.progress);selected="low";redraw();announce(`Previewing ${progress} completed patterns: ${families.filter(x=>!isLocked(x)).map(x=>x.name).join(', ')} producers unlocked.`);}));
   byId("grow").addEventListener("click",grow);
   byId("reset").addEventListener("click",()=>{resetBoard();redraw();announce("Illustration reset. Nothing was saved.");});
   resetBoard();redraw();
