@@ -257,7 +257,7 @@ test.describe('H6.9C native-to-canvas rotation contract', () => {
   });
 });
 
-test('H6.9C10 consecutive visual offerings unlock the next goal and survive a return', async ({
+test('H6.9C10 consecutive visual offerings unlock the next goal', async ({
   page,
 }) => {
   await enterResonanceGarden(page);
@@ -283,18 +283,28 @@ test('H6.9C10 consecutive visual offerings unlock the next goal and survive a re
   state = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
   expect(state.completed).toBe(2);
   expect(state.offers).toBe(2);
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
+// Keep the return/resume contract independently covered without packing both
+// consecutive crafting and scene re-entry into Playwright's 45-second budget.
+test('H6.9C10 an offered pattern survives leaving and restarting Just Games', async ({ page }) => {
+  await enterResonanceGarden(page);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
   await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
   await waitForScene(page, 'JustGamesScene');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
-  expect(
-    await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
-      SANDBOX_KEY,
-    ),
-  ).toBe(2);
+  const resumed = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(resumed.completed).toBe(1);
+  expect(resumed.offers).toBe(1);
   expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
 });
 
@@ -583,6 +593,10 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
     await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
       'Crystalarium Symphony',
     );
+    const finalChapterLabel = portrait.locator('.crystalarium-portrait-eyebrow');
+    await expect(finalChapterLabel).toHaveText('Great Harmonic Garden • 50 of 50');
+    const labelBounds = await finalChapterLabel.boundingBox();
+    expect(labelBounds?.height).toBeLessThan(25);
     await expect(portrait.locator('.crystalarium-portrait-goal')).toHaveCount(3);
     for (const [index, family] of ['low', 'bright', 'bell'].entries()) {
       await expect(
