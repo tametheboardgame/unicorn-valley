@@ -31,6 +31,7 @@ import { loadCrystalariumProgress, saveCrystalariumProgress } from './Crystalari
 import { CrystalariumPortraitView } from './CrystalariumPortraitView';
 import { paintCrystalArt } from './CrystalariumCrystalArt';
 import { CrystalariumGuide } from './CrystalariumGuide';
+import type { FirstLessonCommand } from './CrystalariumTutorialPolicy';
 import { combineCrystalPieces, type CrystalPiece } from './CrystalariumOpeningRules';
 import {
   CRYSTAL_NOTE_PRESENTATION,
@@ -78,32 +79,40 @@ export class CrystalariumFullMode {
     this.portrait = new CrystalariumPortraitView({
       cell: (index) => this.pick(index),
       dragMove: (source, target) => {
+        if (this.guide.getPrompt()?.lessonStep === 'pick-up') {
+          if (!this.permitted({ kind: 'pick', index: source })) return;
+          this.guide.picked(source);
+        }
+        if (!this.permitted({ kind: 'merge', source, target })) return;
         this.selected = null;
         this.apply(moveOrMergeCrystal(this.state, source, target));
       },
       dragShelve: (source) => {
+        if (!this.permitted({ kind: 'other' })) return;
         this.selected = null;
         this.apply(shelveCrystal(this.state, source));
       },
       dragWash: (source) => {
+        if (!this.permitted({ kind: 'other' })) return;
         this.selected = source;
         this.washSelected();
       },
-      dragRestore: (slot, target) => this.apply(restoreCrystalToCell(this.state, slot, target)),
+      dragRestore: (slot, target) => this.run({ kind: 'other' }, () => restoreCrystalToCell(this.state, slot, target)),
       dragInvalid: () => {
         this.message = 'Try an empty socket, a matching crystal, the shelf or Brook Wash.';
         this.render();
       },
-      source: (family) => this.apply(chooseCrystalSource(this.state, family)),
-      grow: () => this.apply(spawnCrystal(this.state)),
-      growRefined: () => this.apply(spawnRefinedCrystal(this.state)),
-      offer: () => this.apply(offerResonancePattern(this.state)),
-      harmony: () => this.apply(createHarmony(this.state)),
+      source: (family) => this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
+      grow: () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
+      growRefined: () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
+      offer: () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
+      inspectGoal: () => this.inspectGoal(),
+      harmony: () => this.run({ kind: 'other' }, () => createHarmony(this.state)),
       polish: () => this.polishSelected(),
       shelve: () => this.shelveSelected(),
       wash: () => this.washSelected(),
       fresh: () => this.freshBoard(),
-      restore: (index) => this.apply(restoreCrystal(this.state, index)),
+      restore: (index) => this.run({ kind: 'other' }, () => restoreCrystal(this.state, index)),
       sound: () => {
         this.quiet = !this.quiet;
         this.render();
@@ -188,6 +197,25 @@ export class CrystalariumFullMode {
     }
   }
 
+  /** Rejected lesson actions never touch rules, counters or saves. */
+  private permitted(action: FirstLessonCommand): boolean {
+    if (this.guide.allows(action)) return true;
+    this.message = 'Follow the glowing tutorial action, or Skip guide.';
+    this.render();
+    return false;
+  }
+
+  private run(action: FirstLessonCommand, execute: () => FullActionResult): void {
+    if (this.permitted(action)) this.apply(execute());
+  }
+
+  private inspectGoal(): void {
+    if (!this.permitted({ kind: 'inspect' })) return;
+    this.guide.inspected(this.state);
+    this.message = 'The crystal matches the picture. Offer it now!';
+    this.render();
+  }
+
   private apply(result: FullActionResult, note?: CrystalFamily): void {
     if (!result.accepted) {
       this.celebration = null;
@@ -246,18 +274,21 @@ export class CrystalariumFullMode {
       case 'Digit2':
       case 'Digit3': {
         const family = CRYSTAL_FAMILIES[Number(event.code.at(-1)) - 1];
-        if (family) this.apply(chooseCrystalSource(this.state, family));
+        if (family) this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family));
         return;
       }
       case 'F1':
         event.preventDefault();
         this.toggleGuide();
         return;
+      case 'KeyI':
+        this.inspectGoal();
+        return;
       case 'KeyN':
-        this.apply(spawnCrystal(this.state));
+        this.run({ kind: 'grow' }, () => spawnCrystal(this.state));
         return;
       case 'KeyO':
-        this.apply(offerResonancePattern(this.state));
+        this.run({ kind: 'offer' }, () => offerResonancePattern(this.state));
         return;
       case 'KeyS':
         this.shelveSelected();
@@ -266,7 +297,7 @@ export class CrystalariumFullMode {
         this.washSelected();
         return;
       case 'KeyH':
-        this.apply(createHarmony(this.state));
+        this.run({ kind: 'other' }, () => createHarmony(this.state));
         return;
       case 'KeyP':
         this.polishSelected();
@@ -377,9 +408,9 @@ export class CrystalariumFullMode {
     const y = Math.floor((pointer.y - TOP) / STEP);
     if (kind === 'shelf' && source !== null) {
       if (wasDragging && x >= 0 && x < FULL_COLUMNS && y >= 0 && y < FULL_ROWS) {
-        this.apply(restoreCrystalToCell(this.state, source, y * FULL_COLUMNS + x));
+        this.run({ kind: 'other' }, () => restoreCrystalToCell(this.state, source, y * FULL_COLUMNS + x));
       } else if (!wasDragging) {
-        this.apply(restoreCrystal(this.state, source));
+        this.run({ kind: 'other' }, () => restoreCrystal(this.state, source));
       } else {
         this.message = 'Crystal returned safely to its shelf.';
         this.render();
@@ -411,12 +442,18 @@ export class CrystalariumFullMode {
   }
 
   private pick(index: number): void {
+    if (this.selected !== null && this.selected !== index) {
+      if (!this.permitted({ kind: 'merge', source: this.selected, target: index })) return;
+    } else if (this.selected === null) {
+      if (!this.permitted({ kind: 'pick', index })) return;
+    }
     this.cursor = index;
     this.washArmed = false;
     this.resetArmed = false;
     if (this.selected === null) {
       if (this.state.cells[index]) {
         this.selected = index;
+        this.guide.picked(index);
         this.message = 'Select a matching crystal to merge, or an empty space to move.';
       } else {
         this.message = 'Empty socket. Tap Grow shard to add a new crystal.';
@@ -437,6 +474,7 @@ export class CrystalariumFullMode {
   }
 
   private shelveSelected(): void {
+    if (!this.permitted({ kind: 'other' })) return;
     if (this.selected === null) {
       this.message = 'Select a crystal to put on the shelf.';
       this.render();
@@ -448,6 +486,7 @@ export class CrystalariumFullMode {
   }
 
   private washSelected(): void {
+    if (!this.permitted({ kind: 'other' })) return;
     if (this.selected === null) {
       this.message = 'Select a crystal before using Brook Wash.';
       this.render();
@@ -465,6 +504,7 @@ export class CrystalariumFullMode {
   }
 
   private polishSelected(): void {
+    if (!this.permitted({ kind: 'other' })) return;
     if (this.selected === null) {
       this.message = 'Select a crystal before using the polishing basin.';
       this.render();
@@ -476,6 +516,7 @@ export class CrystalariumFullMode {
   }
 
   private freshBoard(): void {
+    if (!this.permitted({ kind: 'other' })) return;
     if (!this.resetArmed) {
       this.resetArmed = true;
       this.message = 'Tap Fresh board again to clear pieces. Completed chapters stay saved.';
@@ -768,7 +809,7 @@ export class CrystalariumFullMode {
       pattern?.harmonies ? 147 : 444,
       ready ? '✦ Offer pattern ✓' : 'Offer pattern',
       'crystalarium-full-offer',
-      () => this.apply(offerResonancePattern(this.state)),
+      () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
       ready,
     );
     if (ready && pattern?.harmonies) {
@@ -793,7 +834,7 @@ export class CrystalariumFullMode {
         135,
         unlocked ? note.symbol + ' ' + note.label.split(' ')[0] : 'Locked',
         'crystalarium-source:' + family,
-        () => this.apply(chooseCrystalSource(this.state, family)),
+        () => this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
         unlocked,
       );
     });
@@ -806,12 +847,12 @@ export class CrystalariumFullMode {
         203,
         'Grow ' + this.state.selectedFamily + ' shard',
         'crystalarium-full-grow',
-        () => this.apply(spawnCrystal(this.state)),
+        () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
       );
       // Fresh Board belongs to Tools below, not the growing bed.
     } else {
       this.button(holder, 698, 455, 133, 'Grow shard', 'crystalarium-full-grow', () =>
-        this.apply(spawnCrystal(this.state)),
+        this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
       );
       this.button(
         holder,
@@ -820,13 +861,13 @@ export class CrystalariumFullMode {
         133,
         refinedTier === 2 ? 'Grow crystal' : 'Grow polished',
         'crystalarium-full-grow-refined',
-        () => this.apply(spawnRefinedCrystal(this.state)),
+        () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
       );
       // Tools always hold the same Fresh Board control.
     }
     this.addText(holder, 699, 513, '✧ CRYSTAL TOOLS • Safe shelf', 16, '#e1d1ff', 440);
     this.button(holder, 699, 536, 141, 'Harmony ♫', 'crystalarium-full-harmony', () =>
-      this.apply(createHarmony(this.state)),
+      this.run({ kind: 'other' }, () => createHarmony(this.state)),
     );
     this.button(holder, 846, 536, 141, 'Polish ✧', 'crystalarium-full-polish', () =>
       this.polishSelected(),
