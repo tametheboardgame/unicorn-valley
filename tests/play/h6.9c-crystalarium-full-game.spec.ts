@@ -503,6 +503,11 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
     const bounds = await cell.boundingBox();
     expect(bounds?.width).toBeGreaterThanOrEqual(48);
     expect(bounds?.height).toBeGreaterThanOrEqual(48);
+    // A passing hit-target test is insufficient if the dock visually covers
+    // the entire first row. On the first screen a new player must see one row.
+    const dockBounds = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
+    if (!bounds || !dockBounds) throw new Error('Missing board or shelf on narrow portrait');
+    expect(bounds.y + bounds.height).toBeLessThan(dockBounds.y);
     const scroll = await portrait
       .locator('.crystalarium-portrait-board-scroll')
       .evaluate((node) => node.scrollWidth > node.clientWidth);

@@ -174,6 +174,7 @@ export class CrystalariumPortraitView {
 
     const task = makeElement('section', 'crystalarium-portrait-pattern');
     task.setAttribute('aria-label', 'Current Resonance Pattern');
+    task.dataset.crystalariumGoalCount = String(pattern?.goals.length ?? 0);
     const label = makeElement(
       'p',
       'crystalarium-portrait-eyebrow',
