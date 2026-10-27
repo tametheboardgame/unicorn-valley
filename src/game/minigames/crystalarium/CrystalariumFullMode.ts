@@ -323,14 +323,14 @@ export class CrystalariumFullMode {
 
     if (this.dragSourceKind !== 'cell') return;
     const shelfAvailable = this.state.shelf.some((slot) => slot === null);
-    const shelfHovered = pointerX >= 690 && pointerX <= 1120 && pointerY >= 535 && pointerY <= 594;
+    const shelfHovered = pointerX >= 690 && pointerX <= 1120 && pointerY >= 586 && pointerY <= 630;
     if (shelfAvailable || shelfHovered) {
       graphics.lineStyle(
         shelfHovered ? 4 : 2,
         shelfAvailable ? (shelfHovered ? 0xffefad : 0xa6eed7) : 0xf5afa8,
         0.95,
       );
-      graphics.strokeRoundedRect(690, 535, 430, 59, 12);
+      graphics.strokeRoundedRect(690, 586, 430, 44, 12);
     }
     const washHovered = pointerX >= 480 && pointerX <= 635 && pointerY >= 620 && pointerY <= 674;
     graphics.lineStyle(washHovered ? 4 : 2, washHovered ? 0xffefad : 0xa6eed7, 0.95);
@@ -399,7 +399,7 @@ export class CrystalariumFullMode {
     }
     if (!wasDragging || source === null) return;
     // The desktop shelf and Brook Wash are physical drop destinations too.
-    if (pointer.x >= 690 && pointer.x <= 1120 && pointer.y >= 535 && pointer.y <= 594) {
+    if (pointer.x >= 690 && pointer.x <= 1120 && pointer.y >= 586 && pointer.y <= 630) {
       this.shelveSelected();
     } else if (pointer.x >= 480 && pointer.x <= 635 && pointer.y >= 620 && pointer.y <= 674) {
       this.washSelected();
@@ -544,6 +544,7 @@ export class CrystalariumFullMode {
       .setStrokeStyle(2, active ? 0x9adbea : 0x62788d)
       .setName(name)
       .setInteractive({ useHandCursor: active });
+    if (!active) back.disableInteractive();
     back.on('pointerdown', action);
     holder.add(back);
     this.addText(
@@ -682,7 +683,18 @@ export class CrystalariumFullMode {
       () => this.washSelected(),
     );
 
-    this.plate(holder, 680, 132, 482, 478, 22, 0x192f4e, 0x678bab);
+    // C12B: distinct resonance altar, crystal nursery and tool/safe-shelf surfaces.
+    // The canonical rule determines readiness; neither text nor selected cells do.
+    const ready = canOfferPattern(this.state);
+    if (ready) {
+      const aura = this.scene.add.graphics();
+      aura.fillStyle(0xffe5a0, 0.12);
+      aura.fillRoundedRect(674, 126, 494, 235, 24);
+      holder.add(aura);
+    }
+    this.plate(holder, 680, 132, 482, 223, 22, 0x2b365d, ready ? 0xffe5a0 : 0x9daddb);
+    this.plate(holder, 680, 363, 482, 137, 20, 0x1e4059, 0x8acdd1);
+    this.plate(holder, 680, 508, 482, 133, 20, 0x252f55, 0xa995d2);
     const pattern = activeResonancePattern(this.state);
     this.addText(
       holder,
@@ -714,7 +726,7 @@ export class CrystalariumFullMode {
     if (pattern) {
       pattern.goals.forEach((goal, index) => {
         const x = 742 + index * 138;
-        const y = 288;
+        const y = 263;
         this.plate(holder, x - 56, y - 45, 112, 76, 15, 0x2e5276, 0x93d0e9);
         const illustration = this.scene.add.graphics();
         paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.69);
@@ -735,8 +747,8 @@ export class CrystalariumFullMode {
       if (pattern.harmonies) {
         this.addText(
           holder,
-          1025,
-          282,
+          853,
+          312,
           '♫ Harmony ' + this.state.harmonies + '/' + pattern.harmonies,
           14,
           '#f7e6ff',
@@ -749,24 +761,22 @@ export class CrystalariumFullMode {
     this.button(
       holder,
       698,
-      325,
-      145,
-      canOfferPattern(this.state) ? 'Offer pattern ✓' : 'Offer pattern',
+      303,
+      pattern?.harmonies ? 147 : 444,
+      ready ? '✦ Offer pattern ✓' : 'Offer pattern',
       'crystalarium-full-offer',
       () => this.apply(offerResonancePattern(this.state)),
+      ready,
     );
-    this.button(holder, 850, 325, 145, 'Harmony ♫', 'crystalarium-full-harmony', () =>
-      this.apply(createHarmony(this.state)),
-    );
-    this.button(holder, 1002, 325, 145, 'Polish ✧', 'crystalarium-full-polish', () =>
-      this.polishSelected(),
-    );
-
+    if (ready) {
+      this.addText(holder, 1081, 309, '✦ READY', 14, '#ffe6a5', 72);
+    }
+    this.addText(holder, 699, 369, '✦ CRYSTAL GROWING', 17, '#b6f5df', 442);
     this.addText(
       holder,
-      701,
-      382,
-      'CRYSTAL VEINS • ' + this.state.selectedFamily + ' selected',
+      700,
+      390,
+      'Crystal veins • ' + this.state.selectedFamily + ' selected',
       16,
       '#a8e9f5',
     );
@@ -776,7 +786,7 @@ export class CrystalariumFullMode {
       this.button(
         holder,
         697 + index * 143,
-        413,
+        414,
         135,
         unlocked ? note.symbol + ' ' + note.label.split(' ')[0] : 'Locked',
         'crystalarium-source:' + family,
@@ -789,48 +799,48 @@ export class CrystalariumFullMode {
       this.button(
         holder,
         699,
-        467,
+        455,
         203,
         'Grow ' + this.state.selectedFamily + ' shard',
         'crystalarium-full-grow',
         () => this.apply(spawnCrystal(this.state)),
       );
-      this.button(
-        holder,
-        910,
-        467,
-        193,
-        this.resetArmed ? 'Confirm reset' : 'Fresh board',
-        'crystalarium-full-fresh',
-        () => this.freshBoard(),
-      );
+      // Fresh Board belongs to Tools below, not the growing bed.
     } else {
-      this.button(holder, 698, 467, 133, 'Grow shard', 'crystalarium-full-grow', () =>
+      this.button(holder, 698, 455, 133, 'Grow shard', 'crystalarium-full-grow', () =>
         this.apply(spawnCrystal(this.state)),
       );
       this.button(
         holder,
         836,
-        467,
+        455,
         133,
         refinedTier === 2 ? 'Grow crystal' : 'Grow polished',
         'crystalarium-full-grow-refined',
         () => this.apply(spawnRefinedCrystal(this.state)),
       );
-      this.button(
-        holder,
-        974,
-        458,
-        133,
-        this.resetArmed ? 'Confirm reset' : 'Fresh board',
-        'crystalarium-full-fresh',
-        () => this.freshBoard(),
-      );
+      // Tools always hold the same Fresh Board control.
     }
+    this.addText(holder, 699, 513, '✧ CRYSTAL TOOLS', 16, '#e1d1ff', 440);
+    this.button(holder, 699, 536, 141, 'Harmony ♫', 'crystalarium-full-harmony', () =>
+      this.apply(createHarmony(this.state)),
+    );
+    this.button(holder, 846, 536, 141, 'Polish ✧', 'crystalarium-full-polish', () =>
+      this.polishSelected(),
+    );
+    this.button(
+      holder,
+      994,
+      536,
+      149,
+      this.resetArmed ? 'Confirm reset' : 'Fresh board',
+      'crystalarium-full-fresh',
+      () => this.freshBoard(),
+    );
     this.addText(
       holder,
       702,
-      519,
+      582,
       'SHELF (tap to return)   •   Harmony tokens: ' + this.state.harmonies,
       15,
       '#cbe9f2',
@@ -841,7 +851,7 @@ export class CrystalariumFullMode {
       const shelfTarget = this.button(
         holder,
         698 + 105 * i,
-        545,
+        586,
         99,
         piece ? '' : 'Empty',
         'crystalarium-full-shelf:' + i,
@@ -856,15 +866,15 @@ export class CrystalariumFullMode {
       });
       if (piece) {
         const shelfArt = this.scene.add.graphics();
-        paintCrystalArt(shelfArt, piece, 747 + 105 * i, 568, 0.42);
+        paintCrystalArt(shelfArt, piece, 747 + 105 * i, 609, 0.42);
         holder.add(shelfArt);
       }
     }
-    this.addText(holder, 692, 610, this.message, 15, '#fbe8ba', 450);
+    this.addText(holder, 692, 651, this.message, 15, '#fbe8ba', 450);
     this.addText(
       holder,
       691,
-      666,
+      685,
       'N grow • 1–3 veins • O offer • H harmony • P polish • S shelf • W wash • Esc exit',
       13,
       '#bfd6ec',
