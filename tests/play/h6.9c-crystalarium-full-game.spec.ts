@@ -260,10 +260,7 @@ test('H6.9C10 consecutive visual offerings unlock the next goal and survive a re
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:2');
   await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
-  state = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
-    SANDBOX_KEY,
-  );
+  state = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
   expect(state.completed).toBe(2);
   expect(state.offers).toBe(2);
   await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
