@@ -11,15 +11,15 @@ The existing guide is a prompt overlay and the player can ignore it. That is not
 | Step | Spotlight and suggested words | Allowed gameplay action | Actual success condition | Recovery |
 | --- | --- | --- | --- | --- |
 | **1 Grow** | Highlight Grow Shard: "Tap here to grow a crystal" | One basic Low grow | A successful, persisted spawn on a real free socket | If no room, show accessible Skip or non-destructive space recovery; never trap a full board |
-| **2 Pick up** | One specific Low shard: "Pick up this crystal" | Select/pick the chosen occupied origin socket | Captured drag/keyboard selection, no save | Other cells ignored, cancelled drag returns to this step |
-| **3 Merge** | One matching Low shard: "Drop onto its twin" | Move the chosen piece to exactly the highlighted equal-family and equal-tier destination | Successful persisted merge, not merely pointer-up | Invalid/outside drop safely snaps back; wrong pair has no save or counter |
+| **2 Pick up** | The **newly grown** Low shard: "Pick up this crystal" | Select/pick the new occupied source socket | Captured drag/keyboard selection, no save | Other cells ignored, cancelled drag returns to this step |
+| **3 Merge** | One pre-existing matching Low shard: "Drop onto its twin" | Move the newly grown piece onto the highlighted equal-family and equal-tier destination | Successful persisted merge, not merely pointer-up | Invalid/outside drop safely snaps back; wrong pair has no save or counter |
 | **4 Match art** | Exact resulting tier-one art and identical goal image: "The picture matches!" | Activate/focus the actual goal card | Explicit non-mutating recipe inspection event | Offer still locked until inspection; support keyboard focus |
 | **5 Offer** | Whole goal altar gently illuminates: "Tap Offer Pattern!" | Canonical Offer only if every requirement is met | Successfully persisted increment in completed/offer counters | If missing/changed, derive the next feasible step; no phantom success |
 | **6 Celebrate** | Brief visible chord/sparkle, completion message, free control | All ordinary gameplay actions after saved offer | Tutorial preference recorded separately for World and Just Games | Reduced motion gets still outline/text, global mute stays silent |
 
 ### Source state and action policy
 
-- A fresh game already starts with **two Low tier-zero pieces** in the 42-cell board. The lesson grows a third authentic shard, merges a legal pair, compares that one tier-one piece against the first recipe and offers. Do not fake any gameplay state or overwrite existing pieces.
+- A fresh game already starts with **two Low tier-zero pieces** in the 42-cell board. The lesson grows a third authentic shard, **merges the newly grown shard with one of the two existing twins**, compares the resulting tier-one piece with the first recipe and offers. Do not fake any gameplay state or overwrite existing pieces.
 - At runtime, derive the valid origin and destination from current board/shelf contents rather than globally hardcoding indices 0 and 1. Only the illustrative concept uses fixed positions.
 - Before controller mutation, evaluate an action policy such as Grow, Pick(index), Merge(source,target), InspectGoal(goal-id), Offer, Skip, Help, Leave, Sound. Only a correct enabled gameplay command reaches the existing pure rules. The guide only advances **after a successful save** of an accepted gameplay change; inspecting the goal is deliberately non-mutating.
 - Capture, drag and pointer cancellation are not persistent actions; reject wrong selection and invalid drops without loss or saving. Do not disable Phaser scene-wide input or place an invisible overlay across crystal pointer hit targets. Mouse, real touch, tap-to-select and keyboard all use the same policy.
