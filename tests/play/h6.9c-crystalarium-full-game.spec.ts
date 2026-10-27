@@ -274,9 +274,10 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
       if (!bounds) throw new Error('Crystal must have a visible hit area');
       const hit = await page.evaluate(
         ({ x, y }) =>
-          document.elementFromPoint(x, y)?.closest('[data-crystalarium-cell]')?.getAttribute(
-            'data-crystalarium-cell',
-          ),
+          document
+            .elementFromPoint(x, y)
+            ?.closest('[data-crystalarium-cell]')
+            ?.getAttribute('data-crystalarium-cell'),
         { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 },
       );
       expect(hit).toBe(String(index));
