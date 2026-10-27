@@ -146,6 +146,8 @@ export class CrystalariumPortraitView {
     this.root.dataset.crystalariumCelebration = view.celebration ?? 'none';
     // Replacing view nodes is safe because the game mode owns all persistent state.
     // Restore keyboard focus to the same semantic control after a change.
+    const boardScrollLeft =
+      this.root.querySelector<HTMLElement>('.crystalarium-portrait-board-scroll')?.scrollLeft ?? 0;
     const active = document.activeElement;
     const focusKey =
       active instanceof HTMLElement
@@ -417,6 +419,9 @@ export class CrystalariumPortraitView {
       status,
       controls,
     );
+    // Recreating the 42-cell board must not snap a narrow phone back to column one.
+    // Players need to keep later columns in view after selection, Grow and Offer.
+    scroller.scrollLeft = boardScrollLeft;
 
     if (focusKey !== undefined) {
       const selector = focusIsCell

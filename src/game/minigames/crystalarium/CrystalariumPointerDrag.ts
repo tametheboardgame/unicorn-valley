@@ -1,5 +1,5 @@
 import { createCrystalArtElement } from './CrystalariumCrystalArt';
-import type { CrystalPiece } from './CrystalariumOpeningRules';
+import { combineCrystalPieces, type CrystalPiece } from './CrystalariumOpeningRules';
 
 export interface CrystalariumDragActions {
   move(source: number, target: number): void;
@@ -81,10 +81,12 @@ export class CrystalariumPointerDrag {
       document.body.append(ghost);
       current.ghost = ghost;
       this.root.classList.add('is-dragging-crystal');
+      this.showDropTargets(current.origin);
     }
     event.preventDefault();
     current.ghost?.style.setProperty('left', event.clientX + 'px');
     current.ghost?.style.setProperty('top', event.clientY + 'px');
+    this.showHoveredTarget(event.clientX, event.clientY);
   };
 
   private readonly onUp = (event: PointerEvent): void => {
@@ -123,10 +125,62 @@ export class CrystalariumPointerDrag {
 
   private readonly onCancel = (): void => this.clear();
 
+  /** Preview legal destinations without mutating the controller or saved state. */
+  private showDropTargets(origin: Origin): void {
+    for (const cell of this.root.querySelectorAll<HTMLElement>('[data-crystalarium-cell]')) {
+      const index = Number(cell.dataset.crystalariumCell);
+      const other = this.getPiece({ kind: 'cell', index });
+      const valid =
+        (origin.kind !== 'cell' || index !== origin.index) &&
+        (!other ||
+          (origin.kind === 'cell' && combineCrystalPieces(origin.piece, other) !== null));
+      cell.dataset.crystalariumDrop =
+        origin.kind === 'cell' && index === origin.index
+          ? 'origin'
+          : valid
+            ? 'valid'
+            : 'blocked';
+    }
+    const shelfFull = Array.from({ length: 4 }, (_, index) =>
+      this.getPiece({ kind: 'shelf', index }),
+    ).every(Boolean);
+    for (const shelf of this.root.querySelectorAll<HTMLElement>(
+      '[data-crystalarium-action^="shelf-"]',
+    )) {
+      shelf.dataset.crystalariumDrop =
+        origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
+    }
+    for (const wash of this.root.querySelectorAll<HTMLElement>(
+      '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
+    )) {
+      wash.dataset.crystalariumDrop = origin.kind === 'cell' ? 'valid' : 'blocked';
+    }
+  }
+
+  private showHoveredTarget(x: number, y: number): void {
+    for (const previous of this.root.querySelectorAll<HTMLElement>(
+      '[data-crystalarium-over]',
+    )) {
+      delete previous.dataset.crystalariumOver;
+    }
+    const target = document.elementFromPoint(x, y)?.closest<HTMLElement>(
+      '[data-crystalarium-drop]',
+    );
+    if (target && this.root.contains(target)) {
+      target.dataset.crystalariumOver = 'true';
+    }
+  }
+
   private clear(): void {
     this.current?.ghost?.remove();
     this.current = null;
     this.root.classList.remove('is-dragging-crystal');
+    for (const target of this.root.querySelectorAll<HTMLElement>(
+      '[data-crystalarium-drop]',
+    )) {
+      delete target.dataset.crystalariumDrop;
+      delete target.dataset.crystalariumOver;
+    }
   }
 
   public destroy(): void {

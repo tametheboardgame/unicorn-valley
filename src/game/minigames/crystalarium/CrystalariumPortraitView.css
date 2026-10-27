@@ -222,9 +222,24 @@
     touch-action: none;
   }
 
-  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-cell],
-  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-action] {
-    border-color: #c0ffe0;
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-drop="valid"] {
+    border-color: #aaf6d7;
+    box-shadow: inset 0 0 0 2px rgb(170 246 215 / 55%);
+  }
+
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-drop="blocked"] {
+    opacity: 0.45;
+  }
+
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-over="true"][data-crystalarium-drop="valid"] {
+    outline: 4px solid #fff0a0;
+    outline-offset: -3px;
+    background: #467a89;
+  }
+
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-over="true"][data-crystalarium-drop="blocked"] {
+    outline: 3px dashed #f0b6a0;
+    outline-offset: -3px;
   }
 
   .crystalarium-portrait-cell[data-family="low"] {

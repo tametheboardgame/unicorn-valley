@@ -433,6 +433,46 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
   });
 });
 
+test.describe('H6.9C8 invalid portrait drop protection', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test('marks valid and blocked drops and preserves crystals after an incompatible merge', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    const region = page.locator('[data-crystalarium-portrait="true"]');
+    const first = region.locator('[data-crystalarium-cell="0"]');
+    const second = region.locator('[data-crystalarium-cell="1"]');
+    const drag = async () => {
+      const from = await first.boundingBox();
+      const to = await second.boundingBox();
+      if (!from || !to) throw new Error('Missing Crystalarium drag targets');
+      await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+    };
+    await drag();
+    await expect(second).toHaveAttribute('data-crystalarium-drop', 'valid');
+    await page.mouse.up();
+    await region.locator('[data-crystalarium-action="grow"]').click();
+    const savedBeforeInvalidDrop = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      SANDBOX_KEY,
+    );
+    await drag();
+    await expect(second).toHaveAttribute('data-crystalarium-drop', 'blocked');
+    await expect(region.locator('[data-crystalarium-cell="2"]')).toHaveAttribute(
+      'data-crystalarium-drop',
+      'valid',
+    );
+    await page.mouse.up();
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(
+      savedBeforeInvalidDrop,
+    );
+    await expect(region.locator('[data-crystalarium-drop]')).toHaveCount(0);
+  });
+});
+
 test.describe('H6.9C narrow portrait touch acceptance', () => {
   test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
   test('retains real-size scrollable sockets, readable actions and a saved return', async ({
@@ -459,7 +499,16 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
       path: testInfo.outputPath('h6.9c-narrow-portrait.png'),
       fullPage: true,
     });
+    const scroller = portrait.locator('.crystalarium-portrait-board-scroll');
+    await scroller.evaluate((node) => {
+      node.scrollLeft = node.scrollWidth - node.clientWidth;
+    });
+    const rightmostScroll = await scroller.evaluate((node) => node.scrollLeft);
+    expect(rightmostScroll).toBeGreaterThan(0);
     await portrait.locator('[data-crystalarium-action="grow"]').click();
+    expect(await scroller.evaluate((node) => node.scrollLeft)).toBe(rightmostScroll);
+    await portrait.locator('[data-crystalarium-cell="6"]').click();
+    expect(await scroller.evaluate((node) => node.scrollLeft)).toBe(rightmostScroll);
     expect(
       await page.evaluate(
         (key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length,
