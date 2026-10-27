@@ -240,6 +240,11 @@ export class CrystalariumPortraitView {
         'sound',
       ),
     );
+    const scrollCue = makeElement(
+      'p',
+      'crystalarium-portrait-scroll-cue',
+      '↔ Swipe sideways to see the whole board',
+    );
     const scroller = makeElement('div', 'crystalarium-portrait-board-scroll');
     const grid = makeElement('div', 'crystalarium-portrait-grid');
     grid.setAttribute('role', 'group');
@@ -273,7 +278,7 @@ export class CrystalariumPortraitView {
       grid.append(button);
     }
     scroller.append(grid);
-    boardSection.append(boardHeading, scroller);
+    boardSection.append(boardHeading, scrollCue, scroller);
     const helper = makeElement(
       'p',
       'crystalarium-portrait-hint',
