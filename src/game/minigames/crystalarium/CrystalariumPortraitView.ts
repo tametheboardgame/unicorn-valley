@@ -379,7 +379,13 @@ export class CrystalariumPortraitView {
       shelfSlots.append(slot);
     }
     shelfSlots.append(
-      this.button(view.washArmed ? 'Confirm' : '♻ Wash', this.actions.wash, 'warning', false, 'wash-dock'),
+      this.button(
+        view.washArmed ? 'Confirm' : '♻ Wash',
+        this.actions.wash,
+        'warning',
+        false,
+        'wash-dock',
+      ),
     );
     shelf.append(shelfSlots);
     controls.append(
@@ -394,7 +400,16 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
-    this.root.replaceChildren(header, task, guidePanel, primary, boardSection, shelf, status, controls);
+    this.root.replaceChildren(
+      header,
+      task,
+      guidePanel,
+      primary,
+      boardSection,
+      shelf,
+      status,
+      controls,
+    );
 
     if (focusKey !== undefined) {
       const selector = focusIsCell
