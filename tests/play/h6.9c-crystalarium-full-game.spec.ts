@@ -3,6 +3,7 @@ import { createDefaultSave } from '../../src/game/save/createDefaultSave';
 import { CRYSTAL_BROOK_CRYSTALARIUM_NURSERY } from '../../src/game/world/CrystalBrookMap';
 import {
   clickNamedObject,
+  dragNamedObjectTo,
   getDiagnosticSnapshot,
   openDiagnostics,
   setArcadeSpritePosition,
@@ -82,6 +83,32 @@ test.describe('H6.9C first complete playable Crystalarium visual evidence', () =
     expect(fresh.washes).toBe(1);
     expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
   });
+});
+
+test('H6.9C8 desktop carries crystals through merge, shelf and explicit return socket', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:0', 264, 209);
+  const merged = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(merged.merges).toBe(1);
+  expect(merged.cells[1].tier).toBe(1);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:1', 748, 567);
+  const shelved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(shelved.shelf[0].tier).toBe(1);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-shelf:0', 512, 209);
+  const restored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(restored.cells[5].tier).toBe(1);
+  expect(restored.shelf[0]).toBeNull();
 });
 
 test.describe('H6.9C landscape touch evidence', () => {
