@@ -717,7 +717,7 @@ export class CrystalariumFullMode {
     this.addText(
       holder,
       698,
-      202,
+      196,
       pattern ? pattern.title : 'All chapters restored',
       24,
       '#ffffff',
@@ -726,7 +726,7 @@ export class CrystalariumFullMode {
     if (pattern) {
       pattern.goals.forEach((goal, index) => {
         const x = 742 + index * 138;
-        const y = 263;
+        const y = 271;
         this.plate(holder, x - 56, y - 45, 112, 76, 15, 0x2e5276, 0x93d0e9);
         const illustration = this.scene.add.graphics();
         paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.69);
@@ -768,7 +768,7 @@ export class CrystalariumFullMode {
       () => this.apply(offerResonancePattern(this.state)),
       ready,
     );
-    if (ready) {
+    if (ready && pattern?.harmonies) {
       this.addText(holder, 1081, 309, '✦ READY', 14, '#ffe6a5', 72);
     }
     this.addText(holder, 699, 369, '✦ CRYSTAL GROWING', 17, '#b6f5df', 442);
@@ -821,7 +821,7 @@ export class CrystalariumFullMode {
       );
       // Tools always hold the same Fresh Board control.
     }
-    this.addText(holder, 699, 513, '✧ CRYSTAL TOOLS', 16, '#e1d1ff', 440);
+    this.addText(holder, 699, 513, '✧ CRYSTAL TOOLS • Safe shelf', 16, '#e1d1ff', 440);
     this.button(holder, 699, 536, 141, 'Harmony ♫', 'crystalarium-full-harmony', () =>
       this.apply(createHarmony(this.state)),
     );
@@ -836,15 +836,6 @@ export class CrystalariumFullMode {
       this.resetArmed ? 'Confirm reset' : 'Fresh board',
       'crystalarium-full-fresh',
       () => this.freshBoard(),
-    );
-    this.addText(
-      holder,
-      702,
-      582,
-      'SHELF (tap to return)   •   Harmony tokens: ' + this.state.harmonies,
-      15,
-      '#cbe9f2',
-      410,
     );
     for (let i = 0; i < 4; i += 1) {
       const piece = this.state.shelf[i];
