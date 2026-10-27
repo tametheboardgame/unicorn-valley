@@ -239,9 +239,7 @@ export class CrystalariumGuide {
   /** Called before any rule or save; Skip, Help, Exit and sound live outside this policy. */
   public allows(command: FirstLessonCommand): boolean {
     return (
-      !this.active ||
-      !this.lesson ||
-      firstLessonAllows(this.lesson.step, this.lesson.pair, command)
+      !this.active || !this.lesson || firstLessonAllows(this.lesson.step, this.lesson.pair, command)
     );
   }
 
