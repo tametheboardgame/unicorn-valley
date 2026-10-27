@@ -63,6 +63,9 @@ export function firstLessonAllows(
     case 'pick-up':
       return action.kind === 'pick' && pair !== null && action.index === pair.source;
     case 'merge':
+      // A cancelled mouse/touch drag may clear selection. The highlighted
+      // origin is always re-selectable without mutating the saved board.
+      if (action.kind === 'pick') return pair !== null && action.index === pair.source;
       return (
         action.kind === 'merge' &&
         pair !== null &&
