@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  CrystalariumGuide,
-  crystalariumGuideKey,
-  guideStage,
-} from './CrystalariumGuide';
+import { CrystalariumGuide, crystalariumGuideKey, guideStage } from './CrystalariumGuide';
 import {
   createCrystalariumFullState,
   moveOrMergeCrystal,
