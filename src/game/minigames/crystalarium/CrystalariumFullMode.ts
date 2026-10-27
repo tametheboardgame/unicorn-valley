@@ -751,8 +751,14 @@ export class CrystalariumFullMode {
     );
     for (let i = 0; i < 4; i += 1) {
       const piece = this.state.shelf[i];
-      this.button(holder, 698 + 105 * i, 545, 99, piece ? '' : 'Empty', 'crystalarium-full-shelf:' + i, () =>
-        this.apply(restoreCrystal(this.state, i)),
+      this.button(
+        holder,
+        698 + 105 * i,
+        545,
+        99,
+        piece ? '' : 'Empty',
+        'crystalarium-full-shelf:' + i,
+        () => this.apply(restoreCrystal(this.state, i)),
       );
       if (piece) {
         const shelfArt = this.scene.add.graphics();
