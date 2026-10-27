@@ -28,6 +28,7 @@ import {
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
 import { CrystalariumPortraitView } from './CrystalariumPortraitView';
+import { paintCrystalArt } from './CrystalariumCrystalArt';
 import {
   CRYSTAL_NOTE_PRESENTATION,
   CRYSTAL_TIER_NAMES,
@@ -449,16 +450,9 @@ export class CrystalariumFullMode {
       cell.on('pointerdown', () => this.pick(i));
       holder.add(cell);
       if (piece) {
-        const colour = CRYSTAL_NOTE_PRESENTATION[piece.family].colour;
-        holder.add(
-          this.scene.add
-            .circle(x, y - 4, 19 + Math.min(piece.tier, 3), colour, 0.98)
-            .setStrokeStyle(piece.tier > 2 ? 3 : 1, 0xffffff, 0.8),
-        );
-        this.addText(holder, x, y - 9, this.pieceGlyph(piece), 24, '#152640', 50).setOrigin(0.5);
-        this.addText(holder, x, y + 18, String(piece.tier + 1), 13, '#ffffff', 50)
-          .setOrigin(0.5)
-          .setName('crystalarium-tier:' + i);
+        const illustration = this.scene.add.graphics();
+        paintCrystalArt(illustration, piece, x, y, 0.63);
+        holder.add(illustration);
       }
     }
     this.addText(
@@ -517,26 +511,38 @@ export class CrystalariumFullMode {
       '#ffffff',
       440,
     );
-    const goals = pattern
-      ? pattern.goals.map(
-          (goal) =>
-            CRYSTAL_NOTE_PRESENTATION[goal.family].symbol +
-            ' ' +
-            CRYSTAL_TIER_NAMES[goal.tier] +
-            ' ×' +
-            goal.quantity,
-        )
-      : [];
-    if (pattern?.harmonies) goals.push('♫ Harmony ×' + pattern.harmonies);
-    this.addText(
-      holder,
-      698,
-      244,
-      goals.join('   •   ') || 'Experiment freely!',
-      16,
-      '#f1faff',
-      427,
-    );
+    if (pattern) {
+      pattern.goals.forEach((goal, index) => {
+        const x = 742 + index * 138;
+        const y = 265;
+        holder.add(
+          this.scene.add
+            .rectangle(x, y - 7, 112, 76, 0x2e5276, 0.96)
+            .setStrokeStyle(2, 0x93d0e9),
+        );
+        const illustration = this.scene.add.graphics();
+        paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.59);
+        holder.add(illustration);
+        const owned = [...this.state.cells, ...this.state.shelf].filter(
+          (piece) => piece?.family === goal.family && piece.tier === goal.tier,
+        ).length;
+        this.addText(holder, x, y + 17, owned + ' / ' + goal.quantity, 15, '#fff1bc', 100)
+          .setOrigin(0.5);
+      });
+      if (pattern.harmonies) {
+        this.addText(
+          holder,
+          1025,
+          282,
+          '♫ Harmony ' + this.state.harmonies + '/' + pattern.harmonies,
+          14,
+          '#f7e6ff',
+          140,
+        );
+      }
+    } else {
+      this.addText(holder, 700, 248, 'Experiment freely!', 19, '#fff3cb', 425);
+    }
     this.button(
       holder,
       698,
