@@ -35,6 +35,7 @@ small,.caption{font-size:12px;color:#c0d9eb}
 .board-shell.rooted{border-color:#a2c7cb;background:linear-gradient(140deg,#325a6d,#1b3658)}
 .board-shell.occupied{border-color:#aa93c6}
 .rooted-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;align-items:stretch;margin:0 0 10px;padding:6px;border-radius:15px;background:linear-gradient(90deg,#33577d,#52617b 50%,#3e526e);border:2px solid #c1b7ce;position:relative}
+.rooted-strip[hidden]{display:none}
 .rooted-strip:after{content:"";position:absolute;pointer-events:none;bottom:-10px;left:5%;right:5%;height:9px;border-inline:2px solid #a6cbd6;border-bottom:3px solid #a6cbd6;border-radius:0 0 20px 20px}
 .root-control{position:relative;border:2px solid var(--family,#8adbea);border-radius:12px;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;background:linear-gradient(140deg,#285476,#243f63)}
 .root-control.selected{box-shadow:0 0 0 2px #ffe5a090,inset 0 0 20px #a7e9f21f;border-color:#ffe5a0}
@@ -43,7 +44,7 @@ small,.caption{font-size:12px;color:#c0d9eb}
 .crystal{width:31px;height:35px;filter:drop-shadow(0 2px 2px #081f40bd);display:block}
 .crystal.large{width:48px;height:54px}
 .board-window{width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-color:#a6dbe6 #213a5b;padding:4px 1px 7px}
-.board{display:grid;grid-template-columns:repeat(7,48px);grid-template-rows:repeat(6,48px);gap:5px;width:max-content;margin:auto}
+.board{padding:0;border:0;min-inline-size:0;display:grid;grid-template-columns:repeat(7,48px);grid-template-rows:repeat(6,48px);gap:5px;width:max-content;margin:auto}
 .cell{width:48px;height:48px;border:2px solid #6f96b5;border-radius:11px;background:linear-gradient(145deg,#345777,#213e5d);display:grid;place-items:center;padding:0}
 .cell.empty{color:#53789c}.cell.blocked{border-color:#b9a3d9;background:linear-gradient(150deg,#47466c,#403c65);padding:2px}
 .cell .crystal{width:32px;height:35px}.cell .tiny{font-size:8px;font-weight:900;letter-spacing:.05em}
@@ -55,7 +56,7 @@ small,.caption{font-size:12px;color:#c0d9eb}
 .legend{color:#cce5ef;font-size:12px}
 .info{display:flex;align-items:start;gap:10px;border:1px solid #a99ccc;background:#292f56;padding:12px;border-radius:13px;margin-top:12px}
 .info .symbol{font-size:23px}.info p{margin:0;font-size:13px;color:#e6dcfa}
-.source-cards{display:grid;gap:7px;margin:11px 0}
+.source-cards{padding:0;border:0;min-inline-size:0;display:grid;gap:7px;margin:11px 0}
 .source-card{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #769cba;border-radius:12px;background:#254563;text-align:left;min-height:58px}
 .source-card[aria-pressed="true"]{border:2px solid #ffe4a0;background:#425676}
 .source-card strong{display:block;font-size:13px}
@@ -83,27 +84,27 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
   <section class="panel board-panel" aria-labelledby="board-title">
    <div class="board-head"><strong id="board-title">✦ Crystal Board</strong><span class="board-note">7 columns × 6 rows</span></div>
    <div class="board-shell rooted" id="shell">
-    <div class="rooted-strip" id="frame-sources" aria-label="Crystal veins rooted into the board frame"></div>
-    <div class="board-window"><div class="board" id="board" role="group" aria-label="Simulated Crystalarium board"></div></div>
+    <fieldset class="rooted-strip" id="frame-sources" aria-label="Crystal veins rooted into the board frame"></fieldset>
+    <div class="board-window"><fieldset class="board" id="board" aria-label="Simulated Crystalarium board"></fieldset></div>
    </div>
    <div class="metrics">
     <div class="metric"><strong id="space">42 / 42</strong><span>usable merge sockets</span></div>
     <div class="metric"><strong id="unlocks">1 / 3</strong><span>unlocked crystal wells</span></div>
     <div class="metric"><strong id="total">2</strong><span>crystals on the board</span></div>
    </div>
-   <div class="shelf"><strong>✦ Safe shelf</strong><div class="slots" aria-label="Four decorative shelf spaces"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
+   <div class="shelf"><strong>✦ Safe shelf</strong><div class="slots" aria-hidden="true"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
    <div class="unused">The four-slot shelf stays separate from producer wells. All growing in this demo is <mark>free and unlimited</mark>.</div>
   </section>
   <aside class="panel control-panel warm" aria-label="Producer design controls">
    <h2>1. Choose the placement</h2>
-   <div class="choice" id="layouts" role="group" aria-label="Placement comparison">
+   <div class="choice" id="layouts">
     <button type="button" id="frame-choice" aria-pressed="true">A · Board-frame wells</button>
     <button type="button" id="grid-choice" aria-pressed="false">B · Three board cells</button>
    </div>
    <p id="comparison" class="caption">A: all 42 merge sockets stay available. Wells are physically rooted into the board's frame.</p>
    <div class="separation"></div>
    <h2>2. See the family unlocks</h2>
-   <div class="choice" role="group" aria-label="Simulated completed patterns">
+   <div class="choice">
     <button type="button" data-progress="0" aria-pressed="true">0 patterns</button>
     <button type="button" data-progress="4" aria-pressed="false">4 patterns</button>
     <button type="button" data-progress="7" aria-pressed="false">7 patterns</button>
@@ -111,7 +112,7 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
    <p class="caption">These are test scenarios, not actual saved campaign progress.</p>
    <div class="separation"></div>
    <h2>3. Try growing a free shard</h2>
-   <div class="source-cards" id="source-cards" role="group" aria-label="Select an unlocked crystal family"></div>
+   <fieldset class="source-cards" id="source-cards" aria-label="Select an unlocked crystal family"></fieldset>
    <button type="button" id="grow" class="cta">✦ Grow free Low crystal</button>
    <div class="status" id="message" aria-live="polite">Low is unlocked from the start. Tap its producer, then Grow.</div>
    <div class="choice"><button type="button" id="reset">↺ Reset this illustration</button></div>
@@ -215,7 +216,7 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
     byId("comparison").textContent=placement==="frame"
       ?"A: all 42 merge sockets stay usable. Producer wells are rooted into the physical board frame."
       :"B: three producer structures permanently occupy board cells. Only 39 merge sockets remain.";
-    document.querySelectorAll("[data-progress]").forEach(x=>x.setAttribute("aria-pressed",String(Number(x.dataset.progress)===progress)));
+    document.querySelectorAll("[data-progress]").forEach(x=>{x.setAttribute("aria-pressed",String(Number(x.dataset.progress)===progress));});
     drawSources();drawBoard();
   }
   function grow(){
@@ -229,7 +230,7 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
   }
   byId("frame-choice").addEventListener("click",()=>{placement="frame";resetBoard();redraw();announce("Frame-rooted nursery: 42 usable merge cells.");});
   byId("grid-choice").addEventListener("click",()=>{placement="grid";resetBoard();redraw();announce("Board-cell nursery: only 39 cells remain for merging. This is a comparison, not an approved choice.");});
-  document.querySelectorAll("[data-progress]").forEach(button=>button.addEventListener("click",()=>{progress=Number(button.dataset.progress);selected="low";redraw();announce(`Previewing ${progress} completed patterns: ${families.filter(x=>!isLocked(x)).map(x=>x.name).join(', ')} producers unlocked.`);}));
+  document.querySelectorAll("[data-progress]").forEach(button=>{button.addEventListener("click",()=>{progress=Number(button.dataset.progress);selected="low";redraw();announce(`Previewing ${progress} completed patterns: ${families.filter(x=>!isLocked(x)).map(x=>x.name).join(', ')} producers unlocked.`);});});
   byId("grow").addEventListener("click",grow);
   byId("reset").addEventListener("click",()=>{resetBoard();redraw();announce("Illustration reset. Nothing was saved.");});
   resetBoard();redraw();
