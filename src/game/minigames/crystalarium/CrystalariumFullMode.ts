@@ -51,6 +51,7 @@ export class CrystalariumFullMode {
   private portraitQuery: MediaQueryList | null = null;
   private leaving = false;
   private dragSource: number | null = null;
+  private dragSourceKind: 'cell' | 'shelf' | null = null;
   private dragStart: { x: number; y: number } | null = null;
   private dragGhost: Phaser.GameObjects.Graphics | null = null;
   private cursor = 0;
@@ -282,6 +283,7 @@ export class CrystalariumFullMode {
   }
 
   private clearDrag(): void {
+    this.dragSourceKind = null;
     this.dragSource = null;
     this.dragStart = null;
     this.dragGhost?.destroy();
@@ -289,13 +291,20 @@ export class CrystalariumFullMode {
   }
 
   private pointerMove(pointer: Phaser.Input.Pointer): void {
-    if (this.dragSource === null || !this.dragStart || this.selected !== this.dragSource) {
+    if (
+      this.dragSource === null ||
+      !this.dragStart ||
+      (this.dragSourceKind === 'cell' && this.selected !== this.dragSource)
+    ) {
       return;
     }
     const dx = pointer.x - this.dragStart.x;
     const dy = pointer.y - this.dragStart.y;
     if (!this.dragGhost && Math.hypot(dx, dy) < 10) return;
-    const piece = this.state.cells[this.dragSource];
+    const piece =
+      this.dragSourceKind === 'shelf'
+        ? this.state.shelf[this.dragSource]
+        : this.state.cells[this.dragSource];
     if (!piece) {
       this.clearDrag();
       return;
@@ -308,10 +317,22 @@ export class CrystalariumFullMode {
   private pointerUp(pointer: Phaser.Input.Pointer): void {
     const wasDragging = this.dragGhost !== null;
     const source = this.dragSource;
+    const kind = this.dragSourceKind;
     this.clearDrag();
-    if (this.selected === null) return;
     const x = Math.floor((pointer.x - LEFT) / STEP);
     const y = Math.floor((pointer.y - TOP) / STEP);
+    if (kind === 'shelf' && source !== null) {
+      if (wasDragging && x >= 0 && x < FULL_COLUMNS && y >= 0 && y < FULL_ROWS) {
+        this.apply(restoreCrystalToCell(this.state, source, y * FULL_COLUMNS + x));
+      } else if (!wasDragging) {
+        this.apply(restoreCrystal(this.state, source));
+      } else {
+        this.message = 'Crystal returned safely to its shelf.';
+        this.render();
+      }
+      return;
+    }
+    if (this.selected === null) return;
     if (x >= 0 && x < FULL_COLUMNS && y >= 0 && y < FULL_ROWS) {
       const target = y * FULL_COLUMNS + x;
       if (target !== this.selected) this.pick(target);
@@ -463,7 +484,7 @@ export class CrystalariumFullMode {
     name: string,
     action: () => void,
     active = true,
-  ): void {
+  ): Phaser.GameObjects.Rectangle {
     const back = this.scene.add
       .rectangle(x + w / 2, y + 22, w, 44, active ? 0x335c87 : 0x2a3a54)
       .setStrokeStyle(2, active ? 0x9adbea : 0x62788d)
@@ -480,6 +501,7 @@ export class CrystalariumFullMode {
       active ? '#ffffff' : '#a5b4c4',
       w - 12,
     ).setOrigin(0.5);
+    return back;
   }
 
   private render(): void {
@@ -558,6 +580,7 @@ export class CrystalariumFullMode {
       cell.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
         if (this.selected === null && this.state.cells[i]) {
           this.dragSource = i;
+          this.dragSourceKind = 'cell';
           this.dragStart = { x: pointer.x, y: pointer.y };
         }
         this.pick(i);
@@ -751,15 +774,22 @@ export class CrystalariumFullMode {
     );
     for (let i = 0; i < 4; i += 1) {
       const piece = this.state.shelf[i];
-      this.button(
+      const shelfTarget = this.button(
         holder,
         698 + 105 * i,
         545,
         99,
         piece ? '' : 'Empty',
         'crystalarium-full-shelf:' + i,
-        () => this.apply(restoreCrystal(this.state, i)),
+        () => {},
       );
+      shelfTarget.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (!this.state.shelf[i]) return;
+        this.selected = null;
+        this.dragSource = i;
+        this.dragSourceKind = 'shelf';
+        this.dragStart = { x: pointer.x, y: pointer.y };
+      });
       if (piece) {
         const shelfArt = this.scene.add.graphics();
         paintCrystalArt(shelfArt, piece, 747 + 105 * i, 568, 0.42);
