@@ -85,6 +85,50 @@
     line-height: 1.4;
   }
 
+  .crystalarium-portrait-goals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    align-items: center;
+  }
+
+  .crystalarium-portrait-goal {
+    display: grid;
+    place-items: center;
+    min-width: 76px;
+    min-height: 98px;
+    padding: 6px 9px;
+    border: 2px solid #9acbe3;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #34587d, #192d4d);
+  }
+
+  .crystalarium-portrait-goal-count {
+    color: #fff3c7;
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-harmony-goal {
+    padding: 8px;
+    color: #fff3c7;
+    font-weight: 900;
+  }
+
+  .crystalarium-art {
+    display: block;
+    width: 40px;
+    height: 44px;
+    overflow: visible;
+    filter: drop-shadow(0 3px 3px rgb(4 19 40 / 35%));
+    pointer-events: none;
+  }
+
+  .crystalarium-portrait-goal .crystalarium-art {
+    width: 55px;
+    height: 60px;
+  }
+
   .crystalarium-portrait-board-scroll {
     overflow-x: auto;
     overscroll-behavior-x: contain;
