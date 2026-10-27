@@ -111,6 +111,22 @@ test('H6.9C8 desktop carries crystals through merge, shelf and explicit return s
   expect(restored.shelf[0]).toBeNull();
 });
 
+test('H6.9C10 desktop rejects mismatched drops without losing progress', async ({ page }) => {
+  await enterResonanceGarden(page);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:0', 264, 209);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:0', 264, 209);
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  expect(
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+      SANDBOX_KEY,
+    ),
+  ).toBe(1);
+});
+
 test.describe('H6.9C landscape touch evidence', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
   test('shows the game board on phone landscape without hiding the playable scene', async ({

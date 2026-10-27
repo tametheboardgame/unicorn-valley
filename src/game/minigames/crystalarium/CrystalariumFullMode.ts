@@ -31,6 +31,7 @@ import { loadCrystalariumProgress, saveCrystalariumProgress } from './Crystalari
 import { CrystalariumPortraitView } from './CrystalariumPortraitView';
 import { paintCrystalArt } from './CrystalariumCrystalArt';
 import { CrystalariumGuide } from './CrystalariumGuide';
+import { combineCrystalPieces, type CrystalPiece } from './CrystalariumOpeningRules';
 import {
   CRYSTAL_NOTE_PRESENTATION,
   CRYSTAL_TIER_NAMES,
@@ -54,6 +55,7 @@ export class CrystalariumFullMode {
   private dragSourceKind: 'cell' | 'shelf' | null = null;
   private dragStart: { x: number; y: number } | null = null;
   private dragGhost: Phaser.GameObjects.Graphics | null = null;
+  private dragTargets: Phaser.GameObjects.Graphics | null = null;
   private cursor = 0;
   private selected: number | null = null;
   private message = 'Choose a crystal vein to grow shards, then merge matching pairs.';
@@ -291,6 +293,51 @@ export class CrystalariumFullMode {
     this.dragStart = null;
     this.dragGhost?.destroy();
     this.dragGhost = null;
+    this.dragTargets?.destroy();
+    this.dragTargets = null;
+  }
+
+  /** Non-interactive drop hints use the same rules as touch: nothing is changed or saved here. */
+  private drawDropCues(piece: CrystalPiece, pointerX: number, pointerY: number): void {
+    const graphics = this.dragTargets;
+    if (!graphics || this.dragSourceKind === null) return;
+    graphics.clear();
+    for (let index = 0; index < FULL_CELL_COUNT; index += 1) {
+      const cell = this.state.cells[index];
+      const isOrigin = this.dragSourceKind === 'cell' && index === this.dragSource;
+      const valid =
+        !isOrigin &&
+        (!cell ||
+          (this.dragSourceKind === 'cell' && combineCrystalPieces(piece, cell) !== null));
+      const x = LEFT + (index % FULL_COLUMNS) * STEP;
+      const y = TOP + Math.floor(index / FULL_COLUMNS) * STEP;
+      const hovered =
+        pointerX >= x && pointerX <= x + CELL && pointerY >= y && pointerY <= y + CELL;
+      if (!valid && !hovered) continue;
+      graphics.lineStyle(
+        hovered ? 4 : 2,
+        isOrigin ? 0x9fc5e7 : valid ? (hovered ? 0xffefad : 0xa6eed7) : 0xf5afa8,
+        hovered ? 1 : 0.75,
+      );
+      graphics.strokeRoundedRect(x + 2, y + 2, CELL - 4, CELL - 4, 10);
+    }
+
+    if (this.dragSourceKind !== 'cell') return;
+    const shelfAvailable = this.state.shelf.some((slot) => slot === null);
+    const shelfHovered =
+      pointerX >= 690 && pointerX <= 1120 && pointerY >= 535 && pointerY <= 594;
+    if (shelfAvailable || shelfHovered) {
+      graphics.lineStyle(
+        shelfHovered ? 4 : 2,
+        shelfAvailable ? (shelfHovered ? 0xffefad : 0xa6eed7) : 0xf5afa8,
+        0.95,
+      );
+      graphics.strokeRoundedRect(690, 535, 430, 59, 12);
+    }
+    const washHovered =
+      pointerX >= 480 && pointerX <= 635 && pointerY >= 620 && pointerY <= 674;
+    graphics.lineStyle(washHovered ? 4 : 2, washHovered ? 0xffefad : 0xa6eed7, 0.95);
+    graphics.strokeRoundedRect(480, 620, 155, 54, 12);
   }
 
   private pointerMove(pointer: Phaser.Input.Pointer): void {
@@ -312,7 +359,11 @@ export class CrystalariumFullMode {
       this.clearDrag();
       return;
     }
-    if (!this.dragGhost) this.dragGhost = this.scene.add.graphics().setDepth(400);
+    if (!this.dragGhost) {
+      this.dragGhost = this.scene.add.graphics().setDepth(400);
+      this.dragTargets = this.scene.add.graphics().setName('crystalarium-full-drop-cues').setDepth(390);
+    }
+    this.drawDropCues(piece, pointer.x, pointer.y);
     this.dragGhost.clear();
     paintCrystalArt(this.dragGhost, piece, pointer.x, pointer.y - 16, 0.92);
   }
