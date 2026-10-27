@@ -414,6 +414,7 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
       .locator('.crystalarium-portrait-board-scroll')
       .evaluate((node) => node.scrollWidth > node.clientWidth);
     expect(scroll).toBe(true);
+    await expect(portrait.locator('.crystalarium-portrait-scroll-cue')).toContainText('Swipe sideways');
     await expect(grid.locator('button')).toHaveCount(42);
     await page.screenshot({
       path: testInfo.outputPath('h6.9c-narrow-portrait.png'),
