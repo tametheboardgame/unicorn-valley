@@ -180,14 +180,10 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
     const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
     const step = region.locator('[data-crystalarium-guide]');
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'grow');
-    await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveClass(
-      /is-guide-focus/,
-    );
+    await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveClass(/is-guide-focus/);
     await region.locator('[data-crystalarium-action="grow"]').click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'merge');
-    await expect(region.locator('.crystalarium-portrait-grid')).toHaveClass(
-      /is-guide-focus/,
-    );
+    await expect(region.locator('.crystalarium-portrait-grid')).toHaveClass(/is-guide-focus/);
     await region.locator('[data-crystalarium-cell="0"]').click();
     await region.locator('[data-crystalarium-cell="1"]').click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
