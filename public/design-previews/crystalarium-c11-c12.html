@@ -27,7 +27,7 @@ main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-templa
 .panel-heading .mini{font-size:13px;color:#c5e5f6}
 .board-hint{font-size:13px;margin:7px 0 12px;color:#cbe7f3}
 .board-scroller{overflow:auto;overscroll-behavior-x:contain;border-radius:18px;padding:9px;background:radial-gradient(ellipse at center,#274d70,#10243f);border:1px solid #6a91ad}
-.board-grid{display:grid;grid-template-columns:repeat(7,53px);grid-template-rows:repeat(6,53px);gap:5px;width:max-content;margin:0 auto}
+.board-grid{display:grid;grid-template-columns:repeat(7,53px);grid-template-rows:repeat(6,53px);gap:5px;width:max-content;margin:0 auto;border:0;padding:0;min-inline-size:0}
 .cell{position:relative;min-width:53px;min-height:53px;padding:2px;border-radius:13px;border:2px solid #698ba8;background:linear-gradient(150deg,#36618b,#244462);color:#d7f1fa;display:grid;place-items:center}
 .cell.empty{background:#1d3857;color:#658ba8}
 .cell.allowed{border-color:#fff0aa;box-shadow:0 0 0 3px rgba(255,230,158,.27),0 0 20px #fff0a855}
@@ -48,6 +48,7 @@ main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-templa
 .pattern .sub{font-size:13px;margin:5px 0 9px;color:#ddd2f7}
 .goal-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
 .goal{border:2px solid #afcde8;background:linear-gradient(125deg,#425f86,#273656);border-radius:15px;min-width:82px;min-height:82px;padding:6px;display:grid;place-items:center;gap:2px;color:#fff4d2;font-weight:900}
+.gem{display:block;width:42px;height:48px;filter:drop-shadow(0 3px 2px #102340aa);pointer-events:none}
 .goal .gem{width:42px;height:45px}
 .goal.ready{border-color:#ecdaa0;background:#52668a}
 .count{font-size:13px}
@@ -74,7 +75,6 @@ main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-templa
 .tools h2{font-size:17px}
 .tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
 .tool-grid .pill{border-radius:11px;font-size:13px;width:100%;padding:9px 4px}
-.gem{display:block;width:42px;height:48px;filter:drop-shadow(0 3px 2px #102340aa);pointer-events:none}
 .muted-action{opacity:.52;filter:saturate(.6)}
 .note{font-size:12px;color:#e1d7fc;margin:8px 0 0}
 .spotlight{border-color:#ffe5a0;box-shadow:0 0 0 4px #ffe5a04a,0 0 23px #ffdc8480;opacity:1}
@@ -102,9 +102,9 @@ main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-templa
   <section class="board-area" aria-label="Crystal merging board">
     <div class="panel-heading"><h2>✧ Crystal Board</h2><span class="mini">7 × 6 • 42 sockets</span></div>
     <p class="board-hint">Pick up matching twins. The glowing outline shows your next step.</p>
-    <div class="board-scroller"><div class="board-grid" id="board" role="group" aria-label="Crystal board"></div></div>
+    <div class="board-scroller"><fieldset class="board-grid" id="board" aria-label="Crystal board"></fieldset></div>
     <div class="legend"><span><b>Gold ring:</b> next action</span><span><b>Blue:</b> Low</span><span><b>Lilac:</b> Bell</span><span><b>Green:</b> Bright</span></div>
-    <div class="shelf"><span>✦ Safe shelf</span><div class="shelf-slots" aria-label="Four safe shelf spaces"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
+    <div class="shelf"><span>✦ Safe shelf</span><div class="shelf-slots" aria-hidden="true"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
   </section>
   <div class="rail">
     <section class="surface pattern" id="pattern" aria-label="Resonance Pattern Altar">
