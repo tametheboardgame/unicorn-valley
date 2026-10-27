@@ -231,13 +231,15 @@
     opacity: 0.45;
   }
 
-  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-over="true"][data-crystalarium-drop="valid"] {
+  .crystalarium-portrait.is-dragging-crystal
+    [data-crystalarium-over="true"][data-crystalarium-drop="valid"] {
     outline: 4px solid #fff0a0;
     outline-offset: -3px;
     background: #467a89;
   }
 
-  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-over="true"][data-crystalarium-drop="blocked"] {
+  .crystalarium-portrait.is-dragging-crystal
+    [data-crystalarium-over="true"][data-crystalarium-drop="blocked"] {
     outline: 3px dashed #f0b6a0;
     outline-offset: -3px;
   }

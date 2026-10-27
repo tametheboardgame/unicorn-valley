@@ -132,14 +132,9 @@ export class CrystalariumPointerDrag {
       const other = this.getPiece({ kind: 'cell', index });
       const valid =
         (origin.kind !== 'cell' || index !== origin.index) &&
-        (!other ||
-          (origin.kind === 'cell' && combineCrystalPieces(origin.piece, other) !== null));
+        (!other || (origin.kind === 'cell' && combineCrystalPieces(origin.piece, other) !== null));
       cell.dataset.crystalariumDrop =
-        origin.kind === 'cell' && index === origin.index
-          ? 'origin'
-          : valid
-            ? 'valid'
-            : 'blocked';
+        origin.kind === 'cell' && index === origin.index ? 'origin' : valid ? 'valid' : 'blocked';
     }
     const shelfFull = Array.from({ length: 4 }, (_, index) =>
       this.getPiece({ kind: 'shelf', index }),
@@ -147,8 +142,7 @@ export class CrystalariumPointerDrag {
     for (const shelf of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-action^="shelf-"]',
     )) {
-      shelf.dataset.crystalariumDrop =
-        origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
+      shelf.dataset.crystalariumDrop = origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
     }
     for (const wash of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
@@ -158,14 +152,12 @@ export class CrystalariumPointerDrag {
   }
 
   private showHoveredTarget(x: number, y: number): void {
-    for (const previous of this.root.querySelectorAll<HTMLElement>(
-      '[data-crystalarium-over]',
-    )) {
+    for (const previous of this.root.querySelectorAll<HTMLElement>('[data-crystalarium-over]')) {
       delete previous.dataset.crystalariumOver;
     }
-    const target = document.elementFromPoint(x, y)?.closest<HTMLElement>(
-      '[data-crystalarium-drop]',
-    );
+    const target = document
+      .elementFromPoint(x, y)
+      ?.closest<HTMLElement>('[data-crystalarium-drop]');
     if (target && this.root.contains(target)) {
       target.dataset.crystalariumOver = 'true';
     }
@@ -175,9 +167,7 @@ export class CrystalariumPointerDrag {
     this.current?.ghost?.remove();
     this.current = null;
     this.root.classList.remove('is-dragging-crystal');
-    for (const target of this.root.querySelectorAll<HTMLElement>(
-      '[data-crystalarium-drop]',
-    )) {
+    for (const target of this.root.querySelectorAll<HTMLElement>('[data-crystalarium-drop]')) {
       delete target.dataset.crystalariumDrop;
       delete target.dataset.crystalariumOver;
     }
