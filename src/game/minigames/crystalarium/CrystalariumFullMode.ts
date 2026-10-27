@@ -97,12 +97,14 @@ export class CrystalariumFullMode {
         this.selected = source;
         this.washSelected();
       },
-      dragRestore: (slot, target) => this.run({ kind: 'other' }, () => restoreCrystalToCell(this.state, slot, target)),
+      dragRestore: (slot, target) =>
+        this.run({ kind: 'other' }, () => restoreCrystalToCell(this.state, slot, target)),
       dragInvalid: () => {
         this.message = 'Try an empty socket, a matching crystal, the shelf or Brook Wash.';
         this.render();
       },
-      source: (family) => this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
+      source: (family) =>
+        this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
       grow: () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
       growRefined: () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
       offer: () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
@@ -408,7 +410,9 @@ export class CrystalariumFullMode {
     const y = Math.floor((pointer.y - TOP) / STEP);
     if (kind === 'shelf' && source !== null) {
       if (wasDragging && x >= 0 && x < FULL_COLUMNS && y >= 0 && y < FULL_ROWS) {
-        this.run({ kind: 'other' }, () => restoreCrystalToCell(this.state, source, y * FULL_COLUMNS + x));
+        this.run({ kind: 'other' }, () =>
+          restoreCrystalToCell(this.state, source, y * FULL_COLUMNS + x),
+        );
       } else if (!wasDragging) {
         this.run({ kind: 'other' }, () => restoreCrystal(this.state, source));
       } else {
@@ -581,7 +585,11 @@ export class CrystalariumFullMode {
     active = true,
   ): Phaser.GameObjects.Rectangle {
     const lesson = this.guide.getPrompt()?.lessonStep;
-    const shellAction = ['crystalarium-full-guide', 'crystalarium-full-sound', 'crystalarium-full-exit'].includes(name);
+    const shellAction = [
+      'crystalarium-full-guide',
+      'crystalarium-full-sound',
+      'crystalarium-full-exit',
+    ].includes(name);
     const allowed =
       !lesson ||
       shellAction ||

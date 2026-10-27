@@ -1,6 +1,13 @@
 import type { MiniGameLaunchSource } from '../MiniGameSession';
 import { canOfferPattern, type CrystalariumFullState } from './CrystalariumFullRules';
-import { feasibleFirstLesson, firstLessonAllows, firstLessonPair, type FirstLessonCommand, type FirstLessonStep, type TutorialPair } from './CrystalariumTutorialPolicy';
+import {
+  feasibleFirstLesson,
+  firstLessonAllows,
+  firstLessonPair,
+  type FirstLessonCommand,
+  type FirstLessonStep,
+  type TutorialPair,
+} from './CrystalariumTutorialPolicy';
 
 export type CrystalariumGuideStage =
   | 'grow'
@@ -184,21 +191,58 @@ export class CrystalariumGuide {
     const { step, pair } = this.lesson;
     switch (step) {
       case 'grow':
-        return { stage: 'grow', lessonStep: step, title: '1 of 5 • Grow', instruction: 'Only Grow Shard works. Tap the glowing Grow button.', target: 'grow' };
+        return {
+          stage: 'grow',
+          lessonStep: step,
+          title: '1 of 5 • Grow',
+          instruction: 'Only Grow Shard works. Tap the glowing Grow button.',
+          target: 'grow',
+        };
       case 'pick-up':
-        return { stage: 'merge', lessonStep: step, title: '2 of 5 • Pick up', instruction: 'Pick up the outlined new crystal, not the other one.', target: 'cell', sourceIndex: pair?.source };
+        return {
+          stage: 'merge',
+          lessonStep: step,
+          title: '2 of 5 • Pick up',
+          instruction: 'Pick up the outlined new crystal, not the other one.',
+          target: 'cell',
+          sourceIndex: pair?.source,
+        };
       case 'merge':
-        return { stage: 'merge', lessonStep: step, title: '3 of 5 • Merge', instruction: 'Drop it onto the outlined matching twin.', target: 'cell', sourceIndex: pair?.source, targetIndex: pair?.target };
+        return {
+          stage: 'merge',
+          lessonStep: step,
+          title: '3 of 5 • Merge',
+          instruction: 'Drop it onto the outlined matching twin.',
+          target: 'cell',
+          sourceIndex: pair?.source,
+          targetIndex: pair?.target,
+        };
       case 'inspect':
-        return { stage: 'offer', lessonStep: step, title: '4 of 5 • Match the picture', instruction: 'Look at the new crystal. Tap the matching goal picture.', target: 'goal' };
+        return {
+          stage: 'offer',
+          lessonStep: step,
+          title: '4 of 5 • Match the picture',
+          instruction: 'Look at the new crystal. Tap the matching goal picture.',
+          target: 'goal',
+        };
       case 'offer':
-        return { stage: 'offer', lessonStep: step, title: '5 of 5 • Offer', instruction: 'The crystal matches! Only Offer Pattern works now.', target: 'offer' };
+        return {
+          stage: 'offer',
+          lessonStep: step,
+          title: '5 of 5 • Offer',
+          instruction: 'The crystal matches! Only Offer Pattern works now.',
+          target: 'offer',
+        };
     }
   }
 
   /** Called before any rule or save; Skip, Help, Exit and sound live outside this policy. */
   public allows(command: FirstLessonCommand): boolean {
-    return !this.active || !this.lesson || firstLessonAllows(this.lesson.step, this.lesson.pair, command);
+    return (
+      !this.active ||
+      !this.lesson ||
+      firstLessonAllows(this.lesson.step, this.lesson.pair, command)
+    );
   }
 
   public picked(index: number): void {
@@ -227,7 +271,10 @@ export class CrystalariumGuide {
     if (this.lesson) {
       if (after.completed > before.completed) {
         this.finish();
-      } else if (this.lesson.step === 'grow' && after.cells.filter(Boolean).length > before.cells.filter(Boolean).length) {
+      } else if (
+        this.lesson.step === 'grow' &&
+        after.cells.filter(Boolean).length > before.cells.filter(Boolean).length
+      ) {
         const pair = firstLessonPair(after);
         if (pair) this.lesson = { step: 'pick-up', pair };
         else this.finish(); // An unusual saved board may not support this choreography.

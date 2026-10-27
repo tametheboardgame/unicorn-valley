@@ -373,7 +373,13 @@ export class CrystalariumPortraitView {
     const utility = makeElement('div', 'crystalarium-portrait-secondary-actions');
     utility.append(
       this.button('Harmony ♫', this.actions.harmony, 'standard', locked, 'harmony'),
-      this.button('Polish ✧', this.actions.polish, 'standard', locked || state.completed < 30, 'polish'),
+      this.button(
+        'Polish ✧',
+        this.actions.polish,
+        'standard',
+        locked || state.completed < 30,
+        'polish',
+      ),
       this.button(
         'Shelf selected',
         this.actions.shelve,
