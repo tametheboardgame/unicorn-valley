@@ -170,6 +170,51 @@ test.describe('H6.9C portrait touch evidence', () => {
   });
 });
 
+test.describe('H6.9C9 illustrated first-play guidance', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test('teaches accepted actions, allows replay and keeps the adventure save untouched', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    const step = region.locator('[data-crystalarium-guide]');
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'grow');
+    await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveClass(
+      /is-guide-focus/,
+    );
+    await region.locator('[data-crystalarium-action="grow"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'merge');
+    await expect(region.locator('.crystalarium-portrait-grid')).toHaveClass(
+      /is-guide-focus/,
+    );
+    await region.locator('[data-crystalarium-cell="0"]').click();
+    await region.locator('[data-crystalarium-cell="1"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(
+      /is-guide-focus/,
+    );
+    await region.locator('[data-crystalarium-action="offer"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'hidden');
+    expect(
+      await page.evaluate(() =>
+        localStorage.getItem('unicorn-valley:crystalarium:guide:just-games:v1'),
+      ),
+    ).toBe('seen');
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+    await region.locator('[data-crystalarium-action="guide"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'explore');
+    await region.locator('[data-crystalarium-action="guide"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'hidden');
+    expect(
+      await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+        SANDBOX_KEY,
+      ),
+    ).toBe(1);
+  });
+});
+
 test.describe('H6.9C native-to-canvas rotation contract', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
