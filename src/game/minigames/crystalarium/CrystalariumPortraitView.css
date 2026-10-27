@@ -165,6 +165,17 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  .crystalarium-portrait-cell.is-occupied,
+  .crystalarium-portrait-action.is-shelf:not(:disabled) {
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-cell],
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-action] {
+    border-color: #c0ffe0;
+  }
+
   .crystalarium-portrait-cell[data-family="low"] {
     border-color: #9cc4fa;
     background: #3267a7;
@@ -302,5 +313,31 @@
   .crystalarium-portrait-board-section,
   .crystalarium-portrait-controls {
     padding-inline: 7px;
+  }
+}
+
+.crystalarium-drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  display: grid;
+  width: 70px;
+  height: 76px;
+  place-items: center;
+  pointer-events: none;
+  transform: translate(-50%, -58%);
+  border: 2px solid #fff4b2;
+  border-radius: 24px;
+  background: rgb(39 79 117 / 70%);
+  box-shadow: 0 8px 25px rgb(0 0 0 / 35%), 0 0 18px rgb(201 236 255 / 45%);
+}
+
+.crystalarium-drag-ghost .crystalarium-art {
+  width: 65px;
+  height: 70px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crystalarium-drag-ghost {
+    box-shadow: 0 4px 10px rgb(0 0 0 / 35%);
   }
 }
