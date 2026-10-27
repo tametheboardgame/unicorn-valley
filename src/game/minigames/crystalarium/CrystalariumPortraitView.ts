@@ -319,11 +319,10 @@ export class CrystalariumPortraitView {
       this.button('Offer pattern', this.actions.offer, 'offer', !canOfferPattern(state), 'offer'),
     );
     primary.classList.add('is-quickbar');
-    if (view.guide?.target === 'grow') {
-      primary.querySelector('[data-crystalarium-action="grow"]')?.classList.add('is-guide-focus');
-    }
-    if (view.guide?.target === 'offer') {
-      primary.querySelector('[data-crystalarium-action="offer"]')?.classList.add('is-guide-focus');
+    if (view.guide && view.guide.target !== 'cell' && view.guide.target !== 'none') {
+      primary
+        .querySelector('[data-crystalarium-action="' + view.guide.target + '"]')
+        ?.classList.add('is-guide-focus');
     }
     if (refined !== null) primary.classList.add('is-refined');
 
@@ -346,6 +345,11 @@ export class CrystalariumPortraitView {
         'wash',
       ),
     );
+    if (view.guide && ['harmony', 'polish', 'shelve', 'wash'].includes(view.guide.target)) {
+      utility
+        .querySelector('[data-crystalarium-action="' + view.guide.target + '"]')
+        ?.classList.add('is-guide-focus');
+    }
     controls.append(utility);
     const shelf = makeElement('div', 'crystalarium-portrait-shelf');
     shelf.append(
