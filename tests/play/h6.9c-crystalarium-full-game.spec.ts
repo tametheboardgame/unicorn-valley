@@ -711,7 +711,6 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
   });
 });
 
-
 test.describe('H6.9C13A isolated producer-placement visual concept', () => {
   test('compares 42 frame sockets against 39 fixed-cell sockets without game saves', async ({
     page,
@@ -726,7 +725,10 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
     await expect(page.locator('#frame-sources .root-control')).toHaveCount(3);
     await expect(page.locator('#frame-sources .root-control.locked')).toHaveCount(2);
     await expect(page.locator('#unlocks')).toHaveText('1 / 3');
-    await page.screenshot({ path: testInfo.outputPath('h6.9c13a-frame-desktop.png'), fullPage: true });
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-frame-desktop.png'),
+      fullPage: true,
+    });
 
     await grow.click();
     await expect(page.locator('#total')).toHaveText('3');
@@ -736,7 +738,10 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
     await expect(page.locator('#space')).toHaveText('39 / 42');
     await expect(board.locator('.cell.occupied-producer')).toHaveCount(3);
     await expect(page.locator('#frame-sources')).toBeHidden();
-    await page.screenshot({ path: testInfo.outputPath('h6.9c13a-three-fixed-cells.png'), fullPage: true });
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-three-fixed-cells.png'),
+      fullPage: true,
+    });
 
     await page.getByRole('button', { name: '4 patterns' }).click();
     await expect(page.locator('#unlocks')).toHaveText('2 / 3');
@@ -777,14 +782,20 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
         await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       ).toBe(true);
       const scroller = page.locator('.board-window');
-      expect(
-        await scroller.evaluate((element) => element.scrollWidth > element.clientWidth),
-      ).toBe(true);
-      await page.screenshot({ path: testInfo.outputPath('h6.9c13a-narrow-frame.png'), fullPage: true });
+      expect(await scroller.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+        true,
+      );
+      await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-narrow-frame.png'),
+      fullPage: true,
+    });
       await page.locator('#grid-choice').click();
       await expect(page.locator('#board .cell.occupied-producer')).toHaveCount(3);
       await expect(page.locator('#space')).toHaveText('39 / 42');
-      await page.screenshot({ path: testInfo.outputPath('h6.9c13a-narrow-occupied.png'), fullPage: true });
+      await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-narrow-occupied.png'),
+      fullPage: true,
+    });
     });
   });
 });
