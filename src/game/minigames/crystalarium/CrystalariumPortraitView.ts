@@ -14,6 +14,7 @@ import {
   CRYSTAL_TIER_NAMES,
   type CrystalFamily,
 } from './CrystalariumOpeningRules';
+import { createCrystalArtElement } from './CrystalariumCrystalArt';
 import './CrystalariumPortraitView.css';
 
 export interface CrystalariumPortraitActions {
@@ -150,19 +151,35 @@ export class CrystalariumPortraitView {
       'crystalarium-portrait-pattern-title',
       pattern?.title ?? 'Crystalarium Symphony complete',
     );
-    const goals = makeElement(
-      'p',
-      'crystalarium-portrait-goals',
-      pattern
-        ? pattern.goals
-            .map(
-              (goal) =>
-                `${CRYSTAL_NOTE_PRESENTATION[goal.family].symbol} ${CRYSTAL_TIER_NAMES[goal.tier]} ×${goal.quantity}`,
-            )
-            .concat(pattern.harmonies ? [`♫ Harmony ×${pattern.harmonies}`] : [])
-            .join('  •  ')
-        : 'You can continue experimenting with the crystals.',
-    );
+    const goals = makeElement('div', 'crystalarium-portrait-goals');
+    if (pattern) {
+      for (const goal of pattern.goals) {
+        const tile = makeElement('div', 'crystalarium-portrait-goal');
+        tile.append(createCrystalArtElement({ family: goal.family, tier: goal.tier }));
+        const owned = [...state.cells, ...state.shelf].filter(
+          (piece) => piece?.family === goal.family && piece.tier === goal.tier,
+        ).length;
+        tile.append(
+          makeElement('span', 'crystalarium-portrait-goal-count', owned + ' / ' + goal.quantity),
+        );
+        tile.setAttribute(
+          'aria-label',
+          goal.family + ' ' + CRYSTAL_TIER_NAMES[goal.tier] + ': ' + owned + ' of ' + goal.quantity,
+        );
+        goals.append(tile);
+      }
+      if (pattern.harmonies) {
+        goals.append(
+          makeElement(
+            'span',
+            'crystalarium-portrait-harmony-goal',
+            '♫ ' + state.harmonies + ' / ' + pattern.harmonies,
+          ),
+        );
+      }
+    } else {
+      goals.append(makeElement('span', 'crystalarium-portrait-goal-count', 'Experiment freely!'));
+    }
     task.append(label, title, goals);
 
     const boardSection = makeElement('section', 'crystalarium-portrait-board-section');
@@ -201,9 +218,8 @@ export class CrystalariumPortraitView {
           ? `${piece.family} ${CRYSTAL_TIER_NAMES[piece.tier]}, row ${row}, column ${col}`
           : `Empty socket, row ${row}, column ${col}`,
       );
-      button.textContent = piece
-        ? `${CRYSTAL_NOTE_PRESENTATION[piece.family].symbol}\n${piece.tier + 1}`
-        : '·';
+      if (piece) button.append(createCrystalArtElement(piece));
+      else button.textContent = '·';
       button.addEventListener('click', (event) => {
         event.stopPropagation();
         this.actions.cell(index);
@@ -291,17 +307,21 @@ export class CrystalariumPortraitView {
     const shelfSlots = makeElement('div', 'crystalarium-portrait-shelf-slots');
     for (let index = 0; index < state.shelf.length; index += 1) {
       const piece = state.shelf[index];
-      shelfSlots.append(
-        this.button(
-          piece
-            ? `${CRYSTAL_NOTE_PRESENTATION[piece.family].symbol} level ${piece.tier + 1}`
-            : 'Empty',
-          () => this.actions.restore(index),
-          'shelf',
-          piece === null,
-          'shelf-' + index,
-        ),
+      const slot = this.button(
+        piece ? CRYSTAL_TIER_NAMES[piece.tier] : 'Empty',
+        () => this.actions.restore(index),
+        'shelf',
+        piece === null,
+        'shelf-' + index,
       );
+      if (piece) {
+        slot.replaceChildren(createCrystalArtElement(piece));
+        slot.setAttribute(
+          'aria-label',
+          'Return ' + piece.family + ' ' + CRYSTAL_TIER_NAMES[piece.tier] + ' to board',
+        );
+      }
+      shelfSlots.append(slot);
     }
     shelf.append(shelfSlots);
     controls.append(shelf);
