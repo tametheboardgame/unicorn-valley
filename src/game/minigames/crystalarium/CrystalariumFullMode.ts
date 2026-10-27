@@ -567,6 +567,9 @@ export class CrystalariumFullMode {
       17,
     );
     this.plate(holder, 158, 165, 464, 388, 20, 0x172d4d, 0x6da8c9);
+    // One batched graphics object keeps the 42 socket outlines cheap to redraw.
+    const sockets = this.scene.add.graphics();
+    holder.add(sockets);
     for (let i = 0; i < FULL_CELL_COUNT; i += 1) {
       const piece = this.state.cells[i];
       const x = LEFT + (i % FULL_COLUMNS) * STEP + CELL / 2;
@@ -575,14 +578,12 @@ export class CrystalariumFullMode {
       const selected = this.selected === i;
       const bg = selected ? 0x547da0 : focused ? 0x395b86 : 0x233c5c;
       const rim = selected ? 0xffe5a0 : focused ? 0xcdf3ff : 0x54718d;
-      const socket = this.scene.add.graphics();
-      socket.fillStyle(0x0c233d, 0.66);
-      socket.fillRoundedRect(x - CELL / 2 + 2, y - CELL / 2 + 4, CELL, CELL, 12);
-      socket.fillStyle(bg, 0.98);
-      socket.fillRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
-      socket.lineStyle(selected ? 4 : focused ? 3 : 2, rim, 0.93);
-      socket.strokeRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
-      holder.add(socket);
+      sockets.fillStyle(0x0c233d, 0.66);
+      sockets.fillRoundedRect(x - CELL / 2 + 2, y - CELL / 2 + 4, CELL, CELL, 12);
+      sockets.fillStyle(bg, 0.98);
+      sockets.fillRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
+      sockets.lineStyle(selected ? 4 : focused ? 3 : 2, rim, 0.93);
+      sockets.strokeRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
       // Keep the original stable Phaser object and interactive hit rectangle for
       // keyboard, browser diagnostics, pointer drag and existing play tests.
       const cell = this.scene.add
