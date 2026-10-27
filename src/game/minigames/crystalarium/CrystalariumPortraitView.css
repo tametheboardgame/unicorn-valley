@@ -163,6 +163,14 @@
     box-shadow: 0 0 14px rgb(255 224 146 / 36%);
   }
 
+  .crystalarium-portrait-scroll-cue {
+    margin: 0;
+    color: #ffecab;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+  }
+
   .crystalarium-portrait-board-scroll {
     overflow-x: auto;
     overscroll-behavior-x: contain;
