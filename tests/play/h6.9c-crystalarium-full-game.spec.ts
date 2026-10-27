@@ -559,10 +559,7 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
     // A structurally valid endgame save is injected only into isolated Just Games
     // for late-UI coverage; the 50-pattern legal-action run is independently
     // covered by CrystalariumCampaignSolvability.test.ts.
-    const cells: (CrystalariumFullState['cells'][number])[] = Array.from(
-      { length: 42 },
-      () => null,
-    );
+    const cells: CrystalariumFullState['cells'][number][] = Array.from({ length: 42 }, () => null);
     cells[0] = { family: 'low', tier: 5 };
     cells[1] = { family: 'bright', tier: 5 };
     cells[2] = { family: 'bell', tier: 5 };
@@ -574,10 +571,10 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
       selectedFamily: 'bell',
       discovered: ['low:0', 'low:5', 'bright:5', 'bell:5'],
     };
-    await page.evaluate(
-      ([key, value]) => localStorage.setItem(key, JSON.stringify(value)),
-      [SANDBOX_KEY, seeded] as const,
-    );
+    await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify(value)), [
+      SANDBOX_KEY,
+      seeded,
+    ] as const);
     await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
     await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
     await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
