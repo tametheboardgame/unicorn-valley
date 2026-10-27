@@ -516,9 +516,7 @@ export class CrystalariumFullMode {
         const x = 742 + index * 138;
         const y = 265;
         holder.add(
-          this.scene.add
-            .rectangle(x, y - 7, 112, 76, 0x2e5276, 0.96)
-            .setStrokeStyle(2, 0x93d0e9),
+          this.scene.add.rectangle(x, y - 7, 112, 76, 0x2e5276, 0.96).setStrokeStyle(2, 0x93d0e9),
         );
         const illustration = this.scene.add.graphics();
         paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.59);
@@ -526,8 +524,15 @@ export class CrystalariumFullMode {
         const owned = [...this.state.cells, ...this.state.shelf].filter(
           (piece) => piece?.family === goal.family && piece.tier === goal.tier,
         ).length;
-        this.addText(holder, x, y + 17, owned + ' / ' + goal.quantity, 15, '#fff1bc', 100)
-          .setOrigin(0.5);
+        this.addText(
+          holder,
+          x,
+          y + 17,
+          owned + ' / ' + goal.quantity,
+          15,
+          '#fff1bc',
+          100,
+        ).setOrigin(0.5);
       });
       if (pattern.harmonies) {
         this.addText(
