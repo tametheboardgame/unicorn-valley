@@ -237,6 +237,50 @@ test.describe('H6.9C native-to-canvas rotation contract', () => {
   });
 });
 
+test('H6.9C10 consecutive visual offerings unlock the next goal and survive a return', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  let state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(state.completed).toBe(1);
+  expect(state.offers).toBe(1);
+  // Pattern two needs two identical tier-one crystals, with no hidden charge or timer.
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:2');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(state.completed).toBe(2);
+  expect(state.offers).toBe(2);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
+  await waitForScene(page, 'JustGamesScene');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  expect(
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+      SANDBOX_KEY,
+    ),
+  ).toBe(2);
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
 test('H6.9C Crystal Brook nursery saves world progress and returns without reopening the Grotto', async ({
   page,
 }) => {
