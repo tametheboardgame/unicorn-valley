@@ -16,6 +16,7 @@ import {
 } from './CrystalariumOpeningRules';
 import { createCrystalArtElement } from './CrystalariumCrystalArt';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
+import type { CrystalariumGuidePrompt } from './CrystalariumGuide';
 import './CrystalariumPortraitView.css';
 
 export interface CrystalariumPortraitActions {
@@ -36,6 +37,8 @@ export interface CrystalariumPortraitActions {
   fresh(): void;
   restore(index: number): void;
   sound(): void;
+  guide(): void;
+  skipGuide(): void;
   exit(): void;
 }
 
@@ -48,6 +51,7 @@ export interface CrystalariumPortraitPresentation {
   washArmed: boolean;
   resetArmed: boolean;
   source: 'world' | 'just-games';
+  guide: CrystalariumGuidePrompt | null;
 }
 
 function makeElement<K extends keyof HTMLElementTagNameMap>(
@@ -158,7 +162,11 @@ export class CrystalariumPortraitView {
     );
     const intro = makeElement('div', 'crystalarium-portrait-brand');
     intro.append(heading, subtitle);
-    header.append(intro, this.button('Leave', this.actions.exit, 'quiet', false, 'exit'));
+    header.append(
+      intro,
+      this.button(view.guide ? 'Skip guide' : 'Help', this.actions.guide, 'quiet', false, 'guide'),
+      this.button('Leave', this.actions.exit, 'quiet', false, 'exit'),
+    );
 
     const task = makeElement('section', 'crystalarium-portrait-pattern');
     task.setAttribute('aria-label', 'Current Resonance Pattern');
@@ -204,6 +212,18 @@ export class CrystalariumPortraitView {
       goals.append(makeElement('span', 'crystalarium-portrait-goal-count', 'Experiment freely!'));
     }
     task.append(label, title, goals);
+
+    const guidePanel = makeElement('aside', 'crystalarium-portrait-guide');
+    guidePanel.dataset.crystalariumGuide = view.guide?.stage ?? 'hidden';
+    if (view.guide) {
+      guidePanel.setAttribute('aria-live', 'polite');
+      guidePanel.append(
+        makeElement('strong', 'crystalarium-portrait-guide-title', '✦ ' + view.guide.title),
+        makeElement('p', 'crystalarium-portrait-guide-copy', view.guide.instruction),
+      );
+    } else {
+      guidePanel.hidden = true;
+    }
 
     const boardSection = makeElement('section', 'crystalarium-portrait-board-section');
     boardSection.setAttribute('aria-label', 'Crystal merging board');
@@ -258,6 +278,7 @@ export class CrystalariumPortraitView {
       'Choose a crystal, then tap its matching pair. Slide the board sideways on small phones.',
     );
     boardSection.append(helper);
+    if (view.guide?.target === 'cell') grid.classList.add('is-guide-focus');
 
     const controls = makeElement('section', 'crystalarium-portrait-controls');
     controls.setAttribute('aria-label', 'Crystalarium actions');
@@ -298,6 +319,12 @@ export class CrystalariumPortraitView {
       this.button('Offer pattern', this.actions.offer, 'offer', !canOfferPattern(state), 'offer'),
     );
     primary.classList.add('is-quickbar');
+    if (view.guide?.target === 'grow') {
+      primary.querySelector('[data-crystalarium-action="grow"]')?.classList.add('is-guide-focus');
+    }
+    if (view.guide?.target === 'offer') {
+      primary.querySelector('[data-crystalarium-action="offer"]')?.classList.add('is-guide-focus');
+    }
     if (refined !== null) primary.classList.add('is-refined');
 
     const utility = makeElement('div', 'crystalarium-portrait-secondary-actions');
@@ -361,7 +388,7 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
-    this.root.replaceChildren(header, task, primary, boardSection, status, controls);
+    this.root.replaceChildren(header, task, guidePanel, primary, boardSection, status, controls);
 
     if (focusKey !== undefined) {
       const selector = focusIsCell
