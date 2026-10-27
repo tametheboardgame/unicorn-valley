@@ -786,16 +786,16 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
         true,
       );
       await page.screenshot({
-      path: testInfo.outputPath('h6.9c13a-narrow-frame.png'),
-      fullPage: true,
-    });
+        path: testInfo.outputPath('h6.9c13a-narrow-frame.png'),
+        fullPage: true,
+      });
       await page.locator('#grid-choice').click();
       await expect(page.locator('#board .cell.occupied-producer')).toHaveCount(3);
       await expect(page.locator('#space')).toHaveText('39 / 42');
       await page.screenshot({
-      path: testInfo.outputPath('h6.9c13a-narrow-occupied.png'),
-      fullPage: true,
-    });
+        path: testInfo.outputPath('h6.9c13a-narrow-occupied.png'),
+        fullPage: true,
+      });
     });
   });
 });
