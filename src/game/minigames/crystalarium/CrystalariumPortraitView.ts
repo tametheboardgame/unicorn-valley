@@ -175,6 +175,8 @@ export class CrystalariumPortraitView {
     const task = makeElement('section', 'crystalarium-portrait-pattern');
     task.setAttribute('aria-label', 'Current Resonance Pattern');
     task.dataset.crystalariumGoalCount = String(pattern?.goals.length ?? 0);
+    const readyToOffer = canOfferPattern(state);
+    task.dataset.crystalariumReady = readyToOffer ? 'true' : 'false';
     const label = makeElement(
       'p',
       'crystalarium-portrait-eyebrow',
@@ -216,7 +218,18 @@ export class CrystalariumPortraitView {
     } else {
       goals.append(makeElement('span', 'crystalarium-portrait-goal-count', 'Experiment freely!'));
     }
-    task.append(label, title, goals);
+    const offer = this.button(
+      readyToOffer ? '✦ Ready — Offer Pattern' : 'Offer Pattern',
+      this.actions.offer,
+      'offer',
+      !readyToOffer,
+      'offer',
+    );
+    if (readyToOffer) {
+      offer.classList.add('is-ready');
+      offer.setAttribute('aria-label', 'Pattern complete. Ready to offer.');
+    }
+    task.append(label, title, goals, offer);
 
     const guidePanel = makeElement('aside', 'crystalarium-portrait-guide');
     guidePanel.dataset.crystalariumGuide = view.guide?.stage ?? 'hidden';
@@ -291,8 +304,8 @@ export class CrystalariumPortraitView {
     if (view.guide?.target === 'cell') grid.classList.add('is-guide-focus');
 
     const controls = makeElement('section', 'crystalarium-portrait-controls');
-    controls.setAttribute('aria-label', 'Crystalarium actions');
-    controls.append(makeElement('h2', 'crystalarium-portrait-section-title', 'Crystal veins'));
+    controls.setAttribute('aria-label', 'Crystal Growing');
+    controls.append(makeElement('h2', 'crystalarium-portrait-section-title', '✦ Crystal Growing'));
     const sourceRow = makeElement('div', 'crystalarium-portrait-sources');
     for (const family of CRYSTAL_FAMILIES) {
       const unlocked = unlockedCrystalFamilies(state).includes(family);
@@ -325,17 +338,18 @@ export class CrystalariumPortraitView {
         ),
       );
     }
-    primary.append(
-      this.button('Offer pattern', this.actions.offer, 'offer', !canOfferPattern(state), 'offer'),
-    );
-    primary.classList.add('is-quickbar');
-    if (view.guide && view.guide.target !== 'cell' && view.guide.target !== 'none') {
+    controls.append(primary);
+    if (view.guide?.target === 'grow' || view.guide?.target === 'grow-refined') {
       primary
         .querySelector('[data-crystalarium-action="' + view.guide.target + '"]')
         ?.classList.add('is-guide-focus');
     }
+    if (view.guide?.target === 'offer') offer.classList.add('is-guide-focus');
     if (refined !== null) primary.classList.add('is-refined');
 
+    const tools = makeElement('section', 'crystalarium-portrait-tools');
+    tools.setAttribute('aria-label', 'Crystal Tools');
+    tools.append(makeElement('h2', 'crystalarium-portrait-section-title', '✧ Crystal Tools'));
     const utility = makeElement('div', 'crystalarium-portrait-secondary-actions');
     utility.append(
       this.button('Harmony ♫', this.actions.harmony, 'standard', false, 'harmony'),
@@ -360,7 +374,7 @@ export class CrystalariumPortraitView {
         .querySelector('[data-crystalarium-action="' + view.guide.target + '"]')
         ?.classList.add('is-guide-focus');
     }
-    controls.append(utility);
+    tools.append(utility);
     const shelf = makeElement('div', 'crystalarium-portrait-shelf');
     shelf.append(
       makeElement(
@@ -398,7 +412,7 @@ export class CrystalariumPortraitView {
       ),
     );
     shelf.append(shelfSlots);
-    controls.append(
+    tools.append(
       this.button(
         view.resetArmed ? 'Confirm fresh board' : 'Fresh board',
         this.actions.fresh,
@@ -414,11 +428,11 @@ export class CrystalariumPortraitView {
       header,
       task,
       guidePanel,
-      primary,
       boardSection,
       shelf,
       status,
       controls,
+      tools,
     );
     // Recreating the 42-cell board must not snap a narrow phone back to column one.
     // Players need to keep later columns in view after selection, Grow and Offer.
