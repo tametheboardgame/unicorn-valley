@@ -149,7 +149,7 @@ main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-templa
   const pattern=document.getElementById("pattern");
   const texts=[
     ["1. Grow a crystal","Only Grow Shard is available. Tap the glowing button to start!"],
-    ["2. Pick up a shard","Now tap the outlined blue crystal in the top-left corner."],
+    ["2. Pick up a shard","Now tap the new, glowing blue crystal in the top row."],
     ["3. Merge matching twins","Tap or drop it onto the highlighted matching blue crystal."],
     ["4. Match the picture","That's the same shape! Tap the crystal picture in the Resonance Pattern altar."],
     ["5. Offer the pattern","The altar is ready! Tap the glowing Offer Pattern button."],
@@ -163,17 +163,17 @@ main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-templa
     return `<svg class='gem' aria-hidden='true' viewBox='0 0 50 55'><path d='M25 2 L37 11 L45 30 L26 53 L5 30 L13 11 Z' fill='${b}' stroke='${a}' stroke-width='2'/><path d='M25 2 L13 11 L20 31 L26 53 L32 30 L37 11 Z' fill='${a}' opacity='.55'/><path d='M5 30 L20 31 L26 53 Z' fill='#132a56' opacity='.5'/><path d='M45 30 L32 30 L26 53 Z' fill='#1b396c' opacity='.43'/><path d='M13 11 L37 11 L32 30 L20 31 Z' fill='#f7ffff' opacity='.15'/>${extra}</svg>`;
   };
   const notify = (s) => {const t=document.getElementById("status");t.textContent=s;t.hidden=false;};
-  const cellPiece = (i) => {if(merged){if(i===1)return 1;if(i===2&&grown)return 0;return -1;}if(i===0||i===1)return 0;if(i===2&&grown)return 0;return -1;}
+  const cellPiece = (i) => {if(merged){if(i===0)return 1;if(i===1)return 0;return -1;}if(i===0||i===1)return 0;if(i===2&&grown)return 0;return -1;}
   const cellAction = (i) => {
-    if(stage===1&&i===0){picked=true;stage=2;notify("Picked up. Now tap the glowing matching crystal.");render();return;}
-    if(stage===2&&i===1&&picked){merged=true;stage=3;notify("Resonance! The crystals have merged.");render();return;}
+    if(stage===1&&i===2){picked=true;stage=2;notify("Picked up. Now tap the glowing matching crystal.");render();return;}
+    if(stage===2&&i===0&&picked){merged=true;stage=3;notify("Resonance! The crystals have merged.");render();return;}
     notify("The tutorial allows only the glowing gameplay target. Skip is always available.");
   }
   const render = () => {
     board.replaceChildren();
     for(let i=0;i<42;i++){
-      const el=document.createElement("button"),piece=cellPiece(i),allowed=(stage===1&&i===0)||(stage===2&&i===1);
-      el.type="button";el.className=`cell${piece<0?" empty":""}${allowed?" spotlight allowed":""}${stage===2&&i===0?" origin":""}`;
+      const el=document.createElement("button"),piece=cellPiece(i),allowed=(stage===1&&i===2)||(stage===2&&i===0);
+      el.type="button";el.className=`cell${piece<0?" empty":""}${allowed?" spotlight allowed":""}${stage===2&&i===2?" origin":""}`;
       el.disabled=!allowed;el.setAttribute("aria-label",piece<0?`Empty socket ${i+1}`:`Low ${piece===1?"polished":"shard"} socket ${i+1}`);
       el.innerHTML=piece<0?"·":gem(piece,"low");
       el.addEventListener("click",()=>cellAction(i));board.append(el);
