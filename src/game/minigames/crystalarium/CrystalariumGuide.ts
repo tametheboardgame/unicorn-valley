@@ -58,7 +58,8 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
       return {
         stage,
         title: 'Your crystal songbook',
-        instruction: 'Grow shards, drag matching twins together, then match the pictured recipe. The shelf stores crystals; Brook Wash recycles them.',
+        instruction:
+          'Grow shards, drag matching twins together, then match the pictured recipe. The shelf stores crystals; Brook Wash recycles them.',
         target: 'none',
       };
   }
