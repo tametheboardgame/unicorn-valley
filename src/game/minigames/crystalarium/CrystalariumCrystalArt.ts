@@ -82,7 +82,12 @@ function facets(piece: CrystalPiece): readonly Facet[] {
   // crown and a six-spire formation. Add behind the central crystal body.
   if (tier >= 1) {
     result.push({
-      points: [[49, 43], [61, 17], [72, 25], [63, 58]],
+      points: [
+        [49, 43],
+        [61, 17],
+        [72, 25],
+        [63, 58],
+      ],
       fill: palette.light,
       opacity: 0.94,
       outlined: true,
@@ -90,33 +95,61 @@ function facets(piece: CrystalPiece): readonly Facet[] {
   }
   if (tier >= 2) {
     result.push({
-      points: [[7, 63], [10, 23], [22, 38], [29, 78]],
+      points: [
+        [7, 63],
+        [10, 23],
+        [22, 38],
+        [29, 78],
+      ],
       fill: palette.shadow,
       outlined: true,
     });
   }
   if (tier >= 3) {
     result.push({
-      points: [[56, 72], [68, 20], [79, 46], [74, 78]],
+      points: [
+        [56, 72],
+        [68, 20],
+        [79, 46],
+        [74, 78],
+      ],
       fill: palette.light,
       outlined: true,
     });
   }
   if (tier >= 4) {
     result.push({
-      points: [[21, 38], [19, 10], [32, 22], [40, 2], [49, 22], [61, 9], [60, 41]],
+      points: [
+        [21, 38],
+        [19, 10],
+        [32, 22],
+        [40, 2],
+        [49, 22],
+        [61, 9],
+        [60, 41],
+      ],
       fill: palette.base,
       outlined: true,
     });
   }
   if (tier >= 5) {
     result.push({
-      points: [[12, 63], [5, 5], [26, 28], [34, 65]],
+      points: [
+        [12, 63],
+        [5, 5],
+        [26, 28],
+        [34, 65],
+      ],
       fill: palette.light,
       outlined: true,
     });
     result.push({
-      points: [[49, 66], [63, 5], [75, 15], [69, 77]],
+      points: [
+        [49, 66],
+        [63, 5],
+        [75, 15],
+        [69, 77],
+      ],
       fill: palette.shadow,
       outlined: true,
     });
@@ -255,11 +288,7 @@ export function paintCrystalArt(
     );
     graphics.fillPoints(points, true);
     if (facet.outlined) {
-      graphics.lineStyle(
-        1.6,
-        Number.parseInt(PALETTES[piece.family].outline.slice(1), 16),
-        0.95,
-      );
+      graphics.lineStyle(1.6, Number.parseInt(PALETTES[piece.family].outline.slice(1), 16), 0.95);
       graphics.strokePoints(points, true);
     }
   }
