@@ -655,10 +655,10 @@ export class CrystalariumFullMode {
     if (pattern) {
       pattern.goals.forEach((goal, index) => {
         const x = 742 + index * 138;
-        const y = 265;
+        const y = 288;
         this.plate(holder, x - 56, y - 45, 112, 76, 15, 0x2e5276, 0x93d0e9);
         const illustration = this.scene.add.graphics();
-        paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.59);
+        paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.69);
         holder.add(illustration);
         const owned = [...this.state.cells, ...this.state.shelf].filter(
           (piece) => piece?.family === goal.family && piece.tier === goal.tier,
@@ -690,23 +690,23 @@ export class CrystalariumFullMode {
     this.button(
       holder,
       698,
-      301,
+      325,
       145,
       canOfferPattern(this.state) ? 'Offer pattern ✓' : 'Offer pattern',
       'crystalarium-full-offer',
       () => this.apply(offerResonancePattern(this.state)),
     );
-    this.button(holder, 850, 301, 145, 'Harmony ♫', 'crystalarium-full-harmony', () =>
+    this.button(holder, 850, 325, 145, 'Harmony ♫', 'crystalarium-full-harmony', () =>
       this.apply(createHarmony(this.state)),
     );
-    this.button(holder, 1002, 301, 145, 'Polish ✧', 'crystalarium-full-polish', () =>
+    this.button(holder, 1002, 325, 145, 'Polish ✧', 'crystalarium-full-polish', () =>
       this.polishSelected(),
     );
 
     this.addText(
       holder,
       701,
-      372,
+      382,
       'CRYSTAL VEINS • ' + this.state.selectedFamily + ' selected',
       16,
       '#a8e9f5',
@@ -717,7 +717,7 @@ export class CrystalariumFullMode {
       this.button(
         holder,
         697 + index * 143,
-        402,
+        413,
         135,
         unlocked ? note.symbol + ' ' + note.label.split(' ')[0] : 'Locked',
         'crystalarium-source:' + family,
@@ -730,7 +730,7 @@ export class CrystalariumFullMode {
       this.button(
         holder,
         699,
-        458,
+        467,
         203,
         'Grow ' + this.state.selectedFamily + ' shard',
         'crystalarium-full-grow',
@@ -739,20 +739,20 @@ export class CrystalariumFullMode {
       this.button(
         holder,
         910,
-        458,
+        467,
         193,
         this.resetArmed ? 'Confirm reset' : 'Fresh board',
         'crystalarium-full-fresh',
         () => this.freshBoard(),
       );
     } else {
-      this.button(holder, 698, 458, 133, 'Grow shard', 'crystalarium-full-grow', () =>
+      this.button(holder, 698, 467, 133, 'Grow shard', 'crystalarium-full-grow', () =>
         this.apply(spawnCrystal(this.state)),
       );
       this.button(
         holder,
         836,
-        458,
+        467,
         133,
         refinedTier === 2 ? 'Grow crystal' : 'Grow polished',
         'crystalarium-full-grow-refined',
@@ -771,7 +771,7 @@ export class CrystalariumFullMode {
     this.addText(
       holder,
       702,
-      513,
+      519,
       'SHELF (tap to return)   •   Harmony tokens: ' + this.state.harmonies,
       15,
       '#cbe9f2',
