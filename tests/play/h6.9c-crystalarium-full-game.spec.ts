@@ -227,18 +227,23 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
     await expect(region.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
     const newShard = region.locator('[data-crystalarium-cell="2"]');
     await expect(newShard).toHaveClass(/is-guide-focus/);
+    await expect(newShard).toBeFocused();
     await newShard.click();
-    await expect(region.locator('[data-crystalarium-cell="0"]')).toBeEnabled();
-    await region.locator('[data-crystalarium-cell="0"]').click();
+    const mergeTarget = region.locator('[data-crystalarium-cell="0"]');
+    await expect(mergeTarget).toBeEnabled();
+    await expect(mergeTarget).toBeFocused();
+    await mergeTarget.click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
     const picturedGoal = region.locator('[data-crystalarium-action="inspect-goal"]');
     await expect(picturedGoal).toBeVisible();
+    await expect(picturedGoal).toBeFocused();
     await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
     await picturedGoal.click();
     await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(
       /is-guide-focus/,
     );
     await expect(region.locator('[data-crystalarium-action="offer"]')).toBeEnabled();
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeFocused();
     await region.locator('[data-crystalarium-action="offer"]').click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'hidden');
     expect(
@@ -258,6 +263,38 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
       ),
     ).toBe(1);
   });
+});
+
+test('H6.9C11B desktop first-visit guide enforces real Grow, merge, inspect and Offer', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page, true);
+  const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+
+  // Disabled non-tutorial controls remain named for browser diagnostics but
+  // reject input at the canonical controller, without a save mutation.
+  await clickNamedObject(page, SCENE, 'crystalarium-full-harmony');
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:2');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-inspect');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-inspect');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+
+  expect(
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+      SANDBOX_KEY,
+    ),
+  ).toBe(1);
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem('unicorn-valley:crystalarium:guide:just-games:v1'),
+    ),
+  ).toBe('seen');
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
 });
 
 test.describe('H6.9C native-to-canvas rotation contract', () => {
