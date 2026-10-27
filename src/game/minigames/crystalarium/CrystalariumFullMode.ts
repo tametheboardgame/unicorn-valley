@@ -544,8 +544,11 @@ export class CrystalariumFullMode {
       .setStrokeStyle(2, active ? 0x9adbea : 0x62788d)
       .setName(name)
       .setInteractive({ useHandCursor: active });
-    if (!active) back.disableInteractive();
-    back.on('pointerdown', action);
+    // Preserve scene-visible interactive controls for diagnostics and keyboard
+    // navigation while rejecting a disabled Offer before it can mutate state.
+    back.on('pointerdown', () => {
+      if (active) action();
+    });
     holder.add(back);
     this.addText(
       holder,

@@ -100,7 +100,8 @@ test('H6.9C8 desktop carries crystals through merge, shelf and explicit return s
   );
   expect(merged.merges).toBe(1);
   expect(merged.cells[1].tier).toBe(1);
-  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:1', 748, 567);
+  // C12B moved the physical shelf below the independent Crystal Tools panel.
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:1', 748, 608);
   const shelved = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
@@ -482,6 +483,9 @@ test.describe('H6.9C8 invalid portrait drop protection', () => {
     const first = region.locator('[data-crystalarium-cell="0"]');
     const second = region.locator('[data-crystalarium-cell="1"]');
     const drag = async () => {
+      // Grow now lives below the board; returning to the board must restore
+      // its visible viewport before a real mouse/touch drag begins.
+      await first.scrollIntoViewIfNeeded();
       const from = await first.boundingBox();
       const to = await second.boundingBox();
       if (!from || !to) throw new Error('Missing Crystalarium drag targets');
