@@ -328,7 +328,9 @@
   border: 2px solid #fff4b2;
   border-radius: 24px;
   background: rgb(39 79 117 / 70%);
-  box-shadow: 0 8px 25px rgb(0 0 0 / 35%), 0 0 18px rgb(201 236 255 / 45%);
+  box-shadow:
+    0 8px 25px rgb(0 0 0 / 35%),
+    0 0 18px rgb(201 236 255 / 45%);
 }
 
 .crystalarium-drag-ghost .crystalarium-art {
