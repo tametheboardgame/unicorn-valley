@@ -13,8 +13,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: max(9px, env(safe-area-inset-top)) max(9px, env(safe-area-inset-right))
-      135px max(9px, env(safe-area-inset-left));
+    padding: max(9px, env(safe-area-inset-top)) max(9px, env(safe-area-inset-right)) 135px
+      max(9px, env(safe-area-inset-left));
     overflow: auto;
     overscroll-behavior: contain;
     background: linear-gradient(168deg, #162f50, #213e62 60%, #392c63);
