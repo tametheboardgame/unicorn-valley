@@ -360,6 +360,11 @@ test('H6.9C Crystal Brook nursery saves world progress and returns without reope
     })
     .toBe('Crystalarium Nursery');
 
+  // This scenario verifies world save/return, not the novice lesson; first-time
+  // world guidance is checked independently and cannot be bypassed in production.
+  await page.evaluate(() =>
+    localStorage.setItem('unicorn-valley:crystalarium:guide:world:v1', 'seen'),
+  );
   await page.keyboard.press('KeyE');
   await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
@@ -406,6 +411,11 @@ test('H6.9C6 Crystal Grotto altar launches and returns to the cave, keeping adve
         ?.objects.find((o) => o.name === 'exploration-tablet-hint' && o.visible)?.text;
     })
     .toBe('Crystalarium Altar');
+  // This scenario verifies world save/return, not the novice lesson; first-time
+  // world guidance is checked independently and cannot be bypassed in production.
+  await page.evaluate(() =>
+    localStorage.setItem('unicorn-valley:crystalarium:guide:world:v1', 'seen'),
+  );
   await page.keyboard.press('KeyE');
   await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
