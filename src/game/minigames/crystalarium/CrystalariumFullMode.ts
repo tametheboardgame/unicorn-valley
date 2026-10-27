@@ -574,12 +574,19 @@ export class CrystalariumFullMode {
       const focused = this.cursor === i;
       const selected = this.selected === i;
       const bg = selected ? 0x547da0 : focused ? 0x395b86 : 0x233c5c;
+      const rim = selected ? 0xffe5a0 : focused ? 0xcdf3ff : 0x54718d;
+      const socket = this.scene.add.graphics();
+      socket.fillStyle(0x0c233d, 0.66);
+      socket.fillRoundedRect(x - CELL / 2 + 2, y - CELL / 2 + 4, CELL, CELL, 12);
+      socket.fillStyle(bg, 0.98);
+      socket.fillRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
+      socket.lineStyle(selected ? 4 : focused ? 3 : 2, rim, 0.93);
+      socket.strokeRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
+      holder.add(socket);
+      // Keep the original stable Phaser object and interactive hit rectangle for
+      // keyboard, browser diagnostics, pointer drag and existing play tests.
       const cell = this.scene.add
-        .rectangle(x, y, CELL, CELL, bg)
-        .setStrokeStyle(
-          selected ? 4 : focused ? 3 : 1,
-          selected ? 0xffe5a0 : focused ? 0xcdf3ff : 0x54718d,
-        )
+        .rectangle(x, y, CELL, CELL, 0x000000, 0.001)
         .setName('crystalarium-full-cell:' + i)
         .setInteractive({ useHandCursor: true });
       cell.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
