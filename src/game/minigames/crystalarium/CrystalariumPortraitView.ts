@@ -30,6 +30,7 @@ export interface CrystalariumPortraitActions {
   grow(): void;
   growRefined(): void;
   offer(): void;
+  inspectGoal(): void;
   harmony(): void;
   polish(): void;
   shelve(): void;
@@ -156,6 +157,8 @@ export class CrystalariumPortraitView {
     const focusIsCell =
       active instanceof HTMLElement && active.dataset.crystalariumCell !== undefined;
     const { state } = view;
+    const lesson = view.guide?.lessonStep;
+    const locked = lesson !== undefined;
     const pattern = activeResonancePattern(state);
     const header = makeElement('header', 'crystalarium-portrait-header');
     const heading = makeElement('h1', 'crystalarium-portrait-heading', '✦ Crystalarium');
@@ -191,8 +194,16 @@ export class CrystalariumPortraitView {
     );
     const goals = makeElement('div', 'crystalarium-portrait-goals');
     if (pattern) {
-      for (const goal of pattern.goals) {
-        const tile = makeElement('div', 'crystalarium-portrait-goal');
+      for (const [goalIndex, goal] of pattern.goals.entries()) {
+        const inspecting = lesson === 'inspect' && goalIndex === 0;
+        const tile = inspecting
+          ? makeElement('button', 'crystalarium-portrait-goal is-guide-focus')
+          : makeElement('div', 'crystalarium-portrait-goal');
+        if (tile instanceof HTMLButtonElement) {
+          tile.type = 'button';
+          tile.dataset.crystalariumAction = 'inspect-goal';
+          tile.addEventListener('click', () => this.actions.inspectGoal());
+        }
         tile.append(createCrystalArtElement({ family: goal.family, tier: goal.tier }));
         const owned = [...state.cells, ...state.shelf].filter(
           (piece) => piece?.family === goal.family && piece.tier === goal.tier,
@@ -222,7 +233,7 @@ export class CrystalariumPortraitView {
       readyToOffer ? '✦ Ready — Offer Pattern' : 'Offer Pattern',
       this.actions.offer,
       'offer',
-      !readyToOffer,
+      !readyToOffer || (locked && lesson !== 'offer'),
       'offer',
     );
     if (readyToOffer) {
@@ -278,6 +289,13 @@ export class CrystalariumPortraitView {
       button.dataset.family = piece?.family ?? 'empty';
       button.classList.toggle('is-selected', view.selected === index);
       button.classList.toggle('is-occupied', piece !== null);
+      const allowedCell =
+        !locked ||
+        (lesson === 'pick-up' && index === view.guide?.sourceIndex) ||
+        (lesson === 'merge' &&
+          (index === view.guide?.sourceIndex || index === view.guide?.targetIndex));
+      button.disabled = !allowedCell;
+      button.classList.toggle('is-guide-focus', locked && allowedCell);
       button.setAttribute('aria-pressed', view.selected === index ? 'true' : 'false');
       button.setAttribute(
         'aria-label',
@@ -316,7 +334,7 @@ export class CrystalariumPortraitView {
         text,
         () => this.actions.source(family),
         'source',
-        !unlocked,
+        !unlocked || locked,
         'source-' + family,
       );
       button.setAttribute('aria-pressed', state.selectedFamily === family ? 'true' : 'false');
@@ -325,7 +343,9 @@ export class CrystalariumPortraitView {
     }
     controls.append(sourceRow);
     const primary = makeElement('div', 'crystalarium-portrait-primary-actions');
-    primary.append(this.button('Grow shard', this.actions.grow, 'primary', false, 'grow'));
+    primary.append(
+      this.button('Grow shard', this.actions.grow, 'primary', locked && lesson !== 'grow', 'grow'),
+    );
     const refined = refinedSourceTier(state);
     if (refined !== null) {
       primary.append(
@@ -333,7 +353,7 @@ export class CrystalariumPortraitView {
           refined === 2 ? 'Grow crystal' : 'Grow polished',
           this.actions.growRefined,
           'primary',
-          false,
+          locked,
           'grow-refined',
         ),
       );
@@ -352,13 +372,13 @@ export class CrystalariumPortraitView {
     tools.append(makeElement('h2', 'crystalarium-portrait-section-title', '✧ Crystal Tools'));
     const utility = makeElement('div', 'crystalarium-portrait-secondary-actions');
     utility.append(
-      this.button('Harmony ♫', this.actions.harmony, 'standard', false, 'harmony'),
-      this.button('Polish ✧', this.actions.polish, 'standard', state.completed < 30, 'polish'),
+      this.button('Harmony ♫', this.actions.harmony, 'standard', locked, 'harmony'),
+      this.button('Polish ✧', this.actions.polish, 'standard', locked || state.completed < 30, 'polish'),
       this.button(
         'Shelf selected',
         this.actions.shelve,
         'standard',
-        view.selected === null,
+        locked || view.selected === null,
         'shelve',
       ),
       this.button(
@@ -390,7 +410,7 @@ export class CrystalariumPortraitView {
         piece ? CRYSTAL_TIER_NAMES[piece.tier] : 'Empty',
         () => this.actions.restore(index),
         'shelf',
-        piece === null,
+        locked || piece === null,
         'shelf-' + index,
       );
       if (piece) {
@@ -407,7 +427,7 @@ export class CrystalariumPortraitView {
         view.washArmed ? 'Confirm' : '♻ Wash',
         this.actions.wash,
         'warning',
-        false,
+        locked,
         'wash-dock',
       ),
     );
@@ -417,10 +437,15 @@ export class CrystalariumPortraitView {
         view.resetArmed ? 'Confirm fresh board' : 'Fresh board',
         this.actions.fresh,
         view.resetArmed ? 'warning' : 'quiet',
-        false,
+        locked,
         'fresh',
       ),
     );
+    if (locked) {
+      for (const control of utility.querySelectorAll<HTMLButtonElement>('button')) {
+        control.disabled = true;
+      }
+    }
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
