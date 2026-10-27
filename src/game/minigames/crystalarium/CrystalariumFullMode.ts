@@ -57,6 +57,7 @@ export class CrystalariumFullMode {
   private cursor = 0;
   private selected: number | null = null;
   private message = 'Choose a crystal vein to grow shards, then merge matching pairs.';
+  private celebration: 'merge' | 'offer' | 'harmony' | null = null;
   private washArmed = false;
   private resetArmed = false;
   private quiet = false;
@@ -187,6 +188,7 @@ export class CrystalariumFullMode {
 
   private apply(result: FullActionResult, note?: CrystalFamily): void {
     if (!result.accepted) {
+      this.celebration = null;
       this.message = result.reason;
       this.render();
       return;
@@ -202,6 +204,7 @@ export class CrystalariumFullMode {
     this.guide.observe(this.state, result.state);
     this.state = result.state;
     this.message = result.message;
+    this.celebration = completed ? 'offer' : craftedHarmony ? 'harmony' : merged ? 'merge' : null;
     this.washArmed = false;
     this.resetArmed = false;
     if (merged || completed || craftedHarmony) {
@@ -516,7 +519,9 @@ export class CrystalariumFullMode {
         resetArmed: this.resetArmed,
         source: this.session.source,
         guide: this.guide.getPrompt(),
+        celebration: this.celebration,
       });
+    this.celebration = null;
     this.holder?.destroy(true);
     const holder = this.scene.add.container(0, 0).setDepth(20);
     this.holder = holder;
