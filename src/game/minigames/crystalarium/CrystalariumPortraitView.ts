@@ -275,7 +275,7 @@ export class CrystalariumPortraitView {
     const helper = makeElement(
       'p',
       'crystalarium-portrait-hint',
-      'Choose a crystal, then tap its matching pair. Slide the board sideways on small phones.',
+      'Drag matching crystals together. The floating shelf below stores crystals safely.',
     );
     boardSection.append(helper);
     if (view.guide?.target === 'cell') grid.classList.add('is-guide-focus');
@@ -378,8 +378,10 @@ export class CrystalariumPortraitView {
       }
       shelfSlots.append(slot);
     }
+    shelfSlots.append(
+      this.button(view.washArmed ? 'Confirm' : '♻ Wash', this.actions.wash, 'warning', false, 'wash-dock'),
+    );
     shelf.append(shelfSlots);
-    controls.append(shelf);
     controls.append(
       this.button(
         view.resetArmed ? 'Confirm fresh board' : 'Fresh board',
@@ -392,7 +394,7 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
-    this.root.replaceChildren(header, task, guidePanel, primary, boardSection, status, controls);
+    this.root.replaceChildren(header, task, guidePanel, primary, boardSection, shelf, status, controls);
 
     if (focusKey !== undefined) {
       const selector = focusIsCell
