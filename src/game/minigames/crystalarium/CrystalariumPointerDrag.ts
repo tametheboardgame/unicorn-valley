@@ -99,7 +99,9 @@ export class CrystalariumPointerDrag {
     const target = document.elementFromPoint(event.clientX, event.clientY);
     const cell = target?.closest<HTMLElement>('[data-crystalarium-cell]');
     const shelf = target?.closest<HTMLElement>('[data-crystalarium-action^="shelf-"]');
-    const wash = target?.closest<HTMLElement>('[data-crystalarium-action="wash"]');
+    const wash = target?.closest<HTMLElement>(
+      '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
+    );
     this.lastDropAt = Date.now();
     this.clear();
     if (current.origin.kind === 'cell') {
