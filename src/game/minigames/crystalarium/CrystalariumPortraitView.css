@@ -129,6 +129,40 @@
     height: 60px;
   }
 
+  .crystalarium-portrait-guide {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border: 2px solid #ffe5a4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #365781, #28465e);
+    box-shadow: 0 3px 10px rgb(4 21 46 / 24%);
+  }
+
+  .crystalarium-portrait-guide[hidden] {
+    display: none;
+  }
+
+  .crystalarium-portrait-guide-title {
+    color: #fff4be;
+    font-size: 17px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-guide-copy {
+    margin: 0;
+    color: #f4faff;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .crystalarium-portrait-grid.is-guide-focus,
+  .crystalarium-portrait-action.is-guide-focus {
+    outline: 3px solid #ffe59c;
+    outline-offset: 3px;
+    box-shadow: 0 0 14px rgb(255 224 146 / 36%);
+  }
+
   .crystalarium-portrait-board-scroll {
     overflow-x: auto;
     overscroll-behavior-x: contain;
