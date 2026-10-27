@@ -12,6 +12,7 @@ import {
   washCrystal,
   shelveCrystal,
   restoreCrystal,
+  restoreCrystalToCell,
   canOfferPattern,
   offerResonancePattern,
   unlockedCrystalFamilies,
@@ -67,6 +68,19 @@ describe('H6.9C Crystalarium deep merge mechanics', () => {
     state = restoreCrystal(state, 0).state;
     expect(state.shelf[0]).toBeNull();
     expect(state.cells.filter(Boolean)).toHaveLength(2);
+  });
+  it('restores dragged shelf pieces to the requested free socket and rejects occupied slots', () => {
+    const original = createCrystalariumFullState();
+    const shelved = shelveCrystal(original, 0).state;
+    const untouched = JSON.stringify(shelved);
+    expect(restoreCrystalToCell(shelved, 0, 1).accepted).toBe(false);
+    expect(restoreCrystalToCell(shelved, 0, 42).accepted).toBe(false);
+    expect(JSON.stringify(shelved)).toBe(untouched);
+    const restored = restoreCrystalToCell(shelved, 0, 5);
+    expect(restored.accepted).toBe(true);
+    expect(restored.state.cells[5]).toEqual({ family: 'low', tier: 0 });
+    expect(restored.state.shelf[0]).toBeNull();
+    expect(restored.state.cells[0]).toBeNull();
   });
   it('gradually unlocks families and a voluntary three-family harmony', () => {
     const initial = createCrystalariumFullState();
