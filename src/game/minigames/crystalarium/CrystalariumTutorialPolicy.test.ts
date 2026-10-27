@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { createCrystalariumFullState, moveOrMergeCrystal, offerResonancePattern, spawnCrystal } from './CrystalariumFullRules';
-import { feasibleFirstLesson, firstLessonAllows, firstLessonPair } from './CrystalariumTutorialPolicy';
+import {
+  createCrystalariumFullState,
+  moveOrMergeCrystal,
+  offerResonancePattern,
+  spawnCrystal,
+} from './CrystalariumFullRules';
+import {
+  feasibleFirstLesson,
+  firstLessonAllows,
+  firstLessonPair,
+} from './CrystalariumTutorialPolicy';
 
 describe('H6.9C11B first-play action authorisation foundation', () => {
   it('derives legal spotlight targets from the saved board and teaches the newly grown piece', () => {
