@@ -580,15 +580,23 @@ export class CrystalariumFullMode {
     action: () => void,
     active = true,
   ): Phaser.GameObjects.Rectangle {
+    const lesson = this.guide.getPrompt()?.lessonStep;
+    const shellAction = ['crystalarium-full-guide', 'crystalarium-full-sound', 'crystalarium-full-exit'].includes(name);
+    const allowed =
+      !lesson ||
+      shellAction ||
+      (lesson === 'grow' && name === 'crystalarium-full-grow') ||
+      (lesson === 'offer' && name === 'crystalarium-full-offer');
+    const enabled = active && allowed;
+    const spotlight = Boolean(lesson && enabled && !shellAction);
     const back = this.scene.add
-      .rectangle(x + w / 2, y + 22, w, 44, active ? 0x335c87 : 0x2a3a54)
-      .setStrokeStyle(2, active ? 0x9adbea : 0x62788d)
+      .rectangle(x + w / 2, y + 22, w, 44, enabled ? 0x335c87 : 0x2a3a54)
+      .setStrokeStyle(spotlight ? 4 : 2, spotlight ? 0xffe5a0 : enabled ? 0x9adbea : 0x62788d)
       .setName(name)
-      .setInteractive({ useHandCursor: active });
-    // Preserve scene-visible interactive controls for diagnostics and keyboard
-    // navigation while rejecting a disabled Offer before it can mutate state.
+      .setInteractive({ useHandCursor: enabled });
+    // Retain named objects for diagnostics; disabled tutorial controls cannot fire.
     back.on('pointerdown', () => {
-      if (active) action();
+      if (enabled) action();
     });
     holder.add(back);
     this.addText(
@@ -597,7 +605,7 @@ export class CrystalariumFullMode {
       y + 22,
       label,
       15,
-      active ? '#ffffff' : '#a5b4c4',
+      enabled ? '#ffffff' : '#a5b4c4',
       w - 12,
     ).setOrigin(0.5);
     return back;
@@ -673,12 +681,16 @@ export class CrystalariumFullMode {
       const focused = this.cursor === i;
       const selected = this.selected === i;
       const bg = selected ? 0x547da0 : focused ? 0x395b86 : 0x233c5c;
-      const rim = selected ? 0xffe5a0 : focused ? 0xcdf3ff : 0x54718d;
+      const guidePrompt = this.guide.getPrompt();
+      const highlighted =
+        (guidePrompt?.lessonStep === 'pick-up' && i === guidePrompt.sourceIndex) ||
+        (guidePrompt?.lessonStep === 'merge' && i === guidePrompt.targetIndex);
+      const rim = highlighted ? 0xffe5a0 : selected ? 0xffe5a0 : focused ? 0xcdf3ff : 0x54718d;
       sockets.fillStyle(0x0c233d, 0.66);
       sockets.fillRoundedRect(x - CELL / 2 + 2, y - CELL / 2 + 4, CELL, CELL, 12);
       sockets.fillStyle(bg, 0.98);
       sockets.fillRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
-      sockets.lineStyle(selected ? 4 : focused ? 3 : 2, rim, 0.93);
+      sockets.lineStyle(highlighted || selected ? 4 : focused ? 3 : 2, rim, 0.93);
       sockets.strokeRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 11);
       // Keep the original stable Phaser object and interactive hit rectangle for
       // keyboard, browser diagnostics, pointer drag and existing play tests.
@@ -788,6 +800,15 @@ export class CrystalariumFullMode {
           100,
         ).setOrigin(0.5);
       });
+      if (this.guide.getPrompt()?.lessonStep === 'inspect') {
+        const inspect = this.scene.add
+          .rectangle(742, 271, 108, 76, 0xffe5a0, 0.1)
+          .setStrokeStyle(4, 0xffe5a0)
+          .setName('crystalarium-full-inspect')
+          .setInteractive({ useHandCursor: true });
+        inspect.on('pointerdown', () => this.inspectGoal());
+        holder.add(inspect);
+      }
       if (pattern.harmonies) {
         this.addText(
           holder,
