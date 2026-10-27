@@ -326,6 +326,13 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
     expect(afterMerge.merges).toBe(1);
     expect(afterMerge.cells[0]).toBeNull();
     expect(afterMerge.cells[1].tier).toBe(1);
+    // Recipes and physical pieces must share the exact illustrated tier identity.
+    await expect(
+      region.locator('[data-crystalarium-cell="1"] [data-crystal-art]'),
+    ).toHaveAttribute('data-crystal-art', 'low-tier-1');
+    await expect(
+      region.locator('.crystalarium-portrait-goal [data-crystal-art]').first(),
+    ).toHaveAttribute('data-crystal-art', 'low-tier-1');
     await drag('[data-crystalarium-cell="1"]', '[data-crystalarium-action="shelf-0"]');
     const afterShelf = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
