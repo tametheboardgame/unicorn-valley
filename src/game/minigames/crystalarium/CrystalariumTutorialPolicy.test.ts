@@ -28,6 +28,8 @@ describe('H6.9C11B first-play action authorisation foundation', () => {
     expect(firstLessonAllows('merge', pair, { kind: 'merge', source: 2, target: 0 })).toBe(true);
     expect(firstLessonAllows('merge', pair, { kind: 'merge', source: 0, target: 2 })).toBe(false);
     expect(firstLessonAllows('merge', pair, { kind: 'grow' })).toBe(false);
+    expect(firstLessonAllows('merge', pair, { kind: 'pick', index: 2 })).toBe(true);
+    expect(firstLessonAllows('merge', pair, { kind: 'pick', index: 0 })).toBe(false);
     const merged = moveOrMergeCrystal(result.state, 2, 0);
     expect(merged.accepted).toBe(true);
     if (!merged.accepted) return;

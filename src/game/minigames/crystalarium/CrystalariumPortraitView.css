@@ -224,6 +224,8 @@
     line-height: 1.4;
   }
 
+  .crystalarium-portrait-cell.is-guide-focus,
+  .crystalarium-portrait-goal.is-guide-focus,
   .crystalarium-portrait-grid.is-guide-focus,
   .crystalarium-portrait-action.is-guide-focus {
     outline: 3px solid #ffe59c;
