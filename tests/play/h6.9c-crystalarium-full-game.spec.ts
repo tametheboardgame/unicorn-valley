@@ -266,6 +266,21 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
   }) => {
     await enterResonanceGarden(page);
     const region = page.locator('[data-crystalarium-portrait="true"]');
+    // No floating status/shelf layer may intercept an occupied first-row crystal.
+    for (const index of [0, 1]) {
+      const selector = '[data-crystalarium-cell="' + index + '"]';
+      const crystal = region.locator(selector);
+      const bounds = await crystal.boundingBox();
+      if (!bounds) throw new Error('Crystal must have a visible hit area');
+      const hit = await page.evaluate(
+        ({ x, y }) =>
+          document.elementFromPoint(x, y)?.closest('[data-crystalarium-cell]')?.getAttribute(
+            'data-crystalarium-cell',
+          ),
+        { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 },
+      );
+      expect(hit).toBe(String(index));
+    }
     const drag = async (source: string, target: string) => {
       const from = await region.locator(source).boundingBox();
       const to = await region.locator(target).boundingBox();
