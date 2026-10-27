@@ -257,9 +257,7 @@ test.describe('H6.9C native-to-canvas rotation contract', () => {
   });
 });
 
-test('H6.9C10 consecutive visual offerings unlock the next goal', async ({
-  page,
-}) => {
+test('H6.9C10 consecutive visual offerings unlock the next goal', async ({ page }) => {
   await enterResonanceGarden(page);
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
