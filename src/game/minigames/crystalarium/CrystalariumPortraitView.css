@@ -51,7 +51,8 @@
 
   .crystalarium-portrait-pattern,
   .crystalarium-portrait-board-section,
-  .crystalarium-portrait-controls {
+  .crystalarium-portrait-controls,
+  .crystalarium-portrait-tools {
     display: grid;
     gap: 9px;
     padding: 12px 9px;
@@ -64,6 +65,29 @@
     gap: 5px;
     border-color: #a2cce0;
     background: #25476c;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-ready="true"] {
+    border-color: #ffe4a0;
+    box-shadow: 0 0 0 2px rgb(255 225 158 / 28%), 0 0 18px rgb(255 226 153 / 22%);
+  }
+
+  .crystalarium-portrait-pattern > .crystalarium-portrait-action.is-offer {
+    width: 100%;
+    grid-column: 1 / -1;
+    min-height: 48px;
+  }
+
+  .crystalarium-portrait-pattern > .crystalarium-portrait-action.is-offer.is-ready {
+    border-color: #ffe8af;
+    background: linear-gradient(120deg, #38837b, #6b6290);
+    color: #fff8d6;
+    box-shadow: 0 0 13px rgb(251 229 153 / 37%);
+  }
+
+  .crystalarium-portrait-tools {
+    border-color: #9083be;
+    background: #283659;
   }
 
   /* First-play single-picture recipes must leave a real board visible above the
@@ -326,15 +350,8 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .crystalarium-portrait-primary-actions.is-quickbar {
-    position: sticky;
-    z-index: 2;
-    top: 0;
-    padding: 7px;
-    border: 2px solid #8ccde1;
-    border-radius: 15px;
-    background: #1d3658;
-    box-shadow: 0 5px 12px rgb(12 31 51 / 35%);
+  .crystalarium-portrait-primary-actions {
+    margin-top: 2px;
   }
 
   .crystalarium-portrait-primary-actions.is-refined {
@@ -458,7 +475,8 @@
 
   .crystalarium-portrait-pattern,
   .crystalarium-portrait-board-section,
-  .crystalarium-portrait-controls {
+  .crystalarium-portrait-controls,
+  .crystalarium-portrait-tools {
     padding-inline: 7px;
   }
 }
