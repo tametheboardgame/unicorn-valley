@@ -83,7 +83,9 @@ describe('H6.9C9 optional child-first guide', () => {
     expect(guide.getPrompt()?.stage).toBe('shelf');
     guide.skip();
     expect(new CrystalariumGuide('world', shelfState, storage).getPrompt()).toBeNull();
-    expect(new CrystalariumGuide('just-games', shelfState, storage).getPrompt()?.stage).toBe('shelf');
+    expect(new CrystalariumGuide('just-games', shelfState, storage).getPrompt()?.stage).toBe(
+      'shelf',
+    );
     const washState = { ...shelfState, completed: 3 };
     guide.observe(shelfState, washState);
     expect(guide.getPrompt()?.stage).toBe('wash');
