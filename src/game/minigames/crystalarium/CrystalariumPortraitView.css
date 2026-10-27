@@ -344,8 +344,7 @@
   }
 
   .crystalarium-portrait-status {
-    position: sticky;
-    bottom: 96px;
+    position: static;
     min-height: 48px;
     padding: 12px;
     border: 2px solid #bddfef;
