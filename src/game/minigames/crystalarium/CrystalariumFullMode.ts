@@ -307,8 +307,7 @@ export class CrystalariumFullMode {
       const isOrigin = this.dragSourceKind === 'cell' && index === this.dragSource;
       const valid =
         !isOrigin &&
-        (!cell ||
-          (this.dragSourceKind === 'cell' && combineCrystalPieces(piece, cell) !== null));
+        (!cell || (this.dragSourceKind === 'cell' && combineCrystalPieces(piece, cell) !== null));
       const x = LEFT + (index % FULL_COLUMNS) * STEP;
       const y = TOP + Math.floor(index / FULL_COLUMNS) * STEP;
       const hovered =
@@ -324,8 +323,7 @@ export class CrystalariumFullMode {
 
     if (this.dragSourceKind !== 'cell') return;
     const shelfAvailable = this.state.shelf.some((slot) => slot === null);
-    const shelfHovered =
-      pointerX >= 690 && pointerX <= 1120 && pointerY >= 535 && pointerY <= 594;
+    const shelfHovered = pointerX >= 690 && pointerX <= 1120 && pointerY >= 535 && pointerY <= 594;
     if (shelfAvailable || shelfHovered) {
       graphics.lineStyle(
         shelfHovered ? 4 : 2,
@@ -334,8 +332,7 @@ export class CrystalariumFullMode {
       );
       graphics.strokeRoundedRect(690, 535, 430, 59, 12);
     }
-    const washHovered =
-      pointerX >= 480 && pointerX <= 635 && pointerY >= 620 && pointerY <= 674;
+    const washHovered = pointerX >= 480 && pointerX <= 635 && pointerY >= 620 && pointerY <= 674;
     graphics.lineStyle(washHovered ? 4 : 2, washHovered ? 0xffefad : 0xa6eed7, 0.95);
     graphics.strokeRoundedRect(480, 620, 155, 54, 12);
   }
@@ -361,7 +358,10 @@ export class CrystalariumFullMode {
     }
     if (!this.dragGhost) {
       this.dragGhost = this.scene.add.graphics().setDepth(400);
-      this.dragTargets = this.scene.add.graphics().setName('crystalarium-full-drop-cues').setDepth(390);
+      this.dragTargets = this.scene.add
+        .graphics()
+        .setName('crystalarium-full-drop-cues')
+        .setDepth(390);
     }
     this.drawDropCues(piece, pointer.x, pointer.y);
     this.dragGhost.clear();
