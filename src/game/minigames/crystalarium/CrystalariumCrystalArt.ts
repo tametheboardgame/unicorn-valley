@@ -15,6 +15,7 @@ interface Facet {
   points: readonly Point[];
   fill: string;
   opacity?: number;
+  outlined?: boolean;
 }
 interface Palette {
   base: string;
@@ -77,59 +78,47 @@ function facets(piece: CrystalPiece): readonly Facet[] {
   const [left, tip, right, lowerRight, bottom, lowerLeft] = BODY[piece.family];
   const tier = piece.tier;
   const result: Facet[] = [];
-  if (tier >= 4) {
+  // Silhouettes must increase visibly: second tip, side buds, twin flank,
+  // crown and a six-spire formation. Add behind the central crystal body.
+  if (tier >= 1) {
     result.push({
-      points: [
-        [8, 8],
-        [40, 17],
-        [72, 8],
-        [64, 49],
-        [16, 49],
-      ],
+      points: [[49, 43], [61, 17], [72, 25], [63, 58]],
       fill: palette.light,
-      opacity: 0.24,
+      opacity: 0.94,
+      outlined: true,
     });
   }
   if (tier >= 2) {
     result.push({
-      points: [
-        [7, 66],
-        [10, 32],
-        [21, 45],
-        [28, 79],
-      ],
+      points: [[7, 63], [10, 23], [22, 38], [29, 78]],
       fill: palette.shadow,
+      outlined: true,
     });
   }
   if (tier >= 3) {
     result.push({
-      points: [
-        [53, 71],
-        [66, 26],
-        [76, 41],
-        [74, 79],
-      ],
+      points: [[56, 72], [68, 20], [79, 46], [74, 78]],
+      fill: palette.light,
+      outlined: true,
+    });
+  }
+  if (tier >= 4) {
+    result.push({
+      points: [[21, 38], [19, 10], [32, 22], [40, 2], [49, 22], [61, 9], [60, 41]],
       fill: palette.base,
+      outlined: true,
     });
   }
   if (tier >= 5) {
     result.push({
-      points: [
-        [18, 53],
-        [23, 13],
-        [35, 29],
-        [37, 69],
-      ],
+      points: [[12, 63], [5, 5], [26, 28], [34, 65]],
       fill: palette.light,
+      outlined: true,
     });
     result.push({
-      points: [
-        [47, 60],
-        [56, 9],
-        [69, 22],
-        [64, 72],
-      ],
+      points: [[49, 66], [63, 5], [75, 15], [69, 77]],
       fill: palette.shadow,
+      outlined: true,
     });
   }
   result.push({ points: BODY[piece.family], fill: palette.base });
@@ -235,6 +224,11 @@ export function createCrystalArtElement(piece: CrystalPiece): SVGSVGElement {
     polygon.setAttribute('points', facet.points.map(([x, y]) => x + ',' + y).join(' '));
     polygon.setAttribute('fill', facet.fill);
     if (facet.opacity !== undefined) polygon.setAttribute('opacity', String(facet.opacity));
+    if (facet.outlined) {
+      polygon.setAttribute('stroke', palette.outline);
+      polygon.setAttribute('stroke-width', '1.7');
+      polygon.setAttribute('stroke-linejoin', 'round');
+    }
     svg.append(polygon);
   }
   const rim = document.createElementNS(svgNS, 'polygon');
@@ -256,12 +250,18 @@ export function paintCrystalArt(
   for (const facet of facets(piece)) {
     const colour = Number.parseInt(facet.fill.slice(1), 16);
     graphics.fillStyle(colour, facet.opacity ?? 1);
-    graphics.fillPoints(
-      facet.points.map(
-        ([px, py]) => new Phaser.Math.Vector2(x + (px - 40) * scale, y + (py - 44) * scale),
-      ),
-      true,
+    const points = facet.points.map(
+      ([px, py]) => new Phaser.Math.Vector2(x + (px - 40) * scale, y + (py - 44) * scale),
     );
+    graphics.fillPoints(points, true);
+    if (facet.outlined) {
+      graphics.lineStyle(
+        1.6,
+        Number.parseInt(PALETTES[piece.family].outline.slice(1), 16),
+        0.95,
+      );
+      graphics.strokePoints(points, true);
+    }
   }
   graphics.lineStyle(1.5, Number.parseInt(PALETTES[piece.family].outline.slice(1), 16), 0.95);
   graphics.strokePoints(
