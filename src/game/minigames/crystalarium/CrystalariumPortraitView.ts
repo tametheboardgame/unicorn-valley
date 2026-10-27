@@ -79,6 +79,7 @@ export class CrystalariumPortraitView {
   private readonly actions: CrystalariumPortraitActions;
   private readonly dragging: CrystalariumPointerDrag;
   private currentView: CrystalariumPortraitPresentation | null = null;
+  private previousLessonFocus: string | null = null;
 
   public constructor(actions: CrystalariumPortraitActions) {
     this.actions = actions;
@@ -159,6 +160,25 @@ export class CrystalariumPortraitView {
     const { state } = view;
     const lesson = view.guide?.lessonStep;
     const locked = lesson !== undefined;
+    // Do not scroll on initial render: the compact first board row must remain visible.
+    // After an accepted step, move focus to its next literal action, not an old button.
+    const nextLessonFocus =
+      lesson === 'grow'
+        ? 'grow'
+        : lesson === 'pick-up'
+          ? 'cell-' + view.guide?.sourceIndex
+          : lesson === 'merge'
+            ? 'cell-' + view.guide?.targetIndex
+            : lesson === 'inspect'
+              ? 'inspect-goal'
+              : lesson === 'offer'
+                ? 'offer'
+                : null;
+    const advanceFocus =
+      this.previousLessonFocus !== null &&
+      nextLessonFocus !== null &&
+      this.previousLessonFocus !== nextLessonFocus;
+    this.previousLessonFocus = nextLessonFocus;
     const pattern = activeResonancePattern(state);
     const header = makeElement('header', 'crystalarium-portrait-header');
     const heading = makeElement('h1', 'crystalarium-portrait-heading', '✦ Crystalarium');
@@ -469,7 +489,16 @@ export class CrystalariumPortraitView {
     // Players need to keep later columns in view after selection, Grow and Offer.
     scroller.scrollLeft = boardScrollLeft;
 
-    if (focusKey !== undefined) {
+    if (advanceFocus && nextLessonFocus !== null) {
+      const selector = nextLessonFocus.startsWith('cell-')
+        ? `[data-crystalarium-cell="${nextLessonFocus.slice(5)}"]`
+        : `[data-crystalarium-action="${nextLessonFocus}"]`;
+      const target = this.root.querySelector<HTMLButtonElement>(selector);
+      if (target && !target.disabled) {
+        target.focus({ preventScroll: true });
+        target.scrollIntoView({ block: 'center', inline: 'nearest' });
+      }
+    } else if (focusKey !== undefined) {
       const selector = focusIsCell
         ? `[data-crystalarium-cell="${focusKey}"]`
         : `[data-crystalarium-action="${focusKey}"]`;
