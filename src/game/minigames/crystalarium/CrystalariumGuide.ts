@@ -1,5 +1,6 @@
 import type { MiniGameLaunchSource } from '../MiniGameSession';
 import { canOfferPattern, type CrystalariumFullState } from './CrystalariumFullRules';
+import { feasibleFirstLesson, firstLessonAllows, firstLessonPair, type FirstLessonCommand, type FirstLessonStep, type TutorialPair } from './CrystalariumTutorialPolicy';
 
 export type CrystalariumGuideStage =
   | 'grow'
@@ -15,12 +16,16 @@ export type CrystalariumGuideStage =
 
 export interface CrystalariumGuidePrompt {
   readonly stage: CrystalariumGuideStage;
+  readonly lessonStep?: FirstLessonStep;
+  readonly sourceIndex?: number;
+  readonly targetIndex?: number;
   readonly title: string;
   readonly instruction: string;
   readonly target:
     | 'grow'
     | 'cell'
     | 'offer'
+    | 'goal'
     | 'none'
     | 'shelve'
     | 'wash'
@@ -139,6 +144,7 @@ export class CrystalariumGuide {
   private readonly storage: GuideStorage | null;
   private active: boolean;
   private stage: CrystalariumGuideStage;
+  private lesson: { step: FirstLessonStep; pair: TutorialPair | null } | null = null;
   private static readonly MILESTONES = new Map<number, CrystalariumGuideStage>([
     [2, 'shelf'],
     [3, 'wash'],
@@ -163,6 +169,8 @@ export class CrystalariumGuide {
       // Storage may be disabled; the guide remains optional and in-memory.
     }
     this.active = !seen && state.completed === 0;
+    if (this.active) this.lesson = feasibleFirstLesson(state);
+    if (this.active && !this.lesson) this.active = false;
     const milestone = CrystalariumGuide.MILESTONES.get(state.completed);
     if (!this.active && milestone && !this.wasSeen(milestone)) {
       this.stage = milestone;
@@ -171,10 +179,42 @@ export class CrystalariumGuide {
   }
 
   public getPrompt(): CrystalariumGuidePrompt | null {
-    return this.active ? promptFor(this.stage) : null;
+    if (!this.active) return null;
+    if (!this.lesson) return promptFor(this.stage);
+    const { step, pair } = this.lesson;
+    switch (step) {
+      case 'grow':
+        return { stage: 'grow', lessonStep: step, title: '1 of 5 • Grow', instruction: 'Only Grow Shard works. Tap the glowing Grow button.', target: 'grow' };
+      case 'pick-up':
+        return { stage: 'merge', lessonStep: step, title: '2 of 5 • Pick up', instruction: 'Pick up the outlined new crystal, not the other one.', target: 'cell', sourceIndex: pair?.source };
+      case 'merge':
+        return { stage: 'merge', lessonStep: step, title: '3 of 5 • Merge', instruction: 'Drop it onto the outlined matching twin.', target: 'cell', sourceIndex: pair?.source, targetIndex: pair?.target };
+      case 'inspect':
+        return { stage: 'offer', lessonStep: step, title: '4 of 5 • Match the picture', instruction: 'Look at the new crystal. Tap the matching goal picture.', target: 'goal' };
+      case 'offer':
+        return { stage: 'offer', lessonStep: step, title: '5 of 5 • Offer', instruction: 'The crystal matches! Only Offer Pattern works now.', target: 'offer' };
+    }
+  }
+
+  /** Called before any rule or save; Skip, Help, Exit and sound live outside this policy. */
+  public allows(command: FirstLessonCommand): boolean {
+    return !this.active || !this.lesson || firstLessonAllows(this.lesson.step, this.lesson.pair, command);
+  }
+
+  public picked(index: number): void {
+    if (!this.lesson || this.lesson.step !== 'pick-up') return;
+    if (firstLessonAllows(this.lesson.step, this.lesson.pair, { kind: 'pick', index })) {
+      this.lesson.step = 'merge';
+    }
+  }
+
+  public inspected(state: CrystalariumFullState): void {
+    if (!this.lesson || this.lesson.step !== 'inspect' || !canOfferPattern(state)) return;
+    this.lesson.step = 'offer';
   }
 
   public replay(state: CrystalariumFullState): void {
+    this.lesson = feasibleFirstLesson(state);
     this.active = true;
     this.stage = guideStage(state);
   }
@@ -184,6 +224,18 @@ export class CrystalariumGuide {
   }
 
   public observe(before: CrystalariumFullState, after: CrystalariumFullState): void {
+    if (this.lesson) {
+      if (after.completed > before.completed) {
+        this.finish();
+      } else if (this.lesson.step === 'grow' && after.cells.filter(Boolean).length > before.cells.filter(Boolean).length) {
+        const pair = firstLessonPair(after);
+        if (pair) this.lesson = { step: 'pick-up', pair };
+        else this.finish(); // An unusual saved board may not support this choreography.
+      } else if (this.lesson.step === 'merge' && after.merges > before.merges) {
+        this.lesson = { step: 'inspect', pair: null };
+      }
+      return;
+    }
     if (after.completed > before.completed && this.active) this.finish();
     const milestone = CrystalariumGuide.MILESTONES.get(after.completed);
     if (after.completed > before.completed && milestone && !this.wasSeen(milestone)) {
@@ -212,6 +264,8 @@ export class CrystalariumGuide {
   }
 
   private finish(): void {
+    if (this.lesson) this.stage = 'explore';
+    this.lesson = null;
     this.active = false;
     try {
       this.storage?.setItem(
