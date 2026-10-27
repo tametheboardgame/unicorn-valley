@@ -2,14 +2,32 @@ import type { MiniGameLaunchSource } from '../MiniGameSession';
 import { canOfferPattern, type CrystalariumFullState } from './CrystalariumFullRules';
 
 export type CrystalariumGuideStage =
-  | 'grow' | 'merge' | 'offer' | 'explore'
-  | 'shelf' | 'wash' | 'families' | 'harmony' | 'refined' | 'polish';
+  | 'grow'
+  | 'merge'
+  | 'offer'
+  | 'explore'
+  | 'shelf'
+  | 'wash'
+  | 'families'
+  | 'harmony'
+  | 'refined'
+  | 'polish';
 
 export interface CrystalariumGuidePrompt {
   readonly stage: CrystalariumGuideStage;
   readonly title: string;
   readonly instruction: string;
-  readonly target: 'grow' | 'cell' | 'offer' | 'none' | 'shelve' | 'wash' | 'source-low' | 'harmony' | 'grow-refined' | 'polish';
+  readonly target:
+    | 'grow'
+    | 'cell'
+    | 'offer'
+    | 'none'
+    | 'shelve'
+    | 'wash'
+    | 'source-low'
+    | 'harmony'
+    | 'grow-refined'
+    | 'polish';
 }
 
 interface GuideStorage {
@@ -57,17 +75,50 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
         target: 'offer',
       };
     case 'shelf':
-      return { stage, title: 'A safe crystal shelf', instruction: 'Need room? Keep a crystal on the shelf. Drag it back when you need it!', target: 'shelve' };
+      return {
+        stage,
+        title: 'A safe crystal shelf',
+        instruction: 'Need room? Keep a crystal on the shelf. Drag it back when you need it!',
+        target: 'shelve',
+      };
     case 'wash':
-      return { stage, title: 'Brook Wash is free', instruction: 'Too many crystals? Select one and recycle it in Brook Wash. There is no penalty.', target: 'wash' };
+      return {
+        stage,
+        title: 'Brook Wash is free',
+        instruction:
+          'Too many crystals? Select one and recycle it in Brook Wash. There is no penalty.',
+        target: 'wash',
+      };
     case 'families':
-      return { stage, title: 'A new crystal voice!', instruction: 'Try the new crystal vein. Different colours and shapes make different songs.', target: 'none' };
+      return {
+        stage,
+        title: 'A new crystal voice!',
+        instruction: 'Try the new crystal vein. Different colours and shapes make different songs.',
+        target: 'none',
+      };
     case 'harmony':
-      return { stage, title: 'Three voices sing together', instruction: 'Make one polished shard of each colour. The Harmony button turns them into a musical token.', target: 'harmony' };
+      return {
+        stage,
+        title: 'Three voices sing together',
+        instruction:
+          'Make one polished shard of each colour. The Harmony button turns them into a musical token.',
+        target: 'harmony',
+      };
     case 'refined':
-      return { stage, title: 'New crystal growing power', instruction: 'You can now grow a polished crystal directly, or keep growing basic shards whenever you like.', target: 'grow-refined' };
+      return {
+        stage,
+        title: 'New crystal growing power',
+        instruction:
+          'You can now grow a polished crystal directly, or keep growing basic shards whenever you like.',
+        target: 'grow-refined',
+      };
     case 'polish':
-      return { stage, title: 'Polishing basin unlocked', instruction: 'Select a crystal, then use one Harmony token to polish it to the next shape.', target: 'polish' };
+      return {
+        stage,
+        title: 'Polishing basin unlocked',
+        instruction: 'Select a crystal, then use one Harmony token to polish it to the next shape.',
+        target: 'polish',
+      };
     case 'explore':
       return {
         stage,
@@ -89,8 +140,12 @@ export class CrystalariumGuide {
   private active: boolean;
   private stage: CrystalariumGuideStage;
   private static readonly MILESTONES = new Map<number, CrystalariumGuideStage>([
-    [2, 'shelf'], [3, 'wash'], [4, 'families'], [7, 'harmony'],
-    [20, 'refined'], [30, 'polish'],
+    [2, 'shelf'],
+    [3, 'wash'],
+    [4, 'families'],
+    [7, 'harmony'],
+    [20, 'refined'],
+    [30, 'polish'],
   ]);
 
   public constructor(
@@ -160,7 +215,10 @@ export class CrystalariumGuide {
     this.active = false;
     try {
       this.storage?.setItem(
-        this.stage === 'grow' || this.stage === 'merge' || this.stage === 'offer' || this.stage === 'explore'
+        this.stage === 'grow' ||
+          this.stage === 'merge' ||
+          this.stage === 'offer' ||
+          this.stage === 'explore'
           ? this.key
           : this.key + ':' + this.stage,
         'seen',
