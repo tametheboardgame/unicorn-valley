@@ -257,13 +257,17 @@ export function paintCrystalArt(
     const colour = Number.parseInt(facet.fill.slice(1), 16);
     graphics.fillStyle(colour, facet.opacity ?? 1);
     graphics.fillPoints(
-      facet.points.map(([px, py]) => new Phaser.Math.Vector2(x + (px - 40) * scale, y + (py - 44) * scale)),
+      facet.points.map(
+        ([px, py]) => new Phaser.Math.Vector2(x + (px - 40) * scale, y + (py - 44) * scale),
+      ),
       true,
     );
   }
   graphics.lineStyle(1.5, Number.parseInt(PALETTES[piece.family].outline.slice(1), 16), 0.95);
   graphics.strokePoints(
-    BODY[piece.family].map(([px, py]) => new Phaser.Math.Vector2(x + (px - 40) * scale, y + (py - 44) * scale)),
+    BODY[piece.family].map(
+      ([px, py]) => new Phaser.Math.Vector2(x + (px - 40) * scale, y + (py - 44) * scale),
+    ),
     true,
   );
 }
