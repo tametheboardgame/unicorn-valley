@@ -173,9 +173,19 @@ test.describe('H6.9C portrait touch evidence', () => {
       fullPage: true,
     });
 
+    const altar = portrait.locator('.crystalarium-portrait-pattern');
+    const growing = portrait.locator('.crystalarium-portrait-controls');
+    const tools = portrait.locator('.crystalarium-portrait-tools');
+    const offer = altar.locator('[data-crystalarium-action="offer"]');
+    await expect(altar).toHaveAttribute('data-crystalarium-ready', 'false');
+    await expect(offer).toBeDisabled();
+    await expect(growing.locator('[data-crystalarium-action="grow"]')).toHaveCount(1);
+    await expect(growing.locator('[data-crystalarium-action="offer"]')).toHaveCount(0);
+    await expect(tools.locator('[data-crystalarium-action="wash"]')).toHaveCount(1);
     await portrait.locator('[data-crystalarium-cell="0"]').click();
     await portrait.locator('[data-crystalarium-cell="1"]').click();
-    const offer = portrait.locator('[data-crystalarium-action="offer"]');
+    await expect(altar).toHaveAttribute('data-crystalarium-ready', 'true');
+    await expect(offer).toHaveClass(/is-ready/);
     await expect(offer).toBeEnabled();
     await offer.click();
     expect(
