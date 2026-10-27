@@ -213,6 +213,91 @@ test('H6.9C Crystal Brook nursery saves world progress and returns without reope
   await waitForScene(page, 'CrystalBrookScene');
 });
 
+test('H6.9C6 Crystal Grotto altar launches and returns to the cave, keeping adventure saves', async ({
+  page,
+}) => {
+  await page.addInitScript(({ key, save }) => localStorage.setItem(key, JSON.stringify(save)), {
+    key: 'unicorn-valley.save',
+    save: createDefaultSave('2026-10-27T12:00:00.000Z'),
+  });
+  await openDiagnostics(page);
+  await page.evaluate(() => {
+    const api = (window as typeof window & {
+      __UNICORN_VALLEY_DIAGNOSTICS__?: { startScene(sceneKey: string): void };
+    }).__UNICORN_VALLEY_DIAGNOSTICS__;
+    api?.startScene('CrystalGrottoScene');
+  });
+  await waitForScene(page, 'CrystalGrottoScene');
+  await waitForNamedObject(page, 'CrystalGrottoScene', 'crystal-grotto:crystalarium-altar');
+  await setArcadeSpritePosition(page, 'CrystalGrottoScene', 'world-player-unicorn', 1090, 205);
+  await expect
+    .poll(async () => {
+      const snapshot = await getDiagnosticSnapshot(page);
+      return snapshot.scenes
+        .find((scene) => scene.key === 'CrystalGrottoScene')
+        ?.objects.find((o) => o.name === 'exploration-tablet-hint' && o.visible)?.text;
+    })
+    .toBe('Crystalarium Altar');
+  await page.keyboard.press('KeyE');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  const save = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'),
+  );
+  expect(save.activities.crystalarium.completed).toBe(1);
+  expect(save.world.flags['flag:r6-crystal-grotto-open']).not.toBe(true);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
+  await waitForScene(page, 'CrystalGrottoScene');
+  expect(
+    (await getDiagnosticSnapshot(page)).scenes
+      .find((scene) => scene.key === 'CrystalGrottoScene')
+      ?.objects.some((obj) => obj.name === 'crystal-grotto:bright-crystal'),
+  ).toBe(true);
+});
+
+test.describe('H6.9C8 native touch and mouse carrying', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('physically merges pieces, shelves one and returns it to an explicit socket', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    const region = page.locator('[data-crystalarium-portrait="true"]');
+    const drag = async (source: string, target: string) => {
+      const from = await region.locator(source).boundingBox();
+      const to = await region.locator(target).boundingBox();
+      if (!from || !to) throw new Error('Missing draggable Crystalarium control');
+      await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+      await page.mouse.up();
+    };
+    await drag('[data-crystalarium-cell="0"]', '[data-crystalarium-cell="1"]');
+    const afterMerge = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(afterMerge.merges).toBe(1);
+    expect(afterMerge.cells[0]).toBeNull();
+    expect(afterMerge.cells[1].tier).toBe(1);
+    await drag('[data-crystalarium-cell="1"]', '[data-crystalarium-action="shelf-0"]');
+    const afterShelf = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(afterShelf.shelf[0].tier).toBe(1);
+    expect(afterShelf.cells[1]).toBeNull();
+    await drag('[data-crystalarium-action="shelf-0"]', '[data-crystalarium-cell="5"]');
+    const restored = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(restored.cells[5].tier).toBe(1);
+    expect(restored.shelf[0]).toBeNull();
+  });
+});
+
 test.describe('H6.9C narrow portrait touch acceptance', () => {
   test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
   test('retains real-size scrollable sockets, readable actions and a saved return', async ({
