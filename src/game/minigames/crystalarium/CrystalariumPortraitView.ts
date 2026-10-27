@@ -15,10 +15,16 @@ import {
   type CrystalFamily,
 } from './CrystalariumOpeningRules';
 import { createCrystalArtElement } from './CrystalariumCrystalArt';
+import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
 import './CrystalariumPortraitView.css';
 
 export interface CrystalariumPortraitActions {
   cell(index: number): void;
+  dragMove(source: number, target: number): void;
+  dragShelve(source: number): void;
+  dragWash(source: number): void;
+  dragRestore(shelfIndex: number, target: number): void;
+  dragInvalid(): void;
   source(family: CrystalFamily): void;
   grow(): void;
   growRefined(): void;
@@ -65,6 +71,8 @@ function makeElement<K extends keyof HTMLElementTagNameMap>(
 export class CrystalariumPortraitView {
   private readonly root: HTMLElement;
   private readonly actions: CrystalariumPortraitActions;
+  private readonly dragging: CrystalariumPointerDrag;
+  private currentView: CrystalariumPortraitPresentation | null = null;
 
   public constructor(actions: CrystalariumPortraitActions) {
     this.actions = actions;
@@ -85,6 +93,20 @@ export class CrystalariumPortraitView {
       }
     });
     (document.querySelector('#game-shell') ?? document.body).append(this.root);
+    this.dragging = new CrystalariumPointerDrag(
+      this.root,
+      {
+        move: actions.dragMove,
+        shelve: actions.dragShelve,
+        wash: actions.dragWash,
+        restore: actions.dragRestore,
+        invalid: actions.dragInvalid,
+      },
+      ({ kind, index }) => {
+        const view = this.currentView;
+        return (kind === 'cell' ? view?.state.cells[index] : view?.state.shelf[index]) ?? null;
+      },
+    );
   }
 
   private button(
@@ -115,6 +137,7 @@ export class CrystalariumPortraitView {
   }
 
   public render(view: CrystalariumPortraitPresentation): void {
+    this.currentView = view;
     // Replacing view nodes is safe because the game mode owns all persistent state.
     // Restore keyboard focus to the same semantic control after a change.
     const active = document.activeElement;
@@ -211,6 +234,7 @@ export class CrystalariumPortraitView {
       button.dataset.crystalariumCell = String(index);
       button.dataset.family = piece?.family ?? 'empty';
       button.classList.toggle('is-selected', view.selected === index);
+      button.classList.toggle('is-occupied', piece !== null);
       button.setAttribute('aria-pressed', view.selected === index ? 'true' : 'false');
       button.setAttribute(
         'aria-label',
@@ -349,6 +373,7 @@ export class CrystalariumPortraitView {
   }
 
   public destroy(): void {
+    this.dragging.destroy();
     this.root.remove();
   }
 }
