@@ -18,7 +18,7 @@ import {
 const SCENE = 'CrystalariumActivityScene';
 const SANDBOX_KEY = 'unicorn-valley:just-games:crystalarium:v1';
 
-async function enterResonanceGarden(page: Page): Promise<void> {
+async function enterResonanceGarden(page: Page, teach = false): Promise<void> {
   await page.addInitScript(() => window.localStorage.clear());
   await openDiagnostics(page);
   await waitForScene(page, 'TitleScene');
@@ -26,6 +26,13 @@ async function enterResonanceGarden(page: Page): Promise<void> {
   await waitForScene(page, 'JustGamesScene');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  // Existing free-play regressions intentionally skip the new first-time lesson.
+  // The dedicated C11B scenario below tests it from a completely fresh save.
+  if (!teach) {
+    await page.evaluate(() =>
+      localStorage.setItem('unicorn-valley:crystalarium:guide:just-games:v1', 'seen'),
+    );
+  }
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
 }
@@ -207,20 +214,31 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
   test('teaches accepted actions, allows replay and keeps the adventure save untouched', async ({
     page,
   }) => {
-    await enterResonanceGarden(page);
+    await enterResonanceGarden(page, true);
     const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
     const step = region.locator('[data-crystalarium-guide]');
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'grow');
     await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveClass(/is-guide-focus/);
+    // Only the spotlighted Grow control can mutate the fresh songbook.
+    await expect(region.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
     await region.locator('[data-crystalarium-action="grow"]').click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'merge');
-    await expect(region.locator('.crystalarium-portrait-grid')).toHaveClass(/is-guide-focus/);
+    await expect(region.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
+    const newShard = region.locator('[data-crystalarium-cell="2"]');
+    await expect(newShard).toHaveClass(/is-guide-focus/);
+    await newShard.click();
+    await expect(region.locator('[data-crystalarium-cell="0"]')).toBeEnabled();
     await region.locator('[data-crystalarium-cell="0"]').click();
-    await region.locator('[data-crystalarium-cell="1"]').click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
+    const picturedGoal = region.locator('[data-crystalarium-action="inspect-goal"]');
+    await expect(picturedGoal).toBeVisible();
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
+    await picturedGoal.click();
     await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(
       /is-guide-focus/,
     );
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeEnabled();
     await region.locator('[data-crystalarium-action="offer"]').click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'hidden');
     expect(
