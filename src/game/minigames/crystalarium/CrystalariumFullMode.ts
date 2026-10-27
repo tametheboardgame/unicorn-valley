@@ -35,7 +35,6 @@ import {
   CRYSTAL_NOTE_PRESENTATION,
   CRYSTAL_TIER_NAMES,
   type CrystalFamily,
-  type CrystalPiece,
 } from './CrystalariumOpeningRules';
 
 const CELL = 56;
@@ -416,6 +415,25 @@ export class CrystalariumFullMode {
     });
   }
 
+  /** Soft-edged faceted work surfaces replace the prototype's hard rectangles. */
+  private plate(
+    holder: Phaser.GameObjects.Container,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    fill: number,
+    stroke: number,
+  ): void {
+    const graphic = this.scene.add.graphics();
+    graphic.fillStyle(fill, 0.98);
+    graphic.fillRoundedRect(x, y, width, height, radius);
+    graphic.lineStyle(2, stroke, 0.92);
+    graphic.strokeRoundedRect(x, y, width, height, radius);
+    holder.add(graphic);
+  }
+
   private addText(
     holder: Phaser.GameObjects.Container,
     x: number,
@@ -464,10 +482,6 @@ export class CrystalariumFullMode {
     ).setOrigin(0.5);
   }
 
-  private pieceGlyph(piece: CrystalPiece): string {
-    return CRYSTAL_NOTE_PRESENTATION[piece.family].symbol;
-  }
-
   private render(): void {
     if (this.portraitQuery?.matches)
       this.portrait?.render({
@@ -485,9 +499,7 @@ export class CrystalariumFullMode {
     const holder = this.scene.add.container(0, 0).setDepth(20);
     this.holder = holder;
     holder.add(this.scene.add.rectangle(640, 360, 1280, 720, 0x142944));
-    holder.add(
-      this.scene.add.rectangle(640, 358, 1194, 694, 0x243f63, 0.98).setStrokeStyle(3, 0x82badc),
-    );
+    this.plate(holder, 43, 11, 1194, 694, 28, 0x243f63, 0x82badc);
     this.addText(holder, 93, 32, '✦ CRYSTALARIUM • RESONANCE GARDEN ✦', 30, '#e1f7ff');
     const savedLabel =
       this.session.source === 'just-games'
@@ -527,9 +539,7 @@ export class CrystalariumFullMode {
           : 'The Symphony is complete! Keep creating your favourite crystals.'),
       17,
     );
-    holder.add(
-      this.scene.add.rectangle(390, 359, 464, 388, 0x172d4d, 1).setStrokeStyle(3, 0x6da8c9),
-    );
+    this.plate(holder, 158, 165, 464, 388, 20, 0x172d4d, 0x6da8c9);
     for (let i = 0; i < FULL_CELL_COUNT; i += 1) {
       const piece = this.state.cells[i];
       const x = LEFT + (i % FULL_COLUMNS) * STEP + CELL / 2;
@@ -585,9 +595,7 @@ export class CrystalariumFullMode {
       () => this.washSelected(),
     );
 
-    holder.add(
-      this.scene.add.rectangle(921, 371, 482, 478, 0x192f4e, 0.95).setStrokeStyle(2, 0x678bab),
-    );
+    this.plate(holder, 680, 132, 482, 478, 22, 0x192f4e, 0x678bab);
     const pattern = activeResonancePattern(this.state);
     this.addText(
       holder,
@@ -620,9 +628,7 @@ export class CrystalariumFullMode {
       pattern.goals.forEach((goal, index) => {
         const x = 742 + index * 138;
         const y = 265;
-        holder.add(
-          this.scene.add.rectangle(x, y - 7, 112, 76, 0x2e5276, 0.96).setStrokeStyle(2, 0x93d0e9),
-        );
+        this.plate(holder, x - 56, y - 45, 112, 76, 15, 0x2e5276, 0x93d0e9);
         const illustration = this.scene.add.graphics();
         paintCrystalArt(illustration, { family: goal.family, tier: goal.tier }, x, y - 17, 0.59);
         holder.add(illustration);
@@ -745,10 +751,14 @@ export class CrystalariumFullMode {
     );
     for (let i = 0; i < 4; i += 1) {
       const piece = this.state.shelf[i];
-      const label = piece ? this.pieceGlyph(piece) + ' ' + (piece.tier + 1) : 'Empty';
-      this.button(holder, 698 + 105 * i, 545, 99, label, 'crystalarium-full-shelf:' + i, () =>
+      this.button(holder, 698 + 105 * i, 545, 99, piece ? '' : 'Empty', 'crystalarium-full-shelf:' + i, () =>
         this.apply(restoreCrystal(this.state, i)),
       );
+      if (piece) {
+        const shelfArt = this.scene.add.graphics();
+        paintCrystalArt(shelfArt, piece, 747 + 105 * i, 568, 0.42);
+        holder.add(shelfArt);
+      }
     }
     this.addText(holder, 692, 610, this.message, 15, '#fbe8ba', 450);
     this.addText(
