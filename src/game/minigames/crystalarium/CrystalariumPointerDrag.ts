@@ -26,7 +26,10 @@ export class CrystalariumPointerDrag {
   public constructor(
     private readonly root: HTMLElement,
     private readonly actions: CrystalariumDragActions,
-    private readonly getPiece: (origin: { kind: 'cell' | 'shelf'; index: number }) => CrystalPiece | null,
+    private readonly getPiece: (origin: {
+      kind: 'cell' | 'shelf';
+      index: number;
+    }) => CrystalPiece | null,
   ) {
     root.addEventListener('pointerdown', this.onDown);
     root.addEventListener('pointermove', this.onMove);
