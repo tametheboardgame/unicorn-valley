@@ -710,3 +710,81 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
     expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
   });
 });
+
+
+test.describe('H6.9C13A isolated producer-placement visual concept', () => {
+  test('compares 42 frame sockets against 39 fixed-cell sockets without game saves', async ({
+    page,
+  }, testInfo) => {
+    await page.goto('/design-previews/crystalarium-c13a-generators.html');
+    await expect(page.getByRole('heading', { name: /Where should crystals grow/ })).toBeVisible();
+    const board = page.locator('#board');
+    const grow = page.locator('#grow');
+    const message = page.locator('#message');
+    await expect(board.locator('.cell')).toHaveCount(42);
+    await expect(page.locator('#space')).toHaveText('42 / 42');
+    await expect(page.locator('#frame-sources .root-control')).toHaveCount(3);
+    await expect(page.locator('#frame-sources .root-control.locked')).toHaveCount(2);
+    await expect(page.locator('#unlocks')).toHaveText('1 / 3');
+    await page.screenshot({ path: testInfo.outputPath('h6.9c13a-frame-desktop.png'), fullPage: true });
+
+    await grow.click();
+    await expect(page.locator('#total')).toHaveText('3');
+    await expect(message).toContainText('No charges, fluid or timers were used');
+
+    await page.locator('#grid-choice').click();
+    await expect(page.locator('#space')).toHaveText('39 / 42');
+    await expect(board.locator('.cell.occupied-producer')).toHaveCount(3);
+    await expect(page.locator('#frame-sources')).toBeHidden();
+    await page.screenshot({ path: testInfo.outputPath('h6.9c13a-three-fixed-cells.png'), fullPage: true });
+
+    await page.getByRole('button', { name: '4 patterns' }).click();
+    await expect(page.locator('#unlocks')).toHaveText('2 / 3');
+    await page.locator('#source-cards .source-card').nth(1).click();
+    await expect(grow).toHaveText('✦ Grow free Bright crystal');
+    await grow.click();
+    await expect(page.locator('#total')).toHaveText('3');
+
+    await page.getByRole('button', { name: '7 patterns' }).click();
+    await expect(page.locator('#unlocks')).toHaveText('3 / 3');
+    await page.locator('#source-cards .source-card').nth(2).click();
+    await expect(grow).toHaveText('✦ Grow free Bell crystal');
+    await expect(
+      await page.evaluate(() => ({
+        keys: Object.keys(localStorage),
+        sessionKeys: Object.keys(sessionStorage),
+      })),
+    ).toEqual({ keys: [], sessionKeys: [] });
+  });
+
+  test.describe('320px first-play placement review', () => {
+    test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+    test('keeps generator targets legible, the board horizontally scrollable and 42 cells intact', async ({
+      page,
+    }, testInfo) => {
+      await page.goto('/design-previews/crystalarium-c13a-generators.html');
+      const frame = page.locator('#frame-sources .root-control');
+      await expect(frame).toHaveCount(3);
+      for (const producer of await frame.all()) {
+        const box = await producer.boundingBox();
+        expect(box?.height).toBeGreaterThanOrEqual(48);
+        expect(box?.width).toBeGreaterThanOrEqual(48);
+      }
+      await expect(page.locator('#board .cell')).toHaveCount(42);
+      await expect(page.locator('#space')).toHaveText('42 / 42');
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      ).toBe(true);
+      const scroller = page.locator('.board-window');
+      expect(
+        await scroller.evaluate((element) => element.scrollWidth > element.clientWidth),
+      ).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath('h6.9c13a-narrow-frame.png'), fullPage: true });
+      await page.locator('#grid-choice').click();
+      await expect(page.locator('#board .cell.occupied-producer')).toHaveCount(3);
+      await expect(page.locator('#space')).toHaveText('39 / 42');
+      await page.screenshot({ path: testInfo.outputPath('h6.9c13a-narrow-occupied.png'), fullPage: true });
+    });
+  });
+});
