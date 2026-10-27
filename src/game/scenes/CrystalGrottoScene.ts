@@ -235,14 +235,16 @@ export class CrystalGrottoScene extends InteractiveMicroLocationScene {
       this.add.triangle(-34, -3, 0, 44, 18, 0, 36, 44, 0x63cddd),
       this.add.triangle(3, -16, 0, 60, 20, 0, 40, 60, 0xbd91e7),
       this.add.triangle(35, -3, 0, 46, 18, 0, 36, 46, 0x82bfff),
-      this.add.text(0, 63, '✦ PLAY CRYSTALARIUM ✦', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        fontStyle: 'bold',
-        color: '#fff7d4',
-        backgroundColor: '#223e5cdd',
-        padding: { x: 8, y: 5 },
-      }).setOrigin(0.5),
+      this.add
+        .text(0, 63, '✦ PLAY CRYSTALARIUM ✦', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          fontStyle: 'bold',
+          color: '#fff7d4',
+          backgroundColor: '#223e5cdd',
+          padding: { x: 8, y: 5 },
+        })
+        .setOrigin(0.5),
     ]);
     this.tweens.add({
       targets: altar,
