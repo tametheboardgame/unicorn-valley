@@ -726,5 +726,28 @@
         }
       ]
     }
+  },
+  "growthPotionArt": {
+    "status": "USER_APPROVED_VISUAL_DIRECTION_LOCKED",
+    "approvedOn": "2026-10-28",
+    "direction": "Ornate gold-and-glass vessel with cyan glowing crystal crown; turquoise liquid, carved floral/leaf/plinth detailing and separate readable slim vertical gauge. Approved multi-state vial, single-drop, pour, splash and emerging crystal visuals.",
+    "assetPlan": [
+      "reservoir glass-and-gold empty shell alpha",
+      "separable cyan liquid level mask/tint controlled by UI code, not five fixed bitmaps",
+      "vertical gauge empty frame with independent fill bar",
+      "hand-held empty vial, dynamic fill support",
+      "isolated droplet",
+      "pour stream and splash effects",
+      "crystal emergence/glow effect and reduced motion static states"
+    ],
+    "constraints": [
+      "Reference contact sheet is a visual guide only; do not ship it as a flattened runtime texture",
+      "Never bake percentage labels into the asset art; quantities and progress are real UI data",
+      "All controls and interactive targets remain independent hit-tested UI",
+      "Any numeric growth costs, capacity and refill remain C20 pending approval",
+      "Art-only C17, no change to existing game saves, mechanics, economy or scene"
+    ],
+    "artifactStatus": "Final transparent standalone assets in production preparation, not yet accepted or integrated",
+    "runtimeApproved": false
   }
 }
