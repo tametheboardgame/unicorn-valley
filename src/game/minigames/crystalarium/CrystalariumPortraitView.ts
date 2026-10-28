@@ -151,9 +151,41 @@ export class CrystalariumPortraitView {
     return button;
   }
 
+  /**
+   * Menus only alter their existing DOM visibility: rebuilding the complete
+   * 42-cell board during a native click can replace the target mid-event and
+   * inadvertently close a freshly opened panel on mobile.
+   */
+  private syncMenuVisibility(): void {
+    const backdrop = this.root.querySelector<HTMLElement>('.crystalarium-portrait-menu-backdrop');
+    const panel = this.root.querySelector<HTMLElement>('.crystalarium-portrait-menu-panel');
+    if (!backdrop || !panel) return;
+    backdrop.hidden = this.activeMenu === null;
+    panel.hidden = this.activeMenu === null;
+    panel.setAttribute(
+      'aria-label',
+      'Crystalarium ' + (this.activeMenu ?? 'options') + ' panel',
+    );
+    const title = panel.querySelector<HTMLElement>('.crystalarium-portrait-menu-title');
+    if (title) title.textContent = '✦ ' + (this.activeMenu ?? 'Options');
+    for (const menu of ['pattern', 'growing', 'tools'] as const) {
+      const trigger = this.root.querySelector<HTMLButtonElement>(
+        `[data-crystalarium-menu="${menu}"]`,
+      );
+      trigger?.setAttribute('aria-expanded', String(this.activeMenu === menu));
+      trigger?.classList.toggle('is-active', this.activeMenu === menu);
+    }
+    const pattern = panel.querySelector<HTMLElement>('.crystalarium-portrait-pattern');
+    const growing = panel.querySelector<HTMLElement>('.crystalarium-portrait-controls');
+    const tools = panel.querySelector<HTMLElement>('.crystalarium-portrait-tools');
+    if (pattern) pattern.hidden = this.activeMenu !== 'pattern';
+    if (growing) growing.hidden = this.activeMenu !== 'growing';
+    if (tools) tools.hidden = this.activeMenu !== 'tools';
+  }
+
   private toggleMenu(menu: 'pattern' | 'growing' | 'tools'): void {
     this.activeMenu = this.activeMenu === menu ? null : menu;
-    if (this.currentView) this.render(this.currentView);
+    this.syncMenuVisibility();
     const focusTarget = this.activeMenu
       ? this.root.querySelector<HTMLButtonElement>('[data-crystalarium-action="close-menu"]')
       : this.root.querySelector<HTMLButtonElement>(`[data-crystalarium-menu="${menu}"]`);
@@ -607,6 +639,7 @@ export class CrystalariumPortraitView {
       shelf,
       status,
     );
+    this.syncMenuVisibility();
     // Recreating the 42-cell board must not snap a narrow phone back to column one.
     // Players need to keep later columns in view after selection, Grow and Offer.
     scroller.scrollLeft = boardScrollLeft;

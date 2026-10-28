@@ -741,6 +741,10 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
     await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
     await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
     await expect(portrait).toBeVisible();
+    // The board is the default view even for the 50th pattern. The title and
+    // recipe cards belong to the explicitly opened Pattern menu.
+    await expect(portrait.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
     await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
       'Crystalarium Symphony',
     );
@@ -754,6 +758,11 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
         portrait.locator('.crystalarium-portrait-goal [data-crystal-art]').nth(index),
       ).toHaveAttribute('data-crystal-art', family + '-tier-5');
     }
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-final-chapter-pattern-menu-320.png'),
+      fullPage: true,
+    });
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
     const first = await portrait.locator('[data-crystalarium-cell="0"]').boundingBox();
     const dock = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
     if (!first || !dock) throw new Error('Finale board or safe shelf not visible');

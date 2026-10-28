@@ -979,7 +979,7 @@ export class CrystalariumFullMode {
       holder,
       173,
       681,
-      'N grow • 1–3 veins • O offer • H harmony • P polish • S shelf • W wash • Esc exit',
+      'N Grow • 1–3 Wells • O Offer • H Harmony • P Polish • Esc Leave',
       12,
       '#bfd6ec',
       478,
