@@ -1071,7 +1071,6 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
   });
 });
 
-
 test.describe('H6.9C17 separate ornate board art candidate', () => {
   for (const viewport of [
     { width: 320, height: 700 },
@@ -1088,7 +1087,8 @@ test.describe('H6.9C17 separate ornate board art candidate', () => {
       await expect(page.locator('#frame')).not.toHaveClass(/show-garden/);
       const hasTransparency = await page.locator('.frame-art').evaluate(async (img) => {
         const frame = img as HTMLImageElement;
-        if (!frame.complete) await new Promise((resolve) => frame.addEventListener('load', resolve, { once: true }));
+        if (!frame.complete)
+          await new Promise((resolve) => frame.addEventListener('load', resolve, { once: true }));
         const canvas = document.createElement('canvas');
         canvas.width = frame.naturalWidth;
         canvas.height = frame.naturalHeight;
@@ -1096,21 +1096,25 @@ test.describe('H6.9C17 separate ornate board art candidate', () => {
         if (!context) throw new Error('Canvas missing');
         context.drawImage(frame, 0, 0);
         const alphaAt = (x: number, y: number) => context.getImageData(x, y, 1, 1).data[3];
-        return alphaAt(0, 0) === 0 &&
+        return (
+          alphaAt(0, 0) === 0 &&
           alphaAt(canvas.width - 1, 0) === 0 &&
           alphaAt(0, canvas.height - 1) === 0 &&
           alphaAt(canvas.width - 1, canvas.height - 1) === 0 &&
-          alphaAt(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2)) === 0;
+          alphaAt(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2)) === 0
+        );
       });
       expect(hasTransparency).toBe(true);
       await page.getByRole('button', { name: 'Show 7×6 grid' }).click();
       await expect(page.locator('#frame')).toHaveClass(/show-board/);
-      await expect.poll(() =>
-        page.locator('.frame-art').evaluate((node) => {
-          const img = node as HTMLImageElement;
-          return img.complete && img.naturalWidth > 0;
-        }),
-      ).toBe(true);
+      await expect
+        .poll(() =>
+          page.locator('.frame-art').evaluate((node) => {
+            const img = node as HTMLImageElement;
+            return img.complete && img.naturalWidth > 0;
+          }),
+        )
+        .toBe(true);
       const socket = page.locator('#sockets .socket').first();
       await socket.click();
       await expect(socket).toHaveAttribute('data-state', 'selected');
