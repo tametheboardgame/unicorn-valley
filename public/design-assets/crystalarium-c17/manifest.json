@@ -147,7 +147,8 @@
       "formatTreatment": "The approved source is 3:2; 16:9 derived runtime composition crops 80 pixels from top and bottom, then resizes to 1920×1080. Preserve uncropped source.",
       "userSource": "C17 approved background image in project chat; checksum identifies exact source and must be checked during eventual ingest",
       "repositoryBinaryCommitted": false,
-      "pending": "Upload full-resolution original and WebP derivative to version-controlled assets with matching checksums, then replace SVG preview placeholder; never call it integrated before upload"
+      "pending": "Exact approved WebP staged for GitHub upload on World branch; C17 preview references it with SVG fallback pending actual binary upload",
+      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp"
     },
     "portrait": {
       "decision": "USER_APPROVED_LOCKED",
@@ -160,9 +161,11 @@
       "preparedWebpSha256": "f25bae9923d06070cab91a741967d1a266b68779889f443568ee9c3c464bf684",
       "formation": "The generator returned vertical painting inside wider white-margined canvas. Exactly cropped central 576×1024 9:16 composition, upscale derivative 1080×1920; not a stretched desktop crop.",
       "repositoryBinaryCommitted": false,
-      "pending": "Commit checksum-verified portrait PNG/WebP binaries and integrate portrait design preview; then test overlay contrast and mobile screenshots.",
-      "decisionDate": "2026-10-28"
+      "pending": "Exact approved WebP staged for GitHub upload on World branch; C17 preview references it with SVG fallback pending actual binary upload",
+      "decisionDate": "2026-10-28",
+      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp"
     },
     "note": "These lock references identify conversation-produced raster files by exact checksums; GitHub API text/tree commit cannot ingest arbitrary local binary without transporting its bytes. No painted artwork is yet served by Cloudflare, and pre-existing SVG placeholders remain unchanged."
-  }
+  },
+  "note": "Both approved raster WebPs are staged with correct SHA-256 but are not yet GitHub blobs. Current C17 preview imports them automatically when their bytes are uploaded; otherwise shows SVG fallback clearly labelled."
 }
