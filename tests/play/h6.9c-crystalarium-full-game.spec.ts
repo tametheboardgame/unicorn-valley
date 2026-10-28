@@ -730,9 +730,17 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
       fullPage: true,
     });
 
-    await grow.click();
+    // A locked well explains the requirement but cannot grow or change progress.
+    await page.locator('#frame-sources .root-control').nth(1).click();
+    await expect(page.locator('#total')).toHaveText('2');
+    await expect(message).toContainText('unlocks after 4 completed patterns');
+    // The rooted on-board Low well produces immediately, without a second click.
+    await page.locator('#frame-sources .root-control').first().click();
     await expect(page.locator('#total')).toHaveText('3');
     await expect(message).toContainText('No charges, fluid or timers were used');
+    // The comparison's separate Grow action also remains available.
+    await grow.click();
+    await expect(page.locator('#total')).toHaveText('4');
 
     await page.locator('#grid-choice').click();
     await expect(page.locator('#space')).toHaveText('39 / 42');
@@ -743,17 +751,22 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
       fullPage: true,
     });
 
+    // B permits direct growth from fixed wells, though it sacrifices three sockets.
+    await board.locator('.cell.occupied-producer').first().click();
+    await expect(page.locator('#total')).toHaveText('3');
     await page.locator('[data-progress="4"]').click();
     await expect(page.locator('#unlocks')).toHaveText('2 / 3');
     await page.locator('#source-cards .source-card').nth(1).click();
     await expect(grow).toHaveText('✦ Grow free Bright crystal');
     await grow.click();
-    await expect(page.locator('#total')).toHaveText('3');
+    await expect(page.locator('#total')).toHaveText('4');
 
     await page.locator('[data-progress="7"]').click();
     await expect(page.locator('#unlocks')).toHaveText('3 / 3');
     await page.locator('#source-cards .source-card').nth(2).click();
     await expect(grow).toHaveText('✦ Grow free Bell crystal');
+    await board.locator('.cell.occupied-producer').nth(2).click();
+    await expect(page.locator('#total')).toHaveText('5');
     await expect(
       await page.evaluate(() => ({
         keys: Object.keys(localStorage),

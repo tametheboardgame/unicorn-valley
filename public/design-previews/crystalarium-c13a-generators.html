@@ -93,7 +93,7 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
     <div class="metric"><strong id="total">2</strong><span>crystals on the board</span></div>
    </div>
    <div class="shelf"><strong>✦ Safe shelf</strong><div class="slots" aria-hidden="true"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
-   <div class="unused">The four-slot shelf stays separate from producer wells. All growing in this demo is <mark>free and unlimited</mark>.</div>
+   <div class="unused">Tap an unlocked well on the board to <mark>grow immediately</mark>. The four-slot shelf stays separate. All basic growing is free and unlimited.</div>
   </section>
   <aside class="panel control-panel warm" aria-label="Producer design controls">
    <h2>1. Choose the placement</h2>
@@ -109,7 +109,7 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
     <button type="button" data-progress="4" aria-pressed="false">4 patterns</button>
     <button type="button" data-progress="7" aria-pressed="false">7 patterns</button>
    </div>
-   <p class="caption">These are test scenarios, not actual saved campaign progress.</p>
+   <p class="caption">These are test scenarios, not actual saved campaign progress. Tap a well on the board to grow directly; source cards below use a separate Grow button for comparison.</p>
    <div class="separation"></div>
    <h2>3. Try growing a free shard</h2>
    <fieldset class="source-cards" id="source-cards" aria-label="Select an unlocked crystal family"></fieldset>
@@ -156,9 +156,9 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
         button.className=`root-control${selected===f.id?' selected':''}${locked?' locked':''}`;
         button.style.setProperty("--family",f.base);
         button.innerHTML=`${htmlCrystal(f.id)}<strong>${f.name}</strong><span>${locked?`Unlock at ${f.unlock}`:'Free growth'}</span>`;
-        button.setAttribute("aria-label",label);
+        button.setAttribute("aria-label",locked?label:`Grow free ${f.name} crystal from the board-frame well`);
         button.setAttribute("aria-pressed",String(selected===f.id&&!locked));
-        button.addEventListener("click",()=>selectFamily(f.id));
+        button.addEventListener("click",()=>growFromWell(f.id));
         strip.append(button);
       }
       const card=document.createElement("button");
@@ -185,8 +185,8 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
       if(reserved){
         const f=families[producerIndices.indexOf(i)];
         cell.innerHTML=`${htmlCrystal(f.id)}<span class='tiny'>WELL</span>`;
-        cell.setAttribute("aria-label",`Permanent ${f.name} producer: ${isLocked(f)?'locked':'unlocked'}`);
-        cell.addEventListener("click",()=>selectFamily(f.id));
+        cell.setAttribute("aria-label",isLocked(f)?`Locked ${f.name} producer: unlock after ${f.unlock} patterns`:`Grow free ${f.name} crystal from fixed board well`);
+        cell.addEventListener("click",()=>growFromWell(f.id));
       }else if(piece){
         cell.innerHTML=htmlCrystal(piece);
         cell.setAttribute("aria-label",`Demo ${piece} crystal in socket ${i+1}`);
@@ -207,6 +207,16 @@ mark{background:transparent;color:#ffe5a0;font-weight:900}
     if(isLocked(f)){announce(`${f.name} unlocks after ${f.unlock} completed patterns. Try the progress selector above.`);return;}
     selected=id;
     announce(`${f.name} is selected. Grow a free basic shard when you choose.`);
+    drawSources();
+  }
+  function growFromWell(id){
+    const family=families.find((value)=>value.id===id);
+    if(isLocked(family)){
+      announce(`${family.name} unlocks after ${family.unlock} completed patterns. No shard was grown.`);
+      return;
+    }
+    selected=id;
+    grow();
     drawSources();
   }
   function redraw(){

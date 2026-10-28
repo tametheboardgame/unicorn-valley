@@ -54,3 +54,9 @@
 **Only afterwards:** C13B charge schema, advanced growth probabilities/tiers, optional refill cadence, C14 Growth Fluid and wider Valley rewards. Their proposed numeric values remain hypotheses, not implementation authority.
 
 **Next step:** user reviews the deployed, SHA-matched C13A comparison alongside the actual C11B/C12B game preview and supplies a placement/input preference. Then implement the adopted producer approach behind its own gate; C13B/C14 remain separate. Pond Leap PR #289 and shared Mini Games roadmap are out of scope.
+
+## Screenshot-backed C13A usability observation — 28 October 2026
+
+The initial C13A comparison captured real browser screenshots for 1280px desktop and 320px portrait in both modes in [CI #40579242839](https://github.com/tametheboardgame/unicorn-valley/actions/runs/40579242839), artifact `tier2-critical-runtime-smoke`. The narrow layout has no global sideways page overflow, retains 48px-or-larger well targets and scrolls the 7-column board horizontally. The frame-rooted option retains all 42 sockets, while the alternative visibly reserves the leftmost cells of three later rows and leaves 39. The initial test run found only an ambiguous `4 patterns` selector (18/19 tests passed), fixed in `774acf18`.
+
+**Usability refinement under the same design-only gate:** unlocked physical wells now grow one free basic shard **on a single tap/keyboard activation**, with locked wells giving a non-spending unlock explanation. Separate source-card selection plus Grow button is retained for side-by-side interaction comparison. This only mutates the mock-up's in-memory board; it does not implement either producer approach in `CrystalariumFullMode`, change saves or introduce charges. New browser coverage exercises both direct-well variants and locked/no-growth behaviour. The layout/art/drag model still requires explicit player visual approval before C13B adoption.
