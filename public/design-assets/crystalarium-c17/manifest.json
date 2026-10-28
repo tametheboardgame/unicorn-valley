@@ -465,6 +465,496 @@
       "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
       "runtimeApproved": false,
       "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-5.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/bubbles.webp",
+      "purpose": "Isolated Growth Potion candidate bubbles",
+      "format": "lossless transparent WebP",
+      "bytes": 16008,
+      "gitBlobSha": "a4636accec05d9921c3a29d039ebec0d5d4dbe7b",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-add-disabled.webp",
+      "purpose": "Isolated Growth Potion candidate button-add-disabled",
+      "format": "lossless transparent WebP",
+      "bytes": 12566,
+      "gitBlobSha": "e8763265b9de81f6b9bf0324490f1bab2614149a",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-add.webp",
+      "purpose": "Isolated Growth Potion candidate button-add",
+      "format": "lossless transparent WebP",
+      "bytes": 15280,
+      "gitBlobSha": "fe971abce131583e73d8f7d254a491227406aa63",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-pour-disabled.webp",
+      "purpose": "Isolated Growth Potion candidate button-pour-disabled",
+      "format": "lossless transparent WebP",
+      "bytes": 11000,
+      "gitBlobSha": "bdfb4b1c58c2c572e5e38c9e0232c407a56eb6cd",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-pour.webp",
+      "purpose": "Isolated Growth Potion candidate button-pour",
+      "format": "lossless transparent WebP",
+      "bytes": 14758,
+      "gitBlobSha": "d85e87e44e1df0cd978b4f53f5d0110c4e902760",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-medium.webp",
+      "purpose": "Isolated Growth Potion candidate drop-medium",
+      "format": "lossless transparent WebP",
+      "bytes": 9058,
+      "gitBlobSha": "2c18d8f197ddc2e7820ebff14d4bff67615d9362",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-small.webp",
+      "purpose": "Isolated Growth Potion candidate drop-small",
+      "format": "lossless transparent WebP",
+      "bytes": 8806,
+      "gitBlobSha": "afdceb504e28a8c98c183b46fc68e98f36a7b9dd",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-sparkle.webp",
+      "purpose": "Isolated Growth Potion candidate drop-sparkle",
+      "format": "lossless transparent WebP",
+      "bytes": 12864,
+      "gitBlobSha": "f2ee4701921c7fd82fac70eedfc801923dc74d8b",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-triple.webp",
+      "purpose": "Isolated Growth Potion candidate drop-triple",
+      "format": "lossless transparent WebP",
+      "bytes": 8370,
+      "gitBlobSha": "20742fe67c85fc6a3b4e12908e6cc48d26aeaa20",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-empty.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 26886,
+      "gitBlobSha": "04e0e738e0daa10e49f63951b63efffc81994170",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-fill-region-mask.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-fill-region-mask",
+      "format": "lossless transparent WebP",
+      "bytes": 760,
+      "gitBlobSha": "d16abdaff3d7864be6058a6d8850044321311143",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-full.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-full",
+      "format": "lossless transparent WebP",
+      "bytes": 29694,
+      "gitBlobSha": "9feacdfa61bbd29e41c0d5ede8e11089da53d7f7",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-glass-shell.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-glass-shell",
+      "format": "lossless transparent WebP",
+      "bytes": 26524,
+      "gitBlobSha": "b84b0e0951f73cfaf0d774083e8f661f075b6941",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-half.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-half",
+      "format": "lossless transparent WebP",
+      "bytes": 32578,
+      "gitBlobSha": "4cd1a9167e68b213dd4bb7012fe08a3840debabf",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-high.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-high",
+      "format": "lossless transparent WebP",
+      "bytes": 31204,
+      "gitBlobSha": "ca9722400c1e0aa6a34e8b346474bb5911e64591",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-low.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-low",
+      "format": "lossless transparent WebP",
+      "bytes": 31348,
+      "gitBlobSha": "df8c8cb7739d055cf060601da09bf1e56644b60b",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-01.webp",
+      "purpose": "Isolated Growth Potion candidate growth-01",
+      "format": "lossless transparent WebP",
+      "bytes": 19190,
+      "gitBlobSha": "4c96e4f3bd19b24c47a14d0d0cea5b98a95a6a9e",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-02.webp",
+      "purpose": "Isolated Growth Potion candidate growth-02",
+      "format": "lossless transparent WebP",
+      "bytes": 22256,
+      "gitBlobSha": "6cdffa2374ad49a38ae20b89e2abfd6857a50ab2",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-03.webp",
+      "purpose": "Isolated Growth Potion candidate growth-03",
+      "format": "lossless transparent WebP",
+      "bytes": 33606,
+      "gitBlobSha": "85ec6b26f8a78b12e728c96b138ae257ae59cb0a",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-04.webp",
+      "purpose": "Isolated Growth Potion candidate growth-04",
+      "format": "lossless transparent WebP",
+      "bytes": 35106,
+      "gitBlobSha": "d8a1454e7f5f93c09fe865241e25e517ad69847d",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop-empty.webp",
+      "purpose": "Isolated Growth Potion candidate icon-drop-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 4470,
+      "gitBlobSha": "1008ce80513d28451fac0f239726429958b103a2",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop-filled.webp",
+      "purpose": "Isolated Growth Potion candidate icon-drop-filled",
+      "format": "lossless transparent WebP",
+      "bytes": 5462,
+      "gitBlobSha": "885c0566d3d048df417be22f86e396eb12599daa",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop.webp",
+      "purpose": "Isolated Growth Potion candidate icon-drop",
+      "format": "lossless transparent WebP",
+      "bytes": 11400,
+      "gitBlobSha": "a0772989eb9a53537a089936e101f625bfa83e10",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-vial.webp",
+      "purpose": "Isolated Growth Potion candidate icon-vial",
+      "format": "lossless transparent WebP",
+      "bytes": 12826,
+      "gitBlobSha": "fe830fb5a53d834485283ba17dd6d99b78370743",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/liquid-surface.webp",
+      "purpose": "Isolated Growth Potion candidate liquid-surface",
+      "format": "lossless transparent WebP",
+      "bytes": 22530,
+      "gitBlobSha": "33f0b2c1ffe6dd98f61b8908b532d3ca48b2c506",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-01.webp",
+      "purpose": "Isolated Growth Potion candidate pour-01",
+      "format": "lossless transparent WebP",
+      "bytes": 27412,
+      "gitBlobSha": "a955edc71d29de1cf00713d077b6310dc3a8ce99",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-02.webp",
+      "purpose": "Isolated Growth Potion candidate pour-02",
+      "format": "lossless transparent WebP",
+      "bytes": 27510,
+      "gitBlobSha": "790c6b24807f544935cdbba490bd6fae7043b692",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-03.webp",
+      "purpose": "Isolated Growth Potion candidate pour-03",
+      "format": "lossless transparent WebP",
+      "bytes": 29150,
+      "gitBlobSha": "0b3d90066d4ca3977e3675883d3303afd5417bf1",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-04.webp",
+      "purpose": "Isolated Growth Potion candidate pour-04",
+      "format": "lossless transparent WebP",
+      "bytes": 26158,
+      "gitBlobSha": "11a2ac97697a2d630f00893cdef5e56727aff7de",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-05.webp",
+      "purpose": "Isolated Growth Potion candidate pour-05",
+      "format": "lossless transparent WebP",
+      "bytes": 24224,
+      "gitBlobSha": "2f0c5d0763ef3a7a9e3a72a19bb9a39485b177b9",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-empty.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 117574,
+      "gitBlobSha": "83f4be646e367717eef86a17527e73d3c996209b",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-fill-region-mask.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-fill-region-mask",
+      "format": "lossless transparent WebP",
+      "bytes": 5032,
+      "gitBlobSha": "1b0090354696fbcee40c0847665845bf65f97bfc",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-full.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-full",
+      "format": "lossless transparent WebP",
+      "bytes": 106892,
+      "gitBlobSha": "edbedffca9c66bf886104481f8ed338708d5fae8",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-glass-shell.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-glass-shell",
+      "format": "lossless transparent WebP",
+      "bytes": 120034,
+      "gitBlobSha": "58b735a3ef2d6120ddd29d3ff6d9b5351a72c2fe",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-high.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-high",
+      "format": "lossless transparent WebP",
+      "bytes": 101854,
+      "gitBlobSha": "b35bc72f8a20769ced8f714fa56f86a197936df2",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-low.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-low",
+      "format": "lossless transparent WebP",
+      "bytes": 101610,
+      "gitBlobSha": "9edd0854027b602cdcda6ed06116a4c510df5e61",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-medium.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-medium",
+      "format": "lossless transparent WebP",
+      "bytes": 102146,
+      "gitBlobSha": "b792b7de81f9b2ae68179af52bb444561462cb29",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/sparkles.webp",
+      "purpose": "Isolated Growth Potion candidate sparkles",
+      "format": "lossless transparent WebP",
+      "bytes": 15730,
+      "gitBlobSha": "1233caba8becc41fb2ede201400d3dadc9b386cf",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-01.webp",
+      "purpose": "Isolated Growth Potion candidate splash-01",
+      "format": "lossless transparent WebP",
+      "bytes": 22536,
+      "gitBlobSha": "640ef2ecc5158ce602498efdc9779f9b476e1898",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-02.webp",
+      "purpose": "Isolated Growth Potion candidate splash-02",
+      "format": "lossless transparent WebP",
+      "bytes": 20204,
+      "gitBlobSha": "2389d7bf71d5aa3daa201125548f288ca4734002",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-03.webp",
+      "purpose": "Isolated Growth Potion candidate splash-03",
+      "format": "lossless transparent WebP",
+      "bytes": 24714,
+      "gitBlobSha": "b4e5f5b4b5905420c51ecab927091b424a6d1884",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-04.webp",
+      "purpose": "Isolated Growth Potion candidate splash-04",
+      "format": "lossless transparent WebP",
+      "bytes": 24742,
+      "gitBlobSha": "1e2ed77490645b708038a9ab175b504442a36dfe",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-empty.webp",
+      "purpose": "Isolated Growth Potion candidate vial-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 31304,
+      "gitBlobSha": "165f610f8759935f6e877f7525ebe39c3b76e419",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-fill-region-mask.webp",
+      "purpose": "Isolated Growth Potion candidate vial-fill-region-mask",
+      "format": "lossless transparent WebP",
+      "bytes": 2348,
+      "gitBlobSha": "e21ee2454cdcce52943b273f34f50cf446acf396",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-full.webp",
+      "purpose": "Isolated Growth Potion candidate vial-full",
+      "format": "lossless transparent WebP",
+      "bytes": 37520,
+      "gitBlobSha": "1c7ad8993387a108ff4e59bb2059d4ce628dcc8a",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-glass-shell.webp",
+      "purpose": "Isolated Growth Potion candidate vial-glass-shell",
+      "format": "lossless transparent WebP",
+      "bytes": 32660,
+      "gitBlobSha": "cee992f528a574d5ea1f28d3d85c63440d4a6e8c",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-half.webp",
+      "purpose": "Isolated Growth Potion candidate vial-half",
+      "format": "lossless transparent WebP",
+      "bytes": 32050,
+      "gitBlobSha": "20dc6caffa5f66994705cd6f6f24ecc8c008e6e7",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-quarter.webp",
+      "purpose": "Isolated Growth Potion candidate vial-quarter",
+      "format": "lossless transparent WebP",
+      "bytes": 32600,
+      "gitBlobSha": "7c7bcd28fc3de4683ae39d0cd9a2127aa8558499",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-three-quarter.webp",
+      "purpose": "Isolated Growth Potion candidate vial-three-quarter",
+      "format": "lossless transparent WebP",
+      "bytes": 33116,
+      "gitBlobSha": "254120619edec1013cdda4bb332438af0f9d67f7",
+      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
     }
   ],
   "releaseChecks": [
@@ -750,7 +1240,7 @@
     "artifactStatus": "Final transparent standalone assets in production preparation, not yet accepted or integrated",
     "runtimeApproved": false,
     "candidateArchive": {
-      "status": "GENERATED_TRANSPARENT_ASSET_PACK_ARCHIVED_FOR_REVIEW; NOT_COMMITTED_TO_GITHUB_RUNTIME",
+      "status": "49_INDEPENDENT_WEBP_CANDIDATES_COMMITTED_FOR_VISUAL_REVIEW; NOT_RUNTIME_APPROVED",
       "fileCount": 49,
       "included": "43 individually separated illustrated sprites plus 6 experimental shell/fill-mask layers; each exported as transparent PNG and lossless WebP",
       "archiveDriveUrl": "https://drive.google.com/file/d/11D9Sz8CAhY6UfohDHycSb73s4xfLDtcN/view",
@@ -765,9 +1255,12 @@
       ],
       "warnings": [
         "Generated art contains possible edge/halo artefacts, especially small effects and disabled icons; visual QA still pending",
-        "These binaries are archived in Google Drive and delivered as a conversation ZIP, not present in GitHub runtime tree",
         "C17 final art acceptance, integration, source-bound Cloudflare QA and C20 economy gate remain open"
-      ]
+      ],
+      "repositoryPath": "public/design-assets/crystalarium-c17/growth-potion-assets/",
+      "publishedReview": "/design-previews/crystalarium-c17-growth-potion-assets.html",
+      "gitBlobCount": 49,
+      "totalWebpBytes": 1553670
     }
   }
 }
