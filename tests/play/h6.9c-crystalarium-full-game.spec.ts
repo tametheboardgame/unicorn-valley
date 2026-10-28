@@ -712,6 +712,10 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
   test('shows three rare recipes and completes the Symphony without ending free play', async ({
     page,
   }, testInfo) => {
+    // The isolated 320px finale exercises exit/re-entry, a complete offer and
+    // post-campaign refined growth. CI evidence reached its final assertion at
+    // the 45s limit: retain every assertion with a bounded end-to-end budget.
+    test.setTimeout(90_000);
     await enterResonanceGarden(page);
     const portrait = page.locator('[data-crystalarium-portrait="true"]');
     await portrait.locator('[data-crystalarium-action="exit"]').click();
@@ -904,6 +908,10 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
   test('the default view prioritises the usable board, with reversible Pattern, Grow and Tools panels', async ({
     page,
   }) => {
+    // The full touch, keyboard, focus, drawer and save sequence completed its
+    // assertions but timed out in fixture teardown on shared Chromium CI.
+    // Preserve the entire interaction contract; only bound its time budget.
+    test.setTimeout(90_000);
     await enterResonanceGarden(page);
     const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
     const board = region.locator('.crystalarium-portrait-board-section');
