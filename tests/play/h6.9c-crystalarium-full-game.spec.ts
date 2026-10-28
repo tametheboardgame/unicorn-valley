@@ -743,14 +743,14 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
       fullPage: true,
     });
 
-    await page.getByRole('button', { name: '4 patterns' }).click();
+    await page.locator('[data-progress="4"]').click();
     await expect(page.locator('#unlocks')).toHaveText('2 / 3');
     await page.locator('#source-cards .source-card').nth(1).click();
     await expect(grow).toHaveText('✦ Grow free Bright crystal');
     await grow.click();
     await expect(page.locator('#total')).toHaveText('3');
 
-    await page.getByRole('button', { name: '7 patterns' }).click();
+    await page.locator('[data-progress="7"]').click();
     await expect(page.locator('#unlocks')).toHaveText('3 / 3');
     await page.locator('#source-cards .source-card').nth(2).click();
     await expect(grow).toHaveText('✦ Grow free Bell crystal');
