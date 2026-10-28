@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "package": "R6.5-WP19H6.9C17",
   "date": "2026-10-28",
-  "status": "C17 original SVG layout studies committed; painted desktop background concept user-approved and locked in design record; portrait counterpart awaiting visual approval and raster ingestion",
+  "status": "Both painted desktop and portrait Crystalarium background illustrations approved and locked by user; raster binaries pending GitHub ingestion and preview integration",
   "sourceOfTruth": "docs/design/2026-10-28-CRYSTALARIUM-APPROVED-VISUAL-AND-INTERACTION-CONTRACT.md",
   "provenance": "Original procedurally authored SVG artwork for the project's design review; no third-party graphics/fonts embedded.",
   "designReference": "User-approved in-chat illustrated Garden concept image; flattened concept screenshot is NOT used as a runtime texture.",
@@ -150,7 +150,7 @@
       "pending": "Upload full-resolution original and WebP derivative to version-controlled assets with matching checksums, then replace SVG preview placeholder; never call it integrated before upload"
     },
     "portrait": {
-      "decision": "CANDIDATE_REQUIRES_USER_REVIEW",
+      "decision": "USER_APPROVED_LOCKED",
       "generatedOn": "2026-10-28",
       "sourceName": "crystalarium-garden-portrait-candidate-source.png",
       "sourceWidth": 576,
@@ -160,7 +160,8 @@
       "preparedWebpSha256": "f25bae9923d06070cab91a741967d1a266b68779889f443568ee9c3c464bf684",
       "formation": "The generator returned vertical painting inside wider white-margined canvas. Exactly cropped central 576×1024 9:16 composition, upscale derivative 1080×1920; not a stretched desktop crop.",
       "repositoryBinaryCommitted": false,
-      "pending": "Human visual approval and binary asset ingestion, then mobile screenshot contrast check."
+      "pending": "Commit checksum-verified portrait PNG/WebP binaries and integrate portrait design preview; then test overlay contrast and mobile screenshots.",
+      "decisionDate": "2026-10-28"
     },
     "note": "These lock references identify conversation-produced raster files by exact checksums; GitHub API text/tree commit cannot ingest arbitrary local binary without transporting its bytes. No painted artwork is yet served by Cloudflare, and pre-existing SVG placeholders remain unchanged."
   }
