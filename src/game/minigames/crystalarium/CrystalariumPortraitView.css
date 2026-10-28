@@ -575,9 +575,16 @@
     overflow-y: auto;
   }
 
-  .crystalarium-portrait-header { gap: 6px; min-height: 54px; }
-  .crystalarium-portrait-heading { font-size: clamp(20px, 5.7vw, 25px); }
-  .crystalarium-portrait-subtitle { font-size: 12px; }
+  .crystalarium-portrait-header {
+    gap: 6px;
+    min-height: 54px;
+  }
+  .crystalarium-portrait-heading {
+    font-size: clamp(20px, 5.7vw, 25px);
+  }
+  .crystalarium-portrait-subtitle {
+    font-size: 12px;
+  }
   .crystalarium-portrait-header > .crystalarium-portrait-action {
     padding-inline: 6px;
     min-width: 48px;
@@ -697,7 +704,8 @@
     width: 100%;
     min-width: 0;
   }
-  .crystalarium-portrait-menu-panel > .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] {
+  .crystalarium-portrait-menu-panel
+    > .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] {
     grid-template-columns: minmax(0, 1fr) 90px;
   }
   .crystalarium-portrait-shelf {

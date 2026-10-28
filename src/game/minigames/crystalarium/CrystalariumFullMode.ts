@@ -879,7 +879,15 @@ export class CrystalariumFullMode {
         3,
         this.state.selectedFamily === family ? 0xffe5a0 : unlocked ? 0x9adbea : 0x878cae,
       );
-      this.addText(holder, 651, 257 + index * 108, unlocked ? family : 'locked', 11, '#ccebf1', 65).setOrigin(0.5);
+      this.addText(
+        holder,
+        651,
+        257 + index * 108,
+        unlocked ? family : 'locked',
+        11,
+        '#ccebf1',
+        65,
+      ).setOrigin(0.5);
     });
     this.addText(holder, 699, 369, '✦ CRYSTAL GROWING', 17, '#b6f5df', 442);
     this.addText(

@@ -231,7 +231,13 @@ export class CrystalariumPortraitView {
       ['growing', 'Grow'],
       ['tools', 'Tools'],
     ] as const) {
-      const trigger = this.button(title, () => this.toggleMenu(menu), 'quiet', false, 'menu-' + menu);
+      const trigger = this.button(
+        title,
+        () => this.toggleMenu(menu),
+        'quiet',
+        false,
+        'menu-' + menu,
+      );
       trigger.dataset.crystalariumMenu = menu;
       trigger.setAttribute('aria-expanded', String(this.activeMenu === menu));
       trigger.setAttribute('aria-controls', 'crystalarium-mobile-menu');
@@ -239,7 +245,10 @@ export class CrystalariumPortraitView {
       trigger.classList.toggle('is-active', this.activeMenu === menu);
       if (menu === 'pattern') {
         trigger.classList.toggle('is-ready', canOfferPattern(state));
-        trigger.setAttribute('aria-label', 'Pattern ' + patternName + (canOfferPattern(state) ? ', ready to offer' : ''));
+        trigger.setAttribute(
+          'aria-label',
+          'Pattern ' + patternName + (canOfferPattern(state) ? ', ready to offer' : ''),
+        );
         trigger.replaceChildren(
           makeElement('span', 'crystalarium-portrait-menu-label', '♫ Pattern'),
           makeElement(
@@ -562,13 +571,26 @@ export class CrystalariumPortraitView {
     menuPanel.id = 'crystalarium-mobile-menu';
     menuPanel.hidden = this.activeMenu === null;
     menuPanel.setAttribute('role', 'region');
-    menuPanel.setAttribute('aria-label', 'Crystalarium ' + (this.activeMenu ?? 'options') + ' panel');
-    const closeMenu = this.button('Close ✕', () => {
-      if (this.activeMenu !== null) this.toggleMenu(this.activeMenu);
-    }, 'quiet', false, 'close-menu');
+    menuPanel.setAttribute(
+      'aria-label',
+      'Crystalarium ' + (this.activeMenu ?? 'options') + ' panel',
+    );
+    const closeMenu = this.button(
+      'Close ✕',
+      () => {
+        if (this.activeMenu !== null) this.toggleMenu(this.activeMenu);
+      },
+      'quiet',
+      false,
+      'close-menu',
+    );
     const menuHead = makeElement('div', 'crystalarium-portrait-menu-heading');
     menuHead.append(
-      makeElement('strong', 'crystalarium-portrait-menu-title', '✦ ' + (this.activeMenu ?? 'Options')),
+      makeElement(
+        'strong',
+        'crystalarium-portrait-menu-title',
+        '✦ ' + (this.activeMenu ?? 'Options'),
+      ),
       closeMenu,
     );
     task.hidden = this.activeMenu !== 'pattern';

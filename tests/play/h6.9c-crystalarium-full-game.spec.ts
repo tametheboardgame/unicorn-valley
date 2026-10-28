@@ -930,7 +930,10 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
     await expect(region.locator('[data-crystalarium-action="grow"]')).toBeVisible();
     await region.locator('[data-crystalarium-action="grow"]').click();
     await region.locator('[data-crystalarium-menu="growing"]').click();
-    await expect(region.locator('[data-crystalarium-cell="2"]')).toHaveAttribute('data-family', 'low');
+    await expect(region.locator('[data-crystalarium-cell="2"]')).toHaveAttribute(
+      'data-family',
+      'low',
+    );
     expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
   });
 });
