@@ -28,9 +28,10 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
       expect(first!.y).toBeGreaterThanOrEqual(0);
       expect(first!.y).toBeLessThan(viewport.height);
       if (viewport.width <= 390) {
-        const size = await page.locator('#board .cell').first().evaluate((node) =>
-          node.getBoundingClientRect().width,
-        );
+        const size = await page
+          .locator('#board .cell')
+          .first()
+          .evaluate((node) => node.getBoundingClientRect().width);
         expect(size).toBeGreaterThanOrEqual(48);
       }
 
@@ -42,10 +43,13 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
       ]) {
         await expect
           .poll(() =>
-            page.locator(image).first().evaluate((node) => {
-              const img = node as HTMLImageElement;
-              return img.complete && img.naturalWidth > 0;
-            }),
+            page
+              .locator(image)
+              .first()
+              .evaluate((node) => {
+                const img = node as HTMLImageElement;
+                return img.complete && img.naturalWidth > 0;
+              }),
           )
           .toBe(true);
       }
