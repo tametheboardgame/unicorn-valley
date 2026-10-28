@@ -980,6 +980,23 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
       await expect(page.locator('#orders .order-card')).toHaveCount(5);
       await expect(page.locator('#stock')).toHaveText('100 / 100');
       await expect(page.locator('#low')).toBeVisible();
+      await expect.poll(() => page.locator('body').getAttribute('data-background-art')).toMatch(/^(painted|svg-fallback)$/);
+
+      const boardPanel = await page.locator('.board-panel').boundingBox();
+      const wellsPanel = await page.locator('.wells').boundingBox();
+      const ordersPanel = await page.locator('.orders-panel').boundingBox();
+      const toolsPanel = await page.locator('.tools').boundingBox();
+      if (!boardPanel || !wellsPanel || !ordersPanel || !toolsPanel) {
+        throw new Error('C17 composition regions missing');
+      }
+      if (viewport.width <= 390) {
+        expect(boardPanel.y).toBeLessThan(wellsPanel.y);
+        expect(wellsPanel.y).toBeLessThan(ordersPanel.y);
+      } else {
+        expect(wellsPanel.x).toBeLessThan(boardPanel.x);
+        expect(toolsPanel.x).toBeGreaterThan(boardPanel.x);
+        expect(ordersPanel.y).toBeLessThan(boardPanel.y);
+      }
 
       // A 320px screen can scroll its 42 real-size sockets horizontally,
       // rather than shrinking away game controls or clipping the first row.

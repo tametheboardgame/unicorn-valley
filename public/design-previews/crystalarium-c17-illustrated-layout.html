@@ -33,10 +33,54 @@ footer{padding:9px 12px;border:1px solid #acd5e5;border-radius:12px;background:#
 @media(max-width:650px){body{background-image:url('/design-assets/crystalarium-c17/garden-portrait.svg')}.app{padding:8px;gap:8px}.top{flex-wrap:wrap;gap:4px}.top h1{font-size:20px}.top small{font-size:11px}.top-actions button{font-size:12px;padding:5px;min-height:44px}.stage{display:flex;flex-direction:column;gap:7px}.orders-panel{order:0;width:100%;padding:7px;border-radius:15px}.board-panel{order:2;width:100%;padding:7px;border-radius:15px}.wells{order:1;display:grid;grid-template-columns:1.28fr repeat(3,1fr);gap:5px;width:100%}.board-grid{margin:0;grid-template-columns:repeat(7,48px);grid-template-rows:repeat(6,48px);gap:5px;min-width:max-content}.section-head strong{font-size:14px}.order-card{flex-basis:162px;min-height:123px;padding:7px;gap:3px;border-radius:13px}.order-card strong{font-size:14px}.order-card .goal{min-height:39px;padding:2px}.order-card .goal img{width:28px;height:34px}.order-card b,.order-card em{font-size:11px}.orders-panel p{margin:2px 0}.tools{margin-top:6px}.tools button{min-height:44px}.tools span{font-size:17px}.board-foot span{display:none}.potion{padding:4px 1px}.potion strong{font-size:10px}.potion img{width:46px;height:48px}.potion b{font-size:12px}.well{min-height:88px;padding:2px}.well img{height:55px;width:55px}.well strong{font-size:11px}.well small{font-size:10px}.chamber{grid-template-columns:1fr;gap:8px}.return-icon{justify-self:center;height:50px}.dialog-card{padding:10px}.sample-grid{grid-template-columns:repeat(4,minmax(40px,1fr))}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
+
+/* C17 accepted mock composition: independent fantasy scenery, not painted UI. */
+body.painted-art{background-image:url('/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp')}
+.stage{display:grid;grid-template-columns:minmax(110px,150px) minmax(380px,520px) minmax(110px,1fr) minmax(82px,105px);grid-template-rows:auto 1fr;gap:10px 12px;align-items:start}
+.board-panel{grid-column:2;grid-row:2}
+.wells{grid-column:1;grid-row:1/3}
+.orders-panel{grid-column:2/5;grid-row:1;padding:9px 11px}
+.orders-panel .section-head{margin-bottom:2px}
+.orders-panel p{margin:0 0 5px}
+.order-card{min-height:132px;flex-basis:190px;gap:4px;padding:8px}
+.order-card .goal{min-height:37px;padding:1px}
+.order-card .goal img{height:39px;width:31px}
+.order-card strong{font-size:15px}
+.order-card small,.order-card em{font-size:11px}
+.order-rail{padding-bottom:7px}
+.tools{grid-column:4;grid-row:2;display:flex;flex-direction:column;gap:9px;margin:0}
+.tools button{min-height:88px;padding:8px 3px;font-size:12px;border-radius:17px}
+.tools span{font-size:28px}
+.wells .potion{min-height:130px}
+.wells .well{min-height:110px}
+.board-panel,.orders-panel,.potion,.well,.tools button{background-color:rgba(11,31,60,.96)}
+@media(min-width:651px) and (max-width:1100px){
+ .stage{grid-template-columns:115px minmax(355px,1fr) 94px;gap:8px}
+ .orders-panel{grid-column:2/4;grid-row:1}
+ .board-panel{grid-column:2;grid-row:2}
+ .wells{grid-column:1;grid-row:1/3}
+ .tools{grid-column:3;grid-row:2;display:flex;flex-direction:column}
+ .tools button{min-height:83px}
+}
+@media(max-width:650px){
+ body.painted-art{background-image:url('/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp')}
+ .stage{display:flex;flex-direction:column;gap:7px}
+ .board-panel{order:1;width:100%;padding:7px}
+ .wells{order:2;display:grid;grid-template-columns:1.26fr repeat(3,minmax(0,1fr));gap:5px;width:100%}
+ .orders-panel{order:3;width:100%;padding:7px}
+ .tools{order:4;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%;margin:0}
+ .tools button{min-height:50px;padding:5px 1px;font-size:11px}
+ .tools span{font-size:20px}
+ .wells .potion,.wells .well{min-height:89px}
+ .order-card{min-height:128px;flex-basis:168px}
+ .board-panel .section-head strong{font-size:14px}
+ .top{margin-bottom:0}
+}
+
 </style></head>
 <body>
 <div class="app">
-  <header class="top"><div><h1>✦ Crystalarium · Resonance Garden ✦</h1><small>Illustrated C17 concept · no gameplay saves</small></div><nav class="top-actions"><button type="button" id="help">? Help</button><button type="button" id="sound">♫ Sound</button><button type="button" id="exit">← Leave</button></nav></header>
+  <header class="top"><div><h1>✦ Crystalarium · Resonance Garden ✦</h1><small id="art-status" role="status">C17 visual review · checking painted background</small></div><nav class="top-actions"><button type="button" id="help">? Help</button><button type="button" id="sound">♫ Sound</button><button type="button" id="exit">← Leave</button></nav></header>
   <main class="stage">
     <section class="board-panel" aria-label="Example Crystalarium board">
       <div class="section-head"><strong>✧ Crystal Garden</strong><span>42 sockets · 7 × 6</span></div><div class="board-scroll"><div class="board-grid" id="board"></div></div>
@@ -49,8 +93,8 @@ footer{padding:9px 12px;border:1px solid #acd5e5;border-radius:12px;background:#
     </aside>
     <aside class="orders-panel" aria-label="Resonance Orders"><div class="section-head"><strong>♫ Resonance Orders</strong><span>1 / 50</span></div><p>Several active patterns · swipe sideways</p>
       <div class="order-controls"><button type="button" class="arrow" id="prev" aria-label="Previous order">‹</button><div class="order-rail" id="orders"></div><button type="button" class="arrow" id="next" aria-label="Next order">›</button></div>
-      <nav class="tools"><button type="button" id="harmony"><span>♫</span>Harmony</button><button type="button" id="polish"><span>✧</span>Polish</button><button type="button" id="wash"><span>♻</span>Wash</button><button type="button" id="fresh"><span>↺</span>Fresh</button></nav>
     </aside>
+    <nav class="tools"><button type="button" id="harmony"><span>♫</span>Harmony</button><button type="button" id="polish"><span>✧</span>Polish</button><button type="button" id="wash"><span>♻</span>Wash</button><button type="button" id="fresh"><span>↺</span>Fresh</button></nav>
   </main>
   <footer>C17 visual prototype only. Pattern progression, Growth Potion costs and capacity, twelve storage slots and generator unlock examples are illustrative proposals, not implemented or approved game rules.</footer>
 </div>
@@ -58,6 +102,37 @@ footer{padding:9px 12px;border:1px solid #acd5e5;border-radius:12px;background:#
 <div class="guide" id="guide" hidden><div class="scrim"></div><div class="guide-bubble" id="guide-bubble"><strong>1. Tap the Low Crystal Well</strong><p>A drop of Growth Potion makes a crystal spring forth.</p><button type="button" id="skip">Skip guide preview</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <script>
+
+// Approved C17 raster scenery is loaded only when the exact binary exists.
+// The previously committed SVG remains visible if GitHub assets are absent.
+const paintedAssets={
+  landscape:'/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp',
+  portrait:'/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp',
+};
+const artStatus=document.getElementById('art-status');
+let currentArtProbe=0;
+function probeApprovedBackground(){
+  const run=++currentArtProbe;
+  const mode=matchMedia('(max-width:650px)').matches?'portrait':'landscape';
+  const image=new Image();
+  document.body.classList.remove('painted-art');
+  document.body.dataset.backgroundArt='checking';
+  image.onload=()=>{
+    if(run!==currentArtProbe)return;
+    document.body.classList.add('painted-art');
+    document.body.dataset.backgroundArt='painted';
+    artStatus.textContent='C17 approved painted '+(mode==='portrait'?'mobile':'desktop')+' garden · no saves';
+  };
+  image.onerror=()=>{
+    if(run!==currentArtProbe)return;
+    document.body.dataset.backgroundArt='svg-fallback';
+    artStatus.textContent='C17 SVG layout study · painted files pending upload';
+  };
+  image.src=paintedAssets[mode];
+}
+probeApprovedBackground();
+matchMedia('(max-width:650px)').addEventListener('change',probeApprovedBackground);
+
 (()=>{
 const A='/design-assets/crystalarium-c17/';
 const get=(id)=>document.getElementById(id);
