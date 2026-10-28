@@ -919,7 +919,10 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
     const b = await shelf.boundingBox();
     if (!a || !b) throw new Error('Missing first board row or safe shelf');
     expect(a.y + a.height).toBeLessThan(b.y);
-    await region.locator('[data-crystalarium-menu="tools"]').click();
+    const toolsMenu = region.locator('[data-crystalarium-menu="tools"]');
+    const patternMenu = region.locator('[data-crystalarium-menu="pattern"]');
+    await toolsMenu.click();
+    await expect(toolsMenu).toHaveAttribute('aria-expanded', 'true');
     await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
     await expect(region.locator('[data-crystalarium-action="close-menu"]')).toBeFocused();
     await region.locator('[data-crystalarium-action="sound"]').click();
@@ -927,9 +930,11 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
     await region.locator('[data-crystalarium-action="close-menu"]').click();
     await expect(board).toBeVisible();
     await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
-    await region.locator('[data-crystalarium-menu="pattern"]').click();
+    await patternMenu.click();
+    await expect(patternMenu).toHaveAttribute('aria-expanded', 'true');
     await expect(region.locator('.crystalarium-portrait-pattern')).toBeVisible();
-    await region.locator('[data-crystalarium-menu="pattern"]').click();
+    await patternMenu.click();
+    await expect(patternMenu).toHaveAttribute('aria-expanded', 'false');
     // Escape closes the drawer, never exits the session or loses its save.
     await region.locator('[data-crystalarium-menu="growing"]').click();
     await page.keyboard.press('Escape');

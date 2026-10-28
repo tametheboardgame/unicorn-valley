@@ -144,8 +144,28 @@ export class CrystalariumPortraitView {
         if (!button.disabled) action();
       });
     }
+    // A portrait menu must react before a touch click can be retargeted
+    // onto its newly revealed backdrop. Consume the matching synthetic click,
+    // while retaining keyboard and assistive-technology activation.
+    let menuPointerHandled = false;
+    if (name?.startsWith('menu-')) {
+      button.addEventListener('pointerdown', () => {
+        menuPointerHandled = false;
+      });
+      button.addEventListener('pointerup', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        menuPointerHandled = true;
+        if (!button.disabled) action();
+      });
+    }
     button.addEventListener('click', (event) => {
       event.stopPropagation();
+      if (menuPointerHandled && event.detail > 0) {
+        menuPointerHandled = false;
+        return;
+      }
+      menuPointerHandled = false;
       if (!button.disabled) action();
     });
     return button;
@@ -593,7 +613,11 @@ export class CrystalariumPortraitView {
     // exposed in the non-modal drawer. Saves and controller actions are shared.
     const backdrop = makeElement('div', 'crystalarium-portrait-menu-backdrop');
     backdrop.hidden = this.activeMenu === null;
-    backdrop.addEventListener('click', () => {
+    // Dismiss on a new pointer gesture, not a retargeted click originating
+    // from the button that has just opened the panel.
+    backdrop.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (this.activeMenu !== null) this.toggleMenu(this.activeMenu);
     });
     const menuPanel = makeElement('div', 'crystalarium-portrait-menu-panel');
