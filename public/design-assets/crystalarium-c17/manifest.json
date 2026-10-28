@@ -321,6 +321,78 @@
       "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
       "runtimeApproved": false,
       "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-5.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-0.webp",
+      "purpose": "Bright (teal) family tier 0: Single teal shard",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 91532,
+      "sha256": "e039fc982bcff40f4e6318abfbc527fe93f96483878bf68df40bc9092244e38c",
+      "gitBlobSha": "1b2e1e423441b915f3a17d5a4272bd64ae4960d8",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-0.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-1.webp",
+      "purpose": "Bright (teal) family tier 1: Small teal cluster",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 139622,
+      "sha256": "c9e7721c1c01ecca70884ce1afd87626aa103b39ccfaf009f767c165dc91f3a9",
+      "gitBlobSha": "26e6ef831c64b1f1e7bda94b798560ae71bb70ef",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-1.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-2.webp",
+      "purpose": "Bright (teal) family tier 2: Tall teal formation",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 145872,
+      "sha256": "e7fb9f63eb6d727a401476e0314bcf121f956330048237b2612dd07a28227932",
+      "gitBlobSha": "3450c035fc1903a8d1147369ae314acde8f066e0",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-2.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-3.webp",
+      "purpose": "Bright (teal) family tier 3: Floating teal fragments",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 151906,
+      "sha256": "7e0980fef379255bef5cc4f6204c4b06672035ddb29cea41c36c4520ed591e72",
+      "gitBlobSha": "d0104333c7f9f2fd11b45437c0be1720a0a48a68",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-3.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-4.webp",
+      "purpose": "Bright (teal) family tier 4: Gilded teal spire",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 164358,
+      "sha256": "809a69aa65b730ccf75a77c1501578cf9ff6a5c1254e1b93a5ac53f559e327fb",
+      "gitBlobSha": "2609018fa3ccbbb5f57becb35c545f4f8ad9dc9f",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-4.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-5.webp",
+      "purpose": "Bright (teal) family tier 5: Grand teal crown",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 176292,
+      "sha256": "3b18b3918ed39cca1ac3572cbc7a24a8eb7f72599508a440b339de5bcca8fcbd",
+      "gitBlobSha": "86a94c34aae9734fa764eb574909903917b51562",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-5.png"
     }
   ],
   "releaseChecks": [
@@ -472,6 +544,59 @@
           "bytes": 225340,
           "sha256": "a2a288547474f05d8942b41c6da480ebef9191959d7cabe1a1a530522d424924",
           "gitBlobSha": "44f2b9a321f617406eb1852508939e268747d5dd"
+        }
+      ]
+    },
+    "bright": {
+      "artDecision": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "runtimeIntegrated": false,
+      "tierCount": 6,
+      "reviewPage": "/design-previews/crystalarium-c17-bright-crystals.html",
+      "sourceFolder": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved",
+      "notes": "User authorised committing the six Bright/teal alpha sprites. Canonical WEBP is lossless; PNG archival copies regenerated pixel-identically to avoid transparent-pixel mismatch. Artwork approval does not authorise additional mechanics or replace game renderer.",
+      "files": [
+        {
+          "tier": 0,
+          "name": "Single teal shard",
+          "bytes": 91532,
+          "sha256": "e039fc982bcff40f4e6318abfbc527fe93f96483878bf68df40bc9092244e38c",
+          "gitBlobSha": "1b2e1e423441b915f3a17d5a4272bd64ae4960d8"
+        },
+        {
+          "tier": 1,
+          "name": "Small teal cluster",
+          "bytes": 139622,
+          "sha256": "c9e7721c1c01ecca70884ce1afd87626aa103b39ccfaf009f767c165dc91f3a9",
+          "gitBlobSha": "26e6ef831c64b1f1e7bda94b798560ae71bb70ef"
+        },
+        {
+          "tier": 2,
+          "name": "Tall teal formation",
+          "bytes": 145872,
+          "sha256": "e7fb9f63eb6d727a401476e0314bcf121f956330048237b2612dd07a28227932",
+          "gitBlobSha": "3450c035fc1903a8d1147369ae314acde8f066e0"
+        },
+        {
+          "tier": 3,
+          "name": "Floating teal fragments",
+          "bytes": 151906,
+          "sha256": "7e0980fef379255bef5cc4f6204c4b06672035ddb29cea41c36c4520ed591e72",
+          "gitBlobSha": "d0104333c7f9f2fd11b45437c0be1720a0a48a68"
+        },
+        {
+          "tier": 4,
+          "name": "Gilded teal spire",
+          "bytes": 164358,
+          "sha256": "809a69aa65b730ccf75a77c1501578cf9ff6a5c1254e1b93a5ac53f559e327fb",
+          "gitBlobSha": "2609018fa3ccbbb5f57becb35c545f4f8ad9dc9f"
+        },
+        {
+          "tier": 5,
+          "name": "Grand teal crown",
+          "bytes": 176292,
+          "sha256": "3b18b3918ed39cca1ac3572cbc7a24a8eb7f72599508a440b339de5bcca8fcbd",
+          "gitBlobSha": "86a94c34aae9734fa764eb574909903917b51562"
         }
       ]
     }
