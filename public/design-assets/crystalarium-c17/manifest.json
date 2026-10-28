@@ -1231,8 +1231,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-back.svg",
       "purpose": "C17 Resonance Order reusable illustrated UI candidate",
       "format": "SVG source",
-      "bytes": 2667,
-      "gitBlobSha": "4b56088a5248759b6be345a35534a4733f94bc16",
+      "bytes": 2713,
+      "gitBlobSha": "ba37762691de75913e00870463d837d1961dabb7",
       "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
       "runtimeApproved": false,
       "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
@@ -1261,8 +1261,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-left.svg",
       "purpose": "C17 Resonance Order reusable illustrated UI candidate",
       "format": "SVG source",
-      "bytes": 801,
-      "gitBlobSha": "49d7352bc1cb28670cd8030a4c70409061f29f35",
+      "bytes": 841,
+      "gitBlobSha": "0fc1f411c935684fd2535e400d500c32ce33eb94",
       "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
       "runtimeApproved": false,
       "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
@@ -1281,8 +1281,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-right.svg",
       "purpose": "C17 Resonance Order reusable illustrated UI candidate",
       "format": "SVG source",
-      "bytes": 849,
-      "gitBlobSha": "8489ca0137409a365b5ac102b33bc019a4e299df",
+      "bytes": 885,
+      "gitBlobSha": "e1c1da9d14c1018fdd30809605b1933f42233909",
       "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED - scalable right-arrow source corrected to match its rendered WebP",
       "runtimeApproved": false,
       "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
@@ -1301,8 +1301,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-ornament-left.svg",
       "purpose": "Resonance Order modular visual-state/rail-end refinement: order-rail-ornament-left",
       "format": "transparent scalable SVG",
-      "bytes": 2427,
-      "gitBlobSha": "8ec5678352f6e640423bb827a6fe7c8ec3fb9cc0",
+      "bytes": 2484,
+      "gitBlobSha": "7f6d1754ec523b2c94bc2db73f8e3b5e966163a8",
       "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
       "runtimeApproved": false,
       "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
@@ -1311,8 +1311,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-ornament-right.svg",
       "purpose": "Resonance Order modular visual-state/rail-end refinement: order-rail-ornament-right",
       "format": "transparent scalable SVG",
-      "bytes": 2475,
-      "gitBlobSha": "a5f0193ff6b02ca8da77cb2920c3eb6e0ed49d21",
+      "bytes": 2533,
+      "gitBlobSha": "a4da59d6ca28e510c13b31f4d948cd0ee65d9c82",
       "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
       "runtimeApproved": false,
       "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
@@ -1321,8 +1321,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-completed-overlay.svg",
       "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-completed-overlay",
       "format": "transparent scalable SVG",
-      "bytes": 2067,
-      "gitBlobSha": "1faa9a052a63c731a8b6d85bf7f1b37cefcd1862",
+      "bytes": 2130,
+      "gitBlobSha": "7b0a2582c426c5fb5611cb6171010d224db8abe0",
       "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
       "runtimeApproved": false,
       "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
@@ -1331,8 +1331,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-progress-overlay.svg",
       "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-progress-overlay",
       "format": "transparent scalable SVG",
-      "bytes": 1866,
-      "gitBlobSha": "e71dafefafe8fb8d953261bba70b99404a6608f4",
+      "bytes": 1922,
+      "gitBlobSha": "533adde094e11de0be469b3def5017791b5bf278",
       "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
       "runtimeApproved": false,
       "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
@@ -1341,8 +1341,8 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-ready-overlay.svg",
       "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-ready-overlay",
       "format": "transparent scalable SVG",
-      "bytes": 1923,
-      "gitBlobSha": "c1da0e716998029851d380106cdf6cb221645f89",
+      "bytes": 1973,
+      "gitBlobSha": "8c6865706850eee916450ad714743b51315a9b0d",
       "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
       "runtimeApproved": false,
       "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
@@ -1726,11 +1726,7 @@
     "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
     "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
     "assetCount": 18,
-    "approvedCrystalFamiliesReused": [
-      "low",
-      "bright",
-      "bell"
-    ],
+    "approvedCrystalFamiliesReused": ["low", "bright", "bell"],
     "components": [
       "six illustration-only normal, progress, ready, focus, locked and completed card state surfaces",
       "independent ready aura",
@@ -1773,7 +1769,8 @@
         "No 50-order queue, C18 data migration or runtime implementation",
         "No Growth Potion economy, storage transfer or save changes",
         "No merge/release"
-      ]
+      ],
+      "accessibilityRepair": "Eight decorative SVG files now contain non-empty title nodes; semantic region and controls simplify to native HTML. Earlier preview lint errors corrected."
     }
   }
 }

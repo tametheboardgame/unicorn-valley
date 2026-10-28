@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="215" height="340" viewBox="0 0 215 340"><defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="215" height="340" viewBox="0 0 215 340"><title>Blue crystal and floral left rail ornament</title><defs>
 <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e3eb7f"/><stop offset=".35" stop-color="#74b55c"/><stop offset="1" stop-color="#276047"/></linearGradient>
 <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcf9ff"/><stop offset=".22" stop-color="#5bdafb"/><stop offset=".7" stop-color="#087fb2"/><stop offset="1" stop-color="#1b366c"/></linearGradient>
 <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffefaa"/><stop offset=".5" stop-color="#c17d3d"/><stop offset="1" stop-color="#f1ce87"/></linearGradient><filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
