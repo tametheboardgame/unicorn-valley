@@ -1070,3 +1070,37 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
     ).toEqual({ adventure: null, sandbox: null });
   });
 });
+
+
+test.describe('H6.9C17 separate ornate board art candidate', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`renders all 42 independent sockets and frame at ${viewport.width}px`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/design-previews/crystalarium-c17-board-frame.html');
+      await expect(page.getByRole('heading', { name: /Ornate Board Study/ })).toBeVisible();
+      await expect(page.locator('#sockets .socket')).toHaveCount(42);
+      await expect.poll(() =>
+        page.locator('.frame-art').evaluate((node) => {
+          const img = node as HTMLImageElement;
+          return img.complete && img.naturalWidth > 0;
+        }),
+      ).toBe(true);
+      const socket = page.locator('#sockets .socket').first();
+      await socket.click();
+      await expect(socket).toHaveAttribute('data-state', 'selected');
+      await page.getByRole('button', { name: 'Valid drop', exact: true }).click();
+      await socket.click();
+      await expect(socket).toHaveAttribute('data-state', 'valid-drop');
+      expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-board-frame-${viewport.width}.png`),
+        fullPage: true,
+      });
+    });
+  }
+});

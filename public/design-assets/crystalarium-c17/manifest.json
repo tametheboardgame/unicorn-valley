@@ -122,6 +122,61 @@
       "licence": "Original project-owned design study",
       "review": "pending",
       "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/board-frame-candidate.webp",
+      "purpose": "Transparent ornamental stone-and-crystal surround for a separately rendered 7×6 board, derived from original project illustration",
+      "format": "Transparent WebP candidate",
+      "sha256": "597ce9a631bb4e2537f3d1434f3a7a9372cdc1f68bd8ed563efee3bb46e3e128",
+      "gitBlobSha": "782160b9f98da0e6c7e16ebbe4f45a74dc1d7be0",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-empty.webp",
+      "purpose": "Independent dark blue socket surface, carved rounded border",
+      "format": "Transparent WebP candidate",
+      "sha256": "2ab807be7e22ee9dd9b00f328d472e6dd6f8291dbef72cfbb0d769889cd5b2ed",
+      "gitBlobSha": "55cc716e7dc06cfa0699d1653828789a0bb733ce",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-selected.webp",
+      "purpose": "Independent cyan highlighted socket",
+      "format": "Transparent WebP candidate",
+      "sha256": "e9a7fefc00fcaf47cd505d3fe976e606fbc99f2aa00e0baec8a6295782db99c3",
+      "gitBlobSha": "d91ca0ff685066d14ac9e9576f044170668d7f7e",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-valid-drop.webp",
+      "purpose": "Independent green legal-drop preview socket",
+      "format": "Transparent WebP candidate",
+      "sha256": "65d480f5aceec5b11a715774640cd6a7c472c46ece8e3b4bcddadb77d955bfd7",
+      "gitBlobSha": "66b8226a55999cde4f82983f63c3afdbc141a765",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-invalid-drop.webp",
+      "purpose": "Independent coral/red invalid-drop preview socket",
+      "format": "Transparent WebP candidate",
+      "sha256": "71d86841c18d178a4575c95708222d359a77273b666330e0b897ced1c20a348b",
+      "gitBlobSha": "6c1b6a5387f2b84073f81cfab8a85eafcc0d8436",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
     }
   ],
   "releaseChecks": [
@@ -169,5 +224,12 @@
     },
     "note": "Approved optimised WebPs committed as verified Git binary blobs. Git blob SHAs: desktop d222f54d3685cc287a1843e425a9d65dab1bf5f5, portrait 1bb33626ff7547d3502cc93abfd7f5d049fd546b. Both byte lengths and SHA-256 match approved originals. Full-quality source PNGs archived in user's connected Google Drive (not in game bundle). SVG remains graceful fallback only. C17 visual overlay gate still pending."
   },
-  "note": "Google Drive staging enabled binary handoff to GitHub create_blob(base64); both WebPs are now in the World draft repository. Earlier manual-upload instruction superseded."
+  "note": "Google Drive staging enabled binary handoff to GitHub create_blob(base64); both WebPs are now in the World draft repository. Earlier manual-upload instruction superseded.",
+  "boardCandidate": {
+    "status": "C17 visual approval candidate; NOT live game runtime",
+    "reviewPage": "/design-previews/crystalarium-c17-board-frame.html",
+    "sourceSheetArchived": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+    "composition": "Ornate painted transparent frame, 7x6 independent button sockets with empty/selected/valid/invalid visuals; display scene uses approved painted garden backgrounds",
+    "designCaveat": "Frame dimensions and inset geometry are prototype. Final 320px interaction sizing, scalable edge slicing, dark underlay and visual acceptance require gate before gameplay integration."
+  }
 }

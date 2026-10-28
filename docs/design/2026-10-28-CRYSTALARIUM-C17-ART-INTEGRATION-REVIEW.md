@@ -75,3 +75,10 @@ The user inspected the actual clean-margin **1080×1920 portrait WebP** and said
 ## GitHub binary artwork ingestion completed — 28 October 2026
 
 Supersedes prior manual-upload blocker above. Both exact approved WebPs now exist as **GitHub blob objects** with byte-identical Git hashes verified from the local approved files. They were transferred through the user's existing Google Drive/Unicorn Valley folder and committed to the World PR at `public/design-assets/crystalarium-c17/`. Original full-quality PNGs are archived in the same private Google Drive folder; WebP remains the only runtime painting. See `PAINTED-BACKGROUNDS.md` for exact bytes and checksums and `manifest.json` for provenance and approval. The C17 browser suite must now assert **painted** art, not accept SVG fallback; contrast/geometry screenshots and user composition review remain open. No gameplay or save behaviour changed.
+
+
+## C17 ornate board art candidate — 28 October 2026
+
+Generated an illustrated board-layer reference, and **extracted a separate transparent frame plus four standalone socket-state WebPs** (empty, selected, legal drop, illegal drop). They are purposefully **not one baked 42-cell painting**: artwork does not respond to input and each socket retains its own DOM button, hitbox, keyboard focus and selectable visual state. The original, labelled asset-art generation sheet is archived in the user's connected Drive folder under `Unicorn Valley/C17 Board Candidates`; the playable source never uses that flattened reference sheet. Exact Git blobs and checksum provenance are in `manifest.json`.
+
+**Review candidate:** `/design-previews/crystalarium-c17-board-frame.html`. Includes the approved painted garden behind a dark board-surface layer, the frame and an interactive 7×6 visual-state toggle. It writes no gameplay save. The user has **not yet approved this specific board art**, and it must not replace the production Crystalarium or change its 42-cell rules. Inspect desktop/320px screenshots and frame inset geometry, then accept/refine. An extraction from a generation sheet is an initial art study, not guaranteed scalable nine-slice production art.
