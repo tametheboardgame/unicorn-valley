@@ -7,6 +7,7 @@ import argparse
 import fnmatch
 import io
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -15,8 +16,11 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[2]
-CONFIG_PATH = ROOT / "generated-assets" / "config.json"
+# The privileged workflow executes this script from its trusted main checkout,
+# while importing manifest data into a separate development-branch worktree.
+# Outside CI, preserve the original single-repository behaviour.
+ROOT = Path(os.environ.get("ASSET_REPOSITORY_ROOT") or Path(__file__).resolve().parents[2]).resolve()
+CONFIG_PATH = Path(os.environ.get("ASSET_CONFIG_PATH") or (ROOT / "generated-assets" / "config.json")).resolve()
 DRIVE_READONLY_SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 
 
