@@ -162,10 +162,7 @@ export class CrystalariumPortraitView {
     if (!backdrop || !panel) return;
     backdrop.hidden = this.activeMenu === null;
     panel.hidden = this.activeMenu === null;
-    panel.setAttribute(
-      'aria-label',
-      'Crystalarium ' + (this.activeMenu ?? 'options') + ' panel',
-    );
+    panel.setAttribute('aria-label', 'Crystalarium ' + (this.activeMenu ?? 'options') + ' panel');
     const title = panel.querySelector<HTMLElement>('.crystalarium-portrait-menu-title');
     if (title) title.textContent = '✦ ' + (this.activeMenu ?? 'Options');
     for (const menu of ['pattern', 'growing', 'tools'] as const) {
