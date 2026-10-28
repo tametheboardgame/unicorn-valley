@@ -1,0 +1,40 @@
+name: Generated Asset Workflow Security Check
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/generated-asset-materialisation.yml'
+      - '.github/workflows/generated-asset-security-check.yml'
+      - 'scripts/generated-assets/validate_request.py'
+      - 'scripts/generated-assets/test_validate_request.py'
+      - 'scripts/generated-assets/materialise_drive_asset.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  request-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run no-network request validation regressions
+        run: python3 -m unittest discover -s scripts/generated-assets -p 'test_validate_request.py' -v
+      - name: Verify privileged workflow has no automatic triggers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path(".github/workflows/generated-asset-materialisation.yml").read_text()
+          assert "workflow_dispatch:" in source
+          assert "\n  push:" not in source
+          assert "github.ref == 'refs/heads/main'" in source
+          assert "persist-credentials: false" in source
+          assert "trusted/scripts/generated-assets/materialise_drive_asset.py" in source
+          assert "ASSET_CONFIG_PATH:" in source
+          assert "ASSET_REPOSITORY_ROOT:" in source
+          assert "TARGET_BRANCH: ${{ inputs.target_branch }}" in source
+          assert 'branch="${{ inputs.target_branch }}"' not in source
+          print("Trusted-main boundary and input handling: PASS")
+          PY

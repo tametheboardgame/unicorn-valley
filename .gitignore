@@ -9,3 +9,5 @@ playtest-artifacts/
 .env
 .env.*
 !.env.example
+# Ignore short-lived Google OIDC credential files
+gha-creds-*.json
