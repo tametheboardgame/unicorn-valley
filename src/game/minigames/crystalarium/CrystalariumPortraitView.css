@@ -584,7 +584,14 @@
     font-size: 13px;
   }
 
+  /* Keep navigation, Skip guide and Leave usable while a drawer is open. */
+  .crystalarium-portrait-header {
+    position: relative;
+    z-index: 14;
+  }
   .crystalarium-portrait-menu-strip {
+    position: relative;
+    z-index: 13;
     display: grid;
     grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
     gap: 6px;
