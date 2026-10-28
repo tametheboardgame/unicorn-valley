@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "package": "R6.5-WP19H6.9C17",
+  "date": "2026-10-28",
+  "status": "C17 concept studies; not accepted final game art",
+  "sourceOfTruth": "docs/design/2026-10-28-CRYSTALARIUM-APPROVED-VISUAL-AND-INTERACTION-CONTRACT.md",
+  "provenance": "Original procedurally authored SVG artwork for the project's design review; no third-party graphics/fonts embedded.",
+  "designReference": "User-approved in-chat illustrated Garden concept image; flattened concept screenshot is NOT used as a runtime texture.",
+  "publishedReview": "/design-previews/crystalarium-c17-illustrated-layout.html",
+  "usageRules": [
+    "C17 only: no live runtime imports or save writes",
+    "Preserve existing Low/Bright/Bell identities and 42 real cells",
+    "No UI text, button or state baked into garden backplate",
+    "Art delivered as separate scalable files for replacement by final approved painted derivatives",
+    "Keep all art lazy-loaded on entering Crystalarium; fail gracefully without image"
+  ],
+  "assets": [
+    {
+      "file": "public/design-assets/crystalarium-c17/garden-desktop.svg",
+      "purpose": "desktop background, clean no HUD",
+      "viewBox": "1280x720",
+      "alpha": false,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/garden-portrait.svg",
+      "purpose": "portrait background, clean no HUD",
+      "viewBox": "720x1280",
+      "alpha": false,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/well-low.svg",
+      "purpose": "Low rooted generator prototype with plinth",
+      "viewBox": "120x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/well-bright.svg",
+      "purpose": "Bright rooted generator prototype with plinth",
+      "viewBox": "120x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/well-bell.svg",
+      "purpose": "Bell rooted generator prototype with plinth",
+      "viewBox": "120x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low.svg",
+      "purpose": "Low loose piece prototype (no plinth)",
+      "viewBox": "96x112",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright.svg",
+      "purpose": "Bright loose piece prototype (no plinth)",
+      "viewBox": "96x112",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell.svg",
+      "purpose": "Bell loose piece prototype (no plinth)",
+      "viewBox": "96x112",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion.svg",
+      "purpose": "Potion reservoir icon; fill level is UI not image",
+      "viewBox": "128x148",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chest.svg",
+      "purpose": "Storage chamber button glyph",
+      "viewBox": "128x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/return-board.svg",
+      "purpose": "Board return drop target glyph",
+      "viewBox": "128x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/tutorial-arrow.svg",
+      "purpose": "Tutorial pointer/arrow glyph",
+      "viewBox": "100x100",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    }
+  ],
+  "releaseChecks": [
+    "SVG parsing and image load in preview",
+    "320x700 / 390x844 / 1280x720 / 1440x900 visual screenshots",
+    "Distinct crystal silhouette at 48px and colour independence",
+    "Focal point contrast with board and cards",
+    "Device performance, reduced-motion/static fallback",
+    "Final painted asset approval and provenance before integrating source"
+  ]
+}

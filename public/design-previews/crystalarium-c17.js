@@ -1,7 +1,7 @@
 (()=>{
 const A='/design-assets/crystalarium-c17/';
 const get=(id)=>document.getElementById(id);
-const piece=(family)=>{const im=document.createElement('img');im.src=A+'well-'+family+'.svg';im.alt='';return im};
+const piece=(family)=>{const im=document.createElement('img');im.src=A+'crystal-'+family+'.svg';im.alt='';return im};
 const sample={1:'low',8:'low',16:'bright',31:'bell',37:'low'};
 const board=get('board');
 for(let i=0;i<42;i++){const c=document.createElement('button');c.className='cell';c.type='button';c.dataset.cell=String(i);c.setAttribute('aria-label','Socket '+(i+1)+(sample[i]?', '+sample[i]+' crystal':''));if(sample[i])c.append(piece(sample[i]));c.addEventListener('click',()=>{board.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));c.classList.add('selected')});board.append(c)}
