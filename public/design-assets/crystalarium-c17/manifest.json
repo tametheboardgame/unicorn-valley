@@ -1364,6 +1364,132 @@
       "runtimeApproved": false,
       "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026",
       "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chamber-frame.svg",
+      "format": "SVG vector source",
+      "bytes": 4937,
+      "gitBlobSha": "a3dceca747a3e9a0e23a54bcd74dc398640c44af",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-closed.svg",
+      "format": "SVG vector source",
+      "bytes": 3629,
+      "gitBlobSha": "db430288e051b133202cd141dca3879e86bcb7c1",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-drop-target.svg",
+      "format": "SVG vector source",
+      "bytes": 3831,
+      "gitBlobSha": "6f9b49bd9edf3d6c896f86236f977b91065fdc51",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-full.svg",
+      "format": "SVG vector source",
+      "bytes": 3821,
+      "gitBlobSha": "4c568cb7708ea50b6019d2333fd21fb5997cabc8",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-open.svg",
+      "format": "SVG vector source",
+      "bytes": 3762,
+      "gitBlobSha": "a79192f37f7da2d8b8e62ad97cc79cbbb60fe3fa",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-close.svg",
+      "format": "SVG vector source",
+      "bytes": 1605,
+      "gitBlobSha": "240c987fa95941232786951b166ed48ab08851c3",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-return-board-blocked.svg",
+      "format": "SVG vector source",
+      "bytes": 2630,
+      "gitBlobSha": "6905d4d018dffe3a413ee7754934cb7e58497b24",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-return-board-normal.svg",
+      "format": "SVG vector source",
+      "bytes": 2541,
+      "gitBlobSha": "a562ce39e6dbbd53f6548b45aadb65d44f74a343",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-return-board-ready.svg",
+      "format": "SVG vector source",
+      "bytes": 2660,
+      "gitBlobSha": "9f679ef138bbad90e40bfc0f118c619b9c76022c",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-blocked.svg",
+      "format": "SVG vector source",
+      "bytes": 2002,
+      "gitBlobSha": "15d47b6ded6deccdf22ea9fef6e6e77d19379859",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-empty.svg",
+      "format": "SVG vector source",
+      "bytes": 1914,
+      "gitBlobSha": "f461489f08e8e644c5a1c6cec60f9f75f90496fa",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-legal-drop.svg",
+      "format": "SVG vector source",
+      "bytes": 2053,
+      "gitBlobSha": "effce8114f2164998abe1a7eaed28bc5fa454c0d",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-occupied.svg",
+      "format": "SVG vector source",
+      "bytes": 1917,
+      "gitBlobSha": "5d81380de4810bcb639315cad9ac04c0474fceba",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-selected.svg",
+      "format": "SVG vector source",
+      "bytes": 2035,
+      "gitBlobSha": "6d4150caf585c8905a27253f858c53dfa6128f1d",
+      "review": "C17_STORAGE_CHAMBER_VISUAL_CANDIDATE_NOT_APPROVED",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state"
     }
   ],
   "releaseChecks": [
@@ -1806,5 +1932,36 @@
       "scope": "Visual art library only, not C18 queue/save migration or C21 runtime integration",
       "next": "Storage Chamber art-only preview and modular components"
     }
+  },
+  "storageChamberArt": {
+    "status": "C17_VISUAL_CANDIDATE_PENDING_USER_REVIEW",
+    "createdOn": "2026-10-28",
+    "assetRoot": "public/design-assets/crystalarium-c17/storage-chamber/",
+    "assetCount": 14,
+    "preview": "/design-previews/crystalarium-c17-storage-chamber.html",
+    "assetManifestVerifiedAgainstGitHub": true,
+    "visualDirection": "One ornate crystal-and-gold chest as permanent entry/drop target, separate 4x3 miniature board-like modal/chamber overlay, independent slot states and Board-return icon; Crystalarium indigo/teal/flowers styling.",
+    "illustrativeLayoutOnly": "4 columns × 3 rows / 12 cells is a proposed C19 layout gate, not approved capacity.",
+    "files": [
+      "chest closed/open/drop-target/full",
+      "chamber decorative frame",
+      "socket empty/occupied/selected/legal-drop/blocked",
+      "Board return normal/ready/blocked",
+      "close icon"
+    ],
+    "preserveExisting": [
+      "Do not duplicate inventory or store stack counts/rareness/timers",
+      "Use existing Low/Bright/Bell canonical crystal art",
+      "Preserve all four legacy shelf pieces pending a versioned save migration",
+      "No changes to actual board, stored item transfer semantics or real saves"
+    ],
+    "provisionalInteraction": "No-save preview models board→chest and storage→Board; demo actions are not a C19 storage engine.",
+    "reviewNeeded": [
+      "Owner visual review of the chest/panel, socket scale and 4x3 arrangement",
+      "Actual C19 capacity and transfer/migration approval",
+      "Runtime responsive, pointer/keyboard/reduced-motion QA in later integration gate"
+    ],
+    "provenance": "Separately authored original SVG layers based on approved C17 garden visual direction; experimental generated storage environment sheets with unrelated rarity/shelving were excluded as game specification",
+    "runtimeApproved": false
   }
 }
