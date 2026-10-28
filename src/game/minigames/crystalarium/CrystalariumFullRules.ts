@@ -242,6 +242,23 @@ export function spawnCrystal(state: CrystalariumFullState): FullActionResult {
     'A new shard joins the board.',
   );
 }
+/**
+ * Grow a free basic shard from the requested rooted board-frame well.
+ * Source selection and creation are one atomic rule operation: a locked well or
+ * full board must return the ORIGINAL state, without a selected-family change
+ * or an intermediate save. No charges, timers or fluid exist at this gate.
+ */
+export function growCrystalFromWell(
+  state: CrystalariumFullState,
+  family: CrystalFamily,
+): FullActionResult {
+  const selected = chooseCrystalSource(state, family);
+  if (!selected.accepted) return rejected(state, selected.reason);
+  const grown = spawnCrystal(selected.state);
+  if (!grown.accepted) return rejected(state, grown.reason);
+  return accepted(grown.state, 'A free ' + family + ' shard grew from the crystal well.');
+}
+
 /** Optional free advanced vein: reduces late-game repetition without replacing tier-zero shards. */
 export function refinedSourceTier(state: CrystalariumFullState): CrystalTier | null {
   if (state.completed < 20) return null;

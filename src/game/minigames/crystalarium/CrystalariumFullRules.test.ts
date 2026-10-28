@@ -7,6 +7,7 @@ import {
   isCrystalariumFullState,
   moveOrMergeCrystal,
   spawnCrystal,
+  growCrystalFromWell,
   spawnRefinedCrystal,
   refinedSourceTier,
   washCrystal,
@@ -61,6 +62,35 @@ describe('H6.9C Crystalarium deep merge mechanics', () => {
     state = washCrystal(state, 9).state;
     expect(spawnCrystal(state).accepted).toBe(true);
   });
+  it('grows free basic shards atomically from rooted family wells, preserving all 42 sockets', () => {
+    const initial = createCrystalariumFullState();
+    const snapshot = JSON.stringify(initial);
+    const first = growCrystalFromWell(initial, 'low');
+    expect(first.accepted).toBe(true);
+    expect(first.state.cells).toHaveLength(42);
+    expect(first.state.cells[2]).toEqual({ family: 'low', tier: 0 });
+    expect(first.state.selectedFamily).toBe('low');
+    expect(JSON.stringify(initial)).toBe(snapshot);
+    const locked = growCrystalFromWell(initial, 'bright');
+    expect(locked.accepted).toBe(false);
+    expect(locked.state).toBe(initial);
+    expect(growCrystalFromWell({ ...initial, completed: 4 }, 'bright').state.cells[2]).toEqual({
+      family: 'bright',
+      tier: 0,
+    });
+    const allFamilies = { ...initial, completed: 7 };
+    const bell = growCrystalFromWell(allFamilies, 'bell');
+    expect(bell.accepted).toBe(true);
+    expect(bell.state.selectedFamily).toBe('bell');
+    expect(bell.state.cells[2]).toEqual({ family: 'bell', tier: 0 });
+    let filled = initial;
+    for (let i = 0; i < 40; i += 1) filled = spawnCrystal(filled).state;
+    const full = growCrystalFromWell(filled, 'low');
+    expect(full.accepted).toBe(false);
+    expect(full.state).toBe(filled);
+    expect(growCrystalFromWell(washCrystal(filled, 10).state, 'low').accepted).toBe(true);
+  });
+
   it('stores pieces in a four-slot shelf and restores them safely', () => {
     let state = createCrystalariumFullState();
     state = shelveCrystal(state, 0).state;
