@@ -36,26 +36,26 @@ footer{padding:9px 12px;border:1px solid #acd5e5;border-radius:12px;background:#
 </style></head>
 <body>
 <div class="app">
-  <header class="top"><div><h1>✦ Crystalarium · Resonance Garden ✦</h1><small>Illustrated C17 concept · no gameplay saves</small></div><nav class="top-actions"><button id="help">? Help</button><button id="sound">♫ Sound</button><button id="exit">← Leave</button></nav></header>
+  <header class="top"><div><h1>✦ Crystalarium · Resonance Garden ✦</h1><small>Illustrated C17 concept · no gameplay saves</small></div><nav class="top-actions"><button type="button" id="help">? Help</button><button type="button" id="sound">♫ Sound</button><button type="button" id="exit">← Leave</button></nav></header>
   <main class="stage">
     <section class="board-panel" aria-label="Example Crystalarium board">
       <div class="section-head"><strong>✧ Crystal Garden</strong><span>42 sockets · 7 × 6</span></div><div class="board-scroll"><div class="board-grid" id="board"></div></div>
-      <div class="board-foot"><button class="storage-button" id="storage"><img src="/design-assets/crystalarium-c17/storage-chest.svg" alt="">Storage</button><span>Drag matching crystals to merge</span></div>
+      <div class="board-foot"><button type="button" class="storage-button" id="storage"><img src="/design-assets/crystalarium-c17/storage-chest.svg" alt="">Storage</button><span>Drag matching crystals to merge</span></div>
     </section>
     <aside class="wells" aria-label="Growth Potion and crystal wells"><div class="potion"><strong>Growth Potion</strong><img src="/design-assets/crystalarium-c17/growth-potion.svg" alt=""><b id="stock">100 / 100</b><div class="gauge"><div id="fill"></div></div></div>
-      <button class="well" id="low"><img src="/design-assets/crystalarium-c17/well-low.svg" alt=""><strong>Low</strong><small>💧 1</small></button>
-      <button class="well" disabled><img src="/design-assets/crystalarium-c17/well-bright.svg" alt=""><strong>Bright</strong><small>🔒 4 offers</small></button>
-      <button class="well" disabled><img src="/design-assets/crystalarium-c17/well-bell.svg" alt=""><strong>Bell</strong><small>🔒 7 offers</small></button>
+      <button type="button" class="well" id="low"><img src="/design-assets/crystalarium-c17/well-low.svg" alt=""><strong>Low</strong><small>💧 1</small></button>
+      <button type="button" class="well" disabled><img src="/design-assets/crystalarium-c17/well-bright.svg" alt=""><strong>Bright</strong><small>🔒 4 offers</small></button>
+      <button type="button" class="well" disabled><img src="/design-assets/crystalarium-c17/well-bell.svg" alt=""><strong>Bell</strong><small>🔒 7 offers</small></button>
     </aside>
     <aside class="orders-panel" aria-label="Resonance Orders"><div class="section-head"><strong>♫ Resonance Orders</strong><span>1 / 50</span></div><p>Several active patterns · swipe sideways</p>
-      <div class="order-controls"><button class="arrow" id="prev" aria-label="Previous order">‹</button><div class="order-rail" id="orders" tabindex="0"></div><button class="arrow" id="next" aria-label="Next order">›</button></div>
-      <nav class="tools"><button id="harmony"><span>♫</span>Harmony</button><button id="polish"><span>✧</span>Polish</button><button id="wash"><span>♻</span>Wash</button><button id="fresh"><span>↺</span>Fresh</button></nav>
+      <div class="order-controls"><button type="button" class="arrow" id="prev" aria-label="Previous order">‹</button><div class="order-rail" id="orders"></div><button type="button" class="arrow" id="next" aria-label="Next order">›</button></div>
+      <nav class="tools"><button type="button" id="harmony"><span>♫</span>Harmony</button><button type="button" id="polish"><span>✧</span>Polish</button><button type="button" id="wash"><span>♻</span>Wash</button><button type="button" id="fresh"><span>↺</span>Fresh</button></nav>
     </aside>
   </main>
   <footer>C17 visual prototype only. Pattern progression, Growth Potion costs and capacity, twelve storage slots and generator unlock examples are illustrative proposals, not implemented or approved game rules.</footer>
 </div>
-<div class="dialog" id="storage-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="storage-title"><div class="dialog-card"><div class="section-head"><h2 id="storage-title">Storage Chamber</h2><button id="close" aria-label="Close Storage">×</button></div><div class="chamber"><div><h3>Board</h3><div class="sample-grid" id="board-sample"></div></div><img class="return-icon" src="/design-assets/crystalarium-c17/return-board.svg" alt="Board return target"><div><h3>Storage</h3><div class="sample-grid" id="stored-sample"></div></div></div><p>Planned mechanic: drag onto the Storage chest to put away; drag a stored crystal to the Board icon to return it. No real transfer or save occurs in this prototype.</p></div></div>
-<div class="guide" id="guide" hidden><div class="scrim"></div><div class="guide-bubble" id="guide-bubble"><strong>1. Tap the Low Crystal Well</strong><p>A drop of Growth Potion makes a crystal spring forth.</p><button id="skip">Skip guide preview</button></div></div>
+<div class="dialog" id="storage-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="storage-title"><div class="dialog-card"><div class="section-head"><h2 id="storage-title">Storage Chamber</h2><button type="button" id="close" aria-label="Close Storage">×</button></div><div class="chamber"><div><h3>Board</h3><div class="sample-grid" id="board-sample"></div></div><img class="return-icon" src="/design-assets/crystalarium-c17/return-board.svg" alt="Board return target"><div><h3>Storage</h3><div class="sample-grid" id="stored-sample"></div></div></div><p>Planned mechanic: drag onto the Storage chest to put away; drag a stored crystal to the Board icon to return it. No real transfer or save occurs in this prototype.</p></div></div>
+<div class="guide" id="guide" hidden><div class="scrim"></div><div class="guide-bubble" id="guide-bubble"><strong>1. Tap the Low Crystal Well</strong><p>A drop of Growth Potion makes a crystal spring forth.</p><button type="button" id="skip">Skip guide preview</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <script>
 (()=>{
@@ -64,7 +64,7 @@ const get=(id)=>document.getElementById(id);
 const piece=(family)=>{const im=document.createElement('img');im.src=A+'crystal-'+family+'.svg';im.alt='';return im};
 const sample={1:'low',8:'low',16:'bright',31:'bell',37:'low'};
 const board=get('board');
-for(let i=0;i<42;i++){const c=document.createElement('button');c.className='cell';c.type='button';c.dataset.cell=String(i);c.setAttribute('aria-label','Socket '+(i+1)+(sample[i]?', '+sample[i]+' crystal':''));if(sample[i])c.append(piece(sample[i]));c.addEventListener('click',()=>{board.querySelectorAll('.selected').forEach(n=>n.classList.remove('selected'));c.classList.add('selected')});board.append(c)}
+for(let i=0;i<42;i++){const c=document.createElement('button');c.className='cell';c.type='button';c.dataset.cell=String(i);c.setAttribute('aria-label','Socket '+(i+1)+(sample[i]?', '+sample[i]+' crystal':''));if(sample[i])c.append(piece(sample[i]));c.addEventListener('click',()=>{board.querySelectorAll('.selected').forEach(n=>{n.classList.remove('selected')});c.classList.add('selected')});board.append(c)}
 const orders=[['Double Echo','low',2,'First Notes'],['Bright River','bright',2,'River Nursery'],['Bell Chorus','bell',2,'Singing Pools'],['Prism Song','low',3,'Prism Workshop'],['Last Harmony','bell',3,'Great Harmonic Garden']];
 const rail=get('orders');let ready=1;
 function toast(s){const el=get('toast');el.textContent=s;el.hidden=false;clearTimeout(toast.handle);toast.handle=setTimeout(()=>el.hidden=true,2500)}
@@ -76,7 +76,7 @@ let drops=100;
 get('low').addEventListener('click',()=>{const free=Array.from(board.children).find(c=>c.children.length===0);if(!free||drops===0){toast('No free socket or potion: real game must retain free recovery.');return}drops--;get('stock').textContent=drops+' / 100';get('fill').style.width=drops+'%';free.append(piece('low'));toast('Demonstration: Growth Potion drop creates a Low crystal (not saved).')});
 for(const id of ['harmony','polish','wash','fresh','exit'])get(id).addEventListener('click',()=>toast('Concept only — no game action or save.'));
 let sound=true;get('sound').addEventListener('click',()=>{sound=!sound;get('sound').textContent=sound?'♫ Sound':'♫ Muted'});
-function grid(id,items){const target=get(id);target.replaceChildren();for(let i=0;i<12;i++){let c=document.createElement('button');c.className='cell';c.type='button';c.setAttribute('aria-label',id+' slot '+(i+1));if(items[i])c.append(piece(items[i]));c.addEventListener('click',()=>toast('Storage transfer is planned for C19; this is a layout study.'));target.append(c)}}
+function grid(id,items){const target=get(id);target.replaceChildren();for(let i=0;i<12;i++){const c=document.createElement('button');c.className='cell';c.type='button';c.setAttribute('aria-label',id+' slot '+(i+1));if(items[i])c.append(piece(items[i]));c.addEventListener('click',()=>toast('Storage transfer is planned for C19; this is a layout study.'));target.append(c)}}
 const dialog=get('storage-dialog');get('storage').addEventListener('click',()=>{grid('board-sample',['low','low','bright']);grid('stored-sample',['bell','low',null,'bright']);dialog.hidden=false;get('close').focus()});
 const close=()=>{dialog.hidden=true;get('storage').focus()};get('close').addEventListener('click',close);dialog.addEventListener('click',(e)=>{if(e.target===dialog)close()});
 const guide=get('guide'),target=get('low'),bubble=get('guide-bubble');
