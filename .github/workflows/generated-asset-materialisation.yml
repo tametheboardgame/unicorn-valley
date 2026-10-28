@@ -1,5 +1,7 @@
-name: Materialise Generated Asset from Drive
+name: Materialise Generated Asset from Drive (trusted main only)
 
+# Privileged imports must be launched from the reviewed main workflow.
+# Automatic agent/* push imports are intentionally disabled: branch code is not trusted with GCP OIDC.
 on:
   workflow_dispatch:
     inputs:
@@ -8,179 +10,126 @@ on:
         required: true
         type: string
       target_branch:
-        description: Existing development branch to update
+        description: Existing agent/* development branch to update
         required: true
         type: string
-  push:
-    branches:
-      - agent/r6.5-wp19h3.11-r4-generated-asset-pipeline
-      - agent/story-house-*
-    paths:
-      - generated-assets/manifests/*.json
 
 permissions:
   contents: write
   id-token: write
 
 concurrency:
-  group: generated-asset-materialisation-${{ github.ref }}
+  group: generated-asset-materialisation-${{ inputs.target_branch }}
   cancel-in-progress: false
 
 jobs:
   materialise:
-    if: github.actor != 'github-actions[bot]'
+    # Prevent a caller running a modified copy of this workflow from an agent branch.
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      TARGET_BRANCH: ${{ inputs.target_branch }}
+      MANIFEST_PATH: ${{ inputs.manifest_path }}
+      ASSET_REPOSITORY_ROOT: ${{ github.workspace }}/work
+      ASSET_CONFIG_PATH: ${{ github.workspace }}/trusted/generated-assets/config.json
+
     steps:
-      - name: Resolve target branch
-        id: target
+      - name: Check out reviewed import logic and policy from main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          path: trusted
+          persist-credentials: false
+
+      - name: Validate request without evaluating branch strings
+        id: request
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            branch="${{ inputs.target_branch }}"
-          else
-            branch="${{ github.ref_name }}"
-          fi
-          if [[ -z "$branch" || "$branch" == "main" ]]; then
-            echo "::error::Generated assets must materialise onto an existing development branch, never directly onto main."
-            exit 1
-          fi
-          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          python3 trusted/scripts/generated-assets/validate_request.py "$TARGET_BRANCH" "$MANIFEST_PATH"
+          printf 'branch=%s\n' "$TARGET_BRANCH" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
+      - name: Check out development branch as untrusted data
+        uses: actions/checkout@v6
         with:
-          ref: ${{ steps.target.outputs.branch }}
+          ref: ${{ steps.request.outputs.branch }}
+          path: work
           fetch-depth: 2
 
-      - id: google-auth
-        name: Authenticate to Google Cloud
+      - name: Verify manifest exists in isolated worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "work/$MANIFEST_PATH"
+          test -f "$ASSET_CONFIG_PATH"
+
+      - name: Resolve Google workload identity provider
+        id: provider
+        shell: bash
+        env:
+          CONFIGURED_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        run: |
+          set -euo pipefail
+          provider="${CONFIGURED_PROVIDER#https://iam.googleapis.com/}"
+          provider="${provider#//iam.googleapis.com/}"
+          [[ "$provider" =~ ^projects/[0-9]+/locations/global/workloadIdentityPools/[A-Za-z0-9_-]+/providers/[A-Za-z0-9_-]+$ ]] || {
+            echo "::error::Invalid GCP workload identity provider configuration"
+            exit 1
+          }
+          echo "resource=$provider" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate to Google Cloud via OIDC
+        id: google-auth
         uses: google-github-actions/auth@v3
         with:
           create_credentials_file: true
-          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          workload_identity_provider: ${{ steps.provider.outputs.resource }}
           service_account: ${{ vars.GCP_ASSET_SERVICE_ACCOUNT }}
 
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
 
-      - name: Install image and Drive tooling
+      - name: Install image and read-only Drive tooling
         run: python -m pip install --disable-pip-version-check pillow google-api-python-client google-auth
 
-      - name: Resolve manifests
-        id: manifests
+      - name: Materialise using only reviewed main-branch Python and config
         shell: bash
         run: |
           set -euo pipefail
-          output="$RUNNER_TEMP/generated-asset-manifests.txt"
-          : > "$output"
+          python trusted/scripts/generated-assets/materialise_drive_asset.py --manifest "$MANIFEST_PATH"
 
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            manifest="${{ inputs.manifest_path }}"
-            if [[ ! "$manifest" =~ ^generated-assets/manifests/[A-Za-z0-9._-]+\.json$ ]]; then
-              echo "::error::manifest_path must be a JSON file directly under generated-assets/manifests/"
-              exit 1
-            fi
-            printf '%s\n' "$manifest" >> "$output"
-          else
-            git diff --name-only HEAD^ HEAD -- 'generated-assets/manifests/*.json'               | grep -E '^generated-assets/manifests/[A-Za-z0-9._-]+\.json$'               >> "$output" || true
-          fi
-
-          if [[ ! -s "$output" ]]; then
-            echo "::error::No generated-asset manifest was selected."
-            exit 1
-          fi
-
-          echo "path=$output" >> "$GITHUB_OUTPUT"
-          echo "Selected manifests:"
-          cat "$output"
-
-      - name: Materialise staged images
-        shell: bash
-        run: |
-          set -euo pipefail
-          while IFS= read -r manifest; do
-            python scripts/generated-assets/materialise_drive_asset.py --manifest "$manifest"
-          done < "${{ steps.manifests.outputs.path }}"
-
-      - name: Verify generated WebP files
+      - name: Validate output and commit only approved generated image
         shell: python
-        env:
-          MANIFEST_LIST: ${{ steps.manifests.outputs.path }}
         run: |
           import json
           import os
           from pathlib import Path
+          import subprocess
           from PIL import Image
 
-          manifests = [
-              Path(line.strip())
-              for line in Path(os.environ["MANIFEST_LIST"]).read_text(encoding="utf-8").splitlines()
-              if line.strip()
-          ]
-          if not manifests:
-              raise SystemExit("No generated-asset manifests were selected.")
-
-          outputs = []
-          for manifest_path in manifests:
-              manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-              destination = Path(manifest["destination"])
-              if not destination.exists():
-                  raise SystemExit(f"Materialised output is missing: {destination}")
-              if destination.suffix.lower() != ".webp":
-                  raise SystemExit(f"Materialised output is not WebP: {destination}")
-              with Image.open(destination) as image:
-                  image.verify()
-              outputs.append(destination)
-              print(f"verified {destination} ({destination.stat().st_size} bytes)")
-
-          Path(os.environ["RUNNER_TEMP"], "generated-asset-outputs.txt").write_text(
-              "\n".join(str(path) for path in outputs) + "\n",
-              encoding="utf-8",
-          )
-
-      - name: Commit materialised assets
-        shell: python
-        env:
-          TARGET_BRANCH: ${{ steps.target.outputs.branch }}
-        run: |
-          import subprocess
-          from pathlib import Path
-          import os
-
-          subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True)
-          subprocess.run(
-              [
-                  "git",
-                  "config",
-                  "user.email",
-                  "41898282+github-actions[bot]@users.noreply.github.com",
-              ],
-              check=True,
-          )
-
-          output_list = Path(os.environ["RUNNER_TEMP"], "generated-asset-outputs.txt")
-          outputs = [
-              line.strip()
-              for line in output_list.read_text(encoding="utf-8").splitlines()
-              if line.strip()
-          ]
-          if not outputs:
-              raise SystemExit("No materialised outputs were recorded.")
-
-          subprocess.run(["git", "add", "--", *outputs], check=True)
-          staged = subprocess.run(["git", "diff", "--cached", "--quiet"])
-          if staged.returncode == 0:
-              print("Materialised bytes are unchanged; nothing to commit.")
+          root = Path(os.environ["ASSET_REPOSITORY_ROOT"]).resolve()
+          manifest = (root / os.environ["MANIFEST_PATH"]).resolve()
+          if root not in manifest.parents:
+              raise SystemExit("Manifest escapes development worktree")
+          obj = json.loads(manifest.read_text(encoding="utf-8"))
+          rel = Path(obj["destination"])
+          if rel.is_absolute() or ".." in rel.parts or rel.suffix.lower() != ".webp":
+              raise SystemExit("Invalid generated destination")
+          output = (root / rel).resolve()
+          if root not in output.parents or not output.is_file():
+              raise SystemExit("Generated image missing or outside worktree")
+          with Image.open(output) as image:
+              image.verify()
+          subprocess.run(["git", "-C", str(root), "config", "user.name", "github-actions[bot]"], check=True)
+          subprocess.run(["git", "-C", str(root), "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"], check=True)
+          subprocess.run(["git", "-C", str(root), "add", "--", str(rel)], check=True)
+          changed = subprocess.run(["git", "-C", str(root), "diff", "--cached", "--quiet"], check=False)
+          if changed.returncode == 0:
+              print("Verified image is unchanged; nothing to commit.")
               raise SystemExit(0)
-          if staged.returncode != 1:
-              raise SystemExit(staged.returncode)
-
-          subprocess.run(
-              ["git", "commit", "-m", "Assets: materialise generated image from Drive"],
-              check=True,
-          )
-          subprocess.run(
-              ["git", "push", "origin", f"HEAD:${{ steps.target.outputs.branch }}"],
-              check=True,
-          )
+          if changed.returncode != 1:
+              raise SystemExit("Failed to compare generated image")
+          subprocess.run(["git", "-C", str(root), "commit", "-m", "Assets: materialise generated image from Drive"], check=True)
+          subprocess.run(["git", "-C", str(root), "push", "origin", "HEAD:" + os.environ["TARGET_BRANCH"]], check=True)
