@@ -241,6 +241,46 @@
     text-align: center;
   }
 
+  .crystalarium-portrait-rooted-wells {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 3px 4px 5px;
+    border: 2px solid #9cbccf;
+    border-radius: 14px 14px 5px 5px;
+    background: linear-gradient(130deg, #365e79, #343f6b);
+  }
+
+  .crystalarium-portrait-wells-title {
+    padding: 0 6px;
+    color: #e9daff;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-rooted-wells .crystalarium-portrait-action.is-rooted-well {
+    min-height: 48px;
+    padding: 3px;
+    border-color: #aadce4;
+    border-radius: 12px;
+    background: #2c5971;
+    font-size: 12px;
+  }
+
+  .crystalarium-portrait-rooted-wells .crystalarium-portrait-action.is-rooted-well.is-locked {
+    border-color: #8794b1;
+    background: #353d5c;
+    color: #e2d7f0;
+  }
+
+  .crystalarium-portrait-growing-hint {
+    color: #c7ebef;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
   .crystalarium-portrait-board-scroll {
     overflow-x: auto;
     overscroll-behavior-x: contain;
