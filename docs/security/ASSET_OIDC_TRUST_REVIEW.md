@@ -29,3 +29,7 @@ Status: GitHub workflow hardening proposed in PR, **Google Cloud IAM not yet ind
 
 Do not include service account keys or access tokens in this document. Review **non-secret configuration metadata only**.
 Reference: https://cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines
+
+## Verified Google Drive staging folder access (28 October 2026)
+
+Google Drive folder metadata for the configured staging folder was checked through the connected Drive API. Direct permissions list only the folder owner and the service account `unicorn-valley-asset-materiali@unicorn-valley-510010.iam.gserviceaccount.com` with **reader** access. No public-link or domain-wide permission was returned. This is appropriate for the read-only image materialisation workflow, subject to verifying the GitHub `GCP_ASSET_SERVICE_ACCOUNT` variable and Google Cloud OIDC policy. Google Drive sharing metadata does **not** establish the effective Google IAM provider and impersonation restrictions.
