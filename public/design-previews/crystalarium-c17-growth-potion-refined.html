@@ -9,7 +9,7 @@ const base='/design-assets/crystalarium-c17/growth-potion-assets/';
 const types=['reservoir','vial','gauge'],assets={},range=document.querySelector('#level');
 let amount=75,playing=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,frame=0,lastTick=0,loaded=false;
 const bound={reservoir:[181,362,272],vial:[110,212,162],gauge:[155,358,256]};
-function load(n){return new Promise((resolve,reject)=>{let im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Missing image '+n));im.src=base+n+'.webp';});}
+function load(n){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('Missing image '+n));im.src=base+n+'.webp';});}
 async function init(){try{await Promise.all([...types.flatMap(k=>['liquid-texture','glass-shell','fill-region-mask','liquid-surface-line'].map(async id=>{assets[k+'-'+id]=await load(k+'-'+id)})),...Array.from({length:12},(_,i)=>(async()=>{assets['pour-'+i]=await load('pour-'+String(i+1).padStart(2,'0'))})())]);loaded=true;draw();document.getElementById('status').textContent='All 24 preview images loaded from independent transparent WebPs.';}catch(err){document.getElementById('status').textContent='Art loading error: '+err.message;}}
 function draw(){
 if(!loaded)return;
@@ -39,7 +39,7 @@ p.clearRect(0,0,512,512);p.drawImage(assets['pour-'+frame],0,0,512,512);
 document.getElementById('frame').textContent='Frame '+(frame+1)+' / 12';
 }
 range.addEventListener('input',()=>{amount=Number(range.value);document.querySelector('#amount').textContent=amount+'% demo';draw();});
-document.getElementById('background').addEventListener('click',()=>document.querySelectorAll('.checker').forEach(el=>el.classList.toggle('dark')));
+document.getElementById('background').addEventListener('click',()=>document.querySelectorAll('.checker').forEach(el=>{el.classList.toggle('dark');}));
 function updateButton(){const b=document.getElementById('play');b.textContent=playing?'Pause animation':'Play animation';b.setAttribute('aria-pressed',String(playing));}
 document.getElementById('play').addEventListener('click',()=>{playing=!playing;updateButton()});
 updateButton();function tick(ms){if(playing&&loaded&&ms-lastTick>=95){frame=(frame+1)%12;lastTick=ms;draw()}requestAnimationFrame(tick)}requestAnimationFrame(tick);init();
