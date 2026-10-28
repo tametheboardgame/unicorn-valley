@@ -173,3 +173,6 @@ Created **13 independent blank UI art candidates**, with Git blob hashes in the 
 
 
 **Source correction:** The visual right-arrow WebP pointed right, but its original SVG vector source used the left-arrow path. The right vector now mirrors the arrow strokes independently, preserving its gold frame. The associated manifest SHA/byte record is updated, no other art changed.
+
+
+**Preview composition correction:** The interactive no-save order review now reserves a board-left area and constrains the right-hand order rail to an actual side-panel width on desktop, so 2–5 concurrent cards require genuine horizontal scrolling. Under 900px, the preview remains single-column and touch swipeable. This is a layout presentation change only; the real board/runtime is untouched.
