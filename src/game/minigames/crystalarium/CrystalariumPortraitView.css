@@ -538,8 +538,7 @@
     padding-block: 7px;
   }
 
-  .crystalarium-portrait-pattern[data-crystalarium-goal-count="3"]
-    .crystalarium-portrait-goals {
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="3"] .crystalarium-portrait-goals {
     flex-wrap: nowrap;
     gap: 4px;
   }
