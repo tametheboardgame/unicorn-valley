@@ -27,6 +27,7 @@ export interface CrystalariumPortraitActions {
   dragRestore(shelfIndex: number, target: number): void;
   dragInvalid(): void;
   source(family: CrystalFamily): void;
+  growFromWell(family: CrystalFamily): void;
   grow(): void;
   growRefined(): void;
   offer(): void;
@@ -332,7 +333,32 @@ export class CrystalariumPortraitView {
       grid.append(button);
     }
     scroller.append(grid);
-    boardSection.append(boardHeading, scrollCue, scroller);
+    // These physical wells belong to the merge board's frame, not to the
+    // generator controls. They never occupy or replace one of the 42 cells.
+    const nursery = makeElement('fieldset', 'crystalarium-portrait-rooted-wells');
+    nursery.setAttribute('aria-label', 'Crystal wells rooted in the board frame');
+    const legend = makeElement('legend', 'crystalarium-portrait-wells-title', '✦ Growing wells');
+    nursery.append(legend);
+    for (const family of CRYSTAL_FAMILIES) {
+      const unlocked = unlockedCrystalFamilies(state).includes(family);
+      const well = this.button(
+        unlocked
+          ? `${CRYSTAL_NOTE_PRESENTATION[family].symbol} ${family} · Grow`
+          : `🔒 ${family}`,
+        () => this.actions.growFromWell(family),
+        'rooted-well',
+        !unlocked || locked,
+        'well-' + family,
+      );
+      well.dataset.crystalariumWell = family;
+      well.dataset.crystalariumUnlocked = unlocked ? 'true' : 'false';
+      well.setAttribute('aria-label', unlocked
+        ? `Grow one free ${family} crystal from the board well`
+        : `${family} well locked until ${family === 'bright' ? 4 : 7} patterns`);
+      well.classList.toggle('is-selected', state.selectedFamily === family);
+      nursery.append(well);
+    }
+    boardSection.append(boardHeading, nursery, scrollCue, scroller);
     const helper = makeElement(
       'p',
       'crystalarium-portrait-hint',
@@ -344,24 +370,13 @@ export class CrystalariumPortraitView {
     const controls = makeElement('section', 'crystalarium-portrait-controls');
     controls.setAttribute('aria-label', 'Crystal Growing');
     controls.append(makeElement('h2', 'crystalarium-portrait-section-title', '✦ Crystal Growing'));
-    const sourceRow = makeElement('div', 'crystalarium-portrait-sources');
-    for (const family of CRYSTAL_FAMILIES) {
-      const unlocked = unlockedCrystalFamilies(state).includes(family);
-      const text = unlocked
-        ? `${CRYSTAL_NOTE_PRESENTATION[family].symbol} ${family}`
-        : '🔒 ' + family;
-      const button = this.button(
-        text,
-        () => this.actions.source(family),
-        'source',
-        !unlocked || locked,
-        'source-' + family,
-      );
-      button.setAttribute('aria-pressed', state.selectedFamily === family ? 'true' : 'false');
-      button.classList.toggle('is-selected', state.selectedFamily === family);
-      sourceRow.append(button);
-    }
-    controls.append(sourceRow);
+    controls.append(
+      makeElement(
+        'p',
+        'crystalarium-portrait-growing-hint',
+        'Tap a well attached to the board for a free shard. The Grow button below uses your selected family.',
+      ),
+    );
     const primary = makeElement('div', 'crystalarium-portrait-primary-actions');
     primary.append(
       this.button('Grow shard', this.actions.grow, 'primary', locked && lesson !== 'grow', 'grow'),
