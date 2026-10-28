@@ -6,14 +6,8 @@
   "description": "A browser-based unicorn life-adventure with magical regions to explore, customisation, friends, discoveries, races and a growing world.",
   "type": "game",
   "lifecycle": "active",
-  "categories": [
-    "games",
-    "projects"
-  ],
-  "tags": [
-    "cosy game",
-    "browser game"
-  ],
+  "categories": ["games", "projects"],
+  "tags": ["cosy game", "browser game"],
   "links": {
     "repository": "https://github.com/tametheboardgame/unicorn-valley",
     "play": "https://unicorn-valley.pages.dev/"
