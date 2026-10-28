@@ -256,7 +256,7 @@ export function growCrystalFromWell(
   if (!selected.accepted) return rejected(state, selected.reason);
   const grown = spawnCrystal(selected.state);
   if (!grown.accepted) return rejected(state, grown.reason);
-  return accepted(grown.state, 'A free ' + family + ' shard grew from the crystal well.');
+  return accepted(grown.state, `A free ${family} shard grew from the crystal well.`);
 }
 
 /** Optional free advanced vein: reduces late-game repetition without replacing tier-zero shards. */

@@ -873,7 +873,10 @@ export class CrystalariumFullMode {
         'crystalarium-full-producer:' + family,
         () => this.growFromWell(family),
       );
-      button.setStrokeStyle(3, this.state.selectedFamily === family ? 0xffe5a0 : unlocked ? 0x9adbea : 0x878cae);
+      button.setStrokeStyle(
+        3,
+        this.state.selectedFamily === family ? 0xffe5a0 : unlocked ? 0x9adbea : 0x878cae,
+      );
     });
     this.addText(holder, 699, 369, '✦ CRYSTAL GROWING', 17, '#b6f5df', 442);
     this.addText(

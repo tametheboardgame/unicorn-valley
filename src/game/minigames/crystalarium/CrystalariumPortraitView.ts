@@ -352,9 +352,12 @@ export class CrystalariumPortraitView {
       );
       well.dataset.crystalariumWell = family;
       well.dataset.crystalariumUnlocked = unlocked ? 'true' : 'false';
-      well.setAttribute('aria-label', unlocked
-        ? `Grow one free ${family} crystal from the board well`
-        : `${family} well locked until ${family === 'bright' ? 4 : 7} patterns`);
+      well.setAttribute(
+        'aria-label',
+        unlocked
+          ? `Grow one free ${family} crystal from the board well`
+          : `${family} well locked until ${family === 'bright' ? 4 : 7} patterns`,
+      );
       well.classList.toggle('is-selected', state.selectedFamily === family);
       well.classList.toggle('is-locked', !unlocked);
       nursery.append(well);
