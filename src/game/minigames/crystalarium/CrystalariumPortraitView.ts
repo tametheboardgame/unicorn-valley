@@ -81,6 +81,8 @@ export class CrystalariumPortraitView {
   private readonly dragging: CrystalariumPointerDrag;
   private currentView: CrystalariumPortraitPresentation | null = null;
   private previousLessonFocus: string | null = null;
+  private activeMenu: 'pattern' | 'growing' | 'tools' | null = null;
+  private lastLessonStep: string | undefined;
 
   public constructor(actions: CrystalariumPortraitActions) {
     this.actions = actions;
@@ -97,7 +99,12 @@ export class CrystalariumPortraitView {
       if (event.key === 'Escape') {
         event.preventDefault();
         event.stopPropagation();
-        this.actions.exit();
+        if (this.activeMenu !== null) {
+          const menu = this.activeMenu;
+          this.toggleMenu(menu);
+        } else {
+          this.actions.exit();
+        }
       }
     });
     (document.querySelector('#game-shell') ?? document.body).append(this.root);
@@ -144,6 +151,14 @@ export class CrystalariumPortraitView {
     return button;
   }
 
+  private toggleMenu(menu: 'pattern' | 'growing' | 'tools'): void {
+    this.activeMenu = this.activeMenu === menu ? null : menu;
+    if (this.currentView) this.render(this.currentView);
+    this.root
+      .querySelector<HTMLButtonElement>(`[data-crystalarium-menu="${menu}"]`)
+      ?.focus({ preventScroll: true });
+  }
+
   public render(view: CrystalariumPortraitPresentation): void {
     this.currentView = view;
     this.root.dataset.crystalariumCelebration = view.celebration ?? 'none';
@@ -161,6 +176,17 @@ export class CrystalariumPortraitView {
     const { state } = view;
     const lesson = view.guide?.lessonStep;
     const locked = lesson !== undefined;
+    // The first-play spotlight opens only the panel needed for that action.
+    // Normal play starts board-first, with secondary surfaces closed.
+    if (lesson !== this.lastLessonStep) {
+      this.activeMenu =
+        lesson === 'grow'
+          ? 'growing'
+          : lesson === 'inspect' || lesson === 'offer'
+            ? 'pattern'
+            : null;
+      this.lastLessonStep = lesson;
+    }
     // Do not scroll on initial render: the compact first board row must remain visible.
     // After an accepted step, move focus to its next literal action, not an old button.
     const nextLessonFocus =
@@ -195,6 +221,27 @@ export class CrystalariumPortraitView {
       this.button(view.guide ? 'Skip guide' : 'Help', this.actions.guide, 'quiet', false, 'guide'),
       this.button('Leave', this.actions.exit, 'quiet', false, 'exit'),
     );
+    const menuStrip = makeElement('nav', 'crystalarium-portrait-menu-strip');
+    menuStrip.setAttribute('aria-label', 'Crystalarium panels');
+    const patternName = activeResonancePattern(state)?.title ?? 'Free play';
+    const readyLabel = canOfferPattern(state) ? '✦ Ready!' : '♫ Pattern';
+    for (const [menu, title] of [
+      ['pattern', readyLabel],
+      ['growing', 'Grow'],
+      ['tools', 'Tools'],
+    ] as const) {
+      const trigger = this.button(title, () => this.toggleMenu(menu), 'quiet', false, 'menu-' + menu);
+      trigger.dataset.crystalariumMenu = menu;
+      trigger.setAttribute('aria-expanded', String(this.activeMenu === menu));
+      trigger.setAttribute('aria-controls', 'crystalarium-mobile-menu');
+      trigger.setAttribute('aria-label', 'Open ' + menu + ' panel');
+      trigger.classList.toggle('is-active', this.activeMenu === menu);
+      if (menu === 'pattern') {
+        trigger.classList.toggle('is-ready', canOfferPattern(state));
+        trigger.setAttribute('aria-label', 'Pattern ' + patternName + (canOfferPattern(state) ? ', ready to offer' : ''));
+      }
+      menuStrip.append(trigger);
+    }
 
     const task = makeElement('section', 'crystalarium-portrait-pattern');
     task.setAttribute('aria-label', 'Current Resonance Pattern');
@@ -280,13 +327,7 @@ export class CrystalariumPortraitView {
     const boardHeading = makeElement('div', 'crystalarium-portrait-board-heading');
     boardHeading.append(
       makeElement('h2', 'crystalarium-portrait-board-title', 'Crystal board'),
-      this.button(
-        view.quiet ? 'Sound off' : view.globallyMuted ? 'Muted globally' : 'Sound on',
-        this.actions.sound,
-        'quiet',
-        false,
-        'sound',
-      ),
+      makeElement('span', 'crystalarium-portrait-board-count', '42 sockets · 7 × 6'),
     );
     const scrollCue = makeElement(
       'p',
@@ -407,6 +448,15 @@ export class CrystalariumPortraitView {
     const tools = makeElement('section', 'crystalarium-portrait-tools');
     tools.setAttribute('aria-label', 'Crystal Tools');
     tools.append(makeElement('h2', 'crystalarium-portrait-section-title', '✧ Crystal Tools'));
+    tools.append(
+      this.button(
+        view.quiet ? 'Sound off' : view.globallyMuted ? 'Muted globally' : 'Sound on',
+        this.actions.sound,
+        'quiet',
+        false,
+        'sound',
+      ),
+    );
     const utility = makeElement('div', 'crystalarium-portrait-secondary-actions');
     utility.append(
       this.button('Harmony ♫', this.actions.harmony, 'standard', locked, 'harmony'),
@@ -492,15 +542,39 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
+    // The three existing gameplay surfaces stay mounted, but only one is
+    // exposed in the non-modal drawer. Saves and controller actions are shared.
+    const backdrop = makeElement('div', 'crystalarium-portrait-menu-backdrop');
+    backdrop.hidden = this.activeMenu === null;
+    backdrop.addEventListener('click', () => {
+      if (this.activeMenu !== null) this.toggleMenu(this.activeMenu);
+    });
+    const menuPanel = makeElement('div', 'crystalarium-portrait-menu-panel');
+    menuPanel.id = 'crystalarium-mobile-menu';
+    menuPanel.hidden = this.activeMenu === null;
+    menuPanel.setAttribute('role', 'region');
+    menuPanel.setAttribute('aria-label', 'Crystalarium ' + (this.activeMenu ?? 'options') + ' panel');
+    const closeMenu = this.button('Close ✕', () => {
+      if (this.activeMenu !== null) this.toggleMenu(this.activeMenu);
+    }, 'quiet', false, 'close-menu');
+    const menuHead = makeElement('div', 'crystalarium-portrait-menu-heading');
+    menuHead.append(
+      makeElement('strong', 'crystalarium-portrait-menu-title', '✦ ' + (this.activeMenu ?? 'Options')),
+      closeMenu,
+    );
+    task.hidden = this.activeMenu !== 'pattern';
+    controls.hidden = this.activeMenu !== 'growing';
+    tools.hidden = this.activeMenu !== 'tools';
+    menuPanel.append(menuHead, task, controls, tools);
     this.root.replaceChildren(
       header,
-      task,
+      menuStrip,
       guidePanel,
       boardSection,
       shelf,
       status,
-      controls,
-      tools,
+      backdrop,
+      menuPanel,
     );
     // Recreating the 42-cell board must not snap a narrow phone back to column one.
     // Players need to keep later columns in view after selection, Grow and Offer.

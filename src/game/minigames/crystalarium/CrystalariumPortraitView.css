@@ -566,6 +566,139 @@
   }
 }
 
+/* C13A second visual pass: board-first mobile surface.
+   Drawer panels are presentation only; the controller and saves are unchanged. */
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait {
+    gap: 6px;
+    padding-bottom: max(110px, env(safe-area-inset-bottom) + 104px);
+    overflow-y: auto;
+  }
+
+  .crystalarium-portrait-header { gap: 6px; min-height: 54px; }
+  .crystalarium-portrait-heading { font-size: clamp(20px, 5.7vw, 25px); }
+  .crystalarium-portrait-subtitle { font-size: 12px; }
+  .crystalarium-portrait-header > .crystalarium-portrait-action {
+    padding-inline: 6px;
+    min-width: 48px;
+    font-size: 13px;
+  }
+
+  .crystalarium-portrait-menu-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .crystalarium-portrait-menu-strip .crystalarium-portrait-action {
+    min-height: 48px;
+    font-size: 14px;
+    padding: 5px 3px;
+  }
+  .crystalarium-portrait-menu-strip .is-active,
+  .crystalarium-portrait-menu-strip .is-ready {
+    border-color: #ffe5a0;
+    background: #466b82;
+    box-shadow: 0 0 0 2px rgb(255 225 158 / 18%);
+  }
+  .crystalarium-portrait-board-section {
+    flex: 1 0 auto;
+    min-height: 390px;
+    align-content: start;
+    padding-block: 9px;
+    background: linear-gradient(160deg, #1b365a, #243c60);
+  }
+  .crystalarium-portrait-board-heading {
+    min-height: 25px;
+  }
+  .crystalarium-portrait-board-count {
+    font-size: 12px;
+    font-weight: 800;
+    color: #b8e8f4;
+  }
+  .crystalarium-portrait-rooted-wells {
+    margin-top: 0;
+  }
+  .crystalarium-portrait-hint {
+    display: none;
+  }
+  .crystalarium-portrait-menu-backdrop {
+    position: fixed;
+    z-index: 10;
+    inset: 0;
+    background: rgb(7 19 40 / 58%);
+  }
+  .crystalarium-portrait-menu-backdrop[hidden],
+  .crystalarium-portrait-menu-panel[hidden],
+  .crystalarium-portrait-menu-panel > [hidden] {
+    display: none;
+  }
+  .crystalarium-portrait-menu-panel {
+    position: fixed;
+    z-index: 11;
+    right: max(9px, env(safe-area-inset-right));
+    bottom: max(103px, env(safe-area-inset-bottom) + 96px);
+    left: max(9px, env(safe-area-inset-left));
+    max-height: min(65dvh, 560px);
+    overflow-y: auto;
+    padding: 10px;
+    border: 2px solid #a4dbed;
+    border-radius: 20px;
+    background: #203957;
+    box-shadow: 0 9px 30px rgb(2 10 25 / 60%);
+    overscroll-behavior: contain;
+  }
+  .crystalarium-portrait-menu-heading {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #f3e6ff;
+  }
+  .crystalarium-portrait-menu-title {
+    font-size: 18px;
+    text-transform: capitalize;
+  }
+  .crystalarium-portrait-menu-heading .crystalarium-portrait-action {
+    min-width: 84px;
+  }
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-pattern,
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-controls,
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-tools {
+    width: 100%;
+    min-width: 0;
+  }
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] {
+    grid-template-columns: minmax(0, 1fr) 90px;
+  }
+  .crystalarium-portrait-shelf {
+    z-index: 12;
+    gap: 2px;
+    padding: 5px;
+  }
+  .crystalarium-portrait-shelf-heading {
+    font-size: 12px;
+  }
+  .crystalarium-portrait-status {
+    position: fixed;
+    z-index: 7;
+    right: max(9px, env(safe-area-inset-right));
+    bottom: max(103px, env(safe-area-inset-bottom) + 96px);
+    left: max(9px, env(safe-area-inset-left));
+    min-height: 0;
+    padding: 5px 9px;
+    overflow: hidden;
+    border-width: 1px;
+    border-radius: 8px;
+    background: rgb(24 53 78 / 93%);
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+}
+
 .crystalarium-drag-ghost {
   position: fixed;
   z-index: 9999;

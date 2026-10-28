@@ -264,6 +264,7 @@ test.describe('H6.9C portrait touch evidence', () => {
     await expect(altar).toHaveAttribute('data-crystalarium-ready', 'true');
     await expect(offer).toHaveClass(/is-ready/);
     await expect(offer).toBeEnabled();
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
     await offer.click();
     expect(
       await page.evaluate(
@@ -630,7 +631,9 @@ test.describe('H6.9C8 invalid portrait drop protection', () => {
     await drag();
     await expect(second).toHaveAttribute('data-crystalarium-drop', 'valid');
     await page.mouse.up();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
     await region.locator('[data-crystalarium-action="grow"]').click();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
     const savedBeforeInvalidDrop = await page.evaluate(
       (key) => localStorage.getItem(key),
       SANDBOX_KEY,
@@ -686,7 +689,9 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
     });
     const rightmostScroll = await scroller.evaluate((node) => node.scrollLeft);
     expect(rightmostScroll).toBeGreaterThan(0);
+    await portrait.locator('[data-crystalarium-menu="growing"]').click();
     await portrait.locator('[data-crystalarium-action="grow"]').click();
+    await portrait.locator('[data-crystalarium-menu="growing"]').click();
     expect(await scroller.evaluate((node) => node.scrollLeft)).toBe(rightmostScroll);
     await portrait.locator('[data-crystalarium-cell="6"]').click();
     expect(await scroller.evaluate((node) => node.scrollLeft)).toBe(rightmostScroll);
@@ -758,6 +763,7 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
       fullPage: true,
     });
 
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
     await portrait.locator('[data-crystalarium-action="offer"]').click();
     await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
       'Crystalarium Symphony complete',
@@ -769,6 +775,7 @@ test.describe('H6.9C10 final-chapter 320px experience', () => {
     expect(completed.completed).toBe(50);
     expect(completed.offers).toBe(1);
     expect(completed.harmonies).toBe(0);
+    await portrait.locator('[data-crystalarium-menu="growing"]').click();
     await portrait.locator('[data-crystalarium-action="grow-refined"]').click();
     const freePlay = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
@@ -879,5 +886,45 @@ test.describe('H6.9C13A isolated producer-placement visual concept', () => {
         fullPage: true,
       });
     });
+  });
+});
+
+test.describe('H6.9C13A board-first mobile drawer contract', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+  test('the default view prioritises the usable board, with reversible Pattern, Grow and Tools panels', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    const board = region.locator('.crystalarium-portrait-board-section');
+    const first = region.locator('[data-crystalarium-cell="0"]');
+    const shelf = region.locator('.crystalarium-portrait-shelf');
+    await expect(board).toBeVisible();
+    await expect(region.locator('[data-crystalarium-menu]')).toHaveCount(3);
+    await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await expect(region.locator('.crystalarium-portrait-pattern')).toBeHidden();
+    await expect(region.locator('.crystalarium-portrait-controls')).toBeHidden();
+    await expect(region.locator('.crystalarium-portrait-tools')).toBeHidden();
+    const a = await first.boundingBox();
+    const b = await shelf.boundingBox();
+    if (!a || !b) throw new Error('Missing first board row or safe shelf');
+    expect(a.y + a.height).toBeLessThan(b.y);
+    await region.locator('[data-crystalarium-menu="tools"]').click();
+    await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
+    await region.locator('[data-crystalarium-action="sound"]').click();
+    await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
+    await region.locator('[data-crystalarium-action="close-menu"]').click();
+    await expect(board).toBeVisible();
+    await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await region.locator('[data-crystalarium-menu="pattern"]').click();
+    await expect(region.locator('.crystalarium-portrait-pattern')).toBeVisible();
+    await region.locator('[data-crystalarium-menu="pattern"]').click();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await expect(region.locator('[data-crystalarium-action="grow"]')).toBeVisible();
+    await region.locator('[data-crystalarium-action="grow"]').click();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await expect(region.locator('[data-crystalarium-cell="2"]')).toHaveAttribute('data-family', 'low');
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
   });
 });

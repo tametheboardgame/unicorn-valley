@@ -655,7 +655,7 @@ export class CrystalariumFullMode {
     this.button(
       holder,
       804,
-      71,
+      53,
       170,
       this.guide.getPrompt() ? 'Skip guide' : 'Show help',
       'crystalarium-full-guide',
@@ -665,7 +665,7 @@ export class CrystalariumFullMode {
     this.button(
       holder,
       985,
-      71,
+      53,
       162,
       this.quiet ? 'Sound: Off' : audioSettings.muted ? 'Sound: Muted' : 'Sound: On',
       'crystalarium-full-sound',
@@ -683,7 +683,9 @@ export class CrystalariumFullMode {
         (chapter
           ? 'Drag matching crystals onto each other, then offer the pictured formation.'
           : 'The Symphony is complete! Keep creating your favourite crystals.'),
-      17,
+      15,
+      '#effaff',
+      520,
     );
     this.plate(holder, 158, 165, 464, 388, 20, 0x172d4d, 0x6da8c9);
     // One batched graphics object keeps the 42 socket outlines cheap to redraw.
@@ -764,8 +766,8 @@ export class CrystalariumFullMode {
       holder.add(aura);
     }
     this.plate(holder, 680, 132, 482, 223, 22, 0x2b365d, ready ? 0xffe5a0 : 0x9daddb);
-    this.plate(holder, 680, 363, 482, 137, 20, 0x1e4059, 0x8acdd1);
-    this.plate(holder, 680, 508, 482, 133, 20, 0x252f55, 0xa995d2);
+    this.plate(holder, 680, 363, 482, 143, 20, 0x1e4059, 0x8acdd1);
+    this.plate(holder, 680, 515, 482, 141, 20, 0x252f55, 0xa995d2);
     const pattern = activeResonancePattern(this.state);
     this.addText(
       holder,
@@ -869,7 +871,7 @@ export class CrystalariumFullMode {
         627,
         210 + index * 108,
         49,
-        unlocked ? note.symbol + ' ' + family : '🔒 ' + family,
+        unlocked ? note.symbol : '🔒',
         'crystalarium-full-producer:' + family,
         () => this.growFromWell(family),
       );
@@ -877,6 +879,7 @@ export class CrystalariumFullMode {
         3,
         this.state.selectedFamily === family ? 0xffe5a0 : unlocked ? 0x9adbea : 0x878cae,
       );
+      this.addText(holder, 651, 257 + index * 108, unlocked ? family : 'locked', 11, '#ccebf1', 65).setOrigin(0.5);
     });
     this.addText(holder, 699, 369, '✦ CRYSTAL GROWING', 17, '#b6f5df', 442);
     this.addText(
@@ -923,17 +926,17 @@ export class CrystalariumFullMode {
       );
       // Tools always hold the same Fresh Board control.
     }
-    this.addText(holder, 699, 513, '✧ CRYSTAL TOOLS • Safe shelf', 16, '#e1d1ff', 440);
-    this.button(holder, 699, 536, 141, 'Harmony ♫', 'crystalarium-full-harmony', () =>
+    this.addText(holder, 699, 523, '✧ CRYSTAL TOOLS • Safe shelf', 16, '#e1d1ff', 440);
+    this.button(holder, 699, 546, 141, 'Harmony ♫', 'crystalarium-full-harmony', () =>
       this.run({ kind: 'other' }, () => createHarmony(this.state)),
     );
-    this.button(holder, 846, 536, 141, 'Polish ✧', 'crystalarium-full-polish', () =>
+    this.button(holder, 846, 546, 141, 'Polish ✧', 'crystalarium-full-polish', () =>
       this.polishSelected(),
     );
     this.button(
       holder,
       994,
-      536,
+      546,
       149,
       this.resetArmed ? 'Confirm reset' : 'Fresh board',
       'crystalarium-full-fresh',
@@ -944,7 +947,7 @@ export class CrystalariumFullMode {
       const shelfTarget = this.button(
         holder,
         698 + 105 * i,
-        586,
+        597,
         99,
         piece ? '' : 'Empty',
         'crystalarium-full-shelf:' + i,
@@ -959,19 +962,19 @@ export class CrystalariumFullMode {
       });
       if (piece) {
         const shelfArt = this.scene.add.graphics();
-        paintCrystalArt(shelfArt, piece, 747 + 105 * i, 609, 0.42);
+        paintCrystalArt(shelfArt, piece, 747 + 105 * i, 620, 0.42);
         holder.add(shelfArt);
       }
     }
-    this.addText(holder, 692, 651, this.message, 15, '#fbe8ba', 450);
+    this.addText(holder, 698, 666, this.message, 13, '#fbe8ba', 450);
     this.addText(
       holder,
-      691,
-      685,
+      173,
+      681,
       'N grow • 1–3 veins • O offer • H harmony • P polish • S shelf • W wash • Esc exit',
-      13,
+      12,
       '#bfd6ec',
-      465,
+      478,
     );
   }
 }
