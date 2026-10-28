@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "package": "R6.5-WP19H6.9C17",
   "date": "2026-10-28",
-  "status": "Both painted desktop and portrait Crystalarium background illustrations approved and locked by user; raster binaries pending GitHub ingestion and preview integration",
+  "status": "C17 painted desktop and portrait background WebP assets committed on World draft branch; original source PNGs archived separately in project Google Drive; composition screenshot acceptance pending",
   "sourceOfTruth": "docs/design/2026-10-28-CRYSTALARIUM-APPROVED-VISUAL-AND-INTERACTION-CONTRACT.md",
   "provenance": "Original procedurally authored SVG artwork for the project's design review; no third-party graphics/fonts embedded.",
   "designReference": "User-approved in-chat illustrated Garden concept image; flattened concept screenshot is NOT used as a runtime texture.",
@@ -146,9 +146,10 @@
       "preparedWebpSha256": "bb31ab491d498d5aebb31546575cd244126e4437467f40a2ec6558f5db13e6f8",
       "formatTreatment": "The approved source is 3:2; 16:9 derived runtime composition crops 80 pixels from top and bottom, then resizes to 1920×1080. Preserve uncropped source.",
       "userSource": "C17 approved background image in project chat; checksum identifies exact source and must be checked during eventual ingest",
-      "repositoryBinaryCommitted": false,
-      "pending": "Exact approved WebP staged for GitHub upload on World branch; C17 preview references it with SVG fallback pending actual binary upload",
-      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp"
+      "repositoryBinaryCommitted": true,
+      "pending": "Check SHA-bound Cloudflare rendering, contrast and required responsive screenshots; artwork approved, composition awaiting review.",
+      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp",
+      "originalSourceArchived": "Google Drive/Unicorn Valley/crystalarium-garden-desktop-approved-source.png"
     },
     "portrait": {
       "decision": "USER_APPROVED_LOCKED",
@@ -160,12 +161,13 @@
       "preparedWebp": "crystalarium-garden-portrait-candidate-1080x1920.webp",
       "preparedWebpSha256": "f25bae9923d06070cab91a741967d1a266b68779889f443568ee9c3c464bf684",
       "formation": "The generator returned vertical painting inside wider white-margined canvas. Exactly cropped central 576×1024 9:16 composition, upscale derivative 1080×1920; not a stretched desktop crop.",
-      "repositoryBinaryCommitted": false,
-      "pending": "Exact approved WebP staged for GitHub upload on World branch; C17 preview references it with SVG fallback pending actual binary upload",
+      "repositoryBinaryCommitted": true,
+      "pending": "Check SHA-bound Cloudflare rendering, contrast and required responsive screenshots; artwork approved, composition awaiting review.",
       "decisionDate": "2026-10-28",
-      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp"
+      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp",
+      "originalSourceArchived": "Google Drive/Unicorn Valley/crystalarium-garden-portrait-approved-source.png"
     },
-    "note": "These lock references identify conversation-produced raster files by exact checksums; GitHub API text/tree commit cannot ingest arbitrary local binary without transporting its bytes. No painted artwork is yet served by Cloudflare, and pre-existing SVG placeholders remain unchanged."
+    "note": "Approved optimised WebPs committed as verified Git binary blobs. Git blob SHAs: desktop d222f54d3685cc287a1843e425a9d65dab1bf5f5, portrait 1bb33626ff7547d3502cc93abfd7f5d049fd546b. Both byte lengths and SHA-256 match approved originals. Full-quality source PNGs archived in user's connected Google Drive (not in game bundle). SVG remains graceful fallback only. C17 visual overlay gate still pending."
   },
-  "note": "Both approved raster WebPs are staged with correct SHA-256 but are not yet GitHub blobs. Current C17 preview imports them automatically when their bytes are uploaded; otherwise shows SVG fallback clearly labelled."
+  "note": "Google Drive staging enabled binary handoff to GitHub create_blob(base64); both WebPs are now in the World draft repository. Earlier manual-upload instruction superseded."
 }

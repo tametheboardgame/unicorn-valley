@@ -982,7 +982,7 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
       await expect(page.locator('#low')).toBeVisible();
       await expect
         .poll(() => page.locator('body').getAttribute('data-background-art'))
-        .toMatch(/^(painted|svg-fallback)$/);
+        .toBe('painted');
 
       const boardPanel = await page.locator('.board-panel').boundingBox();
       const wellsPanel = await page.locator('.wells').boundingBox();
