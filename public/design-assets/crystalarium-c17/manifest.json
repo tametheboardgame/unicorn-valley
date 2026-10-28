@@ -1281,9 +1281,9 @@
       "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-right.svg",
       "purpose": "C17 Resonance Order reusable illustrated UI candidate",
       "format": "SVG source",
-      "bytes": 801,
-      "gitBlobSha": "49d7352bc1cb28670cd8030a4c70409061f29f35",
-      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "bytes": 849,
+      "gitBlobSha": "8489ca0137409a365b5ac102b33bc019a4e299df",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED - scalable right-arrow source corrected to match its rendered WebP",
       "runtimeApproved": false,
       "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
     },
