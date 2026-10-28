@@ -342,9 +342,7 @@ export class CrystalariumPortraitView {
     for (const family of CRYSTAL_FAMILIES) {
       const unlocked = unlockedCrystalFamilies(state).includes(family);
       const well = this.button(
-        unlocked
-          ? `${CRYSTAL_NOTE_PRESENTATION[family].symbol} ${family} · Grow`
-          : `🔒 ${family}`,
+        unlocked ? `${CRYSTAL_NOTE_PRESENTATION[family].symbol} ${family} · Grow` : `🔒 ${family}`,
         () => this.actions.growFromWell(family),
         'rooted-well',
         locked,

@@ -169,7 +169,9 @@ test('H6.9C13A live desktop frame wells grow free shards atomically without losi
 test.describe('H6.9C13A portrait board-frame wells', () => {
   test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
 
-  test('retains 42 cells and grows from well while locked wells cannot spend', async ({ page }, testInfo) => {
+  test('retains 42 cells and grows from well while locked wells cannot spend', async ({
+    page,
+  }, testInfo) => {
     await enterResonanceGarden(page);
     const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
     const wells = portrait.locator('.crystalarium-portrait-rooted-wells');
@@ -186,15 +188,23 @@ test.describe('H6.9C13A portrait board-frame wells', () => {
     await locked.click();
     expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(previous);
     await wells.locator('[data-crystalarium-well="low"]').click();
-    await expect(portrait.locator('[data-crystalarium-cell="2"]')).toHaveAttribute('data-family', 'low');
-    const state = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+    await expect(portrait.locator('[data-crystalarium-cell="2"]')).toHaveAttribute(
+      'data-family',
+      'low',
+    );
+    const state = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
     expect(state.cells).toHaveLength(42);
     expect(state.cells[2]).toEqual({ family: 'low', tier: 0 });
     await page.screenshot({
       path: testInfo.outputPath('h6.9c13a-live-wells-320.png'),
       fullPage: true,
     });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
   });
 });
 
