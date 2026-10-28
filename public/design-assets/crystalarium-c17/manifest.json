@@ -472,9 +472,10 @@
       "format": "lossless transparent WebP",
       "bytes": 16008,
       "gitBlobSha": "a4636accec05d9921c3a29d039ebec0d5d4dbe7b",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-add-disabled.webp",
@@ -482,10 +483,11 @@
       "format": "lossless transparent WebP",
       "bytes": 12370,
       "gitBlobSha": "8bb5dacd12fba8a5b15a80e1df0dbce41bd03259",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-add.webp",
@@ -493,10 +495,11 @@
       "format": "lossless transparent WebP",
       "bytes": 14950,
       "gitBlobSha": "59d35084ab09a6a13ad02bd85ea40952b66f4634",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-pour-disabled.webp",
@@ -504,10 +507,11 @@
       "format": "lossless transparent WebP",
       "bytes": 10704,
       "gitBlobSha": "6da61470759d03c2f1d6bf6698341236cd754c29",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-pour.webp",
@@ -515,10 +519,11 @@
       "format": "lossless transparent WebP",
       "bytes": 14882,
       "gitBlobSha": "e6ede5324f2eb7d9d41f60d54f75bbaa5b5fd6a1",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-medium.webp",
@@ -526,9 +531,10 @@
       "format": "lossless transparent WebP",
       "bytes": 9058,
       "gitBlobSha": "2c18d8f197ddc2e7820ebff14d4bff67615d9362",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-small.webp",
@@ -536,9 +542,10 @@
       "format": "lossless transparent WebP",
       "bytes": 8806,
       "gitBlobSha": "afdceb504e28a8c98c183b46fc68e98f36a7b9dd",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-sparkle.webp",
@@ -546,9 +553,10 @@
       "format": "lossless transparent WebP",
       "bytes": 12864,
       "gitBlobSha": "f2ee4701921c7fd82fac70eedfc801923dc74d8b",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-triple.webp",
@@ -556,9 +564,10 @@
       "format": "lossless transparent WebP",
       "bytes": 8370,
       "gitBlobSha": "20742fe67c85fc6a3b4e12908e6cc48d26aeaa20",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-empty.webp",
@@ -566,9 +575,10 @@
       "format": "lossless transparent WebP",
       "bytes": 26886,
       "gitBlobSha": "04e0e738e0daa10e49f63951b63efffc81994170",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-fill-region-mask.webp",
@@ -576,10 +586,11 @@
       "format": "lossless transparent WebP",
       "bytes": 274,
       "gitBlobSha": "a274dba891793a8c58931acd1d0e82301556f4ea",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-full.webp",
@@ -587,9 +598,10 @@
       "format": "lossless transparent WebP",
       "bytes": 29694,
       "gitBlobSha": "9feacdfa61bbd29e41c0d5ede8e11089da53d7f7",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-glass-shell.webp",
@@ -597,10 +609,11 @@
       "format": "lossless transparent WebP",
       "bytes": 26688,
       "gitBlobSha": "71f3f182002331b7511229314e3eb8ff970ec523",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-half.webp",
@@ -608,9 +621,10 @@
       "format": "lossless transparent WebP",
       "bytes": 32578,
       "gitBlobSha": "4cd1a9167e68b213dd4bb7012fe08a3840debabf",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-high.webp",
@@ -618,9 +632,10 @@
       "format": "lossless transparent WebP",
       "bytes": 31204,
       "gitBlobSha": "ca9722400c1e0aa6a34e8b346474bb5911e64591",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-low.webp",
@@ -628,9 +643,10 @@
       "format": "lossless transparent WebP",
       "bytes": 31348,
       "gitBlobSha": "df8c8cb7739d055cf060601da09bf1e56644b60b",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-01.webp",
@@ -638,9 +654,10 @@
       "format": "lossless transparent WebP",
       "bytes": 19190,
       "gitBlobSha": "4c96e4f3bd19b24c47a14d0d0cea5b98a95a6a9e",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-02.webp",
@@ -648,9 +665,10 @@
       "format": "lossless transparent WebP",
       "bytes": 22256,
       "gitBlobSha": "6cdffa2374ad49a38ae20b89e2abfd6857a50ab2",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-03.webp",
@@ -658,9 +676,10 @@
       "format": "lossless transparent WebP",
       "bytes": 33606,
       "gitBlobSha": "85ec6b26f8a78b12e728c96b138ae257ae59cb0a",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-04.webp",
@@ -668,9 +687,10 @@
       "format": "lossless transparent WebP",
       "bytes": 35106,
       "gitBlobSha": "d8a1454e7f5f93c09fe865241e25e517ad69847d",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop-empty.webp",
@@ -678,10 +698,11 @@
       "format": "lossless transparent WebP",
       "bytes": 5400,
       "gitBlobSha": "9a6f374e44e76012a00ec0a549c769078b5948da",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop-filled.webp",
@@ -689,10 +710,11 @@
       "format": "lossless transparent WebP",
       "bytes": 5542,
       "gitBlobSha": "dffd6ad62c6c0195b98dcd814ba229eaf8a0ed86",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop.webp",
@@ -700,10 +722,11 @@
       "format": "lossless transparent WebP",
       "bytes": 11080,
       "gitBlobSha": "da20cfd13f0a41aaed9be486b3de57c0a12a35dd",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-vial.webp",
@@ -711,10 +734,11 @@
       "format": "lossless transparent WebP",
       "bytes": 12884,
       "gitBlobSha": "48d42dc458851bb94fa03910b0a039420f0597c4",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/liquid-surface.webp",
@@ -722,9 +746,10 @@
       "format": "lossless transparent WebP",
       "bytes": 22530,
       "gitBlobSha": "33f0b2c1ffe6dd98f61b8908b532d3ca48b2c506",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-01.webp",
@@ -732,10 +757,11 @@
       "format": "lossless transparent WebP",
       "bytes": 21952,
       "gitBlobSha": "bf3bc01c16bf6899e057eb7869b532583818c7ad",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-02.webp",
@@ -743,10 +769,11 @@
       "format": "lossless transparent WebP",
       "bytes": 22874,
       "gitBlobSha": "b98fcbcf016c416bc12e1d2bc954d760222bdb70",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-03.webp",
@@ -754,10 +781,11 @@
       "format": "lossless transparent WebP",
       "bytes": 23956,
       "gitBlobSha": "04dd046787c9226df1f28cc675b2565ecd4cac90",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-04.webp",
@@ -765,10 +793,11 @@
       "format": "lossless transparent WebP",
       "bytes": 25024,
       "gitBlobSha": "57393f5400013996c76a05f7826f2dde19a50262",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-05.webp",
@@ -776,10 +805,11 @@
       "format": "lossless transparent WebP",
       "bytes": 25924,
       "gitBlobSha": "a4e61f71cd66fbfa8b4934ea0a330b329b9c3b4a",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-empty.webp",
@@ -787,9 +817,10 @@
       "format": "lossless transparent WebP",
       "bytes": 117574,
       "gitBlobSha": "83f4be646e367717eef86a17527e73d3c996209b",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-fill-region-mask.webp",
@@ -797,10 +828,11 @@
       "format": "lossless transparent WebP",
       "bytes": 2356,
       "gitBlobSha": "a6123c433d29d0553387b19bfc968d7a6e598b4d",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-full.webp",
@@ -808,9 +840,10 @@
       "format": "lossless transparent WebP",
       "bytes": 106892,
       "gitBlobSha": "edbedffca9c66bf886104481f8ed338708d5fae8",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-glass-shell.webp",
@@ -818,10 +851,11 @@
       "format": "lossless transparent WebP",
       "bytes": 119540,
       "gitBlobSha": "99b6c2ffb46e3502e0345b9e73df9ae9ffcdbb5f",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-high.webp",
@@ -829,9 +863,10 @@
       "format": "lossless transparent WebP",
       "bytes": 101854,
       "gitBlobSha": "b35bc72f8a20769ced8f714fa56f86a197936df2",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-low.webp",
@@ -839,9 +874,10 @@
       "format": "lossless transparent WebP",
       "bytes": 101610,
       "gitBlobSha": "9edd0854027b602cdcda6ed06116a4c510df5e61",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-medium.webp",
@@ -849,9 +885,10 @@
       "format": "lossless transparent WebP",
       "bytes": 102146,
       "gitBlobSha": "b792b7de81f9b2ae68179af52bb444561462cb29",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/sparkles.webp",
@@ -859,9 +896,10 @@
       "format": "lossless transparent WebP",
       "bytes": 15730,
       "gitBlobSha": "1233caba8becc41fb2ede201400d3dadc9b386cf",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-01.webp",
@@ -869,9 +907,10 @@
       "format": "lossless transparent WebP",
       "bytes": 22536,
       "gitBlobSha": "640ef2ecc5158ce602498efdc9779f9b476e1898",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-02.webp",
@@ -879,9 +918,10 @@
       "format": "lossless transparent WebP",
       "bytes": 20204,
       "gitBlobSha": "2389d7bf71d5aa3daa201125548f288ca4734002",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-03.webp",
@@ -889,9 +929,10 @@
       "format": "lossless transparent WebP",
       "bytes": 24714,
       "gitBlobSha": "b4e5f5b4b5905420c51ecab927091b424a6d1884",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-04.webp",
@@ -899,9 +940,10 @@
       "format": "lossless transparent WebP",
       "bytes": 24742,
       "gitBlobSha": "1e2ed77490645b708038a9ab175b504442a36dfe",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-empty.webp",
@@ -909,9 +951,10 @@
       "format": "lossless transparent WebP",
       "bytes": 31304,
       "gitBlobSha": "165f610f8759935f6e877f7525ebe39c3b76e419",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-fill-region-mask.webp",
@@ -919,10 +962,11 @@
       "format": "lossless transparent WebP",
       "bytes": 604,
       "gitBlobSha": "d0657445b7dbde221dfb1cd811f7649add2599f1",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-full.webp",
@@ -930,9 +974,10 @@
       "format": "lossless transparent WebP",
       "bytes": 37520,
       "gitBlobSha": "1c7ad8993387a108ff4e59bb2059d4ce628dcc8a",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-glass-shell.webp",
@@ -940,10 +985,11 @@
       "format": "lossless transparent WebP",
       "bytes": 31968,
       "gitBlobSha": "e3401b994a8acff15d211bb2f4f4644946227a19",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-half.webp",
@@ -951,9 +997,10 @@
       "format": "lossless transparent WebP",
       "bytes": 32050,
       "gitBlobSha": "20dc6caffa5f66994705cd6f6f24ecc8c008e6e7",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-quarter.webp",
@@ -961,9 +1008,10 @@
       "format": "lossless transparent WebP",
       "bytes": 32600,
       "gitBlobSha": "7c7bcd28fc3de4683ae39d0cd9a2127aa8558499",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-three-quarter.webp",
@@ -971,9 +1019,10 @@
       "format": "lossless transparent WebP",
       "bytes": 33116,
       "gitBlobSha": "254120619edec1013cdda4bb332438af0f9d67f7",
-      "review": "CANDIDATE - visual direction accepted; individual sprite/halo/48px review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive"
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-liquid-surface-line.webp",
@@ -981,9 +1030,10 @@
       "purpose": "gauge-liquid-surface-line",
       "bytes": 912,
       "gitBlobSha": "5f362f485f6a18dd07b23efee97e28b44f54be26",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-liquid-texture.webp",
@@ -991,9 +1041,10 @@
       "purpose": "gauge-liquid-texture",
       "bytes": 8172,
       "gitBlobSha": "fbd671bb3238c5b5e9cc0e61f9fc28936caf08b8",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-06.webp",
@@ -1001,9 +1052,10 @@
       "purpose": "pour-06",
       "bytes": 26924,
       "gitBlobSha": "ce454de5923c1d559916abe9e2a9e3e94653b28a",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-07.webp",
@@ -1011,9 +1063,10 @@
       "purpose": "pour-07",
       "bytes": 29784,
       "gitBlobSha": "f815ede94f6918b0d3ade854612867fa7f1b3c00",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-08.webp",
@@ -1021,9 +1074,10 @@
       "purpose": "pour-08",
       "bytes": 30522,
       "gitBlobSha": "c42269fbc8e2b6ba0b109796d45658bd6e5106de",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-09.webp",
@@ -1031,9 +1085,10 @@
       "purpose": "pour-09",
       "bytes": 29368,
       "gitBlobSha": "10e863bdd8e1938005aab4a2a0ef1229af31e886",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-10.webp",
@@ -1041,9 +1096,10 @@
       "purpose": "pour-10",
       "bytes": 28630,
       "gitBlobSha": "61af1f08cfc944e75b1333d5f01e85700d21d47e",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-11.webp",
@@ -1051,9 +1107,10 @@
       "purpose": "pour-11",
       "bytes": 25962,
       "gitBlobSha": "e34924480658e307ab4948350734c0519f348ff9",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-12.webp",
@@ -1061,9 +1118,10 @@
       "purpose": "pour-12",
       "bytes": 23564,
       "gitBlobSha": "fef905c57377966e29675dec7893fb260bb11e01",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-liquid-surface-line.webp",
@@ -1071,9 +1129,10 @@
       "purpose": "reservoir-liquid-surface-line",
       "bytes": 6036,
       "gitBlobSha": "a411fdf96f065f6c519da7f143f21a81bb3f1f03",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-liquid-texture.webp",
@@ -1081,9 +1140,10 @@
       "purpose": "reservoir-liquid-texture",
       "bytes": 23408,
       "gitBlobSha": "ec26018f22af620eb84efb0390271c89df861960",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-liquid-surface-line.webp",
@@ -1091,9 +1151,10 @@
       "purpose": "vial-liquid-surface-line",
       "bytes": 4834,
       "gitBlobSha": "eca2867fc7fcd79fd554880a3f327cb36b10c6a4",
-      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-liquid-texture.webp",
@@ -1101,9 +1162,10 @@
       "purpose": "vial-liquid-texture",
       "bytes": 10394,
       "gitBlobSha": "37a6651ae3772a51884f86aebaf89fcab0a01fd1",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
     }
   ],
   "releaseChecks": [
@@ -1367,7 +1429,7 @@
     }
   },
   "growthPotionArt": {
-    "status": "USER_APPROVED_VISUAL_DIRECTION_LOCKED",
+    "status": "USER_APPROVED_LOCKED_FINAL_ART",
     "approvedOn": "2026-10-28",
     "direction": "Ornate gold-and-glass vessel with cyan glowing crystal crown; turquoise liquid, carved floral/leaf/plinth detailing and separate readable slim vertical gauge. Approved multi-state vial, single-drop, pour, splash and emerging crystal visuals.",
     "assetPlan": [
@@ -1386,10 +1448,10 @@
       "Any numeric growth costs, capacity and refill remain C20 pending approval",
       "Art-only C17, no change to existing game saves, mechanics, economy or scene"
     ],
-    "artifactStatus": "Final transparent standalone assets in production preparation, not yet accepted or integrated",
+    "artifactStatus": "All 62 standalone transparent WebP artwork files user-approved and locked; present on World PR #337. No runtime import or C20 resource economy approved.",
     "runtimeApproved": false,
     "candidateArchive": {
-      "status": "49_INDEPENDENT_WEBP_CANDIDATES_COMMITTED_FOR_VISUAL_REVIEW; NOT_RUNTIME_APPROVED",
+      "status": "HISTORICAL_CANDIDATE_ARCHIVE; files incorporated into final approved 62-sprite collection",
       "fileCount": 49,
       "included": "43 individually separated illustrated sprites plus 6 experimental shell/fill-mask layers; each exported as transparent PNG and lossless WebP",
       "archiveDriveUrl": "https://drive.google.com/file/d/11D9Sz8CAhY6UfohDHycSb73s4xfLDtcN/view",
@@ -1409,11 +1471,12 @@
       "repositoryPath": "public/design-assets/crystalarium-c17/growth-potion-assets/",
       "publishedReview": "/design-previews/crystalarium-c17-growth-potion-assets.html",
       "gitBlobCount": 49,
-      "totalWebpBytes": 1553670
+      "totalWebpBytes": 1553670,
+      "reviewSupersededBy": "growthPotionArt.finalArtLock"
     },
     "refinement": {
       "date": "2026-10-28",
-      "status": "REFINED_CANDIDATES_COMMITTED_AWAITING_VISUAL_ACCEPTANCE",
+      "status": "REFINEMENT_HISTORY; approved within final 62-sprite artwork lock",
       "humanDecision": "Correction work authorised; approved Growth Potion visual direction unchanged. Do not treat corrected sprites as final player acceptance.",
       "changedExistingAssetCount": 19,
       "newCandidateAssetCount": 13,
@@ -1427,7 +1490,7 @@
     },
     "finalPolish": {
       "date": "2026-10-28",
-      "status": "FINAL_POLISH_CANDIDATES_COMMITTED_WAITING_VISUAL_ACCEPTANCE",
+      "status": "USER_APPROVED_LOCKED_FINAL_ART",
       "replacedWebps": 15,
       "changes": [
         "Removed the right-side source crop seam from all 12 pouring poses while retaining fixed bottle anchor",
@@ -1449,6 +1512,30 @@
         "Do not treat illustrative 0–100 slider as approved gameplay economy or potion capacity"
       ],
       "runtimeApproved": false
+    },
+    "finalArtLock": {
+      "status": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "approvalSource": "User explicitly confirmed the polished Growth Potion artwork and instructed formal lock and commit.",
+      "spriteCount": 62,
+      "repositoryPath": "public/design-assets/crystalarium-c17/growth-potion-assets/",
+      "commitHistory": [
+        "faac236e0977629584f14bf665970f6e8ca50066",
+        "63d7c4b76f4d0286412649179aecfaf31ade7cd6",
+        "de99728943398f676a28574c3010cb4eb570c29d",
+        "8fb9c133365aadda1d53b02229576a6652709bfa"
+      ],
+      "approvedComposition": "Ornate gold-and-glass turquoise reservoir, transparent vials and gauge, independently animated luminous liquid surface, 12 polished curved pouring frames, droplets, splashes, crystal emergence, buttons and reduced-motion source effects",
+      "finalReviewPath": "/design-previews/crystalarium-c17-growth-potion-refined.html",
+      "filesVerifiedAgainstGitHub": 62,
+      "assetHashesAndLengthsPreserved": true,
+      "notApproved": [
+        "C17 whole-screen responsive composition, real runtime use or final acceptance",
+        "C20 Growth Potion capacity, refill, costs or other resource economy",
+        "C18-C19 queue/storage and save migrations",
+        "H6.9D merge or deployment to production"
+      ],
+      "implementationRule": "Dynamic resource quantity is rendered from canonical state with independently masked textured liquid and readable text, never from a fixed 0/25/50/75/100 bitmap. Use one approved collection as source of art; preserve accessibility, 48px touch targets and reduced-motion behaviour."
     }
   }
 }
