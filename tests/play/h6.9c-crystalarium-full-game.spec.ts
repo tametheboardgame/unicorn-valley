@@ -1129,3 +1129,41 @@ test.describe('H6.9C17 separate ornate board art candidate', () => {
     });
   }
 });
+
+test.describe('H6.9C17 generator asset gallery', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 390, height: 844 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`renders five individually loaded generators at ${viewport.width}px without saving`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/design-previews/crystalarium-c17-generators.html');
+      await expect(page.getByRole('heading', { name: /Generator Art/ })).toBeVisible();
+      const images = page.locator('.grid img');
+      await expect(images).toHaveCount(5);
+      for (let index = 0; index < 5; index++) {
+        await expect
+          .poll(() =>
+            images.nth(index).evaluate((node) => {
+              const img = node as HTMLImageElement;
+              return img.complete && img.naturalWidth === 320 && img.naturalHeight === 480;
+            }),
+          )
+          .toBe(true);
+      }
+      expect(
+        await page.evaluate(() => ({
+          adventure: localStorage.getItem('unicorn-valley.save'),
+          sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+        })),
+      ).toEqual({ adventure: null, sandbox: null });
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-generators-${viewport.width}.png`),
+        fullPage: true,
+      });
+    });
+  }
+});

@@ -179,6 +179,71 @@
       "runtimeApproved": false,
       "provenance": "Original project-owned painted illustration; alpha cut-out carefully processed and inspected",
       "alphaContract": "RGBA; all four corners and entire central rectangular void transparent; alpha centre and corners zero"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-sky-blue.webp",
+      "purpose": "Standalone Sky · Blue crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "97aadfa940699f583d6aa5c5fd47b7f6d7595930abd073a091b1250cefb56628",
+      "gitBlobSha": "e571b5ba826b96716e26ed3ad10a419614447e43",
+      "bytes": 216296,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/sky-blue-source.png",
+      "review": "user visually approved five independent generator images 2026-10-28",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-moon-purple.webp",
+      "purpose": "Standalone Moon · Purple crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "c1513d6fc702a72e207252317cba3494738f4871f73d9d525ff8557cd0cd9ecb",
+      "gitBlobSha": "e1a3b4b9810e5cae45cad58fcf27b0464d3bb98c",
+      "bytes": 213488,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/moon-purple-source.png",
+      "review": "user visually approved five independent generator images 2026-10-28",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-flame-red.webp",
+      "purpose": "Standalone Flame · Red crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "6d09abba4e3c34bee9d4a5017765927416e1d4b5af632f68f23ac959a4676276",
+      "gitBlobSha": "23ea04508d12b1074f57ed504e0d236bf399d4a8",
+      "bytes": 207850,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/flame-red-source.png",
+      "review": "user visually approved five independent generator images 2026-10-28",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-forest-green.webp",
+      "purpose": "Standalone Forest · Green crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "c6b0dd8cbaddb9dfe850e53f411311efcc8f78235ac242843c955c79530c9d9f",
+      "gitBlobSha": "c7ca28fcc4c203a09e24814a54b29e9b8a4cac67",
+      "bytes": 219620,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/forest-green-source.png",
+      "review": "user visually approved five independent generator images 2026-10-28",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-sun-gold.webp",
+      "purpose": "Standalone Sun · Gold crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "469493bbad59df9870300bd2c03f2187bc65d7795a4d633f638efacb89884604",
+      "gitBlobSha": "1184d99e2d7e4a884dc6817cf4afd242ed437506",
+      "bytes": 204232,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/sun-gold-source.png",
+      "review": "user visually approved five independent generator images 2026-10-28",
+      "runtimeApproved": false
     }
   ],
   "releaseChecks": [
@@ -234,5 +299,46 @@
     "composition": "Standalone alpha frame; optional independent 7×6 socket DOM grid; optional garden compositing; checkerboard default for transparency validation",
     "designCaveat": "User approved the frame-only visual; responsive cell geometry and final game runtime integration remain gated. Socket visuals are separate candidates.",
     "rejectedSource": "Prior board-frame-candidate.webp contained board/background, rejected by user; removed from active asset kit"
+  },
+  "generators": {
+    "status": "Five independently approved generator illustrations, art-only; production/gameplay mapping NOT approved",
+    "reviewPage": "/design-previews/crystalarium-c17-generators.html",
+    "familyCountInCurrentGame": 3,
+    "additionalArtCountBeyondExistingGame": 2,
+    "restriction": "Do not silently add two new crystal families, alter 0/4/7 unlock thresholds, rename Low/Bright/Bell, add charges or implement resource costs. Decide and test mapping separately within staged gates.",
+    "files": [
+      {
+        "name": "sky-blue",
+        "bytes": 216296,
+        "gitBlobSha": "e571b5ba826b96716e26ed3ad10a419614447e43",
+        "sha256": "97aadfa940699f583d6aa5c5fd47b7f6d7595930abd073a091b1250cefb56628"
+      },
+      {
+        "name": "moon-purple",
+        "bytes": 213488,
+        "gitBlobSha": "e1a3b4b9810e5cae45cad58fcf27b0464d3bb98c",
+        "sha256": "c1513d6fc702a72e207252317cba3494738f4871f73d9d525ff8557cd0cd9ecb"
+      },
+      {
+        "name": "flame-red",
+        "bytes": 207850,
+        "gitBlobSha": "23ea04508d12b1074f57ed504e0d236bf399d4a8",
+        "sha256": "6d09abba4e3c34bee9d4a5017765927416e1d4b5af632f68f23ac959a4676276"
+      },
+      {
+        "name": "forest-green",
+        "bytes": 219620,
+        "gitBlobSha": "c7ca28fcc4c203a09e24814a54b29e9b8a4cac67",
+        "sha256": "c6b0dd8cbaddb9dfe850e53f411311efcc8f78235ac242843c955c79530c9d9f"
+      },
+      {
+        "name": "sun-gold",
+        "bytes": 204232,
+        "gitBlobSha": "1184d99e2d7e4a884dc6817cf4afd242ed437506",
+        "sha256": "469493bbad59df9870300bd2c03f2187bc65d7795a4d633f638efacb89884604"
+      }
+    ],
+    "reviewDate": "2026-10-28",
+    "assetLoading": "On-demand in Crystalarium only; high-res source PNGs private Drive, WebP runtime files in World draft branch"
   }
 }
