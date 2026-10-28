@@ -730,56 +730,56 @@
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-01.webp",
       "purpose": "Isolated Growth Potion candidate pour-01",
       "format": "lossless transparent WebP",
-      "bytes": 24252,
-      "gitBlobSha": "8277be7f3e8542b7a488c3d7cba75540bc27dd68",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 21952,
+      "gitBlobSha": "bf3bc01c16bf6899e057eb7869b532583818c7ad",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-02.webp",
       "purpose": "Isolated Growth Potion candidate pour-02",
       "format": "lossless transparent WebP",
-      "bytes": 25098,
-      "gitBlobSha": "e5814cb17cab4f46784f13f8d2c919600642d882",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 22874,
+      "gitBlobSha": "b98fcbcf016c416bc12e1d2bc954d760222bdb70",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-03.webp",
       "purpose": "Isolated Growth Potion candidate pour-03",
       "format": "lossless transparent WebP",
-      "bytes": 24892,
-      "gitBlobSha": "7cc78f70fab5979db79752c7a96b5777e118535d",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 23956,
+      "gitBlobSha": "04dd046787c9226df1f28cc675b2565ecd4cac90",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-04.webp",
       "purpose": "Isolated Growth Potion candidate pour-04",
       "format": "lossless transparent WebP",
-      "bytes": 25152,
-      "gitBlobSha": "9c05ff036fe36f9e7bc4de3888d9b0dcdab5f476",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 25024,
+      "gitBlobSha": "57393f5400013996c76a05f7826f2dde19a50262",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-05.webp",
       "purpose": "Isolated Growth Potion candidate pour-05",
       "format": "lossless transparent WebP",
-      "bytes": 25420,
-      "gitBlobSha": "fc93671124c3bb04b8f5d50e742675408c99de42",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 25924,
+      "gitBlobSha": "a4e61f71cd66fbfa8b4934ea0a330b329b9c3b4a",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
       "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-empty.webp",
@@ -979,11 +979,11 @@
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-liquid-surface-line.webp",
       "format": "transparent lossless WebP",
       "purpose": "gauge-liquid-surface-line",
-      "bytes": 66,
-      "gitBlobSha": "79ef5afcd680ed35f7e4f95c0023b702c1638ba6",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 912,
+      "gitBlobSha": "5f362f485f6a18dd07b23efee97e28b44f54be26",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-liquid-texture.webp",
@@ -999,81 +999,81 @@
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-06.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-06",
-      "bytes": 25312,
-      "gitBlobSha": "92f505bfd1f9bfcb62444cc9d4a847cb828a0139",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 26924,
+      "gitBlobSha": "ce454de5923c1d559916abe9e2a9e3e94653b28a",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-07.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-07",
-      "bytes": 27336,
-      "gitBlobSha": "d50bf64af11a5f99a07af90932f40628373ff809",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 29784,
+      "gitBlobSha": "f815ede94f6918b0d3ade854612867fa7f1b3c00",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-08.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-08",
-      "bytes": 27658,
-      "gitBlobSha": "ecd6600cc45a1ed688ac27b0ea112ff598529a95",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 30522,
+      "gitBlobSha": "c42269fbc8e2b6ba0b109796d45658bd6e5106de",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-09.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-09",
-      "bytes": 27494,
-      "gitBlobSha": "5adcb6267fcac96c819e3cd174f6fc451f12a1f5",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 29368,
+      "gitBlobSha": "10e863bdd8e1938005aab4a2a0ef1229af31e886",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-10.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-10",
-      "bytes": 28772,
-      "gitBlobSha": "e84e6d90374e2623a6a755ec6e6d0129b3bea311",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 28630,
+      "gitBlobSha": "61af1f08cfc944e75b1333d5f01e85700d21d47e",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-11.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-11",
-      "bytes": 28746,
-      "gitBlobSha": "a2fc0b3c0f2c218345299755135deb0ddf3a791c",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 25962,
+      "gitBlobSha": "e34924480658e307ab4948350734c0519f348ff9",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-12.webp",
       "format": "transparent lossless WebP",
       "purpose": "pour-12",
-      "bytes": 24962,
-      "gitBlobSha": "69fa3a564ee52d374482a774fa512502dd021abc",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 23564,
+      "gitBlobSha": "fef905c57377966e29675dec7893fb260bb11e01",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-liquid-surface-line.webp",
       "format": "transparent lossless WebP",
       "purpose": "reservoir-liquid-surface-line",
-      "bytes": 166,
-      "gitBlobSha": "14f7c1e771ef2c7ab16d4eff0b8c61384eb7bbf8",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 6036,
+      "gitBlobSha": "a411fdf96f065f6c519da7f143f21a81bb3f1f03",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-liquid-texture.webp",
@@ -1089,11 +1089,11 @@
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-liquid-surface-line.webp",
       "format": "transparent lossless WebP",
       "purpose": "vial-liquid-surface-line",
-      "bytes": 120,
-      "gitBlobSha": "2be121d9981d7638a97cbbbe81cb8b7fec815ed9",
-      "review": "REFINED_CANDIDATE - user authorised corrections; final separated asset visual/animation review pending",
+      "bytes": 4834,
+      "gitBlobSha": "eca2867fc7fcd79fd554880a3f327cb36b10c6a4",
+      "review": "POLISHED_CANDIDATE — previously approved visual direction; final export visual inspection pending",
       "runtimeApproved": false,
-      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version"
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate"
     },
     {
       "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-liquid-texture.webp",
@@ -1424,6 +1424,31 @@
       "refinedVisualReview": "/design-previews/crystalarium-c17-growth-potion-refined.html",
       "qa": "Alpha corners zero; transparent RGB cleaned; 12-frame glass anchor identical in first 225px; independent rich liquid and masks with 0/25/50/75/100% screenshot comparisons. Five fixed sprites are only comparisons.",
       "note": "Glass shells, masked vibrant liquid overlays and waterline are separated; dynamic fill demonstration is art-only, not a C20 balance implementation."
+    },
+    "finalPolish": {
+      "date": "2026-10-28",
+      "status": "FINAL_POLISH_CANDIDATES_COMMITTED_WAITING_VISUAL_ACCEPTANCE",
+      "replacedWebps": 15,
+      "changes": [
+        "Removed the right-side source crop seam from all 12 pouring poses while retaining fixed bottle anchor",
+        "Distinct early frame progression, with gradual extension to a tapered flow and detached droplets",
+        "Bright separate waterline for reservoir/vial/gauge, repositioned to arbitrary liquid level after glass compositing and clipped to interior mask"
+      ],
+      "verified": [
+        "12 individual lossless PNG/WebP exports with alpha corners zero",
+        "12 successive frames have different non-empty stream extents",
+        "No alpha at x=322 seam in the cropped stream region",
+        "3 line sprites have nonzero highlights and 0-alpha backgrounds",
+        "Archive blob SHAs checked against GitHub returned SHA after upload"
+      ],
+      "sourceArchive": "https://drive.google.com/file/d/1SU5FdvMhOKVVnPWmUy1hahgJAdC4lWE5/view",
+      "review": "/design-previews/crystalarium-c17-growth-potion-refined.html",
+      "limitations": [
+        "Dynamic demo is not gameplay",
+        "Final human art review and browser deployment are distinct gates",
+        "Do not treat illustrative 0–100 slider as approved gameplay economy or potion capacity"
+      ],
+      "runtimeApproved": false
     }
   }
 }
