@@ -347,7 +347,7 @@ export class CrystalariumPortraitView {
           : `🔒 ${family}`,
         () => this.actions.growFromWell(family),
         'rooted-well',
-        !unlocked || locked,
+        locked,
         'well-' + family,
       );
       well.dataset.crystalariumWell = family;
@@ -356,6 +356,7 @@ export class CrystalariumPortraitView {
         ? `Grow one free ${family} crystal from the board well`
         : `${family} well locked until ${family === 'bright' ? 4 : 7} patterns`);
       well.classList.toggle('is-selected', state.selectedFamily === family);
+      well.classList.toggle('is-locked', !unlocked);
       nursery.append(well);
     }
     boardSection.append(boardHeading, nursery, scrollCue, scroller);
