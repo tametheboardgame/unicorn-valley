@@ -190,8 +190,9 @@
       "bytes": 216296,
       "licence": "Original project-owned C17 generated/extracted art candidate",
       "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/sky-blue-source.png",
-      "review": "user visually approved five independent generator images 2026-10-28",
-      "runtimeApproved": false
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
     },
     {
       "file": "public/design-assets/crystalarium-c17/generator-moon-purple.webp",
@@ -203,8 +204,9 @@
       "bytes": 213488,
       "licence": "Original project-owned C17 generated/extracted art candidate",
       "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/moon-purple-source.png",
-      "review": "user visually approved five independent generator images 2026-10-28",
-      "runtimeApproved": false
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
     },
     {
       "file": "public/design-assets/crystalarium-c17/generator-flame-red.webp",
@@ -216,8 +218,9 @@
       "bytes": 207850,
       "licence": "Original project-owned C17 generated/extracted art candidate",
       "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/flame-red-source.png",
-      "review": "user visually approved five independent generator images 2026-10-28",
-      "runtimeApproved": false
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
     },
     {
       "file": "public/design-assets/crystalarium-c17/generator-forest-green.webp",
@@ -229,8 +232,9 @@
       "bytes": 219620,
       "licence": "Original project-owned C17 generated/extracted art candidate",
       "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/forest-green-source.png",
-      "review": "user visually approved five independent generator images 2026-10-28",
-      "runtimeApproved": false
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
     },
     {
       "file": "public/design-assets/crystalarium-c17/generator-sun-gold.webp",
@@ -242,8 +246,9 @@
       "bytes": 204232,
       "licence": "Original project-owned C17 generated/extracted art candidate",
       "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/sun-gold-source.png",
-      "review": "user visually approved five independent generator images 2026-10-28",
-      "runtimeApproved": false
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
     }
   ],
   "releaseChecks": [
@@ -301,7 +306,7 @@
     "rejectedSource": "Prior board-frame-candidate.webp contained board/background, rejected by user; removed from active asset kit"
   },
   "generators": {
-    "status": "Five independently approved generator illustrations, art-only; production/gameplay mapping NOT approved",
+    "status": "USER_APPROVED_LOCKED — all five separate generator illustrations approved as art; no gameplay mapping or integration approved",
     "reviewPage": "/design-previews/crystalarium-c17-generators.html",
     "familyCountInCurrentGame": 3,
     "additionalArtCountBeyondExistingGame": 2,
@@ -339,6 +344,10 @@
       }
     ],
     "reviewDate": "2026-10-28",
-    "assetLoading": "On-demand in Crystalarium only; high-res source PNGs private Drive, WebP runtime files in World draft branch"
+    "assetLoading": "On-demand in Crystalarium only; high-res source PNGs private Drive, WebP runtime files in World draft branch",
+    "artDecision": "USER_APPROVED_LOCKED",
+    "artApprovalDate": "2026-10-28",
+    "assetFilesCommitted": true,
+    "originalFilesArchivedToDrive": true
   }
 }
