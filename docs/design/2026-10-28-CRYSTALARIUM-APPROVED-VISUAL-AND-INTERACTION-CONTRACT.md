@@ -1,0 +1,79 @@
+# Crystalarium — approved illustrated garden and interaction contract
+
+**Direction approved by the user on 28 October 2026.** The concept image generated in the design conversation (Crystalarium • Resonance Garden; lush blue-purple crystal garden, ornate board frame, larger wells, glowing pattern cards and bottom demonstration panels) is the **primary visual reference**. Approval is of the art direction and the described interactions, not permission to use the flattened image as an interactive game screen or approval of specific economy numbers. The preceding screenshot of the live 1280×720 UI is the rejected composition baseline.
+
+See [implementation stages C17–C24](../work-packages/R6.5-WP19H6.9C17-C24-CRYSTALARIUM-ILLUSTRATED-REDESIGN-ROADMAP.md). Do not assert that the concept asset exists in the repository until source art is individually generated, reviewed, optimised and committed; it is currently a conversation reference.
+
+## Experience and composition
+
+### Desktop / landscape — the board is the hero
+- Illustrate a physical Crystalarium in a magical garden: luminous stone arches, crystalline plants, blue-violet flowers, subtle glowing dust, refined cobalt and indigo stonework. Keep visual emphasis on the game and maintain readable contrast. The background is scenery, **not** clickable game content or an image of baked-in UI.
+- Preserve the real **7×6 / 42-cell** board and its keyboard/touch equivalents. Use an ornate but restrained separate board frame. Cell art and borders remain visibly distinct from the background.
+- Frame-rooted wells sit **immediately beside** the board in a larger vertical strip: Low, Bright, Bell. Each shows the correct crystal silhouette, a concise name or tooltip, lock/unlock and potion-drop cost. They are outside the 42 merge cells. Unlocked wells grow on click/tap/Enter; failed, full-board, or tutorial-disallowed actions must not spend potion.
+- A large **Growth Potion** reservoir/gauge belongs above the well strip. It uses a vial/droplet glyph, clear number/capacity, low/full states and a tiny fountain/refill affordance. Liquid visibly drops onto the chosen well; the crystal emerges from the well, then enters a free cell. Animation may be skipped without changing the authoritative action.
+- To the right, present a horizontal **Resonance Orders** rail, with a short chapter/progress header and active illustrated recipe cards. Show 1 order during the introductory lesson, then progressively unlock multiple concurrently active orders. Each card has readable requirement silhouettes, quantity counters and optional harmony. The rail **scrolls sideways** via trackpad, drag/swipe and arrow keys/accessible controls; the cards do not shrink into illegibility as orders grow.
+- A card that is ready (including harmony and any storage pieces) receives a clearly visible, gentle glow and a *Ready* icon/word. **The card itself** is the Offer target: one click/tap/Enter atomically consumes only that order's required pieces. Never show a separate Offer Pattern button. A non-ready card opens or focuses its progress/details instead of consuming pieces. Other orders remain active and re-evaluate readiness after any use of shared crystals.
+- Replace the whole **Crystal Growing** section with the actual board-attached wells. Remove the old redundant Grow and Offer buttons and stop displaying tools as equally prominent stacked panels. Keep Harmony, Polish, free Brook Wash and confirmed Fresh Board in subordinate, icon-first contextual actions; do not delete their established capabilities.
+- The persistent **Storage** button/chest icon is the one primary storage entry point/drop target; no permanent four-cell shelf row. The storage chamber is a separate miniature-board-like overlay. The Board icon/target exists inside it to return a stored crystal. Keep Leave, Help, Sound accessible.
+- Buttons/controls have consistently rounded corners, shared visual tokens, 48 CSS-pixel minimum practical touch targets, readable focus rings, tooltips/aria labels, clear lock state, no redundant verbose paragraphs and no decorative text baked into textures.
+
+### Portrait / mobile — board-first
+- The actual board occupies the initial view. Wells are adjacent to the frame and scroll with the board in a way that makes source and drop targets reachable; avoid detached producer menus.
+- Compact top HUD: Growth Potion gauge, progress, Help/Leave; compact horizontally **swipable order-card rail** with a visible swipe cue and persistent ready indicator; board and wells below; Storage drop/button and critical recovery affordances remain accessible. The order rail and board horizontal scroll must not fight each other or trigger accidental drag moves.
+- Pattern details, Storage Chamber and subordinate tools use reversible drawers/sheets. None may remove the first visible board row behind a fixed overlay at 320×700. No overlay may intercept an intended crystal tap/drop. At 390×844 and phone landscape, preserve reachable controls and exact saved progress.
+- Match touch, pointer, keyboard and screen-reader semantics; Escape/back closes the uppermost drawer first and never accidentally exits a session.
+
+## True spotlight tutorial
+
+1. Dim the rest of the *actual rendered game* with a neutral grey translucent overlay. Only the **real required control/drag target** is spotlighted and interactive; use genuine rectangular or rounded clip-outs, not a fake button painted over the game.
+2. Place one small anchored instruction bubble beside it, with a distinct arrow pointing to the target. Example: "Tap this crystal well", then "Drag this crystal onto its twin", then "Tap the glowing order card". Keep text short and pair with an icon/gesture animation.
+3. Tutorial controller-level allowlist is authoritative before rules/save mutations: grow from identified well → pick up nominated piece → merge on nominated twin → inspect illustrated order requirement → tap glowing ready order card → celebrate/release. Because a merge is a drag between two points, spotlight both source and destination appropriately without obstructing the drag trajectory.
+4. Never let unrelated clicks, pointer capture, scrolling, touch drags, global Phaser input, or UI overlays bypass the command allowlist. The backing UI is dimmed but not destroyed. Help/replay, Skip tutorial, Leave/Save and Sound remain accessible with safe exceptions.
+5. Move/re-anchor bubble on phone orientation, zoom and scrolling; preserve keyboard focus and announce one step at a time without trapping the user. Reduced-motion mode keeps the focus outline and arrow with no pulses. Older/advanced saves do not forcibly restart guidance. Replay uses real state or a separate no-save isolated teaching scenario.
+
+## Storage Chamber
+
+- Proposed starting geometry for playtest: **4 columns × 3 rows = 12 slots**, subject to the visual/design gate. Preserve and migrate all four legacy shelf pieces intact into the first four slots; never lose a crystal.
+- Drag a board crystal onto the closed Storage chest button: store it in the first vacant slot, atomically. Clicking Storage opens the chamber and shows a clear grid of occupied/empty sockets with the same crystal artwork. Inside, drag a storage crystal onto the Board icon to return it to the next empty cell, **or** choose a specific destination cell for deliberate placement; provide keyboard/tap select-and-place parity.
+- Full chamber and full board are recoverable. Failed or cancelled transfer leaves both places and saves unchanged; confirm Brook Wash remains an independent free recovery path. Closing a chamber does not discard pieces. Do not invent a second independent inventory.
+- Keep the storage hit area present for mouse/touch drag without obscuring the board; support pointer cancel, Escape, wheel/scroll, orientation changes, narrow screen and immediate save/reload.
+
+## Simultaneous horizontally scrolling orders
+
+- Keep the existing 50 authored patterns and five chapters. A single linear \`completed\` index cannot represent non-sequential completed orders. Use stable pattern IDs plus an ordered completion record/ledger and explicit active queue/reveal cursor. Derive total completed for existing chapter/restoration/unlock thresholds; preserve existing offered-count semantics where appropriate.
+- On migration, a legacy \`completed=N\` save is interpreted as the first N authored IDs already completed; subsequent unrevealed IDs remain unearned. Preserve cells, inventory/shelf, harmonies, family selection, merges/washes and current world/Just Games source separation. Validate duplicate/unknown IDs, future versions, out-of-range counts and malformed state.
+- **Provisional pacing for design playtest:** first pattern alone for teaching; two visible active patterns after the first offer; three after the first chapter; later optionally four or five if the rail remains manageable. A player can complete **any ready active card**, not only the leftmost; completing one reveals the next authored unrevealed pattern without deleting/reshuffling the others. Card ordering is stable while open; avoid a jumping scroll position. Do not reveal all 50 or force every card to fit on the same screen.
+- Requirements for concurrent ready cards can overlap; each card computes readiness from the **same canonical board + storage + harmonies**. On offer, atomically reserve/consume the chosen exact pieces and harmonies, recalculate the others and persist once. Prevent double offer, click race, duplicate chapter rewards and same-crystal simultaneous consumption. No countdown, penalty or pressure to choose one order over another.
+
+## Growth Potion — preferred resource vocabulary
+
+- User-approved direction: replace the previously proposed crystal "energy" with **Growth Potion**, represented as fluid in a **larger-than-10** visible reservoir. A drop animates onto a crystal well when it grows. The UI should never show energy and potion as separate currencies.
+- **Tuning PROPOSAL ONLY (not yet approved):** initial/max capacity **100 drops**, basic well cost **1 drop** per successful spawn, potentially greater cost for optional refined growth. Compare 100, 150 and 200 drop caps in the pacing playtest, including several simultaneous order goals. No numeric setting or save migration is authorised by the visual-direction approval alone.
+- **Non-negotiable fairness:** a child may always continue creating basic shards, even at zero potion, without a timer, daily claim, purchase, real-world quest or forced wait. The suggested mechanism to test is an **instant, unlimited free refill at the Brook Spring** (e.g. a modest partial refill), plus optional reward drops for merges/pattern offers. The free refill must be discoverable, one simple action and callable from Just Games and the world with sandbox-local stock. An alternative is a free base well at zero with potion only accelerating production. Choose the best understandable model through a dedicated gate.
+- **No double limitation:** do not also add the old C13B finite-charge meter unless a separate, persuasive design review proves it valuable. **No passive waiting-based refill**. No real-money actions, adverts, loot boxes, streaks, daily rewards or time pressure.
+- Spend potion **only on successful accepted and saved placement**; reject full board, invalid source, guide-locked action or failed save without cost or ghost animation. Refills/rewards must be idempotent, source-isolated and capped. No automatic Valley/world potion grants in this pass; optional grants remain separately human-gated.
+- Clarify naming once: the user prefers "Growth Potion" for UI; existing roadmap "Growth Fluid" refers to the same planned concept and should not survive as an additional consumable.
+
+## Visual asset manifest — generate as separate, optimisable assets
+
+| Asset / layer | Purpose and production requirements |
+| --- | --- |
+| Crystal garden backplate, desktop | Original artwork **without any UI/text**, arches/flowers/crystals/soft lights, 16:9 crop and safe zones; visually matches approved concept. Background must not compete with tile state. |
+| Crystal garden portrait adaptation | Composed 9:16 version, not a severe crop of desktop; preserve distinct art accents around board, safe areas, and legible HUD. |
+| Foreground crystal garden overlays | Optional separate decorative parallax layers, subtle lighting/particles; pointer-events none and reduced-motion static fallback. |
+| Board frame / socket textures | Scalable nine-slice/SVG frame, corners, hover/legal/invalid/socket selection and tutorial spotlight masks; no pre-painted board state or text. |
+| Low/Bright/Bell well artwork | Three family silhouettes, 48px-ready locked/unlocked/active/dry variants and growth burst, small mobile glyphs. |
+| Potion vial, liquid fill, drops | Scalable capacity gauge, readable numbers, empty/full states, droplet animation frames and static reduced-motion state. |
+| Resonance order card surface | Normal, progress, ready-glowing, completion and locked visual states; family art reused from actual crystal artwork; no hard-coded recipe text. |
+| Storage chest/Board icon/chamber | Closed/open/drag-hover/drop-legal/full, chamber tile/frame, storage-to-board return target, compact phone sheet. |
+| Tool/help/settings glyphs | Rounded consistent Harmony/Polish/Wash/Fresh/Help/Sound/Leave icons, contrasting strokes, text/aria equivalents. |
+| Celebration particles/sound | Soft offer/harmony/growth feedback, optional/muted and reduced-motion-safe; reuse existing audio system. |
+
+For each generated visual: store source/reference/prompt/provenance, licence/approval note, desktop and portrait target, intended runtime path, alpha handling and final optimised export (WebP/AVIF/PNG/SVG as suitable). Use art tooling to **regenerate separate clean artwork**, never crop button labels or fake HUD controls out of the flattened concept. Do not share font binaries. Load assets on demand with Crystalarium, not in the startup/common bundle; add screenshot, availability/failure fallback and perf-size evidence. Preserve existing 18 crystal images/silhouettes unless an approved art pass replaces them consistently everywhere.
+
+## Visual acceptance gates
+
+- **Composition concept:** annotated real-scale 1280×720, 1440×900, 390×844, 320×700 and portrait tablet, with at least one multi-order rail scrolled to a later card and a full/ready card; human approval before mass artwork production.
+- **Interaction prototypes:** spotlight tutorial with actual target, order-ready click/consumption, overlapping ready cards, storage drag both ways, potion spend and instant refill; human approval before irreversible economy/migration integration.
+- **Final visuals:** all generator families and major crystal tiers distinguishable by silhouette, complete first board row on narrow screens, order rail horizontal movement, exact focus/hit targets, background readability, accessible reduced-motion.
+- **Final integrity:** previous saves preserved, separate world and Just Games flows, original opening-melody unchanged, long-play no-blocking route, exact-head technical CI and human approval before H6.9D or any merge.
