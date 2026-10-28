@@ -249,6 +249,78 @@
       "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
       "runtimeApproved": false,
       "artDecision": "USER_APPROVED_LOCKED"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-0.webp",
+      "purpose": "Low/blue crystal family tier 0: Single shard, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 121682,
+      "sha256": "d7b9b21aafd9a49d242f8facc153ee1f89f3fd3eaa91b747efa66406cd56da50",
+      "gitBlobSha": "e65fffcf63179924e2862bc2d3ffbb91e11da450",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-0.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-1.webp",
+      "purpose": "Low/blue crystal family tier 1: Short cluster, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 227110,
+      "sha256": "69fc2f742d0a71c35f52486abfcf495b2c762d5b6f93fb1ee379128e6d226adb",
+      "gitBlobSha": "45114eea0a8da563719b2d3c336407f8ffeeab64",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-1.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-2.webp",
+      "purpose": "Low/blue crystal family tier 2: Tall spire, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 172350,
+      "sha256": "30a81fa8df969b6f3e7d9491f1362ff73cd9df2122f6b108996a4bcbbbef6ec5",
+      "gitBlobSha": "4d5fb3393414891fad6aa2a7e5399665428861ef",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-2.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-3.webp",
+      "purpose": "Low/blue crystal family tier 3: Floating crown, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 204306,
+      "sha256": "0f26d3f408c66b73ea17079e7b6ceeea46ff9115fe3673b639264431b35e1c3f",
+      "gitBlobSha": "82bdd4cbaec916832b7c1667e4755393f5d5373a",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-3.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-4.webp",
+      "purpose": "Low/blue crystal family tier 4: Golden wings, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 219306,
+      "sha256": "d4c2ddcfa52b0af343e18c41eceb4cf182e05f3cff7b912be2c0c24af5d64a68",
+      "gitBlobSha": "49659f0823e558d51be6f9e32d6e304140b6c59a",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-4.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-5.webp",
+      "purpose": "Low/blue crystal family tier 5: Grand formation, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 225340,
+      "sha256": "a2a288547474f05d8942b41c6da480ebef9191959d7cabe1a1a530522d424924",
+      "gitBlobSha": "44f2b9a321f617406eb1852508939e268747d5dd",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-5.png"
     }
   ],
   "releaseChecks": [
@@ -349,5 +421,59 @@
     "artApprovalDate": "2026-10-28",
     "assetFilesCommitted": true,
     "originalFilesArchivedToDrive": true
+  },
+  "crystalFamilies": {
+    "low": {
+      "artDecision": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "runtimeIntegrated": false,
+      "tierCount": 6,
+      "notes": "Refined art reviewed and accepted. WebPs match approved 48px sheet; PNG archival copies were regenerated pixel-for-pixel from approved lossless WebPs. No rules, save or render changes.",
+      "sourceFolder": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved",
+      "files": [
+        {
+          "tier": 0,
+          "name": "Single shard",
+          "bytes": 121682,
+          "sha256": "d7b9b21aafd9a49d242f8facc153ee1f89f3fd3eaa91b747efa66406cd56da50",
+          "gitBlobSha": "e65fffcf63179924e2862bc2d3ffbb91e11da450"
+        },
+        {
+          "tier": 1,
+          "name": "Short cluster",
+          "bytes": 227110,
+          "sha256": "69fc2f742d0a71c35f52486abfcf495b2c762d5b6f93fb1ee379128e6d226adb",
+          "gitBlobSha": "45114eea0a8da563719b2d3c336407f8ffeeab64"
+        },
+        {
+          "tier": 2,
+          "name": "Tall spire",
+          "bytes": 172350,
+          "sha256": "30a81fa8df969b6f3e7d9491f1362ff73cd9df2122f6b108996a4bcbbbef6ec5",
+          "gitBlobSha": "4d5fb3393414891fad6aa2a7e5399665428861ef"
+        },
+        {
+          "tier": 3,
+          "name": "Floating crown",
+          "bytes": 204306,
+          "sha256": "0f26d3f408c66b73ea17079e7b6ceeea46ff9115fe3673b639264431b35e1c3f",
+          "gitBlobSha": "82bdd4cbaec916832b7c1667e4755393f5d5373a"
+        },
+        {
+          "tier": 4,
+          "name": "Golden wings",
+          "bytes": 219306,
+          "sha256": "d4c2ddcfa52b0af343e18c41eceb4cf182e05f3cff7b912be2c0c24af5d64a68",
+          "gitBlobSha": "49659f0823e558d51be6f9e32d6e304140b6c59a"
+        },
+        {
+          "tier": 5,
+          "name": "Grand formation",
+          "bytes": 225340,
+          "sha256": "a2a288547474f05d8942b41c6da480ebef9191959d7cabe1a1a530522d424924",
+          "gitBlobSha": "44f2b9a321f617406eb1852508939e268747d5dd"
+        }
+      ]
+    }
   }
 }
