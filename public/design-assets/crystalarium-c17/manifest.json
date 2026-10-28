@@ -748,6 +748,26 @@
       "Art-only C17, no change to existing game saves, mechanics, economy or scene"
     ],
     "artifactStatus": "Final transparent standalone assets in production preparation, not yet accepted or integrated",
-    "runtimeApproved": false
+    "runtimeApproved": false,
+    "candidateArchive": {
+      "status": "GENERATED_TRANSPARENT_ASSET_PACK_ARCHIVED_FOR_REVIEW; NOT_COMMITTED_TO_GITHUB_RUNTIME",
+      "fileCount": 49,
+      "included": "43 individually separated illustrated sprites plus 6 experimental shell/fill-mask layers; each exported as transparent PNG and lossless WebP",
+      "archiveDriveUrl": "https://drive.google.com/file/d/11D9Sz8CAhY6UfohDHycSb73s4xfLDtcN/view",
+      "qaContactSheetDriveUrl": "https://drive.google.com/file/d/1Dgxaj_nG4QTUgSvL1JRDi17Xd5WODEm1/view",
+      "archiveSha256": "4fd793121f52f5ffd539899adb682ed88ddc60e79f0a9fd4144c3fedaf47fe13",
+      "archiveBytes": 5310775,
+      "standaloneWebpBytes": 1553670,
+      "checks": [
+        "All 49 export canvases have transparent corner pixels",
+        "Each sprite isolated from labelled reference sheet; label removal and visual fit still subject to human review",
+        "Includes approximate mask/shell layer geometry for arbitrary liquid fill, not verified final UI implementation"
+      ],
+      "warnings": [
+        "Generated art contains possible edge/halo artefacts, especially small effects and disabled icons; visual QA still pending",
+        "These binaries are archived in Google Drive and delivered as a conversation ZIP, not present in GitHub runtime tree",
+        "C17 final art acceptance, integration, source-bound Cloudflare QA and C20 economy gate remain open"
+      ]
+    }
   }
 }
