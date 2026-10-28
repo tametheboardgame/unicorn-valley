@@ -139,6 +139,65 @@ test('H6.9C10 desktop rejects mismatched drops without losing progress', async (
   ).toBe(1);
 });
 
+test('H6.9C13A live desktop frame wells grow free shards atomically without losing sockets', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page);
+  const scene = await fullBoardSnapshot(page);
+  expect(scene.objects.filter((o) => o.name.startsWith('crystalarium-full-cell:'))).toHaveLength(
+    42,
+  );
+  for (const family of ['low', 'bright', 'bell']) {
+    expect(
+      scene.objects.some((o) => o.name === 'crystalarium-full-producer:' + family && o.visible),
+    ).toBe(true);
+  }
+  const original = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-producer:bright');
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(original);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-producer:low');
+  const grown = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(grown.cells[2]).toEqual({ family: 'low', tier: 0 });
+  expect(grown.cells).toHaveLength(42);
+  expect(grown.selectedFamily).toBe('low');
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
+test.describe('H6.9C13A portrait board-frame wells', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+  test('retains 42 cells and grows from well while locked wells cannot spend', async ({ page }, testInfo) => {
+    await enterResonanceGarden(page);
+    const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    const wells = portrait.locator('.crystalarium-portrait-rooted-wells');
+    await expect(wells.locator('[data-crystalarium-well]')).toHaveCount(3);
+    await expect(portrait.locator('[data-crystalarium-cell]')).toHaveCount(42);
+    for (const well of await wells.locator('[data-crystalarium-well]').all()) {
+      const rect = await well.boundingBox();
+      expect(rect?.height).toBeGreaterThanOrEqual(48);
+      expect(rect?.width).toBeGreaterThanOrEqual(48);
+    }
+    const locked = wells.locator('[data-crystalarium-well="bright"]');
+    await expect(locked).toHaveAttribute('data-crystalarium-unlocked', 'false');
+    const previous = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    await locked.click();
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(previous);
+    await wells.locator('[data-crystalarium-well="low"]').click();
+    await expect(portrait.locator('[data-crystalarium-cell="2"]')).toHaveAttribute('data-family', 'low');
+    const state = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+    expect(state.cells).toHaveLength(42);
+    expect(state.cells[2]).toEqual({ family: 'low', tier: 0 });
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-live-wells-320.png'),
+      fullPage: true,
+    });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+});
+
 test.describe('H6.9C landscape touch evidence', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
   test('shows the game board on phone landscape without hiding the playable scene', async ({
