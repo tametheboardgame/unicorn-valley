@@ -154,9 +154,10 @@ export class CrystalariumPortraitView {
   private toggleMenu(menu: 'pattern' | 'growing' | 'tools'): void {
     this.activeMenu = this.activeMenu === menu ? null : menu;
     if (this.currentView) this.render(this.currentView);
-    this.root
-      .querySelector<HTMLButtonElement>(`[data-crystalarium-menu="${menu}"]`)
-      ?.focus({ preventScroll: true });
+    const focusTarget = this.activeMenu
+      ? this.root.querySelector<HTMLButtonElement>('[data-crystalarium-action="close-menu"]')
+      : this.root.querySelector<HTMLButtonElement>(`[data-crystalarium-menu="${menu}"]`);
+    focusTarget?.focus({ preventScroll: true });
   }
 
   public render(view: CrystalariumPortraitPresentation): void {
@@ -577,12 +578,12 @@ export class CrystalariumPortraitView {
     this.root.replaceChildren(
       header,
       menuStrip,
+      backdrop,
+      menuPanel,
       guidePanel,
       boardSection,
       shelf,
       status,
-      backdrop,
-      menuPanel,
     );
     // Recreating the 42-cell board must not snap a narrow phone back to column one.
     // Players need to keep later columns in view after selection, Grow and Offer.

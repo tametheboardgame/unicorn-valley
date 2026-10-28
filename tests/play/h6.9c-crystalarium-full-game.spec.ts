@@ -912,6 +912,7 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
     expect(a.y + a.height).toBeLessThan(b.y);
     await region.locator('[data-crystalarium-menu="tools"]').click();
     await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
+    await expect(region.locator('[data-crystalarium-action="close-menu"]')).toBeFocused();
     await region.locator('[data-crystalarium-action="sound"]').click();
     await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
     await region.locator('[data-crystalarium-action="close-menu"]').click();
@@ -920,6 +921,11 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
     await region.locator('[data-crystalarium-menu="pattern"]').click();
     await expect(region.locator('.crystalarium-portrait-pattern')).toBeVisible();
     await region.locator('[data-crystalarium-menu="pattern"]').click();
+    // Escape closes the drawer, never exits the session or loses its save.
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await page.keyboard.press('Escape');
+    await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await expect(region).toBeVisible();
     await region.locator('[data-crystalarium-menu="growing"]').click();
     await expect(region.locator('[data-crystalarium-action="grow"]')).toBeVisible();
     await region.locator('[data-crystalarium-action="grow"]').click();
