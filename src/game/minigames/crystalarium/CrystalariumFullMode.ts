@@ -12,6 +12,7 @@ import {
   canOfferPattern,
   chooseCrystalSource,
   createHarmony,
+  growCrystalFromWell,
   moveOrMergeCrystal,
   offerResonancePattern,
   polishCrystal,
@@ -105,6 +106,7 @@ export class CrystalariumFullMode {
       },
       source: (family) =>
         this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
+      growFromWell: (family) => this.growFromWell(family),
       grow: () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
       growRefined: () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
       offer: () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
@@ -209,6 +211,11 @@ export class CrystalariumFullMode {
 
   private run(action: FirstLessonCommand, execute: () => FullActionResult): void {
     if (this.permitted(action)) this.apply(execute());
+  }
+
+  /** The physical well grows once, with one atomic source-and-spawn save. */
+  private growFromWell(family: CrystalFamily): void {
+    this.run({ kind: 'other' }, () => growCrystalFromWell(this.state, family));
   }
 
   private inspectGoal(): void {
@@ -844,6 +851,30 @@ export class CrystalariumFullMode {
     if (ready && pattern?.harmonies) {
       this.addText(holder, 1081, 309, '✦ READY', 14, '#ffe6a5', 72);
     }
+    // Three permanent rooted wells are physically attached to the board
+    // frame but not members of the 7x6 CrystalPiece grid. No save migration.
+    const branch = this.scene.add.graphics();
+    branch.lineStyle(3, 0xa4d9df, 0.9);
+    branch.beginPath();
+    branch.moveTo(621, 208);
+    branch.lineTo(625, 208);
+    branch.lineTo(625, 477);
+    branch.strokePath();
+    holder.add(branch);
+    CRYSTAL_FAMILIES.forEach((family, index) => {
+      const unlocked = unlockedCrystalFamilies(this.state).includes(family);
+      const note = CRYSTAL_NOTE_PRESENTATION[family];
+      const button = this.button(
+        holder,
+        627,
+        210 + index * 108,
+        49,
+        unlocked ? note.symbol + ' ' + family : '🔒 ' + family,
+        'crystalarium-full-producer:' + family,
+        () => this.growFromWell(family),
+      );
+      button.setStrokeStyle(3, this.state.selectedFamily === family ? 0xffe5a0 : unlocked ? 0x9adbea : 0x878cae);
+    });
     this.addText(holder, 699, 369, '✦ CRYSTAL GROWING', 17, '#b6f5df', 442);
     this.addText(
       holder,
@@ -853,20 +884,15 @@ export class CrystalariumFullMode {
       16,
       '#a8e9f5',
     );
-    CRYSTAL_FAMILIES.forEach((family: CrystalFamily, index) => {
-      const note = CRYSTAL_NOTE_PRESENTATION[family];
-      const unlocked = unlockedCrystalFamilies(this.state).includes(family);
-      this.button(
-        holder,
-        697 + index * 143,
-        414,
-        135,
-        unlocked ? note.symbol + ' ' + note.label.split(' ')[0] : 'Locked',
-        'crystalarium-source:' + family,
-        () => this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
-        unlocked,
-      );
-    });
+    this.addText(
+      holder,
+      698,
+      412,
+      'Tap a well on the board frame to grow a free shard, or use Grow below.',
+      13,
+      '#c3e9df',
+      447,
+    );
     const refinedTier = refinedSourceTier(this.state);
     if (refinedTier === null) {
       this.button(
