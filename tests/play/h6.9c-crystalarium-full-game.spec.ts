@@ -980,7 +980,9 @@ test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
       await expect(page.locator('#orders .order-card')).toHaveCount(5);
       await expect(page.locator('#stock')).toHaveText('100 / 100');
       await expect(page.locator('#low')).toBeVisible();
-      await expect.poll(() => page.locator('body').getAttribute('data-background-art')).toMatch(/^(painted|svg-fallback)$/);
+      await expect
+        .poll(() => page.locator('body').getAttribute('data-background-art'))
+        .toMatch(/^(painted|svg-fallback)$/);
 
       const boardPanel = await page.locator('.board-panel').boundingBox();
       const wellsPanel = await page.locator('.wells').boundingBox();
