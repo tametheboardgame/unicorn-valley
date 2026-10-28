@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en-GB">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Crystalarium • C17 Illustrated Garden Review</title><link rel="stylesheet" href="/design-previews/crystalarium-c17.css"></head>
+<body>
+<div class="app">
+  <header class="top"><div><h1>✦ Crystalarium · Resonance Garden ✦</h1><small>Illustrated C17 concept · no gameplay saves</small></div><nav class="top-actions"><button id="help">? Help</button><button id="sound">♫ Sound</button><button id="exit">← Leave</button></nav></header>
+  <main class="stage">
+    <section class="board-panel" aria-label="Example Crystalarium board">
+      <div class="section-head"><strong>✧ Crystal Garden</strong><span>42 sockets · 7 × 6</span></div><div class="board-scroll"><div class="board-grid" id="board"></div></div>
+      <div class="board-foot"><button class="storage-button" id="storage"><img src="/design-assets/crystalarium-c17/storage-chest.svg" alt="">Storage</button><span>Drag matching crystals to merge</span></div>
+    </section>
+    <aside class="wells" aria-label="Growth Potion and crystal wells"><div class="potion"><strong>Growth Potion</strong><img src="/design-assets/crystalarium-c17/growth-potion.svg" alt=""><b id="stock">100 / 100</b><div class="gauge"><div id="fill"></div></div></div>
+      <button class="well" id="low"><img src="/design-assets/crystalarium-c17/well-low.svg" alt=""><strong>Low</strong><small>💧 1</small></button>
+      <button class="well" disabled><img src="/design-assets/crystalarium-c17/well-bright.svg" alt=""><strong>Bright</strong><small>🔒 4 offers</small></button>
+      <button class="well" disabled><img src="/design-assets/crystalarium-c17/well-bell.svg" alt=""><strong>Bell</strong><small>🔒 7 offers</small></button>
+    </aside>
+    <aside class="orders-panel" aria-label="Resonance Orders"><div class="section-head"><strong>♫ Resonance Orders</strong><span>1 / 50</span></div><p>Several active patterns · swipe sideways</p>
+      <div class="order-controls"><button class="arrow" id="prev" aria-label="Previous order">‹</button><div class="order-rail" id="orders" tabindex="0"></div><button class="arrow" id="next" aria-label="Next order">›</button></div>
+      <nav class="tools"><button id="harmony"><span>♫</span>Harmony</button><button id="polish"><span>✧</span>Polish</button><button id="wash"><span>♻</span>Wash</button><button id="fresh"><span>↺</span>Fresh</button></nav>
+    </aside>
+  </main>
+  <footer>C17 visual prototype only. Pattern progression, Growth Potion costs and capacity, twelve storage slots and generator unlock examples are illustrative proposals, not implemented or approved game rules.</footer>
+</div>
+<div class="dialog" id="storage-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="storage-title"><div class="dialog-card"><div class="section-head"><h2 id="storage-title">Storage Chamber</h2><button id="close" aria-label="Close Storage">×</button></div><div class="chamber"><div><h3>Board</h3><div class="sample-grid" id="board-sample"></div></div><img class="return-icon" src="/design-assets/crystalarium-c17/return-board.svg" alt="Board return target"><div><h3>Storage</h3><div class="sample-grid" id="stored-sample"></div></div></div><p>Planned mechanic: drag onto the Storage chest to put away; drag a stored crystal to the Board icon to return it. No real transfer or save occurs in this prototype.</p></div></div>
+<div class="guide" id="guide" hidden><div class="scrim"></div><div class="guide-bubble" id="guide-bubble"><strong>1. Tap the Low Crystal Well</strong><p>A drop of Growth Potion makes a crystal spring forth.</p><button id="skip">Skip guide preview</button></div></div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+<script src="/design-previews/crystalarium-c17.js" defer></script></body></html>
