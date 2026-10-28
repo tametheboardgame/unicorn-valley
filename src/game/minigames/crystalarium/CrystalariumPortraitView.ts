@@ -239,6 +239,14 @@ export class CrystalariumPortraitView {
       if (menu === 'pattern') {
         trigger.classList.toggle('is-ready', canOfferPattern(state));
         trigger.setAttribute('aria-label', 'Pattern ' + patternName + (canOfferPattern(state) ? ', ready to offer' : ''));
+        trigger.replaceChildren(
+          makeElement('span', 'crystalarium-portrait-menu-label', '♫ Pattern'),
+          makeElement(
+            'span',
+            'crystalarium-portrait-menu-detail',
+            canOfferPattern(state) ? '✦ Ready to offer' : patternName,
+          ),
+        );
       }
       menuStrip.append(trigger);
     }

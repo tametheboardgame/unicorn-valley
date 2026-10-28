@@ -602,6 +602,27 @@
     font-size: 14px;
     padding: 5px 3px;
   }
+  .crystalarium-portrait-guide {
+    position: relative;
+    z-index: 14;
+  }
+  .crystalarium-portrait-menu-strip [data-crystalarium-menu="pattern"] {
+    display: grid;
+    gap: 0;
+    align-content: center;
+    text-align: left;
+  }
+  .crystalarium-portrait-menu-label {
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .crystalarium-portrait-menu-detail {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   .crystalarium-portrait-menu-strip .is-active,
   .crystalarium-portrait-menu-strip .is-ready {
     border-color: #ffe5a0;
