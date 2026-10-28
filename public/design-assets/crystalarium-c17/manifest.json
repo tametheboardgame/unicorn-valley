@@ -1166,6 +1166,136 @@
       "runtimeApproved": false,
       "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
       "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-complete.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 249694,
+      "gitBlobSha": "9dacefcb22f168ee0ea0cc3b448fe3ade5a83388",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-focused.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 251770,
+      "gitBlobSha": "0f813921926b2e18e1eb0edea21ffd0edcb3dee7",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-in-progress.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 246352,
+      "gitBlobSha": "788e6518e1861d0b93ea9b819482decec505aa4d",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-locked.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 162086,
+      "gitBlobSha": "4f997f5fd33beb9f06d6b8e9d5efd6b88d986c33",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-normal.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 237636,
+      "gitBlobSha": "89dbe6b302aa7efcdef11bd03ecf3dae46181c86",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-ready.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 250792,
+      "gitBlobSha": "3b57a0af26a418e75ab91e1b5341e3dfaefeb37f",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-back.svg",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "SVG source",
+      "bytes": 2667,
+      "gitBlobSha": "4b56088a5248759b6be345a35534a4733f94bc16",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-back.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 44684,
+      "gitBlobSha": "c5997737cc800eaa0426756458668d19a80b377a",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-ready-aura.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 23356,
+      "gitBlobSha": "61e5b1b45ebd4f8a0281c0c8ded604c66bafcb8d",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-left.svg",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "SVG source",
+      "bytes": 801,
+      "gitBlobSha": "49d7352bc1cb28670cd8030a4c70409061f29f35",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-left.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 9848,
+      "gitBlobSha": "7699619d5a4d3c77d83dccce215704d9c99aaec8",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-right.svg",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "SVG source",
+      "bytes": 801,
+      "gitBlobSha": "49d7352bc1cb28670cd8030a4c70409061f29f35",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-right.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 9826,
+      "gitBlobSha": "fab96bdf5a9af7f0cb1501eaec14be32c7c4b49e",
+      "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
     }
   ],
   "releaseChecks": [
@@ -1537,5 +1667,33 @@
       ],
       "implementationRule": "Dynamic resource quantity is rendered from canonical state with independently masked textured liquid and readable text, never from a fixed 0/25/50/75/100 bitmap. Use one approved collection as source of art; preserve accessibility, 48px touch targets and reduced-motion behaviour."
     }
+  },
+  "resonanceOrderArt": {
+    "status": "C17_CANDIDATE_VISUAL_REVIEW_NOT_APPROVED",
+    "createdOn": "2026-10-28",
+    "sourceArtwork": "Original AI-generated fantasy UI reference with text-free card manually isolated; independent gold/indigo SVG rail and arrow artwork created for game UI",
+    "sourceArchive": "https://drive.google.com/file/d/1bzE52SjuLlxTMlsDjESKn55nw8zKIxLe/view",
+    "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
+    "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
+    "assetCount": 13,
+    "approvedCrystalFamiliesReused": [
+      "low",
+      "bright",
+      "bell"
+    ],
+    "components": [
+      "six illustration-only normal, progress, ready, focus, locked and completed card state surfaces",
+      "independent ready aura",
+      "scalable decorative rail SVG/WebP",
+      "separate left/right gold navigation SVG/WebP"
+    ],
+    "rules": [
+      "No baked recipe labels, counters, ranks, currencies, rarities, timers, reward icons or Offer button",
+      "Whole ready card is Offer target",
+      "Real horizontally scrollable rail (native touch/trackpad plus arrow controls) rather than pre-painted card collection",
+      "Use locked 18 Low/Bright/Bell crystal tier assets as card content",
+      "Preview state is simulated, no real game/state/save changes",
+      "Do not lock these new graphics until user visually approves; other C17/C18-C24 gates stay open"
+    ]
   }
 }
