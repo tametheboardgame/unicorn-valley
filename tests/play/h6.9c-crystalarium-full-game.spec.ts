@@ -960,7 +960,6 @@ test.describe('H6.9C13A board-first mobile drawer contract', () => {
   });
 });
 
-
 const C17_PREVIEW = '/design-previews/crystalarium-c17-illustrated-layout.html';
 
 test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
