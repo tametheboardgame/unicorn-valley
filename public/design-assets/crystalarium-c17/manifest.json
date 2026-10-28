@@ -1296,6 +1296,56 @@
       "review": "C17_CANDIDATE_NOT_YET_USER_APPROVED",
       "runtimeApproved": false,
       "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-ornament-left.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-rail-ornament-left",
+      "format": "transparent scalable SVG",
+      "bytes": 2427,
+      "gitBlobSha": "8ec5678352f6e640423bb827a6fe7c8ec3fb9cc0",
+      "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-ornament-right.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-rail-ornament-right",
+      "format": "transparent scalable SVG",
+      "bytes": 2475,
+      "gitBlobSha": "a5f0193ff6b02ca8da77cb2920c3eb6e0ed49d21",
+      "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-completed-overlay.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-completed-overlay",
+      "format": "transparent scalable SVG",
+      "bytes": 2067,
+      "gitBlobSha": "1faa9a052a63c731a8b6d85bf7f1b37cefcd1862",
+      "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-progress-overlay.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-progress-overlay",
+      "format": "transparent scalable SVG",
+      "bytes": 1866,
+      "gitBlobSha": "e71dafefafe8fb8d953261bba70b99404a6608f4",
+      "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-ready-overlay.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-ready-overlay",
+      "format": "transparent scalable SVG",
+      "bytes": 1923,
+      "gitBlobSha": "c1da0e716998029851d380106cdf6cb221645f89",
+      "review": "C17_REFINED_VISUAL_CANDIDATE - final human review pending",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026"
     }
   ],
   "releaseChecks": [
@@ -1675,7 +1725,7 @@
     "sourceArchive": "https://drive.google.com/file/d/1bzE52SjuLlxTMlsDjESKn55nw8zKIxLe/view",
     "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
     "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
-    "assetCount": 13,
+    "assetCount": 18,
     "approvedCrystalFamiliesReused": [
       "low",
       "bright",
@@ -1694,6 +1744,36 @@
       "Use locked 18 Low/Bright/Bell crystal tier assets as card content",
       "Preview state is simulated, no real game/state/save changes",
       "Do not lock these new graphics until user visually approves; other C17/C18-C24 gates stay open"
-    ]
+    ],
+    "refinement": {
+      "date": "2026-10-28",
+      "status": "REFINED_CANDIDATES_COMMITTED_PENDING_USER_VISUAL_REVIEW",
+      "newLayerCount": 5,
+      "combinedArtAssetCount": 18,
+      "visualChanges": [
+        "In-progress cards use a blue gem/filigree and stronger real progress track, distinct from empty state",
+        "Ready cards gain a bright turquoise and pale-gold continuous silhouette glow with sparkles; active offer remains the whole card",
+        "Completed cards gain gold/green rim accents and a clear green-ticked medallion independent of recipe text",
+        "Rail receives restrained independently layered blue crystals, leaves, white flowers at each end, with the scrolling viewport unobstructed",
+        "Card/card-rail proportions checked in a side-panel layout on desktop and board-first narrow screen demo"
+      ],
+      "assetsRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
+      "reviewPage": "/design-previews/crystalarium-c17-resonance-orders.html",
+      "sourceZip": "https://drive.google.com/file/d/1MjlM3fro15bU6m8wCcj0QoXQ1RXmcO-D/view",
+      "transferArchiveSha256": "f9a7a72c296d49db6b5d358abe30449927e85fba2336b8602d8828a22da4fd2b",
+      "qaEvidence": [
+        "SVG XML parsed and transparent alpha corners checked",
+        "Node --check for independent preview JavaScript passed",
+        "Local headless browser DOM/interaction review at 1280x720, 1440x900, 390x844 and 320x700; exactly five cards overflow and rail navigates in each; no horizontal document overflow or page errors; ready card progresses to completed in no-save test",
+        "The preview CSS was repaired to ensure 8px progress fills are contained within their tracks and titles do not overlap the gem crest",
+        "Fixed earlier preview accessibility/markup errors: button types, control group semantics, labelled rail region and invalid CSS property"
+      ],
+      "notApproved": [
+        "Not final user acceptance of refined art",
+        "No 50-order queue, C18 data migration or runtime implementation",
+        "No Growth Potion economy, storage transfer or save changes",
+        "No merge/release"
+      ]
+    }
   }
 }

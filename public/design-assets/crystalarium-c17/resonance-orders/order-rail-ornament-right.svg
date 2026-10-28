@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="215" height="340" viewBox="0 0 215 340"><g transform="translate(215 0) scale(-1 1)"><defs>
+<linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e3eb7f"/><stop offset=".35" stop-color="#74b55c"/><stop offset="1" stop-color="#276047"/></linearGradient>
+<linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dcf9ff"/><stop offset=".22" stop-color="#5bdafb"/><stop offset=".7" stop-color="#087fb2"/><stop offset="1" stop-color="#1b366c"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffefaa"/><stop offset=".5" stop-color="#c17d3d"/><stop offset="1" stop-color="#f1ce87"/></linearGradient><filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<path d="M0 75Q65 56 95 118Q120 161 82 214Q52 263 6 281" stroke="#2d4b3e" stroke-width="12" fill="none"/>
+<path d="M5 68Q47 66 65 107M9 293Q60 266 76 216" fill="none" stroke="#e6be73" stroke-width="3" opacity=".78"/>
+<g fill="url(#leaf)" stroke="#39693b" stroke-width="2">
+<path d="M43 103Q8 64 82 67Q91 88 43 103"/><path d="M54 132Q8 108 8 151Q37 172 54 132"/><path d="M78 170Q93 120 126 155Q112 193 78 170"/><path d="M74 204Q28 178 23 220Q55 233 74 204"/><path d="M56 258Q20 228 10 259Q32 289 56 258"/>
+</g>
+<g stroke="url(#gold)" stroke-width="3" fill="none"><path d="M8 112Q27 89 54 99"/><path d="M8 250Q23 267 48 260"/></g>
+<g transform="translate(35 168)"><ellipse rx="30" ry="37" fill="#20e4f3" opacity=".34" filter="url(#soft)"/><path d="M0-61L26-17L15 47L-8 67L-23 21Z" fill="url(#blue)" stroke="url(#gold)" stroke-width="5"/><path d="M0-61L1 40L26-17Z" fill="#d1f7ff" opacity=".55"/><path d="M0-61L-8 67L-23 21Z" fill="#3e9cf0" opacity=".58"/></g>
+<g transform="translate(93 233)"><path d="M0-37L20-5L13 29L-5 40L-17 2Z" fill="url(#blue)" stroke="#d9e7b1" stroke-width="3"/><path d="M0-37L-5 40L20-5Z" fill="#a4eafb" opacity=".5"/></g>
+<g transform="translate(89 83)"><circle r="17" fill="#e7f1b5" opacity=".38" filter="url(#soft)"/><g fill="#fff6da" stroke="#dfd4a1" stroke-width="1"><ellipse cy="-13" ry="13" rx="7"/><ellipse cx="13" ry="7" rx="13" transform="rotate(90 13 0)"/><ellipse cy="13" ry="13" rx="7"/><ellipse cx="-13" ry="7" rx="13" transform="rotate(90 -13 0)"/></g><circle r="7" fill="#e0b35f" stroke="#fff4b5" stroke-width="2"/></g>
+<g fill="#d6fff0"><circle cx="119" cy="135" r="3"/><circle cx="95" cy="199" r="3"/><circle cx="72" cy="279" r="3"/></g>
+</g></svg>
