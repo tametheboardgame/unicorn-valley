@@ -1167,3 +1167,42 @@ test.describe('H6.9C17 generator asset gallery', () => {
     });
   }
 });
+
+test.describe('H6.9C17 Bell violet family asset gallery', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 390, height: 844 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`loads six independent Bell crystal sprites at ${viewport.width}px without saving`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/design-previews/crystalarium-c17-bell-crystals.html');
+      await expect(page.getByRole('heading', { name: /Bell · Violet crystals/ })).toBeVisible();
+      const large = page.locator('.gallery img.large');
+      await expect(large).toHaveCount(6);
+      await expect(page.locator('.gallery .cell img')).toHaveCount(6);
+      for (let index = 0; index < 6; index++) {
+        await expect
+          .poll(() =>
+            large.nth(index).evaluate((element) => {
+              const img = element as HTMLImageElement;
+              return img.complete && img.naturalWidth === 512 && img.naturalHeight === 512;
+            }),
+          )
+          .toBe(true);
+      }
+      expect(
+        await page.evaluate(() => ({
+          adventure: localStorage.getItem('unicorn-valley.save'),
+          sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+        })),
+      ).toEqual({ adventure: null, sandbox: null });
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-bell-${viewport.width}.png`),
+        fullPage: true,
+      });
+    });
+  }
+});

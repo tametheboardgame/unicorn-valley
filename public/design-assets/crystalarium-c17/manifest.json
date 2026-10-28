@@ -393,6 +393,78 @@
       "review": "USER_APPROVED_LOCKED - 28 October 2026",
       "runtimeApproved": false,
       "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-5.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-0.webp",
+      "purpose": "Bell (violet) crystal family tier 0: Single violet shard",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 86174,
+      "sha256": "518356b776bd35367dd72ffba7e5c72b9f0475b02dcfd8db2e721621c36bd488",
+      "gitBlobSha": "80882dedbd133a23f5f9e912e11851fe8e81c29d",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "CANDIDATE committed at user request; visual acceptance pending",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-0.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-1.webp",
+      "purpose": "Bell (violet) crystal family tier 1: Violet floral cluster",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 142928,
+      "sha256": "ea6a014fb038374e4d5f244a2fc6642eacf5ba60e4db840d5d22737d8aa1b5d4",
+      "gitBlobSha": "80a21260742a8673a04b1b94bfc0cbbed912f46f",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "CANDIDATE committed at user request; visual acceptance pending",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-1.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-2.webp",
+      "purpose": "Bell (violet) crystal family tier 2: Tall violet spire",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 136000,
+      "sha256": "a2729a89b32511c9cd9a3f8c0e9545b31511a77980f21396e2f19be052f5bad5",
+      "gitBlobSha": "f75acc7bc801142478db218b88fd37ccda2c34ad",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "CANDIDATE committed at user request; visual acceptance pending",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-2.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-3.webp",
+      "purpose": "Bell (violet) crystal family tier 3: Floating violet geode",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 145342,
+      "sha256": "634e9547945b01fd91d05a588540f03cd714951ad862df13e62cca23a99083cc",
+      "gitBlobSha": "ac0e226a2795cbad98e01e9dc67a05efdc26fd08",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "CANDIDATE committed at user request; visual acceptance pending",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-3.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-4.webp",
+      "purpose": "Bell (violet) crystal family tier 4: Violet golden wings",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 144612,
+      "sha256": "0f9919917a3f4d6de7b38530c3d6e356ea742543ce121bbddcbf919ba447a361",
+      "gitBlobSha": "f72111696d4a291fef779adff832c5f7521614a8",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "CANDIDATE committed at user request; visual acceptance pending",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-4.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-5.webp",
+      "purpose": "Bell (violet) crystal family tier 5: Grand violet crown",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 151634,
+      "sha256": "f76eaf9d0a3c79c8de50e83892eee180fc25d2cecfd5e6c5539ff8a095cdcc50",
+      "gitBlobSha": "68f24a55c0ed86757e808de62dce8a72ddbfbd84",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "CANDIDATE committed at user request; visual acceptance pending",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-5.png"
     }
   ],
   "releaseChecks": [
@@ -597,6 +669,60 @@
           "bytes": 176292,
           "sha256": "3b18b3918ed39cca1ac3572cbc7a24a8eb7f72599508a440b339de5bcca8fcbd",
           "gitBlobSha": "86a94c34aae9734fa764eb574909903917b51562"
+        }
+      ]
+    },
+    "bell": {
+      "artDecision": "USER_REQUESTED_COMMITTED_CANDIDATE",
+      "approvedForCommit": "2026-10-28",
+      "visualAcceptance": "pending explicit user review of separated 48px sprites",
+      "runtimeIntegrated": false,
+      "tierCount": 6,
+      "reviewPage": "/design-previews/crystalarium-c17-bell-crystals.html",
+      "sourceFolder": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved",
+      "notes": "Six independently extracted, 512x512 lossless-alpha violet crystal sprites. All PNG archive copies pixel-identical to decoded WebP. User requested creation and commit, not final visual lock. The existing Bell renderer, saved states and rules remain unchanged.",
+      "files": [
+        {
+          "tier": 0,
+          "name": "Single violet shard",
+          "bytes": 86174,
+          "sha256": "518356b776bd35367dd72ffba7e5c72b9f0475b02dcfd8db2e721621c36bd488",
+          "gitBlobSha": "80882dedbd133a23f5f9e912e11851fe8e81c29d"
+        },
+        {
+          "tier": 1,
+          "name": "Violet floral cluster",
+          "bytes": 142928,
+          "sha256": "ea6a014fb038374e4d5f244a2fc6642eacf5ba60e4db840d5d22737d8aa1b5d4",
+          "gitBlobSha": "80a21260742a8673a04b1b94bfc0cbbed912f46f"
+        },
+        {
+          "tier": 2,
+          "name": "Tall violet spire",
+          "bytes": 136000,
+          "sha256": "a2729a89b32511c9cd9a3f8c0e9545b31511a77980f21396e2f19be052f5bad5",
+          "gitBlobSha": "f75acc7bc801142478db218b88fd37ccda2c34ad"
+        },
+        {
+          "tier": 3,
+          "name": "Floating violet geode",
+          "bytes": 145342,
+          "sha256": "634e9547945b01fd91d05a588540f03cd714951ad862df13e62cca23a99083cc",
+          "gitBlobSha": "ac0e226a2795cbad98e01e9dc67a05efdc26fd08"
+        },
+        {
+          "tier": 4,
+          "name": "Violet golden wings",
+          "bytes": 144612,
+          "sha256": "0f9919917a3f4d6de7b38530c3d6e356ea742543ce121bbddcbf919ba447a361",
+          "gitBlobSha": "f72111696d4a291fef779adff832c5f7521614a8"
+        },
+        {
+          "tier": 5,
+          "name": "Grand violet crown",
+          "bytes": 151634,
+          "sha256": "f76eaf9d0a3c79c8de50e83892eee180fc25d2cecfd5e6c5539ff8a095cdcc50",
+          "gitBlobSha": "68f24a55c0ed86757e808de62dce8a72ddbfbd84"
         }
       ]
     }
