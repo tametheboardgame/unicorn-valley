@@ -121,8 +121,13 @@ test('H6.9C Crystalarium full-game pattern persists in Just Games without advent
   await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
   await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
 
+  // This is the fresh Just Games session: complete the real controller-enforced
+  // first-play lesson instead of invoking the pre-tutorial shortcut.
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-grow');
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:2');
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
-  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:1');
+  await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-inspect');
+  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-inspect');
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-offer');
 
   const progress = (await page.evaluate(() =>
