@@ -49,3 +49,12 @@
 ### Risk notes
 
 The current demo uses the browser directly without a test harness and must not be used as evidence of live Crystalarium functionality or real saves. The actual tutorial spotlight still needs correctly anchored holes, pointer-safe authorisation and child/keyboard accessibility in C22. Potion capacity, refill, extra storage cells and multiple-order save migration have later Amber gates.
+
+
+## Painterly background decision — 28 October 2026
+
+**DESKTOP BACKGROUND USER APPROVED AND LOCKED.** The user inspected the clean 1536×1024 AI-generated garden scenery and explicitly said it looks great; subsequently authorised locking it. Preserve the exact original source (SHA-256 `3a913c4fd9038725c112230b01af1e5fa5ca30666f4f236cffdd5130588adb33`) and the prepared 1920×1080 WebP derivative (SHA-256 `bb31ab491d498d5aebb31546575cd244126e4437467f40a2ec6558f5db13e6f8`). The full landscape painting is an artwork approval, **not yet human acceptance of the in-game overlays**. Do not regenerate the desktop image to solve contrast: shade UI panels locally instead.
+
+**PORTRAIT CANDIDATE CREATED, NOT APPROVED.** Unlike cropped desktop scenery, the new independent portrait scene was generated vertically. The 9:16 central art crop (576×1024, source SHA-256 `524ccce0da3c43389363eb336b5b29b2cf786c8270ea2fb192e090fb4f22c162`) is preserved separately from the 1080×1920 WebP derivative (SHA-256 `f25bae9923d06070cab91a741967d1a266b68779889f443568ee9c3c464bf684`). The original generation canvas included white side margins; the accepted artefact must be the **clean margin-free crop**. Mobile artwork awaits user approval.
+
+**Binary integration not yet completed:** the downloaded/created raster files are present as conversation assets but have **not been committed as Git blobs** to PR #337. The current GitHub design preview uses earlier SVG stand-ins. Do not mark desktop background as shipped or replace production art until the checksum-verified PNG and WebP bytes are ingested. Asset identification, status and provenance are recorded in `public/design-assets/crystalarium-c17/manifest.json`. Keep pointer events and all text/control states in separate UI layers; defer actual Cloudflare art visual gate until correct binary delivery.

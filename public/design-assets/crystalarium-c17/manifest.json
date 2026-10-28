@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "package": "R6.5-WP19H6.9C17",
   "date": "2026-10-28",
-  "status": "C17 concept studies; not accepted final game art",
+  "status": "C17 original SVG layout studies committed; painted desktop background concept user-approved and locked in design record; portrait counterpart awaiting visual approval and raster ingestion",
   "sourceOfTruth": "docs/design/2026-10-28-CRYSTALARIUM-APPROVED-VISUAL-AND-INTERACTION-CONTRACT.md",
   "provenance": "Original procedurally authored SVG artwork for the project's design review; no third-party graphics/fonts embedded.",
   "designReference": "User-approved in-chat illustrated Garden concept image; flattened concept screenshot is NOT used as a runtime texture.",
@@ -131,5 +131,37 @@
     "Focal point contrast with board and cards",
     "Device performance, reduced-motion/static fallback",
     "Final painted asset approval and provenance before integrating source"
-  ]
+  ],
+  "paintedBackgrounds": {
+    "desktop": {
+      "decision": "USER_APPROVED_LOCKED",
+      "decisionDate": "2026-10-28",
+      "provenance": "Original AI-generated illustration from in-project C17 design conversation; no UI, fonts, labels or controls baked in",
+      "composition": "Crystalarium Garden landscape; mossy arches, hanging flowers, crystal mountains, stone steps, waterfalls, turquoise pools, crystal plants",
+      "sourceName": "crystalarium-garden-desktop-approved-source.png",
+      "sourceWidth": 1536,
+      "sourceHeight": 1024,
+      "sourceSha256": "3a913c4fd9038725c112230b01af1e5fa5ca30666f4f236cffdd5130588adb33",
+      "preparedWebp": "crystalarium-garden-desktop-approved-1920x1080.webp",
+      "preparedWebpSha256": "bb31ab491d498d5aebb31546575cd244126e4437467f40a2ec6558f5db13e6f8",
+      "formatTreatment": "The approved source is 3:2; 16:9 derived runtime composition crops 80 pixels from top and bottom, then resizes to 1920×1080. Preserve uncropped source.",
+      "userSource": "C17 approved background image in project chat; checksum identifies exact source and must be checked during eventual ingest",
+      "repositoryBinaryCommitted": false,
+      "pending": "Upload full-resolution original and WebP derivative to version-controlled assets with matching checksums, then replace SVG preview placeholder; never call it integrated before upload"
+    },
+    "portrait": {
+      "decision": "CANDIDATE_REQUIRES_USER_REVIEW",
+      "generatedOn": "2026-10-28",
+      "sourceName": "crystalarium-garden-portrait-candidate-source.png",
+      "sourceWidth": 576,
+      "sourceHeight": 1024,
+      "sourceSha256": "524ccce0da3c43389363eb336b5b29b2cf786c8270ea2fb192e090fb4f22c162",
+      "preparedWebp": "crystalarium-garden-portrait-candidate-1080x1920.webp",
+      "preparedWebpSha256": "f25bae9923d06070cab91a741967d1a266b68779889f443568ee9c3c464bf684",
+      "formation": "The generator returned vertical painting inside wider white-margined canvas. Exactly cropped central 576×1024 9:16 composition, upscale derivative 1080×1920; not a stretched desktop crop.",
+      "repositoryBinaryCommitted": false,
+      "pending": "Human visual approval and binary asset ingestion, then mobile screenshot contrast check."
+    },
+    "note": "These lock references identify conversation-produced raster files by exact checksums; GitHub API text/tree commit cannot ingest arbitrary local binary without transporting its bytes. No painted artwork is yet served by Cloudflare, and pre-existing SVG placeholders remain unchanged."
+  }
 }
