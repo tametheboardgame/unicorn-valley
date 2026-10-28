@@ -7,67 +7,78 @@
 <style>
 :root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#f1faff}
 *{box-sizing:border-box}
-body{margin:0;min-height:100dvh;background:#101d39 url('/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp') center/cover fixed no-repeat}
+body{margin:0;min-height:100dvh;background:#101d39}
 body:before{content:"";position:fixed;inset:0;background:linear-gradient(120deg,#07162fd1,#11294765 60%,#081c38c0);pointer-events:none}
 .shell{position:relative;max-width:1300px;margin:auto;min-height:100dvh;padding:18px 18px 30px}
 h1{font:700 clamp(24px,3.1vw,37px)/1.14 Georgia,serif;margin:0}
 .sub{color:#d0e8f6;font-size:13px;margin:8px 0 18px}
 .stage{display:grid;grid-template-columns:minmax(0,1fr) 275px;gap:15px;align-items:start}
 .board-scroll{width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-color:#b1d9df #152f52}
-.frame{position:relative;width:100%;min-width:548px;max-width:711px;aspect-ratio:711/577;margin:auto;isolation:isolate}
-.surface{position:absolute;z-index:0;inset:15.3% 14.6% 15% 18.4%;background:linear-gradient(145deg,#122f4dec,#071a35f5);border-radius:15px;box-shadow:inset 0 0 25px #050d1eff}
-.sockets{position:absolute;z-index:1;inset:15.3% 14.6% 15% 18.4%;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:.65% .9%}
+.frame{position:relative;width:100%;min-width:700px;max-width:768px;aspect-ratio:3/2;margin:auto;isolation:isolate;background-color:#c0cada;background-image:linear-gradient(45deg,#aebacb 25%,transparent 25%),linear-gradient(-45deg,#aebacb 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#aebacb 75%),linear-gradient(-45deg,transparent 75%,#aebacb 75%);background-size:32px 32px;background-position:0 0,0 16px,16px -16px,-16px 0;border-radius:12px}
+.surface{display:none;position:absolute;z-index:0;inset:18% 17.3% 18.5% 17.3%;background:linear-gradient(145deg,#122f4dec,#071a35f5);border-radius:15px;box-shadow:inset 0 0 25px #050d1eff}
+.sockets{display:none;position:absolute;z-index:1;inset:18% 17.3% 18.5% 17.3%;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:.65% .9%;border:0;padding:0;margin:0;min-width:0}
 .socket{border:0;background:transparent url('/design-assets/crystalarium-c17/socket-empty.webp') center/100% 100% no-repeat;cursor:pointer;min-width:0;min-height:0;border-radius:13px;touch-action:manipulation}
 .socket[data-state="selected"]{background-image:url('/design-assets/crystalarium-c17/socket-selected.webp')}
 .socket[data-state="valid-drop"]{background-image:url('/design-assets/crystalarium-c17/socket-valid-drop.webp')}
 .socket[data-state="invalid-drop"]{background-image:url('/design-assets/crystalarium-c17/socket-invalid-drop.webp')}
 .socket:focus-visible{outline:4px solid #ffe8a1;outline-offset:-2px}
 .frame-art{display:block;position:absolute;z-index:2;inset:0;width:100%;height:100%;pointer-events:none}
+.frame.show-board .surface{display:block}
+.frame.show-board .sockets{display:grid}
+.frame.show-garden{background:#07162d url('/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp') center/cover no-repeat}
+.mode-buttons{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.mode-buttons button{flex:1 1 105px;font:inherit;font-size:12px;min-height:48px;color:#f4faff;border:2px solid #8bb9d8;border-radius:12px;background:#214466;cursor:pointer}
+.mode-buttons button[aria-pressed="true"]{border-color:#ffdb93;box-shadow:0 0 12px #ffda866c}
+.mode-buttons button:focus-visible{outline:3px solid #fff1c2}
 aside{background:#0d2a4bed;border:2px solid #91cddd;border-radius:19px;padding:14px;box-shadow:0 10px 35px #031b31bb}
 aside h2{font-size:18px;margin:0 0 8px}aside p,aside small{font-size:13px;line-height:1.5;color:#deedf8}
-.states{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.states{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;padding:0;border:0}
 .state{font:inherit;font-size:12px;color:#e9f9ff;min-height:56px;border:2px solid #8bb9d8;border-radius:13px;background:#214466b8;padding:8px;cursor:pointer}
 .state[aria-pressed="true"]{border-color:#ffdb93;box-shadow:0 0 12px #ffda866c}
 .state:focus-visible{outline:3px solid #fff1c2}
-.status{border:1px solid #95b8d2;border-radius:11px;padding:9px;font-size:13px;margin:8px 0;background:#132d50}
+.status{display:block;border:1px solid #95b8d2;border-radius:11px;padding:9px;font-size:13px;margin:8px 0;background:#132d50}
 nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
 nav a{color:#ecfaff;background:#163b5bea;border:1px solid #8dc4d8;border-radius:12px;padding:10px;font-size:13px}
 footer{margin-top:18px;background:#102d4bdb;border:1px solid #8ab9d0;border-radius:13px;padding:11px;font-size:12px;line-height:1.45;color:#d7eaf5}
 @media(max-width:850px){.stage{display:flex;flex-direction:column}.board-scroll{order:0}.stage aside{order:1;width:100%}}
-@media(max-width:650px){body{background-image:url('/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp')}.shell{padding:10px 8px 20px}.sub{margin-bottom:8px}.frame{width:548px}aside{padding:10px}.states{grid-template-columns:repeat(4,minmax(0,1fr))}.state{padding:5px;font-size:11px}}
+@media(max-width:650px){.shell{padding:10px 8px 20px}.sub{margin-bottom:8px}.frame{width:700px}aside{padding:10px}.states{grid-template-columns:repeat(4,minmax(0,1fr))}.state{padding:5px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="shell">
-<header><h1>✦ Crystalarium · Ornate Board Study</h1><p class="sub">C17 candidate artwork • 7×6 sockets remain genuine independent controls • no gameplay saves</p></header>
+<header><h1>✦ Crystalarium · Ornate Board Study</h1><p class="sub">C17 approved frame-only artwork • transparent centre and outside • optional 7×6 socket demo • no gameplay saves</p></header>
 <main class="stage">
 <div class="board-scroll"><div class="frame" id="frame">
   <div class="surface" aria-hidden="true"></div>
-  <div class="sockets" id="sockets" role="group" aria-label="42 independent Crystalarium board sockets"></div>
-  <img class="frame-art" src="/design-assets/crystalarium-c17/board-frame-candidate.webp" alt="" aria-hidden="true">
+  <fieldset class="sockets" id="sockets" aria-label="42 independent Crystalarium board sockets"></fieldset>
+  <img class="frame-art" src="/design-assets/crystalarium-c17/board-frame-only-approved-candidate.webp" alt="Transparent ornate stone frame with crystal flowers and ivy">
 </div></div>
 <aside>
-<h2>Socket appearance</h2>
-<p>Select a state below, then tap a cell to preview it. Each cell is a separate button and the carved border is a transparent, non-interactive layer.</p>
-<div class="states" role="group" aria-label="Select socket visual state">
+<h2>Frame-only artwork</h2>
+<p>By default, the frame is shown alone on a transparency checkerboard. The middle and the outside are genuinely transparent. Toggle the separate grid and garden to inspect the intended layering.</p>
+<div class="mode-buttons" aria-label="Preview layers">
+<button type="button" id="toggle-board" aria-pressed="false">Show 7×6 grid</button>
+<button type="button" id="toggle-garden" aria-pressed="false">Show garden</button>
+</div>
+<p>Optional socket-state demonstration:</p>
+<fieldset class="states" aria-label="Select socket visual state">
 <button type="button" class="state" data-pick="empty" aria-pressed="false">Empty</button>
 <button type="button" class="state" data-pick="selected" aria-pressed="true">Selected</button>
 <button type="button" class="state" data-pick="valid-drop" aria-pressed="false">Valid drop</button>
 <button type="button" class="state" data-pick="invalid-drop" aria-pressed="false">Invalid drop</button>
-</div>
-<div class="status" id="status" role="status" aria-live="polite">Selected state · tap a socket to apply it</div>
+</fieldset>
+<output class="status" id="status" aria-live="polite">Frame only · transparent middle and exterior</output>
 <small>The blue, green and red glow states are prototypes. This artwork does not determine actual game rules, legal moves or crystal types.</small>
 <nav><a href="/design-previews/crystalarium-c17-illustrated-layout.html">Main C17 layout</a></nav>
 </aside>
 </main>
-<footer>Visual approval candidate only. Derived from original C17 illustrated board-study artwork. No flattened 42-cell texture is used: the outer frame, live 42 sockets, state surfaces and scenery are separate layers. The frame can be refined before integration; no save, gameplay or merge changes here.</footer>
+<footer>The **frame alone** is user-approved as the visual direction. The optional grid, painted scenery and four socket-state assets are separately rendered examples, not baked into the frame. This page has no game-save writes or game-state effects. Integration sizing and the final gameplay visual gate remain pending.</footer>
 </div>
 <script>
 const group=document.getElementById('sockets');
 const stateBox=document.getElementById('status');
 let mode='selected';
-const states=['empty','selected','valid-drop','invalid-drop'];
 for(let i=0;i<42;i++){
   const button=document.createElement('button');
   button.type='button';
@@ -78,6 +89,15 @@ for(let i=0;i<42;i++){
   setLabel();
   button.addEventListener('click',()=>{button.dataset.state=mode;setLabel();stateBox.textContent='Socket '+(i+1)+' · '+mode+' (visual only)';});
   group.append(button);
+}
+const frame=document.getElementById('frame');
+for(const [buttonId,cssClass] of [['toggle-board','show-board'],['toggle-garden','show-garden']]){
+  const toggle=document.getElementById(buttonId);
+  toggle.addEventListener('click',()=>{
+    const isOn=frame.classList.toggle(cssClass);
+    toggle.setAttribute('aria-pressed',String(isOn));
+    stateBox.textContent=isOn?'Preview layer enabled · frame remains separate':'Frame-only transparency preview';
+  });
 }
 for(const button of document.querySelectorAll('.state')){
   button.addEventListener('click',()=>{

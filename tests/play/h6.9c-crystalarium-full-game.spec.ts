@@ -1084,6 +1084,27 @@ test.describe('H6.9C17 separate ornate board art candidate', () => {
       await page.goto('/design-previews/crystalarium-c17-board-frame.html');
       await expect(page.getByRole('heading', { name: /Ornate Board Study/ })).toBeVisible();
       await expect(page.locator('#sockets .socket')).toHaveCount(42);
+      await expect(page.locator('#frame')).not.toHaveClass(/show-board/);
+      await expect(page.locator('#frame')).not.toHaveClass(/show-garden/);
+      const hasTransparency = await page.locator('.frame-art').evaluate(async (img) => {
+        const frame = img as HTMLImageElement;
+        if (!frame.complete) await new Promise((resolve) => frame.addEventListener('load', resolve, { once: true }));
+        const canvas = document.createElement('canvas');
+        canvas.width = frame.naturalWidth;
+        canvas.height = frame.naturalHeight;
+        const context = canvas.getContext('2d');
+        if (!context) throw new Error('Canvas missing');
+        context.drawImage(frame, 0, 0);
+        const alphaAt = (x: number, y: number) => context.getImageData(x, y, 1, 1).data[3];
+        return alphaAt(0, 0) === 0 &&
+          alphaAt(canvas.width - 1, 0) === 0 &&
+          alphaAt(0, canvas.height - 1) === 0 &&
+          alphaAt(canvas.width - 1, canvas.height - 1) === 0 &&
+          alphaAt(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2)) === 0;
+      });
+      expect(hasTransparency).toBe(true);
+      await page.getByRole('button', { name: 'Show 7×6 grid' }).click();
+      await expect(page.locator('#frame')).toHaveClass(/show-board/);
       await expect.poll(() =>
         page.locator('.frame-art').evaluate((node) => {
           const img = node as HTMLImageElement;

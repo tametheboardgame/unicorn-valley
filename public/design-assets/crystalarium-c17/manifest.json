@@ -124,17 +124,6 @@
       "runtimeApproved": false
     },
     {
-      "file": "public/design-assets/crystalarium-c17/board-frame-candidate.webp",
-      "purpose": "Transparent ornamental stone-and-crystal surround for a separately rendered 7×6 board, derived from original project illustration",
-      "format": "Transparent WebP candidate",
-      "sha256": "597ce9a631bb4e2537f3d1434f3a7a9372cdc1f68bd8ed563efee3bb46e3e128",
-      "gitBlobSha": "782160b9f98da0e6c7e16ebbe4f45a74dc1d7be0",
-      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
-      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
-      "review": "pending user approval",
-      "runtimeApproved": false
-    },
-    {
       "file": "public/design-assets/crystalarium-c17/socket-empty.webp",
       "purpose": "Independent dark blue socket surface, carved rounded border",
       "format": "Transparent WebP candidate",
@@ -177,6 +166,19 @@
       "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
       "review": "pending user approval",
       "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/board-frame-only-approved-candidate.webp",
+      "purpose": "Standalone original painted stone-and-crystal ornamental frame only; centre/outside fully transparent; no scenery, sockets, game board or controls baked in",
+      "format": "1536×1024 alpha WebP",
+      "sha256": "fea38a860708ec8a73c78986a2be17da5fb45289151536ef203b1fcb90ea38d7",
+      "gitBlobSha": "6545f74792a5ed946e89013328fdfcaad0b0418b",
+      "sourcePngSha256": "83599c65d785b6e389e81bf6d8f3deb2a285b4a9ac9459847a6931f82c3f02db",
+      "originalPng": "Google Drive/Unicorn Valley/C17 Board Candidates/crystalarium-frame-only-source.png",
+      "review": "user accepted corrected frame visual direction 2026-10-28; live overlay geometry remains to be reviewed",
+      "runtimeApproved": false,
+      "provenance": "Original project-owned painted illustration; alpha cut-out carefully processed and inspected",
+      "alphaContract": "RGBA; all four corners and entire central rectangular void transparent; alpha centre and corners zero"
     }
   ],
   "releaseChecks": [
@@ -226,10 +228,11 @@
   },
   "note": "Google Drive staging enabled binary handoff to GitHub create_blob(base64); both WebPs are now in the World draft repository. Earlier manual-upload instruction superseded.",
   "boardCandidate": {
-    "status": "C17 visual approval candidate; NOT live game runtime",
+    "status": "User accepted corrected frame-only artwork; NOT production-integrated",
     "reviewPage": "/design-previews/crystalarium-c17-board-frame.html",
     "sourceSheetArchived": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
-    "composition": "Ornate painted transparent frame, 7x6 independent button sockets with empty/selected/valid/invalid visuals; display scene uses approved painted garden backgrounds",
-    "designCaveat": "Frame dimensions and inset geometry are prototype. Final 320px interaction sizing, scalable edge slicing, dark underlay and visual acceptance require gate before gameplay integration."
+    "composition": "Standalone alpha frame; optional independent 7×6 socket DOM grid; optional garden compositing; checkerboard default for transparency validation",
+    "designCaveat": "User approved the frame-only visual; responsive cell geometry and final game runtime integration remain gated. Socket visuals are separate candidates.",
+    "rejectedSource": "Prior board-frame-candidate.webp contained board/background, rejected by user; removed from active asset kit"
   }
 }
