@@ -1984,11 +1984,7 @@
     "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
     "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
     "assetCount": 18,
-    "approvedCrystalFamiliesReused": [
-      "low",
-      "bright",
-      "bell"
-    ],
+    "approvedCrystalFamiliesReused": ["low", "bright", "bell"],
     "components": [
       "six illustration-only normal, progress, ready, focus, locked and completed card state surfaces",
       "independent ready aura",

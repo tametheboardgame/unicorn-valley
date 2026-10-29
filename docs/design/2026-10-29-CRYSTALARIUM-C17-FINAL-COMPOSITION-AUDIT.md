@@ -30,3 +30,7 @@ Branch: `agent/world-h6-9c-crystalarium-full-game`  |  PR: #337  |  Scope: visua
 3. Review the 10 new contextual icon designs for visual lock; verify 48px hit targets, focus, disabled/muted state, reduced motion and layout under mobile/tablet safe areas.
 4. Review full C17 source-bound composition for the order rail, wells and potion; take real screenshots at 320, 390, 768, 1280 and 1440, and check loaded images, network errors and fallback behaviour.
 5. Keep gameplay off this package. C18 queue/persistence, C19 12-slot migration, C20 potion cap/refill and C21–C24 playable integration remain separate gates. Do not merge PR #337 based on this art-only checkpoint.
+
+## CI recovery after initial commit
+
+The first source-bound Tier 0 run flagged two `noNoninteractiveTabindex` errors (unnecessary focusable review scroll regions) and one manifest compact-array formatting discrepancy. The review page now leaves focus on the actual interactive board/order buttons and visible navigation arrows, and the three-item crystal-family array is Biome-formatted. An unused demonstration callback parameter was removed. No artwork file or gameplay behaviour changed. Validate against this new exact head; superseded CI results do not qualify it.
