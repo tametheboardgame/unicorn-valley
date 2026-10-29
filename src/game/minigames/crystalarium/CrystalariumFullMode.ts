@@ -29,7 +29,11 @@ import {
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
-import { CrystalariumPortraitView, type CrystalariumPortraitActions, type CrystalariumPortraitPresentation } from './CrystalariumPortraitView';
+import {
+  CrystalariumPortraitView,
+  type CrystalariumPortraitActions,
+  type CrystalariumPortraitPresentation,
+} from './CrystalariumPortraitView';
 import { CrystalariumIllustratedView } from './CrystalariumIllustratedView';
 import { paintCrystalArt } from './CrystalariumCrystalArt';
 import { CrystalariumGuide } from './CrystalariumGuide';

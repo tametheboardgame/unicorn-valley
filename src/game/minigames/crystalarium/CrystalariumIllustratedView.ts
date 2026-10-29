@@ -116,7 +116,12 @@ export class CrystalariumIllustratedView {
     return element;
   }
 
-  private iconButton(command: string, label: string, icon: string, callback: () => void): HTMLButtonElement {
+  private iconButton(
+    command: string,
+    label: string,
+    icon: string,
+    callback: () => void,
+  ): HTMLButtonElement {
     const button = this.button('', command, callback);
     button.classList.add('is-icon');
     button.setAttribute('aria-label', label);
@@ -135,8 +140,10 @@ export class CrystalariumIllustratedView {
       active instanceof HTMLElement
         ? (active.dataset.crystalariumCell ?? active.dataset.crystalariumAction ?? null)
         : null;
-    const restoreCell = active instanceof HTMLElement && active.dataset.crystalariumCell !== undefined;
-    const scrollLeft = this.root.querySelector<HTMLElement>('.crystalarium-live-orders-scroll')?.scrollLeft ?? 0;
+    const restoreCell =
+      active instanceof HTMLElement && active.dataset.crystalariumCell !== undefined;
+    const scrollLeft =
+      this.root.querySelector<HTMLElement>('.crystalarium-live-orders-scroll')?.scrollLeft ?? 0;
     const { state } = view;
     const prompt = view.guide;
     const activeLesson = prompt?.lessonStep;
@@ -158,7 +165,12 @@ export class CrystalariumIllustratedView {
         this.actions.guide();
         this.renderCurrent();
       }),
-      this.iconButton('sound', 'Toggle sound', view.quiet || view.globallyMuted ? 'sound-off' : 'sound-on', this.actions.sound),
+      this.iconButton(
+        'sound',
+        'Toggle sound',
+        view.quiet || view.globallyMuted ? 'sound-off' : 'sound-on',
+        this.actions.sound,
+      ),
       this.iconButton('exit', 'Leave and save', 'leave', this.actions.exit),
     );
     header.append(heading, headerButtons);
@@ -179,12 +191,25 @@ export class CrystalariumIllustratedView {
       cell.classList.add('crystalarium-live-cell');
       cell.dataset.crystalariumCell = String(index);
       cell.classList.toggle('is-selected', view.selected === index);
-      cell.classList.toggle('is-guide-focus', Boolean(activeLesson === 'pick-up' && prompt?.sourceIndex === index) || Boolean(activeLesson === 'merge' && prompt?.targetIndex === index));
-      cell.setAttribute('aria-label', piece ? 'Socket ' + (index + 1) + ': ' + piece.family + ' ' + CRYSTAL_TIER_NAMES[piece.tier] : 'Socket ' + (index + 1) + ': empty');
+      cell.classList.toggle(
+        'is-guide-focus',
+        Boolean(activeLesson === 'pick-up' && prompt?.sourceIndex === index) ||
+          Boolean(activeLesson === 'merge' && prompt?.targetIndex === index),
+      );
+      cell.setAttribute(
+        'aria-label',
+        piece
+          ? 'Socket ' + (index + 1) + ': ' + piece.family + ' ' + CRYSTAL_TIER_NAMES[piece.tier]
+          : 'Socket ' + (index + 1) + ': empty',
+      );
       if (piece) cell.append(image(sprite(piece)));
       board.append(cell);
     }
-    frame.append(node('div', 'crystalarium-live-underlay'), board, image(ASSETS + 'board-frame-only-approved-candidate.webp'));
+    frame.append(
+      node('div', 'crystalarium-live-underlay'),
+      board,
+      image(ASSETS + 'board-frame-only-approved-candidate.webp'),
+    );
     frame.lastElementChild?.classList.add('crystalarium-live-frame-art');
     boardViewport.append(frame);
     const gardenFooter = node('div', 'crystalarium-live-board-footer');
@@ -202,50 +227,89 @@ export class CrystalariumIllustratedView {
     const potion = node('section', 'crystalarium-live-potion');
     potion.append(
       node('h2', '', 'Growth Potion'),
-      image(ASSETS + 'growth-potion-assets/reservoir-full.webp', 'Decorative Growth Potion reservoir'),
+      image(
+        ASSETS + 'growth-potion-assets/reservoir-full.webp',
+        'Decorative Growth Potion reservoir',
+      ),
       node('small', '', 'Balance pending'),
     );
     producers.append(potion);
     CRYSTAL_FAMILIES.forEach((family) => {
       const available = unlocked.includes(family);
-      const well = this.button('', 'well-' + family, () => this.actions.growFromWell(family), !available);
+      const well = this.button(
+        '',
+        'well-' + family,
+        () => this.actions.growFromWell(family),
+        !available,
+      );
       well.classList.add('crystalarium-live-well');
       well.classList.toggle('is-locked', !available);
       if (family === state.selectedFamily && available) well.classList.add('is-active');
-      const generator = family === 'low' ? 'generator-sky-blue.webp' : family === 'bright' ? 'generator-forest-green.webp' : 'generator-moon-purple.webp';
-      well.append(image(ASSETS + generator), node('strong', '', family === 'low' ? 'Low' : family === 'bright' ? 'Bright' : 'Bell'), node('small', '', available ? 'Grow shard' : 'Locked'));
+      const generator =
+        family === 'low'
+          ? 'generator-sky-blue.webp'
+          : family === 'bright'
+            ? 'generator-forest-green.webp'
+            : 'generator-moon-purple.webp';
+      well.append(
+        image(ASSETS + generator),
+        node('strong', '', family === 'low' ? 'Low' : family === 'bright' ? 'Bright' : 'Bell'),
+        node('small', '', available ? 'Grow shard' : 'Locked'),
+      );
       producers.append(well);
     });
 
     const orders = node('section', 'crystalarium-live-orders');
     const ordersTitle = node('div', 'crystalarium-live-section-title');
     ordersTitle.append(node('h2', '', 'Resonance Orders'), node('small', '', 'Scroll sideways'));
-    const orderHelp = node('p', 'crystalarium-live-orders-caption', 'Live state · one active order until C18 queue migration');
+    const orderHelp = node(
+      'p',
+      'crystalarium-live-orders-caption',
+      'Live state · one active order until C18 queue migration',
+    );
     const orderRow = node('div', 'crystalarium-live-orders-row');
     const rail = node('div', 'crystalarium-live-orders-scroll');
     rail.setAttribute('aria-label', 'Current Resonance Order');
     const card = this.button('', 'offer', this.actions.offer, !pattern || !isReady);
     card.classList.add('crystalarium-live-order-card');
     card.classList.toggle('is-ready', isReady);
-    card.style.backgroundImage = "url('" + ASSETS + 'resonance-orders/order-card-' + (isReady ? 'ready' : 'in-progress') + ".webp')";
+    card.style.backgroundImage =
+      "url('" +
+      ASSETS +
+      'resonance-orders/order-card-' +
+      (isReady ? 'ready' : 'in-progress') +
+      ".webp')";
     if (pattern) {
       card.append(node('strong', '', pattern.title));
       const goals = node('div', 'crystalarium-live-goals');
       for (const goal of pattern.goals) {
-        const count = [...state.cells, ...state.shelf].filter((piece) => piece?.family === goal.family && piece.tier === goal.tier).length;
+        const count = [...state.cells, ...state.shelf].filter(
+          (piece) => piece?.family === goal.family && piece.tier === goal.tier,
+        ).length;
         const item = node('div', 'crystalarium-live-goal');
-        item.append(image(sprite({ family: goal.family, tier: goal.tier })), node('span', '', Math.min(count, goal.quantity) + ' / ' + goal.quantity));
+        item.append(
+          image(sprite({ family: goal.family, tier: goal.tier })),
+          node('span', '', Math.min(count, goal.quantity) + ' / ' + goal.quantity),
+        );
         goals.append(item);
       }
       card.append(goals);
-      if (pattern.harmonies) card.append(node('small', '', 'Harmony ' + state.harmonies + ' / ' + pattern.harmonies));
+      if (pattern.harmonies)
+        card.append(node('small', '', 'Harmony ' + state.harmonies + ' / ' + pattern.harmonies));
       card.append(node('em', '', isReady ? 'Ready to offer' : 'In progress'));
     } else {
-      card.append(node('strong', '', 'All orders complete'), node('small', '', 'Enjoy free crystal growing'));
+      card.append(
+        node('strong', '', 'All orders complete'),
+        node('small', '', 'Enjoy free crystal growing'),
+      );
     }
     rail.append(card);
     orderRow.append(rail);
-    const orderFooter = node('p', 'crystalarium-live-order-foot', 'Only an eligible glowing card can be offered.');
+    const orderFooter = node(
+      'p',
+      'crystalarium-live-order-foot',
+      'Only an eligible glowing card can be offered.',
+    );
     orders.append(ordersTitle, orderHelp, orderRow, orderFooter);
 
     const tools = node('section', 'crystalarium-live-tools');
@@ -255,7 +319,12 @@ export class CrystalariumIllustratedView {
       ['harmony', 'Harmony', 'harmony', this.actions.harmony],
       ['polish', 'Polish', 'polish', this.actions.polish],
       ['wash', 'Brook Wash', 'brook-wash', this.actions.wash],
-      ['fresh', view.resetArmed ? 'Confirm new board' : 'Fresh Board', 'fresh-board', this.actions.fresh],
+      [
+        'fresh',
+        view.resetArmed ? 'Confirm new board' : 'Fresh Board',
+        'fresh-board',
+        this.actions.fresh,
+      ],
       ['guide', 'Guide', 'help', this.actions.guide],
       ['grow', 'Grow', 'skip-guide', this.actions.grow],
     ];
@@ -278,12 +347,22 @@ export class CrystalariumIllustratedView {
     if (this.guideVisible || activeLesson) {
       const guide = node('aside', 'crystalarium-live-guide');
       guide.setAttribute('aria-label', 'Crystalarium guide');
-      guide.append(node('strong', '', prompt?.title ?? 'Crystalarium guide'), node('p', '', prompt?.instruction ?? 'Grow two matching shards, merge them, and offer the completed crystal.'));
-      guide.append(this.button('Close', 'close-guide', () => {
-        this.guideVisible = false;
-        this.actions.skipGuide();
-        this.renderCurrent();
-      }));
+      guide.append(
+        node('strong', '', prompt?.title ?? 'Crystalarium guide'),
+        node(
+          'p',
+          '',
+          prompt?.instruction ??
+            'Grow two matching shards, merge them, and offer the completed crystal.',
+        ),
+      );
+      guide.append(
+        this.button('Close', 'close-guide', () => {
+          this.guideVisible = false;
+          this.actions.skipGuide();
+          this.renderCurrent();
+        }),
+      );
       children.push(guide);
     }
 
@@ -293,31 +372,52 @@ export class CrystalariumIllustratedView {
       chamber.setAttribute('role', 'dialog');
       chamber.setAttribute('aria-modal', 'true');
       chamber.setAttribute('aria-label', 'Storage Chamber');
-      chamber.append(node('h2', '', 'Storage Chamber'), node('p', '', 'Current save: four shelf slots. Twelve-slot expansion follows C19.'));
+      chamber.append(
+        node('h2', '', 'Storage Chamber'),
+        node('p', '', 'Current save: four shelf slots. Twelve-slot expansion follows C19.'),
+      );
       const slots = node('div', 'crystalarium-live-storage-grid');
       for (let index = 0; index < 12; index += 1) {
         const piece = state.shelf[index];
-        const slot = this.button('', 'shelf-' + index, () => {
-          if (piece) this.actions.restore(index);
-        }, index >= state.shelf.length);
+        const slot = this.button(
+          '',
+          'shelf-' + index,
+          () => {
+            if (piece) this.actions.restore(index);
+          },
+          index >= state.shelf.length,
+        );
         slot.classList.add('crystalarium-live-storage-slot');
-        slot.setAttribute('aria-label', index >= state.shelf.length ? 'Future storage slot, unavailable' : piece ? 'Return stored crystal ' + (index + 1) : 'Empty storage slot ' + (index + 1));
+        slot.setAttribute(
+          'aria-label',
+          index >= state.shelf.length
+            ? 'Future storage slot, unavailable'
+            : piece
+              ? 'Return stored crystal ' + (index + 1)
+              : 'Empty storage slot ' + (index + 1),
+        );
         if (piece) slot.append(image(sprite(piece)));
         slots.append(slot);
       }
       chamber.append(slots);
-      chamber.append(this.button('Store selected', 'shelve', this.actions.shelve, view.selected === null));
-      chamber.append(this.button('Return to Board', 'storage-close', () => {
-        this.storageOpen = false;
-        this.renderCurrent();
-      }));
+      chamber.append(
+        this.button('Store selected', 'shelve', this.actions.shelve, view.selected === null),
+      );
+      chamber.append(
+        this.button('Return to Board', 'storage-close', () => {
+          this.storageOpen = false;
+          this.renderCurrent();
+        }),
+      );
       layer.append(chamber);
       children.push(layer);
     }
     this.root.replaceChildren(...children);
     rail.scrollLeft = scrollLeft;
     if (selectedKey) {
-      const query = restoreCell ? '[data-crystalarium-cell="' + selectedKey + '"]' : '[data-crystalarium-action="' + selectedKey + '"]';
+      const query = restoreCell
+        ? '[data-crystalarium-cell="' + selectedKey + '"]'
+        : '[data-crystalarium-action="' + selectedKey + '"]';
       this.root.querySelector<HTMLButtonElement>(query)?.focus({ preventScroll: true });
     }
   }
