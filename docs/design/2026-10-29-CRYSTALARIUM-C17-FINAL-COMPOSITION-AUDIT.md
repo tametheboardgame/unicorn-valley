@@ -34,3 +34,7 @@ Branch: `agent/world-h6-9c-crystalarium-full-game`  |  PR: #337  |  Scope: visua
 ## CI recovery after initial commit
 
 The first source-bound Tier 0 run flagged two `noNoninteractiveTabindex` errors (unnecessary focusable review scroll regions) and one manifest compact-array formatting discrepancy. The review page now leaves focus on the actual interactive board/order buttons and visible navigation arrows, and the three-item crystal-family array is Biome-formatted. An unused demonstration callback parameter was removed. No artwork file or gameplay behaviour changed. Validate against this new exact head; superseded CI results do not qualify it.
+
+## Neutral art failure treatment
+
+Final C17 no-save composition now has explicit neutral fallback colours for independent socket and order-card surfaces. A failed image becomes visually hidden rather than displaying a broken-image glyph, while the native labelled controls remain accessible and a visible status announces missing artwork. It does not conceal the missing source-bound art QA gate: inspect real Cloudflare requests and source loading before approving C17.
