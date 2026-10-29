@@ -29,7 +29,8 @@ import {
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
-import { CrystalariumPortraitView } from './CrystalariumPortraitView';
+import { CrystalariumPortraitView, type CrystalariumPortraitActions, type CrystalariumPortraitPresentation } from './CrystalariumPortraitView';
+import { CrystalariumIllustratedView } from './CrystalariumIllustratedView';
 import { paintCrystalArt } from './CrystalariumCrystalArt';
 import { CrystalariumGuide } from './CrystalariumGuide';
 import type { FirstLessonCommand } from './CrystalariumTutorialPolicy';
@@ -51,6 +52,7 @@ export class CrystalariumFullMode {
   private readonly guide: CrystalariumGuide;
   private holder: Phaser.GameObjects.Container | null = null;
   private portrait: CrystalariumPortraitView | null = null;
+  private illustrated: CrystalariumIllustratedView | null = null;
   private portraitQuery: MediaQueryList | null = null;
   private leaving = false;
   private dragSource: number | null = null;
@@ -77,7 +79,7 @@ export class CrystalariumFullMode {
 
   public start(): void {
     this.scene.cameras.main.setBackgroundColor('#142944');
-    this.portrait = new CrystalariumPortraitView({
+    const actions: CrystalariumPortraitActions = {
       cell: (index) => this.pick(index),
       dragMove: (source, target) => {
         if (this.guide.getPrompt()?.lessonStep === 'pick-up') {
@@ -127,7 +129,13 @@ export class CrystalariumFullMode {
         this.render();
       },
       exit: () => this.leave(),
-    });
+    };
+    this.portrait = new CrystalariumPortraitView(actions);
+    // This is real gameplay using the existing controller, save store and guide.
+    // During C17 integration it is opt-in until the C18/C19/C20 gates pass.
+    if (CrystalariumIllustratedView.enabled()) {
+      this.illustrated = new CrystalariumIllustratedView(actions);
+    }
     // Keep native controls independently interactive on portrait phones.
     // Never disable the Phaser scene-wide input subsystem; browser diagnostics,
     // canvas launch/return and orientation changes share that lifecycle.
@@ -150,6 +158,8 @@ export class CrystalariumFullMode {
       this.holder = null;
       this.portrait?.destroy();
       this.portrait = null;
+      this.illustrated?.destroy();
+      this.illustrated = null;
     });
     this.render();
   }
@@ -165,6 +175,8 @@ export class CrystalariumFullMode {
     // Late pointer events from the same touch must not activate the next scene.
     this.portrait?.destroy();
     this.portrait = null;
+    this.illustrated?.destroy();
+    this.illustrated = null;
     this.onExit();
   }
 
@@ -627,19 +639,20 @@ export class CrystalariumFullMode {
   }
 
   private render(): void {
-    if (this.portraitQuery?.matches)
-      this.portrait?.render({
-        state: this.state,
-        selected: this.selected,
-        message: this.message,
-        quiet: this.quiet,
-        globallyMuted: getBrowserAudioSettingsStore().load().muted,
-        washArmed: this.washArmed,
-        resetArmed: this.resetArmed,
-        source: this.session.source,
-        guide: this.guide.getPrompt(),
-        celebration: this.celebration,
-      });
+    const presentation: CrystalariumPortraitPresentation = {
+      state: this.state,
+      selected: this.selected,
+      message: this.message,
+      quiet: this.quiet,
+      globallyMuted: getBrowserAudioSettingsStore().load().muted,
+      washArmed: this.washArmed,
+      resetArmed: this.resetArmed,
+      source: this.session.source,
+      guide: this.guide.getPrompt(),
+      celebration: this.celebration,
+    };
+    if (this.portraitQuery?.matches) this.portrait?.render(presentation);
+    this.illustrated?.render(presentation);
     this.celebration = null;
     this.holder?.destroy(true);
     const holder = this.scene.add.container(0, 0).setDepth(20);

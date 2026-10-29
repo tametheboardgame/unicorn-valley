@@ -18,9 +18,13 @@ import {
 const SCENE = 'CrystalariumActivityScene';
 const SANDBOX_KEY = 'unicorn-valley:just-games:crystalarium:v1';
 
-async function enterResonanceGarden(page: Page, teach = false): Promise<void> {
+async function enterResonanceGarden(
+  page: Page,
+  teach = false,
+  illustrated = false,
+): Promise<void> {
   await page.addInitScript(() => window.localStorage.clear());
-  await openDiagnostics(page);
+  await openDiagnostics(page, illustrated ? '/?diagnostics=1&crystalariumLiveArt=1' : '/?diagnostics=1');
   await waitForScene(page, 'TitleScene');
   await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
   await waitForScene(page, 'JustGamesScene');
@@ -1335,4 +1339,53 @@ test('C17 viewport-fit v2 deploy preview keeps the entire desktop composition vi
   expect(result.pageExtraHeight).toBeLessThanOrEqual(1);
   expect(result.pageExtraWidth).toBeLessThanOrEqual(1);
   expect(result.railExtraWidth).toBeGreaterThan(0);
+});
+
+test('C21 staged illustrated live game uses canonical state, actions and isolated save', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  const cells = live.locator('[data-crystalarium-cell]');
+  await expect(cells).toHaveCount(42);
+  await expect(live.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
+  const frame = await live.locator('.crystalarium-live-frame').boundingBox();
+  expect(frame).not.toBeNull();
+  const first = await cells.first().boundingBox();
+  const last = await cells.last().boundingBox();
+  expect(first).not.toBeNull();
+  expect(last).not.toBeNull();
+  expect(first!.x).toBeGreaterThanOrEqual(frame!.x);
+  expect(last!.x + last!.width).toBeLessThanOrEqual(frame!.x + frame!.width);
+  expect(last!.y + last!.height).toBeLessThanOrEqual(frame!.y + frame!.height);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBeLessThanOrEqual(1);
+
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  const grown = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(grown.cells).toHaveLength(42);
+  expect(grown.cells[2]).toEqual({ family: 'low', tier: 0 });
+  await live.locator('[data-crystalarium-cell="0"]').click();
+  await live.locator('[data-crystalarium-cell="1"]').click();
+  await expect(live.locator('[data-crystalarium-action="offer"]')).toBeEnabled();
+  await live.locator('[data-crystalarium-action="offer"]').click();
+  const offered = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(offered.completed).toBe(1);
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+
+  await live.locator('[data-crystalarium-action="storage"]').click();
+  await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toBeVisible();
+  await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
+  await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(8);
+  await live.locator('[data-crystalarium-action="storage-close"]').click();
+  await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath('c21-live-art-1440.png'), fullPage: true });
+});
+
+test('C21 visual integration opt-in leaves existing full-game UI default unchanged', async ({ page }) => {
+  await enterResonanceGarden(page);
+  await expect(page.locator('[data-crystalarium-live]')).toHaveCount(0);
+  const scene = await fullBoardSnapshot(page);
+  expect(scene.objects.filter((object) => object.name.startsWith('crystalarium-full-cell:'))).toHaveLength(42);
 });
