@@ -1235,15 +1235,33 @@ async function measureC17FrameGeometry(page: Page) {
       pageExtraWidth: document.documentElement.scrollWidth - innerWidth,
       boardExtraWidth: board.scrollWidth - board.clientWidth,
       railExtraWidth: rail.scrollWidth - rail.clientWidth,
+      toolsBelowOrders: (() => {
+        const tools = document.querySelector<HTMLElement>('.actions');
+        const orders = document.querySelector<HTMLElement>('.orders-panel');
+        return !!tools && !!orders && tools.getBoundingClientRect().top >= orders.getBoundingClientRect().bottom - 1;
+      })(),
+      allPanelsVisible: (() => {
+        const selectors = ['.board-panel', '.orders-panel', '.actions', '.producers', '.footer'];
+        return selectors.every((selector) => {
+          const el = document.querySelector<HTMLElement>(selector);
+          if (!el) return false;
+          const rect = el.getBoundingClientRect();
+          return rect.top >= -1 && rect.bottom <= innerHeight + 1 && rect.left >= -1 && rect.right <= innerWidth + 1;
+        });
+      })(),
     };
   });
 }
 
 test.describe('C17 no-save artwork frame-fit regression', () => {
   for (const viewport of [
+    { width: 1000, height: 660 },
+    { width: 1024, height: 768 },
+    { width: 1100, height: 700 },
     { width: 1280, height: 720 },
     { width: 1440, height: 900 },
     { width: 1534, height: 682 },
+    { width: 1918, height: 852 },
   ]) {
     test(`desktop ${viewport.width}x${viewport.height} has no page scroll or frame overlap`, async ({
       page,
@@ -1258,6 +1276,8 @@ test.describe('C17 no-save artwork frame-fit regression', () => {
       expect(result.pageExtraHeight).toBeLessThanOrEqual(1);
       expect(result.pageExtraWidth).toBeLessThanOrEqual(1);
       expect(result.railExtraWidth).toBeGreaterThan(0);
+      expect(result.toolsBelowOrders).toBe(true);
+      expect(result.allPanelsVisible).toBe(true);
       await page.locator('#open-storage').click();
       await expect(page.locator('#storage')).toBeVisible();
       await page.locator('#storage-close').click();
@@ -1288,4 +1308,23 @@ test.describe('C17 no-save artwork frame-fit regression', () => {
       await expect(page.locator('#guide')).toBeHidden();
     });
   }
+});
+
+
+test('C17 viewport-fit v2 deploy preview keeps the entire desktop composition visible', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1534, height: 682 });
+  await page.goto('/design-previews/crystalarium-c17-viewport-fit-v2.html');
+  await expect(page.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
+  const result = await measureC17FrameGeometry(page);
+  expect(result.count).toBe(42);
+  expect(result.fits).toBe(true);
+  expect(result.toolsBelowOrders).toBe(true);
+  expect(result.allPanelsVisible).toBe(true);
+  expect(result.width).toBeGreaterThanOrEqual(48);
+  expect(result.height).toBeGreaterThanOrEqual(48);
+  expect(result.pageExtraHeight).toBeLessThanOrEqual(1);
+  expect(result.pageExtraWidth).toBeLessThanOrEqual(1);
+  expect(result.railExtraWidth).toBeGreaterThan(0);
 });
