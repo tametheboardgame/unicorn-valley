@@ -1238,7 +1238,11 @@ async function measureC17FrameGeometry(page: Page) {
       toolsBelowOrders: (() => {
         const tools = document.querySelector<HTMLElement>('.actions');
         const orders = document.querySelector<HTMLElement>('.orders-panel');
-        return !!tools && !!orders && tools.getBoundingClientRect().top >= orders.getBoundingClientRect().bottom - 1;
+        return (
+          !!tools &&
+          !!orders &&
+          tools.getBoundingClientRect().top >= orders.getBoundingClientRect().bottom - 1
+        );
       })(),
       allPanelsVisible: (() => {
         const selectors = ['.board-panel', '.orders-panel', '.actions', '.producers', '.footer'];
@@ -1246,7 +1250,12 @@ async function measureC17FrameGeometry(page: Page) {
           const el = document.querySelector<HTMLElement>(selector);
           if (!el) return false;
           const rect = el.getBoundingClientRect();
-          return rect.top >= -1 && rect.bottom <= innerHeight + 1 && rect.left >= -1 && rect.right <= innerWidth + 1;
+          return (
+            rect.top >= -1 &&
+            rect.bottom <= innerHeight + 1 &&
+            rect.left >= -1 &&
+            rect.right <= innerWidth + 1
+          );
         });
       })(),
     };
@@ -1309,7 +1318,6 @@ test.describe('C17 no-save artwork frame-fit regression', () => {
     });
   }
 });
-
 
 test('C17 viewport-fit v2 deploy preview keeps the entire desktop composition visible', async ({
   page,
