@@ -1504,6 +1504,106 @@
       "runtimeApproved": false,
       "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
       "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/brook-wash.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: brook-wash",
+      "bytes": 1187,
+      "gitBlobSha": "65b8a3288ab954afa94b816eae5a7df30c6cb17c",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/fresh-board.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: fresh-board",
+      "bytes": 1229,
+      "gitBlobSha": "c8c9c47de9d433d0bca39d42da5d01970f8b195c",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/harmony.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: harmony",
+      "bytes": 1223,
+      "gitBlobSha": "6e627713d0b940f6b25f85884b1e09f2386f60f1",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/help.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: help",
+      "bytes": 1186,
+      "gitBlobSha": "d11d8cf741f73755cd29eea9ffc242a312b31195",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/leave.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: leave",
+      "bytes": 1211,
+      "gitBlobSha": "11ee2c2453338990ecf6928b0ab694300144b8bc",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/polish.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: polish",
+      "bytes": 1173,
+      "gitBlobSha": "6743a425331e502fc9a09fc32fe32ae23fc1a3fc",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/settings.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: settings",
+      "bytes": 1222,
+      "gitBlobSha": "be4bec4042b33f2458cd0a5d7605a8ebd9fd0c93",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/skip-guide.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: skip-guide",
+      "bytes": 1139,
+      "gitBlobSha": "9d8f51cb9d267467ad09d23ac47d26cfa5d4f33b",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/sound-off.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: sound-off",
+      "bytes": 1152,
+      "gitBlobSha": "f63f11433fcc136949a7ffd59cc35074eb699795",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/sound-on.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: sound-on",
+      "bytes": 1161,
+      "gitBlobSha": "24cb7f566df7a5d9db8b6c50380cc0ae5d892b78",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
     }
   ],
   "releaseChecks": [
@@ -1884,7 +1984,11 @@
     "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
     "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
     "assetCount": 18,
-    "approvedCrystalFamiliesReused": ["low", "bright", "bell"],
+    "approvedCrystalFamiliesReused": [
+      "low",
+      "bright",
+      "bell"
+    ],
     "components": [
       "six illustration-only normal, progress, ready, focus, locked and completed card state surfaces",
       "independent ready aura",
@@ -2000,5 +2104,31 @@
       ],
       "next": "Complete remaining C17 icon/action/visual-composition audit then C18 multi-order pure rules and legacy-save migration gate B; implement storage C19 only after separate exact migration/atomic-transfer review."
     }
+  },
+  "contextualControlsArt": {
+    "status": "C17_CANDIDATE_PENDING_USER_VISUAL_REVIEW",
+    "createdOn": "2026-10-29",
+    "assetCount": 10,
+    "root": "public/design-assets/crystalarium-c17/context-controls/",
+    "preview": "/design-previews/crystalarium-c17-context-controls.html",
+    "sourceArchive": "https://drive.google.com/file/d/15xTZqev4gJreRThUDZygnIxvY6NdXvZy/view?usp=drivesdk",
+    "coverage": "Help, sound on/off, leave, Harmony, Polish, Brook Wash, Fresh Board, settings and guide skip",
+    "interactionRule": "Accessible minimum 48px click targets; SVG supplies icon only, no painted text/quantities; focus, hover, disabled and reduced motion handled by the shared UI and CSS; no game mutations in C17.",
+    "artApproval": "NOT_YET_USER_APPROVED"
+  },
+  "finalCompositionReview": {
+    "status": "C17_NO_SAVE_PREVIEW_COMMITTED_AWAITING_SHA_BOUND_VISUAL_ACCEPTANCE",
+    "createdOn": "2026-10-29",
+    "url": "/design-previews/crystalarium-c17-final-composition.html",
+    "sourceArchive": "https://drive.google.com/file/d/15xTZqev4gJreRThUDZygnIxvY6NdXvZy/view?usp=drivesdk",
+    "demonstration": "Desktop board-left, potions/wells next, horizontally overflowing order cards right; portrait board-first/well-row/order rail/actions; storage/spotlight example; all illustrative no saves.",
+    "checkSummary": "Static JavaScript syntax and XML passed; Chromium set_content DOM/geometry smoke passed at 320×700, 390×844, 768×1024, 1280×720, 1440×900: 42 sockets, 4 overflowing sample orders, 6 tool controls, 48px socket width, zero document overflow, functional demo storage/help and zero JS exceptions. Local browser cannot retrieve local file/HTTP asset URLs in this execution environment, so SHA-bound exact-asset visual rendering and accessibility/contrast acceptance are still pending.",
+    "remaining": [
+      "Actual source-bound deployed CSS/img loading and screenshots of approved painted background/board, mobile contrast, socket compositing and typography",
+      "Review board socket state prototypes (empty/selected/valid/invalid) and final frame fit, which are not yet artwork-locked",
+      "Check tool glyph visual acceptance, labels, keyboard/zoom focus and reduced-motion in runtime",
+      "Check lazy-loaded image/no-art fallback and interaction bridge with canonical gameplay at C21-C23"
+    ],
+    "runtimeApproved": false
   }
 }
