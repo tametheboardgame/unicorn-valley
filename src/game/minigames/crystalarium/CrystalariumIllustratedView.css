@@ -87,7 +87,8 @@
   flex: 1;
   display: grid;
   align-items: stretch;
-  grid-template-columns: minmax(0, 1.5fr) clamp(88px, 7vw, 110px) minmax(0, 0.82fr);
+  /* Portrait board fits by height; give the spare landscape width to order cards. */
+  grid-template-columns: minmax(0, 1fr) clamp(88px, 7vw, 110px) minmax(0, 1.05fr);
   grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(5px, 0.6vw, 10px);
 }
