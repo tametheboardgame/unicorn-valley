@@ -218,12 +218,9 @@ export class CrystalariumIllustratedView {
       if (piece) cell.append(image(sprite(piece)));
       board.append(cell);
     }
-    frame.append(
-      node('div', 'crystalarium-live-underlay'),
-      board,
-      image(ASSETS + 'board-frame-only-approved-candidate.webp'),
-    );
-    frame.lastElementChild?.classList.add('crystalarium-live-frame-art');
+    // The grid owns its geometry. A lightweight CSS border hugs the 42 sockets.
+    // The original illustrated frame stays archived, not stretched over gameplay.
+    frame.append(board);
     boardViewport.append(frame);
     const gardenFooter = node('div', 'crystalarium-live-board-footer');
     const storageButton = this.button(

@@ -1409,7 +1409,8 @@ test('C21 illustrated real game survives a zoom-equivalent desktop viewport with
   const live = page.locator('[data-crystalarium-live="true"]');
   await expect(live).toBeVisible();
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
-  await expect(live.locator('.crystalarium-live-frame-art')).toBeVisible();
+  await expect(live.locator('.crystalarium-live-frame')).toBeVisible();
+  await expect(live.locator('.crystalarium-live-frame-art')).toHaveCount(0);
   const metrics = await live.evaluate((element) => {
     const bounds = element.getBoundingClientRect();
     return {
@@ -1542,8 +1543,8 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   });
   expect(geometry.socketAspects).toHaveLength(42);
   for (const ratio of geometry.socketAspects) {
-    expect(ratio).toBeGreaterThan(0.92);
-    expect(ratio).toBeLessThan(1.1);
+    expect(ratio).toBeGreaterThan(1.1);
+    expect(ratio).toBeLessThan(1.4);
   }
   expect(geometry.overflowX).toBeLessThanOrEqual(1);
   expect(geometry.overflowY).toBeLessThanOrEqual(1);
@@ -1555,7 +1556,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
-test('C21 live board has near-square sockets and clean parchment artwork', async ({ page }) => {
+test('C21 CSS frame follows wide 7x6 sockets with clean parchment artwork', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
@@ -1573,11 +1574,16 @@ test('C21 live board has near-square sockets and clean parchment artwork', async
     const b = cells.getBoundingClientRect();
     return {
       socketCount: cells.children.length,
-      innerTop: (b.top - a.top) / a.height,
-      innerBottom: (b.bottom - a.top) / a.height,
+      gridInsetLeft: b.left - a.left,
+      gridInsetRight: a.right - b.right,
+      gridInsetTop: b.top - a.top,
+      gridInsetBottom: a.bottom - b.bottom,
       frameWidth: a.width,
       frameHeight: a.height,
       gardenWidth: garden.getBoundingClientRect().width,
+      gridWidth: b.width,
+      frameBorder: getComputedStyle(frame).borderTopWidth,
+      illustratedFrameCount: root.querySelectorAll('.crystalarium-live-frame-art').length,
       gardenBorder: getComputedStyle(garden).borderTopWidth,
       guideGrowsFromWell: wells.some((well) => well.dataset.crystalariumAction === 'well-low'),
       noExtraGrow: !tools.querySelector('[data-crystalarium-action="grow"]'),
@@ -1591,17 +1597,27 @@ test('C21 live board has near-square sockets and clean parchment artwork', async
     };
   });
   expect(geometry.socketCount).toBe(42);
-  expect(geometry.innerTop).toBeGreaterThanOrEqual(0.18);
-  expect(geometry.innerBottom).toBeLessThanOrEqual(0.8);
+  for (const inset of [
+    geometry.gridInsetLeft,
+    geometry.gridInsetRight,
+    geometry.gridInsetTop,
+    geometry.gridInsetBottom,
+  ]) {
+    expect(inset).toBeGreaterThanOrEqual(11);
+    expect(inset).toBeLessThanOrEqual(19);
+  }
   expect(geometry.frameWidth).toBeGreaterThan(0);
   expect(geometry.frameHeight).toBeGreaterThan(0);
-  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.2, 1);
+  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.44, 1);
+  expect(geometry.frameBorder).toBe('3px');
+  expect(geometry.illustratedFrameCount).toBe(0);
+  expect(geometry.gridWidth / geometry.gardenWidth).toBeGreaterThan(0.7);
   expect(geometry.socketAspects).toHaveLength(42);
   for (const ratio of geometry.socketAspects) {
-    expect(ratio).toBeGreaterThan(0.92);
-    expect(ratio).toBeLessThan(1.1);
+    expect(ratio).toBeGreaterThan(1.1);
+    expect(ratio).toBeLessThan(1.4);
   }
-  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.55);
+  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.74);
   expect(geometry.gardenBorder).toBe('0px');
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
