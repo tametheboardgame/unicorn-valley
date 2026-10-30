@@ -1531,10 +1531,13 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
         fr.bottom <= br.bottom + 1,
       socketCount: root.querySelectorAll('[data-crystalarium-cell]').length,
       documentOverflow: document.documentElement.scrollHeight - innerHeight,
-      socketAspects: Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-cell'), (cell) => {
-        const rect = cell.getBoundingClientRect();
-        return rect.width / rect.height;
-      }),
+      socketAspects: Array.from(
+        root.querySelectorAll<HTMLElement>('.crystalarium-live-cell'),
+        (cell) => {
+          const rect = cell.getBoundingClientRect();
+          return rect.width / rect.height;
+        },
+      ),
     };
   });
   expect(geometry.socketAspects).toHaveLength(42);
@@ -1552,9 +1555,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
-test('C21 live board has near-square sockets and clean parchment artwork', async ({
-  page,
-}) => {
+test('C21 live board has near-square sockets and clean parchment artwork', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
@@ -1605,7 +1606,9 @@ test('C21 live board has near-square sockets and clean parchment artwork', async
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
   expect(geometry.cardArt).toContain('order-card-clean.svg');
-  const cardSource = await page.request.get('/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg');
+  const cardSource = await page.request.get(
+    '/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg',
+  );
   expect(cardSource.ok()).toBe(true);
   expect(await cardSource.text()).not.toContain('id="grain"');
   expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
