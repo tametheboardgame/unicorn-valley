@@ -196,7 +196,9 @@ export class CrystalariumIllustratedView {
     const garden = node('section', 'crystalarium-live-garden');
     garden.setAttribute('aria-label', 'Seven by six crystal merge board');
     const gardenTitle = node('div', 'crystalarium-live-section-title');
-    gardenTitle.append(node('h2', '', this.storagePickMode ? 'Choose a crystal to store' : 'Crystal Garden'));
+    gardenTitle.append(
+      node('h2', '', this.storagePickMode ? 'Choose a crystal to store' : 'Crystal Garden'),
+    );
     const boardViewport = node('div', 'crystalarium-live-board-viewport');
     const frame = node('div', 'crystalarium-live-frame');
     const board = node('div', 'crystalarium-live-grid');
@@ -444,8 +446,10 @@ export class CrystalariumIllustratedView {
         node(
           'p',
           '',
-          storedCount + ' / ' + state.shelf.length +
-            ' slots used. Tap a stored crystal to return it to the first empty board socket.',
+          storedCount +
+            ' / ' +
+            state.shelf.length +
+            ' slots used. Tap a stored crystal to return it to the first empty board socket.'
         ),
         node('p', 'crystalarium-live-storage-message', view.message),
       );
