@@ -113,13 +113,46 @@ export class CrystalariumIllustratedView {
     command: string,
     callback: () => void,
     disabled = false,
+    pointerActivate = false,
   ): HTMLButtonElement {
     const element = node('button', 'crystalarium-live-button', text);
     element.type = 'button';
     element.disabled = disabled;
     element.dataset.crystalariumAction = command;
-    element.addEventListener('click', () => {
-      if (!element.disabled) callback();
+    if (pointerActivate) {
+      let down: { id: number; x: number; y: number } | null = null;
+      element.addEventListener('pointerdown', (event) => {
+        if (!element.disabled && event.isPrimary && event.button === 0) {
+          down = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        }
+      });
+      element.addEventListener('pointercancel', () => {
+        down = null;
+      });
+      element.addEventListener('pointerup', (event) => {
+        const start = down;
+        down = null;
+        if (!start || event.pointerId !== start.id || element.disabled) return;
+        if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 12) return;
+        const bounds = element.getBoundingClientRect();
+        if (
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom
+        ) {
+          return;
+        }
+        // The controller may replace the button synchronously after growth.
+        // Act on pointer-up rather than relying on a later synthetic click
+        // against a button that is no longer in the document.
+        callback();
+      });
+    }
+    element.addEventListener('click', (event) => {
+      // Native pointer clicks were already handled on pointer-up; detail=0
+      // preserves Enter, Space and programmatic accessibility activation.
+      if (!element.disabled && (!pointerActivate || event.detail === 0)) callback();
     });
     return element;
   }
@@ -269,6 +302,7 @@ export class CrystalariumIllustratedView {
         'well-' + family,
         () => this.actions.growFromWell(family),
         !available || (firstLesson && activeLesson !== 'grow'),
+        true,
       );
       well.classList.add('crystalarium-live-well');
       const isGrowTarget = activeLesson === 'grow' && available && family === state.selectedFamily;

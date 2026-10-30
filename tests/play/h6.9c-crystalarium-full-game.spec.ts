@@ -1653,6 +1653,68 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
+test('C20 rapid generator pointer taps and keyboard activation are all saved during pouring', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const well = live.locator('[data-crystalarium-action="well-low"]');
+  const bounds = await well.boundingBox();
+  if (!bounds) throw new Error('Missing playable Low generator');
+  const x = bounds.x + bounds.width / 2;
+  const y = bounds.y + bounds.height / 2;
+
+  // Use real pointer-down/up pairs, not DOM click(), to catch detached
+  // generator elements losing their synthetic clicks under frequent redraws.
+  for (let index = 0; index < 8; index += 1) {
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.up();
+  }
+  const stateAfterPointers = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(stateAfterPointers.cells.filter(Boolean)).toHaveLength(8);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+
+  // Keyboard-based activation must work once, not twice, without pointer-up.
+  await well.focus();
+  await page.keyboard.press('Enter');
+  const stateAfterKeyboard = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(stateAfterKeyboard.cells.filter(Boolean)).toHaveLength(9);
+
+  // The growth animation occupies a bounded canvas that cannot cover
+  // controls or consume full-screen repaint work on every frame.
+  const fx = live.locator('.crystalarium-live-growth-fx');
+  await expect(fx).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  const geometry = await fx.evaluate((layer) => {
+    const canvas = layer.querySelector('canvas');
+    const root = layer.parentElement;
+    if (!canvas || !root) throw new Error('Missing animation canvas/root');
+    const box = canvas.getBoundingClientRect();
+    const rootBox = root.getBoundingClientRect();
+    return {
+      areaRatio: (box.width * box.height) / (rootBox.width * rootBox.height),
+      pointerEvents: getComputedStyle(canvas).pointerEvents,
+      rootPointerEvents: getComputedStyle(layer).pointerEvents,
+    };
+  });
+  expect(geometry.areaRatio).toBeLessThan(0.8);
+  expect(geometry.pointerEvents).toBe('none');
+  expect(geometry.rootPointerEvents).toBe('none');
+  const target = await page.evaluate(({ x: cx, y: cy }) => {
+    return document.elementFromPoint(cx, cy)?.closest('[data-crystalarium-action]')?.getAttribute(
+      'data-crystalarium-action',
+    );
+  }, { x, y });
+  expect(target).toBe('well-low');
+});
+
 test('C20 potion canvas stays attached through a controller redraw during a pour', async ({
   page,
 }) => {

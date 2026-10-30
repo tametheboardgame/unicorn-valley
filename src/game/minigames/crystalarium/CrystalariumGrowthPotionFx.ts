@@ -5,6 +5,7 @@ const POUR_FRAMES = 12;
 const EFFECT_FRAMES = 4;
 const FRAME_MS = 95;
 const END_FADE_MS = 160;
+const MAX_DRAW_RATE_MS = 1000 / 30;
 
 function loadFrames(prefix: string, count: number): HTMLImageElement[] {
   return Array.from({ length: count }, (_, index) => {
@@ -100,9 +101,46 @@ export class CrystalariumGrowthPotionFx {
         crystalHeight: cellBounds.height + 10,
       };
 
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      this.canvas.width = Math.round(rootBounds.width * ratio);
-      this.canvas.height = Math.round(rootBounds.height * ratio);
+      // The potion only occupies the well and one board socket. A
+      // full-viewport high-DPI canvas was needlessly clearing millions of
+      // pixels on every refresh and competing with real pointer input.
+      const left = Math.max(
+        0,
+        Math.floor(Math.min(placement.pourX, placement.splashX, placement.crystalX)),
+      );
+      const top = Math.max(
+        0,
+        Math.floor(Math.min(placement.pourY, placement.splashY, placement.crystalY)),
+      );
+      const right = Math.min(
+        rootBounds.width,
+        Math.ceil(
+          Math.max(
+            placement.pourX + placement.pourSize,
+            placement.splashX + placement.splashSize,
+            placement.crystalX + placement.crystalWidth,
+          ),
+        ),
+      );
+      const bottom = Math.min(
+        rootBounds.height,
+        Math.ceil(
+          Math.max(
+            placement.pourY + placement.pourSize,
+            placement.splashY + placement.splashSize,
+            placement.crystalY + placement.crystalHeight,
+          ),
+        ),
+      );
+      const width = Math.max(1, right - left);
+      const height = Math.max(1, bottom - top);
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      this.canvas.style.left = left + 'px';
+      this.canvas.style.top = top + 'px';
+      this.canvas.style.width = width + 'px';
+      this.canvas.style.height = height + 'px';
+      this.canvas.width = Math.round(width * ratio);
+      this.canvas.height = Math.round(height * ratio);
       const context = this.canvas.getContext('2d', { alpha: true });
       if (!context) return;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -112,8 +150,14 @@ export class CrystalariumGrowthPotionFx {
       this.layer.dataset.crystalariumGrowthCell = String(cue.cellIndex);
       this.layer.dataset.crystalariumCompositor = 'canvas';
 
+      let lastDrawAt = -Infinity;
       const draw = (now: number): void => {
         if (this.destroyed || generation !== this.generation) return;
+        if (now - lastDrawAt < MAX_DRAW_RATE_MS) {
+          this.frameRequest = window.requestAnimationFrame(draw);
+          return;
+        }
+        lastDrawAt = now;
         const elapsed = Math.max(0, now - startedAt);
         const progress = Math.min(elapsed / FRAME_MS, POUR_FRAMES - 1);
         const index = Math.floor(progress);
@@ -127,13 +171,13 @@ export class CrystalariumGrowthPotionFx {
         // One atomic canvas repaint, rather than toggling 20 translucent DOM
         // elements. The previous fully decoded frame remains visible while
         // the next frame blends in, preventing inter-frame blank flashes.
-        context.clearRect(0, 0, rootBounds.width, rootBounds.height);
+        context.clearRect(0, 0, width, height);
         context.save();
         context.globalAlpha = fade;
         context.drawImage(
           this.pours[index],
-          placement.pourX,
-          placement.pourY,
+          placement.pourX - left,
+          placement.pourY - top,
           placement.pourSize,
           placement.pourSize,
         );
@@ -141,8 +185,8 @@ export class CrystalariumGrowthPotionFx {
           context.globalAlpha = fade * blend;
           context.drawImage(
             this.pours[next],
-            placement.pourX,
-            placement.pourY,
+            placement.pourX - left,
+            placement.pourY - top,
             placement.pourSize,
             placement.pourSize,
           );
@@ -152,15 +196,15 @@ export class CrystalariumGrowthPotionFx {
           context.globalAlpha = fade;
           context.drawImage(
             this.splashes[effectIndex],
-            placement.splashX,
-            placement.splashY,
+            placement.splashX - left,
+            placement.splashY - top,
             placement.splashSize,
             placement.splashSize,
           );
           context.drawImage(
             this.growths[effectIndex],
-            placement.crystalX,
-            placement.crystalY,
+            placement.crystalX - left,
+            placement.crystalY - top,
             placement.crystalWidth,
             placement.crystalHeight,
           );
