@@ -77,3 +77,8 @@ For each generated visual: store source/reference/prompt/provenance, licence/app
 - **Interaction prototypes:** spotlight tutorial with actual target, order-ready click/consumption, overlapping ready cards, storage drag both ways, potion spend and instant refill; human approval before irreversible economy/migration integration.
 - **Final visuals:** all generator families and major crystal tiers distinguishable by silhouette, complete first board row on narrow screens, order rail horizontal movement, exact focus/hit targets, background readability, accessible reduced-motion.
 - **Final integrity:** previous saves preserved, separate world and Just Games flows, original opening-melody unchanged, long-play no-blocking route, exact-head technical CI and human approval before H6.9D or any merge.
+
+
+## 30 October 2026, user-requested live visual correction candidate
+
+The reviewed live game wastes space by distorting the original 1536×1024 transparent board frame from 3:2 to 6:5, imposing a 720px cap, and nesting the game within a dark bordered panel. The candidate now fills the Crystal Garden with the native-proportion board and 42 real sockets, overlays heading/Storage within the transparent margins, and removes the extra border and backing. Resonance Order cards use a newly authored transparent SVG parchment/gold skin instead of the original WebP with a blue chroma matte and polygon-clipping workaround. All original raster assets remain preserved. This is a draft visual iteration requiring browser and human review, not C17 visual acceptance or merge authorisation.

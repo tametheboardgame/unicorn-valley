@@ -1543,7 +1543,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
-test('C21 live illustration keeps 42 sockets inside the decorative frame and crops card mattes', async ({
+test('C21 live board fills the garden using native frame and clean order artwork', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
@@ -1552,10 +1552,13 @@ test('C21 live illustration keeps 42 sockets inside the decorative frame and cro
   const geometry = await live.evaluate((root) => {
     const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
     const cells = root.querySelector<HTMLElement>('.crystalarium-live-grid');
+    const garden = root.querySelector<HTMLElement>('.crystalarium-live-garden');
     const card = root.querySelector<HTMLElement>('.crystalarium-live-order-card');
     const wells = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-well'));
     const tools = root.querySelector<HTMLElement>('.crystalarium-live-tools');
-    if (!frame || !cells || !card || !tools) throw new Error('Missing Crystalarium components');
+    if (!frame || !garden || !cells || !card || !tools) {
+      throw new Error('Missing Crystalarium components');
+    }
     const a = frame.getBoundingClientRect();
     const b = cells.getBoundingClientRect();
     return {
@@ -1564,19 +1567,24 @@ test('C21 live illustration keeps 42 sockets inside the decorative frame and cro
       innerBottom: (b.bottom - a.top) / a.height,
       frameWidth: a.width,
       frameHeight: a.height,
+      gardenWidth: garden.getBoundingClientRect().width,
+      gardenBorder: getComputedStyle(garden).borderTopWidth,
       guideGrowsFromWell: wells.some((well) => well.dataset.crystalariumAction === 'well-low'),
       noExtraGrow: !tools.querySelector('[data-crystalarium-action="grow"]'),
-      cardSilhouette: getComputedStyle(card, '::before').clipPath,
-      matteBackground: getComputedStyle(card).backgroundColor,
+      cardArt: getComputedStyle(card).backgroundImage,
+      cardAspect: card.getBoundingClientRect().width / card.getBoundingClientRect().height,
     };
   });
   expect(geometry.socketCount).toBe(42);
-  expect(geometry.innerTop).toBeGreaterThanOrEqual(0.205);
-  expect(geometry.innerBottom).toBeLessThanOrEqual(0.79);
+  expect(geometry.innerTop).toBeGreaterThanOrEqual(0.18);
+  expect(geometry.innerBottom).toBeLessThanOrEqual(0.80);
   expect(geometry.frameWidth).toBeGreaterThan(0);
   expect(geometry.frameHeight).toBeGreaterThan(0);
+  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.5, 1);
+  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.83);
+  expect(geometry.gardenBorder).toBe('0px');
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
-  expect(geometry.cardSilhouette).toContain('polygon');
-  expect(geometry.matteBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(geometry.cardArt).toContain('order-card-clean.svg');
+  expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
 });
