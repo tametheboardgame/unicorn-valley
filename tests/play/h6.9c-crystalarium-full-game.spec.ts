@@ -35,10 +35,10 @@ async function enterResonanceGarden(
   await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
   if (seededState) {
-    await page.evaluate(
-      ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-      { key: SANDBOX_KEY, state: seededState },
-    );
+    await page.evaluate(({ key, state }) => localStorage.setItem(key, JSON.stringify(state)), {
+      key: SANDBOX_KEY,
+      state: seededState,
+    });
   }
   // Existing free-play regressions intentionally skip the new first-time lesson.
   // The dedicated C11B scenario below tests it from a completely fresh save.
@@ -1496,7 +1496,9 @@ test('C21 top Guide is retained while four expanded Garden Tools omit the duplic
   await expect(
     live.locator('.crystalarium-live-header-actions [data-crystalarium-action="guide"]'),
   ).toHaveCount(1);
-  await expect(live.locator('.crystalarium-live-tools [data-crystalarium-action="guide"]')).toHaveCount(0);
+  await expect(
+    live.locator('.crystalarium-live-tools [data-crystalarium-action="guide"]'),
+  ).toHaveCount(0);
   await expect(live.locator('.crystalarium-live-tools .crystalarium-live-tool')).toHaveCount(4);
   await expect(live.locator('.crystalarium-live-message')).toHaveCount(0);
   const layout = await live.evaluate((root) => {
@@ -1525,6 +1527,63 @@ test('C21 top Guide is retained while four expanded Garden Tools omit the duplic
   expect(layout.headingBacking).toContain('linear-gradient');
   expect(layout.subtitleBacking).toContain('linear-gradient');
   expect(layout.pageOverflow).toBeLessThanOrEqual(1);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C21 Brook Chorus ready two-crystal card keeps its title and status inside parchment', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  const seed = createCrystalariumFullState();
+  const cells = [...seed.cells];
+  cells[0] = { family: 'low', tier: 2 };
+  cells[1] = { family: 'bright', tier: 2 };
+  await enterResonanceGarden(page, false, true, { ...seed, completed: 6, cells });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const card = live.locator('.crystalarium-live-order-card.has-two-goals.is-ready');
+  await expect(card).toBeVisible();
+  await expect(card).toBeEnabled();
+  await expect(card.locator('strong')).toHaveText('Brook Chorus');
+  await expect(card.locator('em')).toHaveText('Ready to offer');
+  await expect(card.locator('.crystalarium-live-goal')).toHaveCount(2);
+
+  for (const viewport of [
+    { width: 1819, height: 792 },
+    { width: 960, height: 560 },
+  ]) {
+    await page.setViewportSize(viewport);
+    const layout = await card.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const title = element.querySelector('strong')!.getBoundingClientRect();
+      const goals = Array.from(element.querySelectorAll('.crystalarium-live-goal')).map((goal) =>
+        goal.getBoundingClientRect(),
+      );
+      const status = element.querySelector('em')!.getBoundingClientRect();
+      return {
+        cardTop: bounds.top,
+        cardBottom: bounds.bottom,
+        cardWidth: bounds.width,
+        titleTop: title.top,
+        titleBottom: title.bottom,
+        goals: goals.map((goal) => ({
+          x: goal.x,
+          y: goal.y,
+          top: goal.top,
+          bottom: goal.bottom,
+        })),
+        statusTop: status.top,
+        statusBottom: status.bottom,
+        pageOverflow: document.documentElement.scrollHeight - innerHeight,
+      };
+    });
+    expect(layout.titleTop).toBeGreaterThan(layout.cardTop + layout.cardWidth * 0.21);
+    expect(layout.titleBottom).toBeLessThan(layout.goals[0].top);
+    expect(Math.abs(layout.goals[0].x - layout.goals[1].x)).toBeLessThan(3);
+    expect(layout.goals[1].y).toBeGreaterThan(layout.goals[0].y + 20);
+    expect(layout.statusTop).toBeGreaterThan(layout.goals[1].bottom);
+    expect(layout.statusBottom).toBeLessThan(layout.cardBottom - layout.cardWidth * 0.15);
+    expect(layout.pageOverflow).toBeLessThanOrEqual(1);
+  }
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 

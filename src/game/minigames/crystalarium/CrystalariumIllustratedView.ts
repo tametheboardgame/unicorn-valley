@@ -316,6 +316,7 @@ export class CrystalariumIllustratedView {
     const offering = isReady && (!firstLesson || activeLesson === 'offer');
     const card = this.button('', 'offer', this.actions.offer, !(pattern && offering));
     card.classList.add('crystalarium-live-order-card');
+    card.classList.toggle('has-two-goals', pattern?.goals.length === 2);
     card.classList.toggle('has-three-goals', Boolean(pattern && pattern.goals.length >= 3));
     card.classList.toggle('is-guide-focus', activeLesson === 'offer');
     card.setAttribute('aria-label', 'Offer Resonance Order');
