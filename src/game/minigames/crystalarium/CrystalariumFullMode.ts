@@ -122,7 +122,10 @@ export class CrystalariumFullMode {
       shelve: () => this.shelveSelected(),
       wash: () => this.washSelected(),
       fresh: () => this.freshBoard(),
-      restore: (index) => this.run({ kind: 'other' }, () => restoreCrystal(this.state, index)),
+      restore: (index) => {
+        this.selected = null;
+        this.run({ kind: 'other' }, () => restoreCrystal(this.state, index));
+      },
       sound: () => {
         this.quiet = !this.quiet;
         this.render();
