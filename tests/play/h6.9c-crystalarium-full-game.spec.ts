@@ -1707,11 +1707,15 @@ test('C20 rapid generator pointer taps and keyboard activation are all saved dur
   expect(geometry.areaRatio).toBeLessThan(0.8);
   expect(geometry.pointerEvents).toBe('none');
   expect(geometry.rootPointerEvents).toBe('none');
-  const target = await page.evaluate(({ x: cx, y: cy }) => {
-    return document.elementFromPoint(cx, cy)?.closest('[data-crystalarium-action]')?.getAttribute(
-      'data-crystalarium-action',
-    );
-  }, { x, y });
+  const target = await page.evaluate(
+    ({ x: cx, y: cy }) => {
+      return document
+        .elementFromPoint(cx, cy)
+        ?.closest('[data-crystalarium-action]')
+        ?.getAttribute('data-crystalarium-action');
+    },
+    { x, y },
+  );
   expect(target).toBe('well-low');
 });
 
