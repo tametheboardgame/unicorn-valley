@@ -102,3 +102,8 @@ The live owner playtest of the temporary CSS frame confirmed that the 1.44:1 boa
 ## 30 October 2026, crystal-garden decorative border follows approved tall sockets
 
 Following the owner's approval to proceed from the taller-socket experiment, the illustrated live renderer retains the established 7×6, 42-cell layout, 0.92:1 board frame ratio, painted crystal sprites, tutorial placement and clean order cards. A **standalone, pointer-transparent decoration layer** now adds four mirrored leafy/gold/crystal corner ornaments and top/bottom sapphire jewellery, authored as independent transparent SVG assets. The artwork follows the CSS border calculated from the grid. It cannot set grid dimensions, consume flex space, change cell hitboxes or touch gameplay, and the earlier distorted source frame remains archived but unused. The candidate remains subject to the user's visual acceptance and exact-head CI; no C18–C24 system design or save changes are implied.
+
+
+### Decorative frame clipping safeguard
+
+The illustrated frame's corner ornaments deliberately overhang the CSS board border. The local board viewport therefore permits **visible, non-scrollable overflow** for decorative drawing only, while its containing Crystal Garden remains clipped and the document remains viewport-bound. This retains the accepted socket dimensions and frame ratio and prevents the new decorative corners being accidentally cropped at the board viewport boundary. Automated checks guard the absence of document scrolling, all 42 focus/click targets, and no independently scrolling board.

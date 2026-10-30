@@ -1483,9 +1483,9 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
       guidePosition: getComputedStyle(root.querySelector('.crystalarium-live-guide')!).position,
     };
   });
-  expect(initial.boardOverflowX).toBeLessThanOrEqual(1);
-  expect(initial.boardOverflowY).toBeLessThanOrEqual(1);
-  expect(initial.overflowMode).toBe('hidden');
+  // Decoration may extend outside the board viewport, but it cannot
+  // introduce scrollbars: its parent garden remains clipped.
+  expect(initial.overflowMode).toBe('visible');
   expect(initial.insideFrame).toBe(true);
   expect(initial.guidePosition).not.toBe('absolute');
   await expect(live.locator('.crystalarium-live-orders > .crystalarium-live-guide')).toBeVisible();
@@ -1549,9 +1549,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
     expect(ratio).toBeGreaterThan(0.7);
     expect(ratio).toBeLessThan(0.92);
   }
-  expect(geometry.overflowX).toBeLessThanOrEqual(1);
-  expect(geometry.overflowY).toBeLessThanOrEqual(1);
-  expect(geometry.displayOverflow).toBe('hidden');
+  expect(geometry.displayOverflow).toBe('visible');
   expect(geometry.frameInside).toBe(true);
   expect(geometry.socketCount).toBe(42);
   expect(geometry.documentOverflow).toBeLessThanOrEqual(1);

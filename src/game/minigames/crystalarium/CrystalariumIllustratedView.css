@@ -149,7 +149,9 @@
   min-width: 0;
   display: grid;
   place-items: center;
-  overflow: hidden;
+  /* Decorative corners may extend into the reserved surrounding garden space.
+     The garden itself clips overflow; the board is never scrollable. */
+  overflow: visible;
   container-type: size;
 }
 .crystalarium-live-frame {
@@ -661,7 +663,7 @@
   .crystalarium-live-board-viewport {
     display: grid;
     place-items: center;
-    overflow: hidden;
+    overflow: visible;
   }
   .crystalarium-live-frame {
     flex: none;
@@ -706,7 +708,7 @@
     display: none;
   }
   .crystalarium-live-board-viewport {
-    overflow: hidden;
+    overflow: visible;
   }
   .crystalarium-live-frame {
     min-width: 0;
@@ -750,7 +752,7 @@
 }
 /* Board-led 7 × 6 geometry with tall portrait cells and no internal scrolling. */
 .crystalarium-live-board-viewport {
-  overflow: hidden;
+  overflow: visible;
 }
 .crystalarium-live-frame {
   min-width: 0;
