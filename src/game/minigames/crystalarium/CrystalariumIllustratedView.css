@@ -189,6 +189,11 @@
   display: grid;
   place-items: center;
 }
+.crystalarium-live-cell.is-storage-target {
+  outline: 3px solid #a7ffc6;
+  outline-offset: -3px;
+  box-shadow: 0 0 12px #76efad99;
+}
 .crystalarium-live-cell.is-selected,
 .crystalarium-live-cell.is-guide-focus {
   background-image: url("/design-assets/crystalarium-c17/socket-selected.webp") !important;
@@ -554,6 +559,10 @@
 .crystalarium-live-storage p {
   margin: 8px 0;
   color: #c4eaf4;
+}
+.crystalarium-live-storage .crystalarium-live-storage-message {
+  min-height: 1.4em;
+  color: #ffedba;
 }
 .crystalarium-live-storage-grid {
   display: grid;
