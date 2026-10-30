@@ -234,7 +234,9 @@ export class CrystalariumFullMode {
     // A generator is the actual Grow control in the illustrated design.
     // The first-lesson policy must allow the same atomic source+spawn action.
     const command =
-      this.guide.getPrompt()?.lessonStep === 'grow' ? { kind: 'grow' as const } : { kind: 'other' as const };
+      this.guide.getPrompt()?.lessonStep === 'grow'
+        ? { kind: 'grow' as const }
+        : { kind: 'other' as const };
     this.run(command, () => growCrystalFromWell(this.state, family));
   }
 

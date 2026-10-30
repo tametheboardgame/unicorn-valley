@@ -291,7 +291,9 @@
   opacity: 1;
   outline: 3px solid #fff0a4;
   outline-offset: -3px;
-  box-shadow: 0 0 0 3px #42ffe1, 0 0 20px 5px #88f5ed;
+  box-shadow:
+    0 0 0 3px #42ffe1,
+    0 0 20px 5px #88f5ed;
 }
 
 .crystalarium-live-orders {
@@ -352,12 +354,23 @@
   z-index: -1;
   inset: 0;
   pointer-events: none;
-  background: url("/design-assets/crystalarium-c17/resonance-orders/order-card-in-progress.webp")
-    center / 114% 112% no-repeat;
+  background:
+    url("/design-assets/crystalarium-c17/resonance-orders/order-card-in-progress.webp") center /
+    114% 112% no-repeat;
   /* Only the cut-out ornate silhouette is shown, not its source matte corners. */
   clip-path: polygon(
-    18% 0, 82% 0, 95% 7%, 100% 17%, 100% 83%,
-    95% 93%, 82% 100%, 18% 100%, 5% 93%, 0 83%, 0 17%, 5% 7%
+    18% 0,
+    82% 0,
+    95% 7%,
+    100% 17%,
+    100% 83%,
+    95% 93%,
+    82% 100%,
+    18% 100%,
+    5% 93%,
+    0 83%,
+    0 17%,
+    5% 7%
   );
   border-radius: 24px;
   filter: drop-shadow(0 7px 8px #030b1e80);
@@ -368,7 +381,10 @@
 .crystalarium-live-order-card.is-complete::before {
   background-image: url("/design-assets/crystalarium-c17/resonance-orders/order-card-complete.webp");
 }
-.crystalarium-live-order-card > * { position: relative; z-index: 1; }
+.crystalarium-live-order-card > * {
+  position: relative;
+  z-index: 1;
+}
 .crystalarium-live-order-card:disabled {
   opacity: 1;
 }

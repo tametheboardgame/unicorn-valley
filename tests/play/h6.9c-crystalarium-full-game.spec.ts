@@ -1461,7 +1461,9 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   await expect(grow).toBeEnabled();
   await expect(grow).toHaveAttribute('data-crystalarium-guide-target', 'true');
   await expect(live.locator('[data-crystalarium-action="grow"]')).toHaveCount(0);
-  await expect(live.locator('.crystalarium-live-tools [data-crystalarium-action="grow"]')).toHaveCount(0);
+  await expect(
+    live.locator('.crystalarium-live-tools [data-crystalarium-action="grow"]'),
+  ).toHaveCount(0);
   await expect(live.locator('[data-crystalarium-action="storage"]')).toBeDisabled();
   const initial = await live.evaluate((root) => {
     const board = root.querySelector<HTMLElement>('.crystalarium-live-board-viewport');
@@ -1540,7 +1542,6 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await live.locator('[data-crystalarium-action="well-low"]').click();
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
-
 
 test('C21 live illustration keeps 42 sockets inside the decorative frame and crops card mattes', async ({
   page,
