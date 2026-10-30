@@ -1383,11 +1383,69 @@ test('C21 staged illustrated live game uses canonical state, actions and isolate
 
   await live.locator('[data-crystalarium-action="storage"]').click();
   await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toBeVisible();
-  await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
-  await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(8);
+  await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(4);
+  await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(4);
+  await expect(live.locator('[data-crystalarium-action="storage-choose"]')).toBeEnabled();
   await live.locator('[data-crystalarium-action="storage-close"]').click();
   await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('c21-live-art-1440.png'), fullPage: true });
+});
+
+test('C21 Storage stores a chosen board crystal then restores from the real saved slot', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
+  await live.locator('[data-crystalarium-action="storage"]').click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('0 / 4 slots used');
+  await expect(dialog.locator('[data-crystalarium-action="shelve"]')).toBeDisabled();
+  await dialog.locator('[data-crystalarium-action="storage-choose"]').click();
+  await expect(dialog).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-cell.is-storage-target')).toHaveCount(2);
+  await live.locator('[data-crystalarium-cell="0"]').click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('1 / 4 slots used');
+  const stored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(stored.cells[0]).toBeNull();
+  expect(stored.shelf[0]).toEqual({ family: 'low', tier: 0 });
+  await dialog.locator('[data-crystalarium-action="shelf-0"]').click();
+  await expect(dialog).toContainText('0 / 4 slots used');
+  const restored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(restored.shelf[0]).toBeNull();
+  expect(restored.cells[0]).toEqual({ family: 'low', tier: 0 });
+  await dialog.locator('[data-crystalarium-action="storage-close"]').click();
+  await expect(dialog).toHaveCount(0);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C21 drag a crystal onto the Storage dock without opening the modal', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const from = await live.locator('[data-crystalarium-cell="0"]').boundingBox();
+  const to = await live.locator('[data-crystalarium-action="storage"]').boundingBox();
+  if (!from || !to) throw new Error('Missing crystal or Storage drop target');
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+  await page.mouse.up();
+  const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
+  await expect(dialog).toBeVisible();
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(saved.cells[0]).toBeNull();
+  expect(saved.shelf[0]).toEqual({ family: 'low', tier: 0 });
 });
 
 test('C21 visual integration opt-in leaves existing full-game UI default unchanged', async ({
