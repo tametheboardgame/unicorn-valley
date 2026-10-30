@@ -1626,9 +1626,7 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
-test('C20 reduced motion skips pouring but canonical well growth still saves', async ({
-  page,
-}) => {
+test('C20 reduced motion skips pouring but canonical well growth still saves', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await enterResonanceGarden(page, false, true);

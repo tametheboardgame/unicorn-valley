@@ -63,10 +63,8 @@ export class CrystalariumGrowthPotionFx {
 
     const splash = effectImage('crystalarium-live-pour-splash');
     splash.style.width = Math.max(56, Math.min(96, wellBounds.width * 1.1)) + 'px';
-    splash.style.left =
-      wellBounds.left - rootBounds.left + wellBounds.width / 2 - 42 + 'px';
-    splash.style.top =
-      wellBounds.top - rootBounds.top + wellBounds.height * 0.27 + 'px';
+    splash.style.left = wellBounds.left - rootBounds.left + wellBounds.width / 2 - 42 + 'px';
+    splash.style.top = wellBounds.top - rootBounds.top + wellBounds.height * 0.27 + 'px';
 
     const growth = effectImage('crystalarium-live-crystal-emergence');
     growth.style.width = cellBounds.width + 10 + 'px';
@@ -84,10 +82,8 @@ export class CrystalariumGrowthPotionFx {
           pour.src = ASSETS + 'pour-' + String(frame + 1).padStart(2, '0') + '.webp';
           pour.dataset.crystalariumPourFrame = String(frame + 1);
           if (frame >= 7 && frame <= 10) {
-            splash.src =
-              ASSETS + 'splash-' + String(frame - 6).padStart(2, '0') + '.webp';
-            growth.src =
-              ASSETS + 'growth-' + String(frame - 6).padStart(2, '0') + '.webp';
+            splash.src = ASSETS + 'splash-' + String(frame - 6).padStart(2, '0') + '.webp';
+            growth.src = ASSETS + 'growth-' + String(frame - 6).padStart(2, '0') + '.webp';
           }
         }, frame * FRAME_MS),
       );
