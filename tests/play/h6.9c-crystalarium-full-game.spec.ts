@@ -1401,7 +1401,6 @@ test('C21 visual integration opt-in leaves existing full-game UI default unchang
   ).toHaveLength(42);
 });
 
-
 test('C21 illustrated real game survives a zoom-equivalent desktop viewport with the first lesson', async ({
   page,
 }) => {
