@@ -461,7 +461,14 @@ export class CrystalariumIllustratedView {
     }
     // Reuse one pointer-transparent effect layer across DOM redraws. A cue
     // is consumed once, even if focus, sound or tutorial redraws this view.
-    this.root.replaceChildren(...children, this.growthFx.layer);
+    // Never detach the effect canvas during unrelated controller redraws.
+    // Reparenting it on every button press can blank the active animation.
+    const effectLayer = this.growthFx.layer;
+    if (effectLayer.parentElement !== this.root) this.root.append(effectLayer);
+    for (const child of Array.from(this.root.children)) {
+      if (child !== effectLayer) child.remove();
+    }
+    for (const child of children) this.root.insertBefore(child, effectLayer);
     this.growthFx.render(this.root, view.growthCue);
     rail.scrollLeft = scrollLeft;
     if (this.storageOpen) {

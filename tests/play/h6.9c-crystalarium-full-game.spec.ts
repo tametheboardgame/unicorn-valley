@@ -1601,26 +1601,33 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   const effects = live.locator('.crystalarium-live-growth-fx');
   await expect(effects).toHaveAttribute('data-crystalarium-growth-id', '1');
   await expect(effects).toHaveAttribute('data-crystalarium-growth-family', 'low');
-  // Predecoded, fixed-source image layers prevent blank frames during
-  // Chrome/Firefox/WebKit animation. They are never re-src'd mid-pour.
-  await expect(effects.locator('.crystalarium-live-pour-frame')).toHaveCount(12);
-  await expect(effects.locator('.crystalarium-live-pour-splash')).toHaveCount(4);
-  await expect(effects.locator('.crystalarium-live-crystal-emergence')).toHaveCount(4);
-  const sourcesBefore = await effects.evaluate((layer) => {
-    const frames = Array.from(layer.querySelectorAll<HTMLImageElement>(
-      '.crystalarium-live-pour-frame',
-    ));
-    if (!frames.every((frame) => frame.complete && frame.naturalWidth > 0)) {
-      throw new Error('Pour frames must be fully decoded before playback');
+  // The entire pour is drawn atomically into one persistent canvas.
+  // No image nodes or async opacity transitions may appear during playback.
+  await expect(effects).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  await expect(effects.locator('canvas.crystalarium-live-growth-canvas')).toHaveCount(1);
+  await expect(effects.locator('img')).toHaveCount(0);
+  const activeCanvas = effects.locator('canvas');
+  await expect
+    .poll(async () => Number(await effects.getAttribute('data-crystalarium-frames-painted')))
+    .toBeGreaterThanOrEqual(3);
+  const samples = await activeCanvas.evaluate((canvas) => {
+    const bitmap = canvas as HTMLCanvasElement;
+    const context = bitmap.getContext('2d');
+    if (!context) throw new Error('Canvas unavailable');
+    const pixels = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
+    let paintedPixels = 0;
+    for (let index = 3; index < pixels.length; index += 4) {
+      if (pixels[index] > 0) paintedPixels += 1;
     }
-    return frames.map((frame) => frame.currentSrc);
+    return {
+      paintedPixels,
+      width: bitmap.width,
+      height: bitmap.height,
+    };
   });
-  await expect.poll(async () => Number(await effects.getAttribute('data-crystalarium-pour-frame'))).toBeGreaterThanOrEqual(5);
-  const sourcesAfter = await effects.locator('.crystalarium-live-pour-frame').evaluateAll(
-    (frames) => frames.map((frame) => (frame as HTMLImageElement).currentSrc),
-  );
-  expect(sourcesAfter).toEqual(sourcesBefore);
-  expect(new Set(sourcesBefore).size).toBe(12);
+  expect(samples.paintedPixels).toBeGreaterThan(100);
+  expect(samples.width).toBeGreaterThan(100);
+  expect(samples.height).toBeGreaterThan(100);
   const cell = await effects.getAttribute('data-crystalarium-growth-cell');
   expect(cell).not.toBeNull();
   const state = await page.evaluate(
@@ -1639,9 +1646,34 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   );
   expect(pour.ok()).toBe(true);
   expect(growth.ok()).toBe(true);
-  await expect(effects.locator('img')).toHaveCount(0, { timeout: 5000 });
+  await expect(effects).not.toHaveAttribute('data-crystalarium-growth-id', '1', {
+    timeout: 5000,
+  });
   await expect(target.locator('img')).toBeVisible();
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C20 potion canvas stays attached through a controller redraw during a pour', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const layer = live.locator('.crystalarium-live-growth-fx');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(layer).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  const originalCanvas = await layer.locator('canvas').elementHandle();
+  if (!originalCanvas) throw new Error('Missing pouring canvas');
+
+  await live.locator('[data-crystalarium-action="sound"]').click();
+  const remainsAttached = await layer.evaluate((element, original) => {
+    return element.querySelector('canvas') === original && element.parentElement !== null;
+  }, originalCanvas);
+  expect(remainsAttached).toBe(true);
+  await expect(layer).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  await expect
+    .poll(async () => Number(await layer.getAttribute('data-crystalarium-frames-painted')))
+    .toBeGreaterThanOrEqual(3);
 });
 
 test('C20 reduced motion skips pouring but canonical well growth still saves', async ({ page }) => {
@@ -1650,7 +1682,10 @@ test('C20 reduced motion skips pouring but canonical well growth still saves', a
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
   await live.locator('[data-crystalarium-action="well-low"]').click();
-  await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-growth-fx')).not.toHaveAttribute(
+    'data-crystalarium-growth-id',
+    '1',
+  );
   const state = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
@@ -1668,7 +1703,10 @@ test('C20 blocked full-board generator growth never plays a pouring animation', 
   await enterResonanceGarden(page, false, true, { ...seed, cells });
   const live = page.locator('[data-crystalarium-live="true"]');
   await live.locator('[data-crystalarium-action="well-low"]').click();
-  await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-growth-fx')).not.toHaveAttribute(
+    'data-crystalarium-growth-id',
+    '1',
+  );
   const saved = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
