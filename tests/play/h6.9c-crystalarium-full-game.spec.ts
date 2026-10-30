@@ -1577,7 +1577,7 @@ test('C21 live board fills the garden using native frame and clean order artwork
   });
   expect(geometry.socketCount).toBe(42);
   expect(geometry.innerTop).toBeGreaterThanOrEqual(0.18);
-  expect(geometry.innerBottom).toBeLessThanOrEqual(0.80);
+  expect(geometry.innerBottom).toBeLessThanOrEqual(0.8);
   expect(geometry.frameWidth).toBeGreaterThan(0);
   expect(geometry.frameHeight).toBeGreaterThan(0);
   expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.5, 1);

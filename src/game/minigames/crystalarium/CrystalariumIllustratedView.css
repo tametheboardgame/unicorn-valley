@@ -362,8 +362,9 @@
   padding: 15% 10%;
   color: #342345 !important;
   border: 0 !important;
-  background: url("/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg")
-    center / 100% 100% no-repeat !important;
+  background:
+    url("/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg") center / 100% 100%
+    no-repeat !important;
   scroll-snap-align: start;
   text-align: center;
 }
