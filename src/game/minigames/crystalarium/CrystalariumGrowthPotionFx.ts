@@ -91,8 +91,7 @@ export class CrystalariumGrowthPotionFx {
         pourX: wellBounds.left - rootBounds.left + (wellBounds.width - pourSize) / 2,
         pourY: Math.max(0, wellBounds.top - rootBounds.top - pourSize * 0.68),
         pourSize,
-        splashX:
-          wellBounds.left - rootBounds.left + wellBounds.width / 2 - splashSize / 2,
+        splashX: wellBounds.left - rootBounds.left + wellBounds.width / 2 - splashSize / 2,
         splashY: wellBounds.top - rootBounds.top + wellBounds.height * 0.27,
         splashSize,
         crystalX: cellBounds.left - rootBounds.left - 5,
