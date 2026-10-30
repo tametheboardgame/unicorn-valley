@@ -185,8 +185,8 @@
   position: absolute;
   width: clamp(42px, 9cqh, 79px);
   aspect-ratio: 1;
-  background: url("/design-assets/crystalarium-c17/board-frame-corner.svg") center / contain
-    no-repeat;
+  background:
+    url("/design-assets/crystalarium-c17/board-frame-corner.svg") center / contain no-repeat;
   filter: drop-shadow(0 2px 4px #061a2d77);
 }
 .crystalarium-live-frame-corner.is-top-left {
@@ -214,8 +214,8 @@
   width: clamp(24px, 4.7cqh, 42px);
   aspect-ratio: 1;
   transform: translateX(-50%);
-  background: url("/design-assets/crystalarium-c17/board-frame-jewel.svg") center / contain
-    no-repeat;
+  background:
+    url("/design-assets/crystalarium-c17/board-frame-jewel.svg") center / contain no-repeat;
   filter: drop-shadow(0 2px 5px #091f37aa);
 }
 .crystalarium-live-frame-jewel.is-top {
