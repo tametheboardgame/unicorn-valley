@@ -258,9 +258,15 @@ export class CrystalariumIllustratedView {
         '',
         'well-' + family,
         () => this.actions.growFromWell(family),
-        !available || firstLesson,
+        !available || (firstLesson && activeLesson !== 'grow'),
       );
       well.classList.add('crystalarium-live-well');
+      const isGrowTarget = activeLesson === 'grow' && available && family === state.selectedFamily;
+      well.classList.toggle('is-guide-focus', isGrowTarget);
+      if (isGrowTarget) {
+        well.dataset.crystalariumGuideTarget = 'true';
+        well.setAttribute('aria-label', 'Tutorial: tap the glowing Low generator to grow a shard');
+      }
       well.classList.toggle('is-locked', !available);
       if (family === state.selectedFamily && available) well.classList.add('is-active');
       const generator =
@@ -272,10 +278,21 @@ export class CrystalariumIllustratedView {
       well.append(
         image(ASSETS + generator),
         node('strong', '', family === 'low' ? 'Low' : family === 'bright' ? 'Bright' : 'Bell'),
-        node('small', '', available ? 'Grow shard' : 'Locked'),
+        node('small', '', available ? 'Tap to grow' : 'Locked'),
       );
       producers.append(well);
     });
+    // The upgrade is presented with the generators, not in the Garden Tools.
+    if (refinedSourceTier(state) !== null) {
+      const refined = this.button(
+        'Grow refined',
+        'grow-refined',
+        this.actions.growRefined,
+        firstLesson,
+      );
+      refined.classList.add('crystalarium-live-refined-control');
+      producers.append(refined);
+    }
 
     const orders = node('section', 'crystalarium-live-orders');
     const ordersTitle = node('div', 'crystalarium-live-section-title');
@@ -283,7 +300,7 @@ export class CrystalariumIllustratedView {
     const orderHelp = node(
       'p',
       'crystalarium-live-orders-caption',
-      'Live state · one active order until C18 queue migration',
+      'Fulfil the illustrated crystal requirements',
     );
     const orderRow = node('div', 'crystalarium-live-orders-row');
     const rail = node('div', 'crystalarium-live-orders-scroll');
@@ -303,12 +320,8 @@ export class CrystalariumIllustratedView {
       inspecting ? 'Inspect the matching crystal goal' : 'Offer Resonance Order',
     );
     card.classList.toggle('is-ready', isReady);
-    card.style.backgroundImage =
-      "url('" +
-      ASSETS +
-      'resonance-orders/order-card-' +
-      (isReady ? 'ready' : 'in-progress') +
-      ".webp')";
+    card.classList.toggle('is-complete', !pattern);
+    card.dataset.cardArt = isReady ? 'ready' : 'in-progress';
     if (pattern) {
       card.append(node('strong', '', pattern.title));
       const goals = node('div', 'crystalarium-live-goals');
@@ -356,24 +369,13 @@ export class CrystalariumIllustratedView {
         this.actions.fresh,
       ],
       ['guide', 'Guide', 'help', this.actions.guide],
-      ['grow', 'Grow', 'skip-guide', this.actions.grow],
     ];
     for (const [key, label, icon, action] of entries) {
-      const allowed = !firstLesson || (activeLesson === 'grow' && key === 'grow');
+      const allowed = !firstLesson;
       const tool = this.button('', key, action, !allowed);
       tool.classList.add('crystalarium-live-tool');
-      tool.classList.toggle('is-guide-focus', activeLesson === 'grow' && key === 'grow');
-      if (activeLesson === 'grow' && key === 'grow') {
-        tool.setAttribute('aria-label', 'Tutorial: Grow a crystal shard');
-        tool.setAttribute('data-crystalarium-guide-target', 'true');
-      }
       tool.append(image(ASSETS + 'context-controls/' + icon + '.svg'), node('span', '', label));
       toolRow.append(tool);
-    }
-    if (refinedSourceTier(state) !== null) {
-      toolRow.append(
-        this.button('Grow refined', 'grow-refined', this.actions.growRefined, firstLesson),
-      );
     }
     tools.append(toolRow);
 
@@ -388,7 +390,16 @@ export class CrystalariumIllustratedView {
       guide.setAttribute('aria-label', 'Crystalarium guide');
       guide.setAttribute('aria-live', 'polite');
       const instruction = node('div', 'crystalarium-live-guide-copy');
-      instruction.append(node('strong', '', prompt.title), node('span', '', prompt.instruction));
+      instruction.append(
+        node('strong', '', prompt.title),
+        node(
+          'span',
+          '',
+          activeLesson === 'grow'
+            ? 'Tap the glowing Low generator in the middle to grow your first crystal.'
+            : prompt.instruction,
+        ),
+      );
       guide.append(instruction, this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
       children.push(guide);
     }

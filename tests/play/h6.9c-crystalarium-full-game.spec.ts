@@ -1455,12 +1455,13 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   await enterResonanceGarden(page, true, true);
   const live = page.locator('[data-crystalarium-live="true"]');
   const guide = live.locator('.crystalarium-live-guide');
-  const grow = live.locator('[data-crystalarium-action="grow"]');
+  const grow = live.locator('[data-crystalarium-action="well-low"]');
   await expect(guide).toBeVisible();
   await expect(guide).toContainText('1 of 5');
   await expect(grow).toBeEnabled();
   await expect(grow).toHaveAttribute('data-crystalarium-guide-target', 'true');
-  await expect(live.locator('[data-crystalarium-action="well-low"]')).toBeDisabled();
+  await expect(live.locator('[data-crystalarium-action="grow"]')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-tools [data-crystalarium-action="grow"]')).toHaveCount(0);
   await expect(live.locator('[data-crystalarium-action="storage"]')).toBeDisabled();
   const initial = await live.evaluate((root) => {
     const board = root.querySelector<HTMLElement>('.crystalarium-live-board-viewport');
@@ -1485,10 +1486,11 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
 
   await grow.click();
   await expect(guide).toContainText('2 of 5');
-  await expect(live.locator('[data-crystalarium-cell="2"]')).toBeEnabled();
-  await live.locator('[data-crystalarium-cell="2"]').click();
+  // The policy chooses the correct pair from the saved board, not fixed indices.
+  await expect(live.locator('.crystalarium-live-cell.is-guide-focus')).toHaveCount(1);
+  await live.locator('.crystalarium-live-cell.is-guide-focus').click();
   await expect(guide).toContainText('3 of 5');
-  await live.locator('[data-crystalarium-cell="0"]').click();
+  await live.locator('.crystalarium-live-cell.is-guide-focus').click();
   await expect(guide).toContainText('4 of 5');
   const inspect = live.locator('[data-crystalarium-action="inspect-goal"]');
   await expect(inspect).toBeEnabled();
@@ -1535,6 +1537,45 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   expect(geometry.frameInside).toBe(true);
   expect(geometry.socketCount).toBe(42);
   expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
-  await live.locator('[data-crystalarium-action="grow"]').click();
+  await live.locator('[data-crystalarium-action="well-low"]').click();
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
+});
+
+
+test('C21 live illustration keeps 42 sockets inside the decorative frame and crops card mattes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const geometry = await live.evaluate((root) => {
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    const cells = root.querySelector<HTMLElement>('.crystalarium-live-grid');
+    const card = root.querySelector<HTMLElement>('.crystalarium-live-order-card');
+    const wells = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-well'));
+    const tools = root.querySelector<HTMLElement>('.crystalarium-live-tools');
+    if (!frame || !cells || !card || !tools) throw new Error('Missing Crystalarium components');
+    const a = frame.getBoundingClientRect();
+    const b = cells.getBoundingClientRect();
+    return {
+      socketCount: cells.children.length,
+      innerTop: (b.top - a.top) / a.height,
+      innerBottom: (b.bottom - a.top) / a.height,
+      frameWidth: a.width,
+      frameHeight: a.height,
+      guideGrowsFromWell: wells.some((well) => well.dataset.crystalariumAction === 'well-low'),
+      noExtraGrow: !tools.querySelector('[data-crystalarium-action="grow"]'),
+      cardSilhouette: getComputedStyle(card, '::before').clipPath,
+      matteBackground: getComputedStyle(card).backgroundColor,
+    };
+  });
+  expect(geometry.socketCount).toBe(42);
+  expect(geometry.innerTop).toBeGreaterThanOrEqual(0.205);
+  expect(geometry.innerBottom).toBeLessThanOrEqual(0.79);
+  expect(geometry.frameWidth).toBeGreaterThan(0);
+  expect(geometry.frameHeight).toBeGreaterThan(0);
+  expect(geometry.guideGrowsFromWell).toBe(true);
+  expect(geometry.noExtraGrow).toBe(true);
+  expect(geometry.cardSilhouette).toContain('polygon');
+  expect(geometry.matteBackground).toBe('rgba(0, 0, 0, 0)');
 });

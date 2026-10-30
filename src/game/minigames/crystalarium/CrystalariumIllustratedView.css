@@ -154,7 +154,8 @@
 .crystalarium-live-grid {
   position: absolute;
   z-index: 1;
-  inset: 18% 17.8% 20% 17.8%;
+  /* Keep the first and sixth rows clear of the painted top/bottom stones. */
+  inset: 21% 18% 23% 18%;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(6, minmax(0, 1fr));
@@ -279,6 +280,20 @@
 .crystalarium-live-well.is-locked {
   opacity: 0.65;
 }
+.crystalarium-live-refined-control {
+  min-width: 0;
+  min-height: 48px;
+  padding: 4px;
+  font-size: 10px !important;
+  border-color: #a7eeda !important;
+}
+.crystalarium-live-well.is-guide-focus {
+  opacity: 1;
+  outline: 3px solid #fff0a4;
+  outline-offset: -3px;
+  box-shadow: 0 0 0 3px #42ffe1, 0 0 20px 5px #88f5ed;
+}
+
 .crystalarium-live-orders {
   grid-column: 3;
   grid-row: 1;
@@ -314,28 +329,54 @@
   align-items: center;
 }
 .crystalarium-live-order-card {
-  width: clamp(175px, 14vw, 245px);
-  height: clamp(200px, 43vh, 350px);
-  flex: 0 0 clamp(175px, 14vw, 245px);
+  position: relative;
+  isolation: isolate;
+  width: clamp(190px, 17vw, 290px);
+  height: clamp(220px, 44vh, 355px);
+  flex: 0 0 clamp(190px, 17vw, 290px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(18px, 3vw, 36px);
-  color: #3b2943 !important;
+  gap: clamp(2px, 0.6vh, 8px);
+  padding: clamp(24px, 3.5vw, 46px);
+  color: #342345 !important;
   border: 0 !important;
-  background-color: #f2e4c1 !important;
-  background-position: center !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
+  background: transparent !important;
   scroll-snap-align: start;
   text-align: center;
 }
+.crystalarium-live-order-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background: url("/design-assets/crystalarium-c17/resonance-orders/order-card-in-progress.webp")
+    center / 114% 112% no-repeat;
+  /* Only the cut-out ornate silhouette is shown, not its source matte corners. */
+  clip-path: polygon(
+    18% 0, 82% 0, 95% 7%, 100% 17%, 100% 83%,
+    95% 93%, 82% 100%, 18% 100%, 5% 93%, 0 83%, 0 17%, 5% 7%
+  );
+  border-radius: 24px;
+  filter: drop-shadow(0 7px 8px #030b1e80);
+}
+.crystalarium-live-order-card.is-ready::before {
+  background-image: url("/design-assets/crystalarium-c17/resonance-orders/order-card-ready.webp");
+}
+.crystalarium-live-order-card.is-complete::before {
+  background-image: url("/design-assets/crystalarium-c17/resonance-orders/order-card-complete.webp");
+}
+.crystalarium-live-order-card > * { position: relative; z-index: 1; }
 .crystalarium-live-order-card:disabled {
   opacity: 1;
 }
 .crystalarium-live-order-card.is-ready {
-  filter: drop-shadow(0 0 12px #8afde0);
+  filter: drop-shadow(0 0 13px #8afde0);
+}
+.crystalarium-live-order-card.is-ready:not(:disabled) {
+  cursor: pointer;
 }
 .crystalarium-live-order-card strong {
   font:

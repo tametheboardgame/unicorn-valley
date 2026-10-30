@@ -231,7 +231,11 @@ export class CrystalariumFullMode {
 
   /** The physical well grows once, with one atomic source-and-spawn save. */
   private growFromWell(family: CrystalFamily): void {
-    this.run({ kind: 'other' }, () => growCrystalFromWell(this.state, family));
+    // A generator is the actual Grow control in the illustrated design.
+    // The first-lesson policy must allow the same atomic source+spawn action.
+    const command =
+      this.guide.getPrompt()?.lessonStep === 'grow' ? { kind: 'grow' as const } : { kind: 'other' as const };
+    this.run(command, () => growCrystalFromWell(this.state, family));
   }
 
   private inspectGoal(): void {
