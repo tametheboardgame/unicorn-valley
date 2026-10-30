@@ -107,3 +107,8 @@ Following the owner's approval to proceed from the taller-socket experiment, the
 ### Decorative frame clipping safeguard
 
 The illustrated frame's corner ornaments deliberately overhang the CSS board border. The local board viewport therefore permits **visible, non-scrollable overflow** for decorative drawing only, while its containing Crystal Garden remains clipped and the document remains viewport-bound. This retains the accepted socket dimensions and frame ratio and prevents the new decorative corners being accidentally cropped at the board viewport boundary. Automated checks guard the absence of document scrolling, all 42 focus/click targets, and no independently scrolling board.
+
+
+## 30 October 2026: Owner rejects ornate frame, permanent plain-board direction
+
+The user rejected the independent decorative frame treatment after real playtest. The painted frame and newly added four-corner/two-jewel decoration are now removed from the live board. The short-lived new corner/jewel SVGs are removed from the PR as unused; the historical original approved frame art is retained in the art library without being rendered. The game keeps a restrained CSS border that follows the unchanged portrait 0.92:1 seven-by-six board with all 42 preserved socket positions. The board viewport is again non-scrolling, and the existing painted garden background, crystal sprites, transparent parchment offering cards, generators and order-panel guide remain unchanged. Chromium checks enforce absence of ornament overlays, cell centre clickability, aspect ratio and no inner scroll. This supersedes the previous decorative-frame review proposal and is not a statement that the full Crystalarium gameplay work package is accepted or merge-qualified.

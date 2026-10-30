@@ -218,17 +218,9 @@ export class CrystalariumIllustratedView {
       if (piece) cell.append(image(sprite(piece)));
       board.append(cell);
     }
-    // The grid owns the layout. All decoration is outside its flow and
-    // pointer-transparent, so no ornament can resize or obstruct a socket.
-    const ornamentLayer = node('div', 'crystalarium-live-frame-ornaments');
-    ornamentLayer.setAttribute('aria-hidden', 'true');
-    for (const corner of ['top-left', 'top-right', 'bottom-left', 'bottom-right']) {
-      ornamentLayer.append(node('span', 'crystalarium-live-frame-corner is-' + corner));
-    }
-    for (const edge of ['top', 'bottom']) {
-      ornamentLayer.append(node('span', 'crystalarium-live-frame-jewel is-' + edge));
-    }
-    frame.append(board, ornamentLayer);
+    // The approved portrait-proportioned grid is the entire board.
+    // A plain CSS border follows the sockets; no decorative image overlays.
+    frame.append(board);
     boardViewport.append(frame);
     const gardenFooter = node('div', 'crystalarium-live-board-footer');
     const storageButton = this.button(
