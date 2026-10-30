@@ -449,7 +449,7 @@ export class CrystalariumIllustratedView {
           storedCount +
             ' / ' +
             state.shelf.length +
-            ' slots used. Tap a stored crystal to return it to the first empty board socket.'
+            ' slots used. Tap a stored crystal to return it to the first empty board socket.',
         ),
         node('p', 'crystalarium-live-storage-message', view.message),
       );
