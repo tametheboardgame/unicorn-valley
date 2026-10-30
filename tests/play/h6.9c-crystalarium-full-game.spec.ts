@@ -1557,7 +1557,9 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
-test('C21 tutorial sits alongside orders and never reduces crystal board height', async ({ page }) => {
+test('C21 tutorial sits alongside orders and never reduces crystal board height', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, true, true);
   const live = page.locator('[data-crystalarium-live="true"]');
@@ -1571,10 +1573,14 @@ test('C21 tutorial sits alongside orders and never reduces crystal board height'
   expect(initialHeight).toBeGreaterThan(400);
   expect(Math.abs(afterHeight - initialHeight)).toBeLessThanOrEqual(2);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
-  expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBeLessThanOrEqual(1);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollHeight - innerHeight),
+  ).toBeLessThanOrEqual(1);
 });
 
-test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({ page }) => {
+test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
