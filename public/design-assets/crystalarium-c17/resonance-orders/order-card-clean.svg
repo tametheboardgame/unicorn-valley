@@ -12,16 +12,12 @@
     </linearGradient>
     <linearGradient id="foliage"><stop stop-color="#b6d664"/><stop offset=".5" stop-color="#598e30"/><stop offset="1" stop-color="#26632f"/></linearGradient>
     <filter id="shade" x="-15%" y="-12%" width="130%" height="130%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#061629" flood-opacity=".4"/></filter>
-    <pattern id="grain" width="48" height="55" patternUnits="userSpaceOnUse">
-      <path d="M5 22q13-12 25 2m7 24q-15-9-27-2" stroke="#a4794f" stroke-opacity=".08" stroke-width="2"/>
-    </pattern>
   </defs>
   <g filter="url(#shade)">
     <path d="M62 92Q77 70 116 72L178 66Q214 49 256 16Q298 49 334 66L396 72Q435 70 450 92Q470 106 470 154L470 551Q470 603 443 623L398 646Q338 654 296 660L256 686L216 660Q154 654 114 646L69 623Q42 603 42 551L42 154Q42 106 62 92Z" fill="#663711" stroke="#47250d" stroke-width="8"/>
     <path d="M64 94Q80 73 118 76L180 69Q216 51 256 24Q296 51 332 69L394 76Q432 73 448 94Q465 111 465 154L465 550Q465 600 440 618L398 640Q334 650 295 654L256 678L217 654Q155 650 114 640L72 618Q47 600 47 550L47 154Q47 111 64 94Z" fill="url(#gold)" stroke="#ffe28c" stroke-width="5"/>
     <path d="M81 124Q93 110 130 110L383 110Q420 110 432 124Q442 138 442 170L442 545Q442 581 420 596L387 613Q326 619 287 627L256 644L225 627Q168 619 125 613L92 596Q70 581 70 545L70 170Q70 138 81 124Z" fill="#8c4c1c" stroke="#633414" stroke-width="6"/>
     <path d="M89 137Q99 122 133 122L378 122Q412 122 423 137Q433 151 433 176L433 543Q433 573 414 587L382 601Q328 608 285 616L256 630L227 616Q169 608 130 601L98 587Q79 573 79 543L79 176Q79 151 89 137Z" fill="url(#paper)" stroke="#ffe5ad" stroke-width="6"/>
-    <path d="M89 137Q99 122 133 122L378 122Q412 122 423 137Q433 151 433 176L433 543Q433 573 414 587L382 601Q328 608 285 616L256 630L227 616Q169 608 130 601L98 587Q79 573 79 543L79 176Q79 151 89 137Z" fill="url(#grain)"/>
     <path d="M128 78Q184 78 256 32Q328 78 384 78M124 621Q178 635 256 661Q334 635 388 621" fill="none" stroke="#7b411b" stroke-width="8" stroke-linecap="round"/>
     <path d="M128 78Q184 78 256 32Q328 78 384 78M124 621Q178 635 256 661Q334 635 388 621" fill="none" stroke="#fff0a5" stroke-width="3" stroke-linecap="round"/>
     <path d="M256 24L300 78L256 133L212 78Z" fill="#82400e" stroke="#ffe6a0" stroke-width="7"/>

@@ -1531,8 +1531,17 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
         fr.bottom <= br.bottom + 1,
       socketCount: root.querySelectorAll('[data-crystalarium-cell]').length,
       documentOverflow: document.documentElement.scrollHeight - innerHeight,
+      socketAspects: Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-cell'), (cell) => {
+        const rect = cell.getBoundingClientRect();
+        return rect.width / rect.height;
+      }),
     };
   });
+  expect(geometry.socketAspects).toHaveLength(42);
+  for (const ratio of geometry.socketAspects) {
+    expect(ratio).toBeGreaterThan(0.92);
+    expect(ratio).toBeLessThan(1.1);
+  }
   expect(geometry.overflowX).toBeLessThanOrEqual(1);
   expect(geometry.overflowY).toBeLessThanOrEqual(1);
   expect(geometry.displayOverflow).toBe('hidden');
@@ -1543,7 +1552,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
-test('C21 live board fills the garden using native frame and clean order artwork', async ({
+test('C21 live board has near-square sockets and clean parchment artwork', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
@@ -1573,6 +1582,11 @@ test('C21 live board fills the garden using native frame and clean order artwork
       noExtraGrow: !tools.querySelector('[data-crystalarium-action="grow"]'),
       cardArt: getComputedStyle(card).backgroundImage,
       cardAspect: card.getBoundingClientRect().width / card.getBoundingClientRect().height,
+      socketAspects: Array.from(cells.children, (cell) => {
+        const rect = cell.getBoundingClientRect();
+        return rect.width / rect.height;
+      }),
+      cardTexture: getComputedStyle(card).backgroundImage,
     };
   });
   expect(geometry.socketCount).toBe(42);
@@ -1580,11 +1594,19 @@ test('C21 live board fills the garden using native frame and clean order artwork
   expect(geometry.innerBottom).toBeLessThanOrEqual(0.8);
   expect(geometry.frameWidth).toBeGreaterThan(0);
   expect(geometry.frameHeight).toBeGreaterThan(0);
-  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.5, 1);
-  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.83);
+  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.2, 1);
+  expect(geometry.socketAspects).toHaveLength(42);
+  for (const ratio of geometry.socketAspects) {
+    expect(ratio).toBeGreaterThan(0.92);
+    expect(ratio).toBeLessThan(1.1);
+  }
+  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.55);
   expect(geometry.gardenBorder).toBe('0px');
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
   expect(geometry.cardArt).toContain('order-card-clean.svg');
+  const cardSource = await page.request.get('/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg');
+  expect(cardSource.ok()).toBe(true);
+  expect(await cardSource.text()).not.toContain('id="grain"');
   expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
 });

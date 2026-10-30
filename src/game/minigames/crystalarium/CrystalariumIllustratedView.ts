@@ -183,7 +183,7 @@ export class CrystalariumIllustratedView {
     const garden = node('section', 'crystalarium-live-garden');
     garden.setAttribute('aria-label', 'Seven by six crystal merge board');
     const gardenTitle = node('div', 'crystalarium-live-section-title');
-    gardenTitle.append(node('h2', '', 'Crystal Garden'), node('small', '', '7 × 6 · 42 sockets'));
+    gardenTitle.append(node('h2', '', 'Crystal Garden'));
     const boardViewport = node('div', 'crystalarium-live-board-viewport');
     const frame = node('div', 'crystalarium-live-frame');
     const board = node('div', 'crystalarium-live-grid');
@@ -237,7 +237,7 @@ export class CrystalariumIllustratedView {
     );
     storageButton.classList.add('crystalarium-live-storage-entry');
     storageButton.prepend(image(ASSETS + 'storage-chamber/storage-chest-closed.svg'));
-    gardenFooter.append(storageButton, node('small', '', 'Three families · six tiers each'));
+    gardenFooter.append(storageButton);
     garden.append(gardenTitle, boardViewport, gardenFooter);
 
     const producers = node('aside', 'crystalarium-live-producers');

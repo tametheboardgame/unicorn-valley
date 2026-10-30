@@ -64,7 +64,6 @@ export class CrystalariumPointerDrag {
       dragging: false,
       ghost: null,
     };
-    (cell ?? shelf)?.setPointerCapture(event.pointerId);
   };
 
   private readonly onMove = (event: PointerEvent): void => {
@@ -75,6 +74,14 @@ export class CrystalariumPointerDrag {
     if (!current.dragging && Math.hypot(dx, dy) < 10) return;
     if (!current.dragging) {
       current.dragging = true;
+      // A plain tap must complete as a native button click; only a genuine
+      // drag captures the pointer. Capturing every tap can swallow its click.
+      const source = this.root.querySelector<HTMLElement>(
+        current.origin.kind === 'cell'
+          ? '[data-crystalarium-cell="' + current.origin.index + '"]'
+          : '[data-crystalarium-action="shelf-' + current.origin.index + '"]',
+      );
+      source?.setPointerCapture(event.pointerId);
       const ghost = document.createElement('div');
       ghost.className = 'crystalarium-drag-ghost';
       ghost.append(createCrystalArtElement(current.origin.piece));
