@@ -1449,3 +1449,94 @@ test('C21 real player sees illustrated Crystalarium without a query flag', async
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
   expect(await page.evaluate(() => location.search)).toBe('');
 });
+
+
+test('C21 first lesson remains playable without a blocking overlay', async ({ page }) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const guide = live.locator('.crystalarium-live-guide');
+  const grow = live.locator('[data-crystalarium-action="grow"]');
+  await expect(guide).toBeVisible();
+  await expect(guide).toContainText('1 of 5');
+  await expect(grow).toBeEnabled();
+  await expect(grow).toHaveAttribute('data-crystalarium-guide-target', 'true');
+  await expect(live.locator('[data-crystalarium-action="well-low"]')).toBeDisabled();
+  await expect(live.locator('[data-crystalarium-action="storage"]')).toBeDisabled();
+  const initial = await live.evaluate((root) => {
+    const board = root.querySelector<HTMLElement>('.crystalarium-live-board-viewport');
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    const grid = root.querySelector<HTMLElement>('.crystalarium-live-grid');
+    if (!board || !frame || !grid) throw new Error('Missing illustrated board');
+    const a = frame.getBoundingClientRect();
+    const b = grid.getBoundingClientRect();
+    return {
+      boardOverflowX: board.scrollWidth - board.clientWidth,
+      boardOverflowY: board.scrollHeight - board.clientHeight,
+      overflowMode: getComputedStyle(board).overflow,
+      insideFrame:
+        b.left >= a.left &&
+        b.right <= a.right &&
+        b.top >= a.top &&
+        b.bottom <= a.bottom,
+      guidePosition: getComputedStyle(root.querySelector('.crystalarium-live-guide')!).position,
+    };
+  });
+  expect(initial.boardOverflowX).toBeLessThanOrEqual(1);
+  expect(initial.boardOverflowY).toBeLessThanOrEqual(1);
+  expect(initial.overflowMode).toBe('hidden');
+  expect(initial.insideFrame).toBe(true);
+  expect(initial.guidePosition).not.toBe('absolute');
+
+  await grow.click();
+  await expect(guide).toContainText('2 of 5');
+  await expect(live.locator('[data-crystalarium-cell="2"]')).toBeEnabled();
+  await live.locator('[data-crystalarium-cell="2"]').click();
+  await expect(guide).toContainText('3 of 5');
+  await live.locator('[data-crystalarium-cell="0"]').click();
+  await expect(guide).toContainText('4 of 5');
+  const inspect = live.locator('[data-crystalarium-action="inspect-goal"]');
+  await expect(inspect).toBeEnabled();
+  await inspect.click();
+  await expect(guide).toContainText('5 of 5');
+  const offer = live.locator('[data-crystalarium-action="offer"]');
+  await expect(offer).toBeEnabled();
+  await offer.click();
+  await expect(guide).toHaveCount(0);
+  const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(saved.completed).toBe(1);
+});
+
+test('C21 zoomed desktop scales the 42-socket board with no internal scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 960, height: 560 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  const geometry = await live.evaluate((root) => {
+    const board = root.querySelector<HTMLElement>('.crystalarium-live-board-viewport');
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    if (!board || !frame) throw new Error('Missing board');
+    const br = board.getBoundingClientRect();
+    const fr = frame.getBoundingClientRect();
+    return {
+      overflowX: board.scrollWidth - board.clientWidth,
+      overflowY: board.scrollHeight - board.clientHeight,
+      displayOverflow: getComputedStyle(board).overflow,
+      frameInside:
+        fr.left >= br.left - 1 &&
+        fr.right <= br.right + 1 &&
+        fr.top >= br.top - 1 &&
+        fr.bottom <= br.bottom + 1,
+      socketCount: root.querySelectorAll('[data-crystalarium-cell]').length,
+      documentOverflow: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(geometry.overflowX).toBeLessThanOrEqual(1);
+  expect(geometry.overflowY).toBeLessThanOrEqual(1);
+  expect(geometry.displayOverflow).toBe('hidden');
+  expect(geometry.frameInside).toBe(true);
+  expect(geometry.socketCount).toBe(42);
+  expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
+  await live.locator('[data-crystalarium-action="grow"]').click();
+  await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
+});
