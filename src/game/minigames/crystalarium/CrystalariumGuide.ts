@@ -91,7 +91,7 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
         stage,
         title: 'Keep crystals in Storage',
         instruction:
-          'Open Storage and choose a crystal from the board. Tap a stored crystal to bring it back, or drag one onto Storage.',
+          'Drag a crystal onto Storage to keep it safe. Open Storage and tap a stored crystal to return it to the board.',
         target: 'shelve',
       };
     case 'wash':

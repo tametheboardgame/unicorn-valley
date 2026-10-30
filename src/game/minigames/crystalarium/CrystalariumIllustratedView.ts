@@ -61,7 +61,6 @@ export class CrystalariumIllustratedView {
   private readonly actions: CrystalariumPortraitActions;
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
-  private storagePickMode = false;
 
   public constructor(actions: CrystalariumPortraitActions) {
     this.actions = actions;
@@ -93,7 +92,6 @@ export class CrystalariumIllustratedView {
       {
         move: actions.dragMove,
         shelve: (index) => {
-          this.storagePickMode = false;
           this.storageOpen = true;
           actions.dragShelve(index);
         },
@@ -140,12 +138,6 @@ export class CrystalariumIllustratedView {
     if (this.latest) this.render(this.latest);
   }
 
-  private storeFromBoard(index: number): void {
-    this.storagePickMode = false;
-    this.storageOpen = true;
-    this.actions.dragShelve(index);
-  }
-
   public render(view: CrystalariumPortraitPresentation): void {
     this.latest = view;
     const active = document.activeElement;
@@ -165,7 +157,6 @@ export class CrystalariumIllustratedView {
     const pattern = activeResonancePattern(state);
     const unlocked = unlockedCrystalFamilies(state);
     const storedCount = state.shelf.filter(Boolean).length;
-    const storageFull = storedCount === state.shelf.length;
 
     const header = node('header', 'crystalarium-live-header');
     const heading = node('div', 'crystalarium-live-heading');
@@ -196,9 +187,7 @@ export class CrystalariumIllustratedView {
     const garden = node('section', 'crystalarium-live-garden');
     garden.setAttribute('aria-label', 'Seven by six crystal merge board');
     const gardenTitle = node('div', 'crystalarium-live-section-title');
-    gardenTitle.append(
-      node('h2', '', this.storagePickMode ? 'Choose a crystal to store' : 'Crystal Garden'),
-    );
+    gardenTitle.append(node('h2', '', 'Crystal Garden'));
     const boardViewport = node('div', 'crystalarium-live-board-viewport');
     const frame = node('div', 'crystalarium-live-frame');
     const board = node('div', 'crystalarium-live-grid');
@@ -213,17 +202,10 @@ export class CrystalariumIllustratedView {
       const cell = this.button(
         '',
         'cell-' + index,
-        () => {
-          if (this.storagePickMode) {
-            if (piece) this.storeFromBoard(index);
-          } else {
-            this.actions.cell(index);
-          }
-        },
-        (firstLesson && !lessonCell) || (this.storagePickMode && !piece),
+        () => this.actions.cell(index),
+        firstLesson && !lessonCell,
       );
       cell.classList.add('crystalarium-live-cell');
-      cell.classList.toggle('is-storage-target', this.storagePickMode && piece !== null);
       cell.dataset.crystalariumCell = String(index);
       cell.classList.toggle('is-selected', view.selected === index);
       cell.classList.toggle(
@@ -246,10 +228,9 @@ export class CrystalariumIllustratedView {
     boardViewport.append(frame);
     const gardenFooter = node('div', 'crystalarium-live-board-footer');
     const storageButton = this.button(
-      this.storagePickMode ? 'Cancel storing' : 'Storage ' + storedCount + '/' + state.shelf.length,
+      'Storage ' + storedCount + '/' + state.shelf.length,
       'storage',
       () => {
-        this.storagePickMode = false;
         this.storageOpen = true;
         this.renderCurrent();
       },
@@ -260,9 +241,7 @@ export class CrystalariumIllustratedView {
     storageButton.dataset.crystalariumStorageDrop = 'true';
     storageButton.setAttribute(
       'aria-label',
-      this.storagePickMode
-        ? 'Cancel choosing a crystal for Storage'
-        : 'Open Storage, ' + storedCount + ' of ' + state.shelf.length + ' slots occupied',
+      'Open Storage, ' + storedCount + ' of ' + state.shelf.length + ' slots occupied',
     );
     storageButton.prepend(image(ASSETS + 'storage-chamber/storage-chest-closed.svg'));
     gardenFooter.append(storageButton);
@@ -430,9 +409,6 @@ export class CrystalariumIllustratedView {
       guide.append(instruction, this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
       orders.insertBefore(guide, orderRow);
     }
-    if (this.storagePickMode) {
-      message.textContent = 'Tap a highlighted crystal to put it in Storage, or cancel storing.';
-    }
     const children: HTMLElement[] = [header, scene, message];
 
     if (this.storageOpen) {
@@ -441,7 +417,15 @@ export class CrystalariumIllustratedView {
       chamber.setAttribute('role', 'dialog');
       chamber.setAttribute('aria-modal', 'true');
       chamber.setAttribute('aria-label', 'Storage Chamber');
+      const closeStorage = this.button('×', 'storage-close', () => {
+        this.storageOpen = false;
+        this.renderCurrent();
+      });
+      closeStorage.classList.add('crystalarium-live-storage-close');
+      closeStorage.setAttribute('aria-label', 'Close Storage');
+      closeStorage.title = 'Close Storage';
       chamber.append(
+        closeStorage,
         node('h2', '', 'Storage Chamber'),
         node(
           'p',
@@ -449,9 +433,8 @@ export class CrystalariumIllustratedView {
           storedCount +
             ' / ' +
             state.shelf.length +
-            ' slots used. Tap a stored crystal to return it to the first empty board socket.',
+            ' slots used. Drag a crystal onto Storage to keep it safe. Tap a stored crystal to return it to the board.',
         ),
-        node('p', 'crystalarium-live-storage-message', view.message),
       );
       const slots = node('div', 'crystalarium-live-storage-grid');
       for (let index = 0; index < state.shelf.length; index += 1) {
@@ -475,39 +458,22 @@ export class CrystalariumIllustratedView {
         slots.append(slot);
       }
       chamber.append(slots);
-      chamber.append(
-        this.button(
-          'Store selected crystal',
-          'shelve',
-          this.actions.shelve,
-          view.selected === null || storageFull,
-        ),
-        this.button(
-          'Choose crystal from board',
-          'storage-choose',
-          () => {
-            this.storageOpen = false;
-            this.storagePickMode = true;
-            this.renderCurrent();
-          },
-          storageFull || !state.cells.some(Boolean),
-        ),
-      );
-      chamber.append(
-        this.button('Return to Board', 'storage-close', () => {
-          this.storageOpen = false;
-          this.renderCurrent();
-        }),
-      );
       layer.append(chamber);
       children.push(layer);
     }
     this.root.replaceChildren(...children);
     rail.scrollLeft = scrollLeft;
-    if (selectedKey) {
-      const query = restoreCell
-        ? '[data-crystalarium-cell="' + selectedKey + '"]'
-        : '[data-crystalarium-action="' + selectedKey + '"]';
+    if (this.storageOpen) {
+      this.root
+        .querySelector<HTMLButtonElement>('[data-crystalarium-action="storage-close"]')
+        ?.focus({ preventScroll: true });
+    } else if (selectedKey) {
+      const query =
+        selectedKey === 'storage-close'
+          ? '[data-crystalarium-action="storage"]'
+          : restoreCell
+            ? '[data-crystalarium-cell="' + selectedKey + '"]'
+            : '[data-crystalarium-action="' + selectedKey + '"]';
       this.root.querySelector<HTMLButtonElement>(query)?.focus({ preventScroll: true });
     }
   }
