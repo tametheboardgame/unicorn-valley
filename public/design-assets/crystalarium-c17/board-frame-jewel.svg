@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">
+  <title>Crystalarium sapphire frame jewel</title>
+  <defs>
+    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#90501a"/><stop offset=".28" stop-color="#ffd481"/>
+      <stop offset=".55" stop-color="#fff2b3"/><stop offset="1" stop-color="#9a551d"/>
+    </linearGradient>
+    <linearGradient id="gem" x1=".1" x2=".9" y1=".1" y2="1">
+      <stop stop-color="#edffff"/><stop offset=".3" stop-color="#69e8fb"/>
+      <stop offset=".62" stop-color="#066cc1"/><stop offset="1" stop-color="#213d96"/>
+    </linearGradient>
+  </defs>
+  <path d="M36 2L69 36L36 70L3 36Z" fill="#4b2c14" stroke="#3b2919" stroke-width="3"/>
+  <path d="M36 6L64 36L36 65L8 36Z" fill="url(#gold)" stroke="#fff1b0" stroke-width="2"/>
+  <path d="M36 13L56 36L36 58L16 36Z" fill="url(#gem)" stroke="#d8ffff" stroke-width="2.5"/>
+  <path d="M36 15L36 56L17 36Z" fill="#76e6fa" opacity=".55"/>
+  <path d="M36 15L55 36L36 36Z" fill="#f2ffff" opacity=".5"/>
+  <path d="M14 36H58M36 11V61" stroke="#b0f6ff" stroke-width="1.5" opacity=".65"/>
+</svg>

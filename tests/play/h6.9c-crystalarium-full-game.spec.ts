@@ -1411,6 +1411,8 @@ test('C21 illustrated real game survives a zoom-equivalent desktop viewport with
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
   await expect(live.locator('.crystalarium-live-frame')).toBeVisible();
   await expect(live.locator('.crystalarium-live-frame-art')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-frame-corner')).toHaveCount(4);
+  await expect(live.locator('.crystalarium-live-frame-jewel')).toHaveCount(2);
   const metrics = await live.evaluate((element) => {
     const bounds = element.getBoundingClientRect();
     return {
@@ -1578,6 +1580,37 @@ test('C21 tutorial sits alongside orders and never reduces crystal board height'
   ).toBeLessThanOrEqual(1);
 });
 
+test('C21 decorative frame layers never intercept any crystal socket', async ({ page }) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const result = await live.evaluate((root) => {
+    const ornament = root.querySelector<HTMLElement>('.crystalarium-live-frame-ornaments');
+    const cells = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-cell'));
+    if (!ornament || cells.length !== 42) throw new Error('Missing board decoration or sockets');
+    return {
+      ariaHidden: ornament.getAttribute('aria-hidden'),
+      pointerEvents: getComputedStyle(ornament).pointerEvents,
+      allSocketsTargetable: cells.every((cell) => {
+        const bounds = cell.getBoundingClientRect();
+        const target = document.elementFromPoint(
+          bounds.x + bounds.width / 2,
+          bounds.y + bounds.height / 2,
+        );
+        return target === cell || cell.contains(target);
+      }),
+      frameRatio: (() => {
+        const bounds = ornament.parentElement!.getBoundingClientRect();
+        return bounds.width / bounds.height;
+      })(),
+    };
+  });
+  expect(result.ariaHidden).toBe('true');
+  expect(result.pointerEvents).toBe('none');
+  expect(result.allSocketsTargetable).toBe(true);
+  expect(result.frameRatio).toBeCloseTo(0.92, 1);
+});
+
 test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({
   page,
 }) => {
@@ -1608,6 +1641,10 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
       gridWidth: b.width,
       frameBorder: getComputedStyle(frame).borderTopWidth,
       illustratedFrameCount: root.querySelectorAll('.crystalarium-live-frame-art').length,
+      ornaments: root.querySelectorAll('.crystalarium-live-frame-ornaments > span').length,
+      ornamentPointerEvents: getComputedStyle(
+        root.querySelector<HTMLElement>('.crystalarium-live-frame-ornaments')!,
+      ).pointerEvents,
       gardenBorder: getComputedStyle(garden).borderTopWidth,
       guideGrowsFromWell: wells.some((well) => well.dataset.crystalariumAction === 'well-low'),
       noExtraGrow: !tools.querySelector('[data-crystalarium-action="grow"]'),
@@ -1635,6 +1672,8 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
   expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(0.92, 1);
   expect(geometry.frameBorder).toBe('3px');
   expect(geometry.illustratedFrameCount).toBe(0);
+  expect(geometry.ornaments).toBe(6);
+  expect(geometry.ornamentPointerEvents).toBe('none');
   expect(geometry.gridWidth / geometry.gardenWidth).toBeGreaterThan(0.48);
   expect(geometry.socketAspects).toHaveLength(42);
   for (const ratio of geometry.socketAspects) {
