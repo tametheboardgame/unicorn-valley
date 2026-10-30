@@ -169,12 +169,6 @@ export class CrystalariumIllustratedView {
     headerButtons.setAttribute('aria-label', 'Crystalarium navigation');
     headerButtons.append(
       this.iconButton(
-        'guide',
-        prompt ? 'Skip guide' : 'Show guide',
-        'help',
-        prompt ? this.actions.skipGuide : this.actions.guide,
-      ),
-      this.iconButton(
         'sound',
         'Toggle sound',
         view.quiet || view.globallyMuted ? 'sound-off' : 'sound-on',
@@ -367,7 +361,6 @@ export class CrystalariumIllustratedView {
         'fresh-board',
         this.actions.fresh,
       ],
-      ['guide', 'Guide', 'help', this.actions.guide],
     ];
     for (const [key, label, icon, action] of entries) {
       const allowed = !firstLesson;
@@ -378,7 +371,10 @@ export class CrystalariumIllustratedView {
     }
     tools.append(toolRow);
 
-    const message = node('footer', 'crystalarium-live-message', view.message);
+    // Keep gameplay feedback accessible without occupying the garden's
+    // limited height with a permanent, low-value status strip.
+    const message = node('div', 'crystalarium-live-sr-status', view.message);
+    message.setAttribute('role', 'status');
     message.setAttribute('aria-live', 'polite');
     scene.append(garden, producers, orders, tools);
     if (prompt) {

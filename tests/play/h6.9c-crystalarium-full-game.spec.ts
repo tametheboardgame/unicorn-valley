@@ -1471,6 +1471,43 @@ test('C21 drag a crystal onto the Storage dock without opening the modal', async
   expect(saved.shelf[0]).toEqual({ family: 'low', tier: 0 });
 });
 
+test('C21 simplified chrome has four expanded tools, no duplicate Guide controls or status strip', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
+  await expect(live.getByRole('heading', { name: 'Crystal Garden' })).toBeVisible();
+  await expect(live.locator('.crystalarium-live-header-actions .crystalarium-live-button')).toHaveCount(2);
+  await expect(live.locator('[data-crystalarium-action="guide"]')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-tools .crystalarium-live-tool')).toHaveCount(4);
+  await expect(live.locator('.crystalarium-live-message')).toHaveCount(0);
+  const layout = await live.evaluate((root) => {
+    const buttons = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-tool'));
+    const title = root.querySelector<HTMLElement>('.crystalarium-live-heading h1');
+    const subheading = root.querySelector<HTMLElement>('.crystalarium-live-garden h2');
+    const status = root.querySelector<HTMLElement>('.crystalarium-live-sr-status');
+    if (!title || !subheading || !status) throw new Error('Missing heading or accessible status');
+    return {
+      widths: buttons.map((button) => button.getBoundingClientRect().width),
+      titleFontSize: parseFloat(getComputedStyle(title).fontSize),
+      subtitleFontSize: parseFloat(getComputedStyle(subheading).fontSize),
+      statusClipped: getComputedStyle(status).clipPath,
+      statusRole: status.getAttribute('role'),
+      pageOverflow: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(Math.max(...layout.widths) - Math.min(...layout.widths)).toBeLessThanOrEqual(2);
+  expect(Math.min(...layout.widths)).toBeGreaterThan(80);
+  expect(layout.titleFontSize).toBeGreaterThanOrEqual(28);
+  expect(layout.subtitleFontSize).toBeGreaterThanOrEqual(17);
+  expect(layout.statusClipped).toBe('inset(50%)');
+  expect(layout.statusRole).toBe('status');
+  expect(layout.pageOverflow).toBeLessThanOrEqual(1);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
 test('C21 visual integration opt-in leaves existing full-game UI default unchanged', async ({
   page,
 }) => {
@@ -1645,7 +1682,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   expect(geometry.socketCount).toBe(42);
   expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
   await live.locator('[data-crystalarium-action="well-low"]').click();
-  await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
+  await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 4');
 });
 
 test('C21 tutorial sits alongside orders and never reduces crystal board height', async ({
