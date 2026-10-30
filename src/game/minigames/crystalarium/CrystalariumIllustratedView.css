@@ -340,7 +340,8 @@
 .crystalarium-live-growth-fx {
   position: absolute;
   inset: 0;
-  z-index: 18;
+  /* Storage must stay above any in-flight Growth Potion animation. */
+  z-index: 4;
   overflow: hidden;
   pointer-events: none;
 }
