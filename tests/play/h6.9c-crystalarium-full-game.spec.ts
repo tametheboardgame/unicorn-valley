@@ -1479,7 +1479,9 @@ test('C21 simplified chrome has four expanded tools, no duplicate Guide controls
   const live = page.locator('[data-crystalarium-live="true"]');
   await expect(live.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
   await expect(live.getByRole('heading', { name: 'Crystal Garden' })).toBeVisible();
-  await expect(live.locator('.crystalarium-live-header-actions .crystalarium-live-button')).toHaveCount(2);
+  await expect(
+    live.locator('.crystalarium-live-header-actions .crystalarium-live-button'),
+  ).toHaveCount(2);
   await expect(live.locator('[data-crystalarium-action="guide"]')).toHaveCount(0);
   await expect(live.locator('.crystalarium-live-tools .crystalarium-live-tool')).toHaveCount(4);
   await expect(live.locator('.crystalarium-live-message')).toHaveCount(0);

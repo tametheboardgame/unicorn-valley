@@ -59,7 +59,10 @@
   position: relative;
   display: inline-block;
   padding: 0 0 5px;
-  font: 800 clamp(28px, 2.6vw, 42px) / 1.05 Georgia, 'Palatino Linotype', serif;
+  font:
+    800 clamp(28px, 2.6vw, 42px) / 1.05 Georgia,
+    "Palatino Linotype",
+    serif;
   letter-spacing: 0.025em;
   color: #fff0bb;
   background: linear-gradient(180deg, #fffde1 0%, #ffe7a3 48%, #d69b4e 100%);
@@ -69,7 +72,7 @@
   filter: drop-shadow(0 2px 2px #09233c) drop-shadow(0 0 8px #ffdc8b4d);
 }
 .crystalarium-live-heading h1::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -156,13 +159,18 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font: 800 clamp(17px, 1.55vw, 24px) / 1.1 Georgia, 'Palatino Linotype', serif;
+  font:
+    800 clamp(17px, 1.55vw, 24px) / 1.1 Georgia,
+    "Palatino Linotype",
+    serif;
   letter-spacing: 0.015em;
   color: #fff0c0;
-  text-shadow: 0 2px 3px #08233d, 0 0 9px #ffd47780;
+  text-shadow:
+    0 2px 3px #08233d,
+    0 0 9px #ffd47780;
 }
 .crystalarium-live-garden .crystalarium-live-section-title h2::before {
-  content: '✦';
+  content: "✦";
   color: #a8eaff;
   font-size: 0.76em;
   text-shadow: 0 0 7px #6cd7ff;
