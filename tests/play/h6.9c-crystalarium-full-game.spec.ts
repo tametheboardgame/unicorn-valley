@@ -1450,7 +1450,6 @@ test('C21 real player sees illustrated Crystalarium without a query flag', async
   expect(await page.evaluate(() => location.search)).toBe('');
 });
 
-
 test('C21 first lesson remains playable without a blocking overlay', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, true, true);
@@ -1474,11 +1473,7 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
       boardOverflowX: board.scrollWidth - board.clientWidth,
       boardOverflowY: board.scrollHeight - board.clientHeight,
       overflowMode: getComputedStyle(board).overflow,
-      insideFrame:
-        b.left >= a.left &&
-        b.right <= a.right &&
-        b.top >= a.top &&
-        b.bottom <= a.bottom,
+      insideFrame: b.left >= a.left && b.right <= a.right && b.top >= a.top && b.bottom <= a.bottom,
       guidePosition: getComputedStyle(root.querySelector('.crystalarium-live-guide')!).position,
     };
   });
@@ -1503,7 +1498,10 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   await expect(offer).toBeEnabled();
   await offer.click();
   await expect(guide).toHaveCount(0);
-  const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
   expect(saved.completed).toBe(1);
 });
 

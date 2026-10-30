@@ -298,7 +298,10 @@ export class CrystalariumIllustratedView {
     );
     card.classList.add('crystalarium-live-order-card');
     card.classList.toggle('is-guide-focus', inspecting || activeLesson === 'offer');
-    card.setAttribute('aria-label', inspecting ? 'Inspect the matching crystal goal' : 'Offer Resonance Order');
+    card.setAttribute(
+      'aria-label',
+      inspecting ? 'Inspect the matching crystal goal' : 'Offer Resonance Order',
+    );
     card.classList.toggle('is-ready', isReady);
     card.style.backgroundImage =
       "url('" +
@@ -385,10 +388,7 @@ export class CrystalariumIllustratedView {
       guide.setAttribute('aria-label', 'Crystalarium guide');
       guide.setAttribute('aria-live', 'polite');
       const instruction = node('div', 'crystalarium-live-guide-copy');
-      instruction.append(
-        node('strong', '', prompt.title),
-        node('span', '', prompt.instruction),
-      );
+      instruction.append(node('strong', '', prompt.title), node('span', '', prompt.instruction));
       guide.append(instruction, this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
       children.push(guide);
     }

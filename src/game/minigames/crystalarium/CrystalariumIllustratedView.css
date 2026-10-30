@@ -444,7 +444,9 @@
   gap: 4px 12px;
 }
 .crystalarium-live-guide strong {
-  font: 700 14px Georgia, serif;
+  font:
+    700 14px Georgia,
+    serif;
 }
 .crystalarium-live-guide span {
   font-size: 12px;
@@ -461,7 +463,9 @@
   z-index: 3;
   outline: 4px solid #ffe291;
   outline-offset: -2px;
-  box-shadow: 0 0 0 3px #28fff2, 0 0 22px 7px #93ffcf;
+  box-shadow:
+    0 0 0 3px #28fff2,
+    0 0 22px 7px #93ffcf;
 }
 .crystalarium-live-tool:disabled,
 .crystalarium-live-well:disabled,
@@ -635,7 +639,9 @@
   }
 }
 /* One scalable board+frame, no board-scrolling at any desktop zoom. */
-.crystalarium-live-board-viewport { overflow: hidden; }
+.crystalarium-live-board-viewport {
+  overflow: hidden;
+}
 .crystalarium-live-frame {
   min-width: 0;
   max-width: 100%;
@@ -643,9 +649,15 @@
   width: min(100%, 720px, 120cqh);
 }
 @media (min-width: 701px) and (max-height: 650px) {
-  .crystalarium-live-guide { padding-block: 2px; }
-  .crystalarium-live-guide strong { font-size: 12px; }
-  .crystalarium-live-guide span { font-size: 11px; }
+  .crystalarium-live-guide {
+    padding-block: 2px;
+  }
+  .crystalarium-live-guide strong {
+    font-size: 12px;
+  }
+  .crystalarium-live-guide span {
+    font-size: 11px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
