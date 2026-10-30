@@ -71,6 +71,8 @@ export class CrystalariumFullMode {
   private washArmed = false;
   private resetArmed = false;
   private quiet = false;
+  private growthSequence = 0;
+  private growthCue: CrystalariumPortraitPresentation['growthCue'] = null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -114,7 +116,10 @@ export class CrystalariumFullMode {
         this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
       growFromWell: (family) => this.growFromWell(family),
       grow: () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
-      growRefined: () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
+      growRefined: () => {
+        if (!this.permitted({ kind: 'other' })) return;
+        this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily);
+      },
       offer: () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
       harmony: () => this.run({ kind: 'other' }, () => createHarmony(this.state)),
       polish: () => this.polishSelected(),
@@ -239,10 +244,15 @@ export class CrystalariumFullMode {
       this.guide.getPrompt()?.lessonStep === 'grow'
         ? { kind: 'grow' as const }
         : { kind: 'other' as const };
-    this.run(command, () => growCrystalFromWell(this.state, family));
+    if (!this.permitted(command)) return;
+    this.apply(growCrystalFromWell(this.state, family), undefined, family);
   }
 
-  private apply(result: FullActionResult, note?: CrystalFamily): void {
+  private apply(
+    result: FullActionResult,
+    note?: CrystalFamily,
+    growthFamily?: CrystalFamily,
+  ): void {
     if (!result.accepted) {
       this.celebration = null;
       this.message = result.reason;
@@ -254,11 +264,21 @@ export class CrystalariumFullMode {
       this.render();
       return;
     }
+    const grownIndex =
+      growthFamily === undefined
+        ? -1
+        : result.state.cells.findIndex((piece, index) => piece && !this.state.cells[index]);
     const merged = result.state.merges > this.state.merges;
     const completed = result.state.completed > this.state.completed;
     const craftedHarmony = result.state.harmonies > this.state.harmonies;
     this.guide.observe(this.state, result.state);
     this.state = result.state;
+    // The visual cue must only follow a *saved* accepted growth. Never fire
+    // for full-board failures, tutorial rejection, cancelled moves or reload.
+    this.growthCue =
+      growthFamily && grownIndex >= 0
+        ? { id: ++this.growthSequence, family: growthFamily, cellIndex: grownIndex }
+        : null;
     this.message = result.message;
     this.celebration = completed ? 'offer' : craftedHarmony ? 'harmony' : merged ? 'merge' : null;
     this.washArmed = false;
@@ -652,6 +672,7 @@ export class CrystalariumFullMode {
       source: this.session.source,
       guide: this.guide.getPrompt(),
       celebration: this.celebration,
+      growthCue: this.growthCue,
     };
     if (this.portraitQuery?.matches) this.portrait?.render(presentation);
     this.illustrated?.render(presentation);

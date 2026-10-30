@@ -1587,6 +1587,79 @@ test('C21 Brook Chorus ready two-crystal card keeps its title and status inside 
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
+test('C20 Growth Potion uses approved twelve-frame art after a saved generator growth', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live.locator('.crystalarium-live-potion')).toContainText('Free growth');
+  await expect(live.locator('.crystalarium-live-potion')).not.toContainText('Balance pending');
+  await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
+
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  const effects = live.locator('.crystalarium-live-growth-fx');
+  await expect(effects).toHaveAttribute('data-crystalarium-growth-id', '1');
+  await expect(effects).toHaveAttribute('data-crystalarium-growth-family', 'low');
+  await expect(effects.locator('.crystalarium-live-pour-frame')).toHaveCount(1);
+  await expect(effects.locator('.crystalarium-live-crystal-emergence')).toHaveCount(1);
+  const cell = await effects.getAttribute('data-crystalarium-growth-cell');
+  expect(cell).not.toBeNull();
+  const state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(state.cells[Number(cell)]).toEqual({ family: 'low', tier: 0 });
+  const target = live.locator('[data-crystalarium-cell="' + cell + '"]');
+  await expect(target.locator('img')).toBeVisible();
+
+  const pour = await page.request.get(
+    '/design-assets/crystalarium-c17/growth-potion-assets/pour-12.webp',
+  );
+  const growth = await page.request.get(
+    '/design-assets/crystalarium-c17/growth-potion-assets/growth-04.webp',
+  );
+  expect(pour.ok()).toBe(true);
+  expect(growth.ok()).toBe(true);
+  await expect(effects.locator('img')).toHaveCount(0, { timeout: 5000 });
+  await expect(target.locator('img')).toBeVisible();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C20 reduced motion skips pouring but canonical well growth still saves', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
+  const state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(state.cells.filter(Boolean)).toHaveLength(1);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C20 blocked full-board generator growth never plays a pouring animation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  const cells = Array.from({ length: 42 }, () => ({ family: 'low' as const, tier: 0 as const }));
+  await enterResonanceGarden(page, false, true, { ...seed, cells });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(saved.cells.filter(Boolean)).toHaveLength(42);
+});
+
 test('C21 Three Notes card keeps its title and status safe around a two-column recipe', async ({
   page,
 }) => {

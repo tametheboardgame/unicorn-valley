@@ -43,6 +43,13 @@ export interface CrystalariumPortraitActions {
   exit(): void;
 }
 
+/** Transient visual-only event emitted after a successful, persisted well growth. */
+export interface CrystalariumGrowthCue {
+  readonly id: number;
+  readonly family: CrystalFamily;
+  readonly cellIndex: number;
+}
+
 export interface CrystalariumPortraitPresentation {
   state: CrystalariumFullState;
   selected: number | null;
@@ -54,6 +61,7 @@ export interface CrystalariumPortraitPresentation {
   source: 'world' | 'just-games';
   guide: CrystalariumGuidePrompt | null;
   celebration: 'merge' | 'offer' | 'harmony' | null;
+  growthCue?: CrystalariumGrowthCue | null;
 }
 
 function makeElement<K extends keyof HTMLElementTagNameMap>(

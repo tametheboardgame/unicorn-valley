@@ -9,6 +9,7 @@ import {
 } from './CrystalariumFullRules';
 import { CRYSTAL_TIER_NAMES, type CrystalPiece } from './CrystalariumOpeningRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
+import { CrystalariumGrowthPotionFx } from './CrystalariumGrowthPotionFx';
 import type {
   CrystalariumPortraitActions,
   CrystalariumPortraitPresentation,
@@ -59,6 +60,7 @@ export class CrystalariumIllustratedView {
   private readonly root: HTMLElement;
   private readonly dragging: CrystalariumPointerDrag;
   private readonly actions: CrystalariumPortraitActions;
+  private readonly growthFx = new CrystalariumGrowthPotionFx();
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
 
@@ -257,7 +259,7 @@ export class CrystalariumIllustratedView {
         ASSETS + 'growth-potion-assets/reservoir-full.webp',
         'Decorative Growth Potion reservoir',
       ),
-      node('small', '', 'Balance pending'),
+      node('small', '', 'Free growth'),
     );
     producers.append(potion);
     CRYSTAL_FAMILIES.forEach((family) => {
@@ -457,7 +459,10 @@ export class CrystalariumIllustratedView {
       layer.append(chamber);
       children.push(layer);
     }
-    this.root.replaceChildren(...children);
+    // Reuse one pointer-transparent effect layer across DOM redraws. A cue
+    // is consumed once, even if focus, sound or tutorial redraws this view.
+    this.root.replaceChildren(...children, this.growthFx.layer);
+    this.growthFx.render(this.root, view.growthCue);
     rail.scrollLeft = scrollLeft;
     if (this.storageOpen) {
       this.root
@@ -475,6 +480,7 @@ export class CrystalariumIllustratedView {
   }
 
   public destroy(): void {
+    this.growthFx.destroy();
     this.dragging.destroy();
     this.root.remove();
     this.latest = null;
