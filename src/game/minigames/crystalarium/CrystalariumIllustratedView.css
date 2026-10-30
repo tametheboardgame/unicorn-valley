@@ -142,7 +142,7 @@
 }
 .crystalarium-live-board-viewport {
   position: absolute;
-  /* Keep the header and Storage button clear without wasting frame space. */
+  /* Board height is independent of whether tutorial instructions are showing. */
   inset: 27px 0 49px;
   min-height: 0;
   min-width: 0;
@@ -153,12 +153,12 @@
 }
 .crystalarium-live-frame {
   position: relative;
-  /* 7 columns x 6 rows, with sockets approximately 1.2 times wider than tall.
-     The CSS frame hugs the board instead of prescribing a painted aperture. */
-  width: min(100%, 144cqh);
+  /* Portrait crystal sockets drive the frame, not the other way round.
+     At 7 × 6, a 0.92 board ratio yields tiles roughly 0.78 width/height. */
+  width: min(100%, 92cqh);
   max-width: 100%;
   max-height: 100%;
-  aspect-ratio: 1.44;
+  aspect-ratio: 0.92;
   isolation: isolate;
   border: 3px solid #d7b76f;
   border-radius: 16px;
@@ -197,10 +197,14 @@
   box-shadow: 0 0 12px #bfeeff;
 }
 .crystalarium-live-cell img {
-  max-width: 95%;
-  max-height: 95%;
+  display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  /* Keep the original crystal silhouette, never stretch it to the socket. */
+  transform: scale(1.06);
 }
 .crystalarium-live-board-footer {
   position: absolute;
@@ -466,7 +470,7 @@
   justify-content: space-between;
   min-width: 0;
   gap: 8px;
-  padding: 4px 9px;
+  padding: 5px 9px;
   border: 2px solid #e4b968;
   border-radius: 12px;
   background: #fff0c9;
@@ -478,6 +482,21 @@
   flex-wrap: wrap;
   min-width: 0;
   gap: 4px 12px;
+}
+/* The guide belongs with the order instructions, never in the outer
+   flex stack where it would shrink the playable garden. */
+.crystalarium-live-orders > .crystalarium-live-guide {
+  width: 100%;
+  border-radius: 10px;
+}
+.crystalarium-live-orders > .crystalarium-live-guide .crystalarium-live-button {
+  min-width: 92px;
+}
+@media (max-width: 1100px) {
+  .crystalarium-live-orders > .crystalarium-live-guide {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 .crystalarium-live-guide strong {
   font:
@@ -594,7 +613,7 @@
     flex: none;
     min-width: 0;
     max-width: 100%;
-    width: min(100%, 144cqh);
+    width: min(100%, 92cqh);
   }
   .crystalarium-live-order-card {
     flex-basis: clamp(145px, 16vw, 190px);
@@ -638,7 +657,7 @@
   .crystalarium-live-frame {
     min-width: 0;
     max-width: 100%;
-    width: min(100%, 144cqh);
+    width: min(100%, 92cqh);
   }
   .crystalarium-live-tool {
     min-height: 48px;
@@ -675,7 +694,7 @@
     width: 38px;
   }
 }
-/* Board-led 7×6 geometry with wide rectangular cells and no internal scrolling. */
+/* Board-led 7 × 6 geometry with tall portrait cells and no internal scrolling. */
 .crystalarium-live-board-viewport {
   overflow: hidden;
 }
@@ -683,7 +702,7 @@
   min-width: 0;
   max-width: 100%;
   max-height: 100%;
-  width: min(100%, 144cqh);
+  width: min(100%, 92cqh);
 }
 @media (min-width: 701px) and (max-height: 650px) {
   .crystalarium-live-guide {

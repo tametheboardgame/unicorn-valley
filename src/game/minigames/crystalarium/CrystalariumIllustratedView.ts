@@ -379,9 +379,8 @@ export class CrystalariumIllustratedView {
     const message = node('footer', 'crystalarium-live-message', view.message);
     message.setAttribute('aria-live', 'polite');
     scene.append(garden, producers, orders, tools);
-    const children: HTMLElement[] = [header];
     if (prompt) {
-      // Inline instructions never cover or intercept the board, wells or tools.
+      // Put the tutorial in the order panel; it cannot compress the main board.
       // The genuine controller still enforces each first-lesson action.
       const guide = node('aside', 'crystalarium-live-guide');
       guide.setAttribute('aria-label', 'Crystalarium guide');
@@ -398,9 +397,9 @@ export class CrystalariumIllustratedView {
         ),
       );
       guide.append(instruction, this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
-      children.push(guide);
+      orders.insertBefore(guide, orderRow);
     }
-    children.push(scene, message);
+    const children: HTMLElement[] = [header, scene, message];
 
     if (this.storageOpen) {
       const layer = node('div', 'crystalarium-live-storage-backdrop');

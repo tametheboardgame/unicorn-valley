@@ -1486,6 +1486,7 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   expect(initial.overflowMode).toBe('hidden');
   expect(initial.insideFrame).toBe(true);
   expect(initial.guidePosition).not.toBe('absolute');
+  await expect(live.locator('.crystalarium-live-orders > .crystalarium-live-guide')).toBeVisible();
 
   await grow.click();
   await expect(guide).toContainText('2 of 5');
@@ -1543,8 +1544,8 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   });
   expect(geometry.socketAspects).toHaveLength(42);
   for (const ratio of geometry.socketAspects) {
-    expect(ratio).toBeGreaterThan(1.1);
-    expect(ratio).toBeLessThan(1.4);
+    expect(ratio).toBeGreaterThan(0.7);
+    expect(ratio).toBeLessThan(0.92);
   }
   expect(geometry.overflowX).toBeLessThanOrEqual(1);
   expect(geometry.overflowY).toBeLessThanOrEqual(1);
@@ -1556,7 +1557,24 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
-test('C21 CSS frame follows wide 7x6 sockets with clean parchment artwork', async ({ page }) => {
+test('C21 tutorial sits alongside orders and never reduces crystal board height', async ({ page }) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const frame = live.locator('.crystalarium-live-frame');
+  const guide = live.locator('.crystalarium-live-orders > .crystalarium-live-guide');
+  await expect(guide).toBeVisible();
+  const initialHeight = (await frame.boundingBox())?.height ?? 0;
+  await guide.locator('[data-crystalarium-action="skip-guide"]').click();
+  await expect(guide).toHaveCount(0);
+  const afterHeight = (await frame.boundingBox())?.height ?? 0;
+  expect(initialHeight).toBeGreaterThan(400);
+  expect(Math.abs(afterHeight - initialHeight)).toBeLessThanOrEqual(2);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBeLessThanOrEqual(1);
+});
+
+test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
@@ -1608,16 +1626,16 @@ test('C21 CSS frame follows wide 7x6 sockets with clean parchment artwork', asyn
   }
   expect(geometry.frameWidth).toBeGreaterThan(0);
   expect(geometry.frameHeight).toBeGreaterThan(0);
-  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(1.44, 1);
+  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(0.92, 1);
   expect(geometry.frameBorder).toBe('3px');
   expect(geometry.illustratedFrameCount).toBe(0);
-  expect(geometry.gridWidth / geometry.gardenWidth).toBeGreaterThan(0.7);
+  expect(geometry.gridWidth / geometry.gardenWidth).toBeGreaterThan(0.48);
   expect(geometry.socketAspects).toHaveLength(42);
   for (const ratio of geometry.socketAspects) {
-    expect(ratio).toBeGreaterThan(1.1);
-    expect(ratio).toBeLessThan(1.4);
+    expect(ratio).toBeGreaterThan(0.7);
+    expect(ratio).toBeLessThan(0.92);
   }
-  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.74);
+  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.5);
   expect(geometry.gardenBorder).toBe('0px');
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
