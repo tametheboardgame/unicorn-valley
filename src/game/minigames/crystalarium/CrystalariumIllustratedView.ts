@@ -169,6 +169,12 @@ export class CrystalariumIllustratedView {
     headerButtons.setAttribute('aria-label', 'Crystalarium navigation');
     headerButtons.append(
       this.iconButton(
+        'guide',
+        prompt ? 'Skip guide' : 'Show guide',
+        'help',
+        prompt ? this.actions.skipGuide : this.actions.guide,
+      ),
+      this.iconButton(
         'sound',
         'Toggle sound',
         view.quiet || view.globallyMuted ? 'sound-off' : 'sound-on',
@@ -310,6 +316,7 @@ export class CrystalariumIllustratedView {
     const offering = isReady && (!firstLesson || activeLesson === 'offer');
     const card = this.button('', 'offer', this.actions.offer, !(pattern && offering));
     card.classList.add('crystalarium-live-order-card');
+    card.classList.toggle('has-three-goals', Boolean(pattern && pattern.goals.length >= 3));
     card.classList.toggle('is-guide-focus', activeLesson === 'offer');
     card.setAttribute('aria-label', 'Offer Resonance Order');
     card.classList.toggle('is-ready', isReady);

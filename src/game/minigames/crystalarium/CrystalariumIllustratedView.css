@@ -55,6 +55,16 @@
   flex: 0 0 auto;
   gap: 12px;
 }
+.crystalarium-live-heading {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 3px 14px 5px;
+  border: 1px solid #c6a66a99;
+  border-radius: 12px;
+  background: linear-gradient(105deg, #071f3fef, #0b304fe3 80%, #0e3350bd);
+  box-shadow: 0 2px 10px #031328ae, inset 0 1px 0 #ffedb33d;
+}
 .crystalarium-live-heading h1 {
   position: relative;
   display: inline-block;
@@ -69,7 +79,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 2px #09233c) drop-shadow(0 0 8px #ffdc8b4d);
+  filter: drop-shadow(0 2px 1px #031121) drop-shadow(0 0 5px #ffe6a083);
 }
 .crystalarium-live-heading h1::after {
   content: "";
@@ -155,6 +165,15 @@
   flex: 0 0 auto;
   margin: 0 2px 3px;
 }
+.crystalarium-live-garden .crystalarium-live-section-title {
+  right: auto;
+  max-width: calc(100% - 10px);
+  padding: 2px 12px 3px 9px;
+  border: 1px solid #c6a66a99;
+  border-radius: 10px;
+  background: linear-gradient(95deg, #071e3ff2, #102f4cdb);
+  box-shadow: 0 2px 9px #031328aa;
+}
 .crystalarium-live-garden .crystalarium-live-section-title h2 {
   display: flex;
   align-items: center;
@@ -164,10 +183,10 @@
     "Palatino Linotype",
     serif;
   letter-spacing: 0.015em;
-  color: #fff0c0;
+  color: #fff3c8;
   text-shadow:
-    0 2px 3px #08233d,
-    0 0 9px #ffd47780;
+    0 1px 2px #031121,
+    0 0 8px #ffe5a08c;
 }
 .crystalarium-live-garden .crystalarium-live-section-title h2::before {
   content: "✦";
@@ -415,6 +434,41 @@
 }
 .crystalarium-live-order-card.is-ready {
   filter: drop-shadow(0 0 13px #8afde0);
+}
+/* Two rows in the first column, then the next column, for recipes with
+   three requirements. Single- and two-goal cards keep their old layout. */
+.crystalarium-live-order-card.has-three-goals {
+  width: clamp(230px, 18vw, 300px);
+  flex-basis: clamp(230px, 18vw, 300px);
+  padding: 16% 12%;
+  gap: 4px;
+}
+.crystalarium-live-order-card.has-three-goals > strong {
+  max-width: 100%;
+  font-size: clamp(13px, 1vw, 16px);
+  line-height: 1.12;
+  overflow-wrap: break-word;
+}
+.crystalarium-live-order-card.has-three-goals .crystalarium-live-goals {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, max-content);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  place-items: center;
+  column-gap: 10px;
+  row-gap: 4px;
+  width: 100%;
+  max-height: 65%;
+  margin: 2px 0;
+}
+.crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
+  width: clamp(34px, 3.1vw, 49px);
+  height: clamp(39px, 3.65vw, 55px);
+}
+.crystalarium-live-order-card.has-three-goals > em {
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1.15;
 }
 .crystalarium-live-order-card.is-ready:not(:disabled) {
   cursor: pointer;
@@ -693,6 +747,15 @@
     height: auto;
     padding: 12%;
   }
+  .crystalarium-live-order-card.has-three-goals {
+    width: clamp(175px, 20vw, 205px);
+    flex-basis: clamp(175px, 20vw, 205px);
+    padding: 14% 10%;
+  }
+  .crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
+    width: 31px;
+    height: 36px;
+  }
   .crystalarium-live-goal img {
     width: 38px;
     height: 43px;
@@ -760,6 +823,15 @@
     flex-basis: clamp(160px, 15vw, 200px);
     width: clamp(160px, 15vw, 200px);
     height: auto;
+  }
+  .crystalarium-live-order-card.has-three-goals {
+    flex-basis: clamp(180px, 17vw, 225px);
+    width: clamp(180px, 17vw, 225px);
+    padding: 13% 10%;
+  }
+  .crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
+    width: 31px;
+    height: 36px;
   }
   .crystalarium-live-order-card .crystalarium-live-goal img {
     height: 40px;

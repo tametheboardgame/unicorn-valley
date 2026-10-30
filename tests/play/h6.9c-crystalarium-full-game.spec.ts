@@ -18,7 +18,12 @@ import {
 const SCENE = 'CrystalariumActivityScene';
 const SANDBOX_KEY = 'unicorn-valley:just-games:crystalarium:v1';
 
-async function enterResonanceGarden(page: Page, teach = false, illustrated = false): Promise<void> {
+async function enterResonanceGarden(
+  page: Page,
+  teach = false,
+  illustrated = false,
+  seededState?: CrystalariumFullState,
+): Promise<void> {
   await page.addInitScript(() => window.localStorage.clear());
   await openDiagnostics(
     page,
@@ -29,6 +34,12 @@ async function enterResonanceGarden(page: Page, teach = false, illustrated = fal
   await waitForScene(page, 'JustGamesScene');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
   await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  if (seededState) {
+    await page.evaluate(
+      ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
+      { key: SANDBOX_KEY, state: seededState },
+    );
+  }
   // Existing free-play regressions intentionally skip the new first-time lesson.
   // The dedicated C11B scenario below tests it from a completely fresh save.
   if (!teach) {
@@ -1471,7 +1482,7 @@ test('C21 drag a crystal onto the Storage dock without opening the modal', async
   expect(saved.shelf[0]).toEqual({ family: 'low', tier: 0 });
 });
 
-test('C21 simplified chrome has four expanded tools, no duplicate Guide controls or status strip', async ({
+test('C21 top Guide is retained while four expanded Garden Tools omit the duplicate', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -1481,8 +1492,11 @@ test('C21 simplified chrome has four expanded tools, no duplicate Guide controls
   await expect(live.getByRole('heading', { name: 'Crystal Garden' })).toBeVisible();
   await expect(
     live.locator('.crystalarium-live-header-actions .crystalarium-live-button'),
-  ).toHaveCount(2);
-  await expect(live.locator('[data-crystalarium-action="guide"]')).toHaveCount(0);
+  ).toHaveCount(3);
+  await expect(
+    live.locator('.crystalarium-live-header-actions [data-crystalarium-action="guide"]'),
+  ).toHaveCount(1);
+  await expect(live.locator('.crystalarium-live-tools [data-crystalarium-action="guide"]')).toHaveCount(0);
   await expect(live.locator('.crystalarium-live-tools .crystalarium-live-tool')).toHaveCount(4);
   await expect(live.locator('.crystalarium-live-message')).toHaveCount(0);
   const layout = await live.evaluate((root) => {
@@ -1497,6 +1511,8 @@ test('C21 simplified chrome has four expanded tools, no duplicate Guide controls
       subtitleFontSize: parseFloat(getComputedStyle(subheading).fontSize),
       statusClipped: getComputedStyle(status).clipPath,
       statusRole: status.getAttribute('role'),
+      headingBacking: getComputedStyle(title.parentElement!).backgroundImage,
+      subtitleBacking: getComputedStyle(subheading.parentElement!).backgroundImage,
       pageOverflow: document.documentElement.scrollHeight - innerHeight,
     };
   });
@@ -1506,7 +1522,53 @@ test('C21 simplified chrome has four expanded tools, no duplicate Guide controls
   expect(layout.subtitleFontSize).toBeGreaterThanOrEqual(17);
   expect(layout.statusClipped).toBe('inset(50%)');
   expect(layout.statusRole).toBe('status');
+  expect(layout.headingBacking).toContain('linear-gradient');
+  expect(layout.subtitleBacking).toContain('linear-gradient');
   expect(layout.pageOverflow).toBeLessThanOrEqual(1);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C21 Three Notes card keeps its title and status safe around a two-column recipe', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true, {
+    ...createCrystalariumFullState(),
+    completed: 8,
+  });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const card = live.locator('.crystalarium-live-order-card.has-three-goals');
+  await expect(card).toBeVisible();
+  await expect(card.locator('strong')).toHaveText('Three Notes');
+  await expect(card.locator('.crystalarium-live-goal')).toHaveCount(3);
+  const positions = await card.evaluate((root) => {
+    const bounds = root.getBoundingClientRect();
+    const title = root.querySelector('strong')!.getBoundingClientRect();
+    const goals = Array.from(root.querySelectorAll('.crystalarium-live-goal')).map((x) =>
+      x.getBoundingClientRect(),
+    );
+    const status = root.querySelector('em')!.getBoundingClientRect();
+    return {
+      cardTop: bounds.top,
+      cardBottom: bounds.bottom,
+      titleTop: title.top,
+      titleBottom: title.bottom,
+      statusTop: status.top,
+      statusBottom: status.bottom,
+      goals: goals.map((g) => ({ x: g.x, y: g.y, top: g.top, bottom: g.bottom })),
+      isGrid: getComputedStyle(root.querySelector('.crystalarium-live-goals')!).display,
+      pageOverflow: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(positions.isGrid).toBe('grid');
+  expect(positions.titleTop).toBeGreaterThan(positions.cardTop + 15);
+  expect(positions.titleBottom).toBeLessThan(positions.goals[0].top);
+  expect(Math.abs(positions.goals[0].x - positions.goals[1].x)).toBeLessThan(3);
+  expect(positions.goals[1].y).toBeGreaterThan(positions.goals[0].y + 15);
+  expect(positions.goals[2].x).toBeGreaterThan(positions.goals[0].x + 20);
+  expect(positions.statusTop).toBeGreaterThan(positions.goals[1].bottom);
+  expect(positions.statusBottom).toBeLessThan(positions.cardBottom - 12);
+  expect(positions.pageOverflow).toBeLessThanOrEqual(1);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
