@@ -108,6 +108,7 @@ export class CrystalariumPointerDrag {
     const target = document.elementFromPoint(event.clientX, event.clientY);
     const cell = target?.closest<HTMLElement>('[data-crystalarium-cell]');
     const shelf = target?.closest<HTMLElement>('[data-crystalarium-action^="shelf-"]');
+    const storageDock = target?.closest<HTMLElement>('[data-crystalarium-storage-drop]');
     const wash = target?.closest<HTMLElement>(
       '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
     );
@@ -116,7 +117,7 @@ export class CrystalariumPointerDrag {
     if (current.origin.kind === 'cell') {
       if (cell && Number(cell.dataset.crystalariumCell) !== current.origin.index) {
         this.actions.move(current.origin.index, Number(cell.dataset.crystalariumCell));
-      } else if (shelf) {
+      } else if (shelf || storageDock) {
         this.actions.shelve(current.origin.index);
       } else if (wash) {
         this.actions.wash(current.origin.index);
@@ -150,6 +151,12 @@ export class CrystalariumPointerDrag {
       '[data-crystalarium-action^="shelf-"]',
     )) {
       shelf.dataset.crystalariumDrop = origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
+    }
+    for (const storageDock of this.root.querySelectorAll<HTMLElement>(
+      '[data-crystalarium-storage-drop]',
+    )) {
+      storageDock.dataset.crystalariumDrop =
+        origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
     }
     for (const wash of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
