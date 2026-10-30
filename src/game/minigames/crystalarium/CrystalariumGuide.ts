@@ -69,7 +69,7 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
       return {
         stage,
         title: '1. Make a crystal',
-        instruction: 'Tap Grow shard. A new little crystal appears on the board!',
+        instruction: 'Tap the Low crystal generator to grow a new shard.',
         target: 'grow',
       };
     case 'merge':
@@ -89,8 +89,9 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
     case 'shelf':
       return {
         stage,
-        title: 'A safe crystal shelf',
-        instruction: 'Need room? Keep a crystal on the shelf. Drag it back when you need it!',
+        title: 'Keep crystals in Storage',
+        instruction:
+          'Open Storage and choose a crystal from the board. Tap a stored crystal to bring it back, or drag one onto Storage.',
         target: 'shelve',
       };
     case 'wash':
@@ -136,7 +137,7 @@ function promptFor(stage: CrystalariumGuideStage): CrystalariumGuidePrompt {
         stage,
         title: 'Your crystal songbook',
         instruction:
-          'Grow shards, drag matching twins together, then match the pictured recipe. The shelf stores crystals; Brook Wash recycles them.',
+          'Grow shards, drag matching twins together, then match the pictured recipe. Storage keeps crystals safely; Brook Wash recycles them.',
         target: 'none',
       };
   }
