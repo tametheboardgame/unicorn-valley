@@ -60,10 +60,7 @@ export class CrystalariumPointerDrag {
     if (Date.now() - this.lastDropAt > 250) return;
     // A drag may generate a synthetic click on the board/drop source. Never
     // swallow a subsequent genuine tap on a stored crystal or the close cross.
-    if (
-      event.target instanceof Element &&
-      event.target.closest('.crystalarium-live-storage')
-    ) {
+    if (event.target instanceof Element && event.target.closest('.crystalarium-live-storage')) {
       return;
     }
     event.preventDefault();

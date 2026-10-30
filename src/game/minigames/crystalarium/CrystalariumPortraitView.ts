@@ -114,6 +114,7 @@ export class CrystalariumPortraitView {
         shelve: actions.dragShelve,
         wash: actions.dragWash,
         restore: actions.dragRestore,
+        tapShelf: actions.restore,
         invalid: actions.dragInvalid,
       },
       ({ kind, index }) => {
@@ -228,12 +229,7 @@ export class CrystalariumPortraitView {
     // The first-play spotlight opens only the panel needed for that action.
     // Normal play starts board-first, with secondary surfaces closed.
     if (lesson !== this.lastLessonStep) {
-      this.activeMenu =
-        lesson === 'grow'
-          ? 'growing'
-          : lesson === 'offer'
-            ? 'pattern'
-            : null;
+      this.activeMenu = lesson === 'grow' ? 'growing' : lesson === 'offer' ? 'pattern' : null;
       this.lastLessonStep = lesson;
     }
     // Do not scroll on initial render: the compact first board row must remain visible.

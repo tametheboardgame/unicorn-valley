@@ -307,9 +307,6 @@ export class CrystalariumFullMode {
         event.preventDefault();
         this.toggleGuide();
         return;
-      case 'KeyI':
-        this.inspectGoal();
-        return;
       case 'KeyN':
         this.run({ kind: 'grow' }, () => spawnCrystal(this.state));
         return;
@@ -835,15 +832,6 @@ export class CrystalariumFullMode {
           100,
         ).setOrigin(0.5);
       });
-      if (this.guide.getPrompt()?.lessonStep === 'inspect') {
-        const inspect = this.scene.add
-          .rectangle(742, 271, 108, 76, 0xffe5a0, 0.1)
-          .setStrokeStyle(4, 0xffe5a0)
-          .setName('crystalarium-full-inspect')
-          .setInteractive({ useHandCursor: true });
-        inspect.on('pointerdown', () => this.inspectGoal());
-        holder.add(inspect);
-      }
       if (pattern.harmonies) {
         this.addText(
           holder,
