@@ -41,15 +41,19 @@ function image(url: string, alt = ''): HTMLImageElement {
 /**
  * C17/C21 real-game visual integration candidate. It presents the EXISTING
  * CrystalariumFullMode state/actions and does not invent an economy, order
- * queue or save schema. Enabled only with ?crystalariumLiveArt=1 until the
- * migration and interaction gates have passed.
+ * queue or save schema. Default on World draft builds; diagnostics retain
+ * classic Phaser unless explicitly opting in with ?crystalariumLiveArt=1.
  */
 export class CrystalariumIllustratedView {
   public static enabled(): boolean {
-    return (
-      typeof window !== 'undefined' &&
-      new URLSearchParams(window.location.search).get('crystalariumLiveArt') === '1'
-    );
+    if (typeof window === 'undefined') return false;
+    const params = new URLSearchParams(window.location.search);
+    // Diagnostics stay on the established Phaser presentation unless the
+    // browser test explicitly opts into the live illustrated view.
+    // The preview build presents approved artwork by default to real players.
+    const mode = params.get('crystalariumLiveArt');
+    if (mode === '0' || mode === 'classic') return false;
+    return mode === '1' || !params.has('diagnostics');
   }
 
   private readonly root: HTMLElement;

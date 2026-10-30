@@ -1400,3 +1400,53 @@ test('C21 visual integration opt-in leaves existing full-game UI default unchang
     scene.objects.filter((object) => object.name.startsWith('crystalarium-full-cell:')),
   ).toHaveLength(42);
 });
+
+
+test('C21 illustrated real game survives a zoom-equivalent desktop viewport with the first lesson', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 960, height: 560 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  await expect(live.locator('.crystalarium-live-frame-art')).toBeVisible();
+  const metrics = await live.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    return {
+      display: getComputedStyle(element).display,
+      width: bounds.width,
+      height: bounds.height,
+      pageExtraHeight: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(metrics.display).not.toBe('none');
+  expect(metrics.width).toBeGreaterThan(900);
+  expect(metrics.height).toBeGreaterThan(500);
+  expect(metrics.pageExtraHeight).toBeLessThanOrEqual(1);
+  await expect(live.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
+  await expect(live.locator('[data-crystalarium-action="well-low"]')).toBeVisible();
+});
+
+test('C21 real player sees illustrated Crystalarium without a query flag', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => window.localStorage.clear());
+  await openDiagnostics(page);
+  await waitForScene(page, 'TitleScene');
+  await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
+  await waitForScene(page, 'JustGamesScene');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  // In-memory diagnostics remains available, but the game sees the URL used
+  // by ordinary players, with no query flags at all.
+  await page.evaluate(() => {
+    localStorage.setItem('unicorn-valley:crystalarium:guide:just-games:v1', 'seen');
+    history.replaceState(null, '', window.location.pathname);
+  });
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  expect(await page.evaluate(() => location.search)).toBe('');
+});
