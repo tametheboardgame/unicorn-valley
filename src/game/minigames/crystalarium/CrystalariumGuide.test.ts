@@ -88,6 +88,8 @@ describe('H6.9C9 optional child-first guide', () => {
     const shelfState = { ...initial, completed: 2 };
     const guide = new CrystalariumGuide('world', shelfState, storage);
     expect(guide.getPrompt()?.stage).toBe('shelf');
+    expect(guide.getPrompt()?.instruction).toContain('Open Storage');
+    expect(guide.getPrompt()?.instruction).toContain('Tap a stored crystal');
     guide.skip();
     expect(new CrystalariumGuide('world', shelfState, storage).getPrompt()).toBeNull();
     expect(new CrystalariumGuide('just-games', shelfState, storage).getPrompt()?.stage).toBe(
