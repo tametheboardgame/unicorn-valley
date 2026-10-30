@@ -195,7 +195,7 @@ export class CrystalariumGuide {
         return {
           stage: 'grow',
           lessonStep: step,
-          title: '1 of 5 • Grow',
+          title: '1 of 4 • Grow',
           instruction: 'Only Grow Shard works. Tap the glowing Grow button.',
           target: 'grow',
         };
@@ -203,7 +203,7 @@ export class CrystalariumGuide {
         return {
           stage: 'merge',
           lessonStep: step,
-          title: '2 of 5 • Pick up',
+          title: '2 of 4 • Pick up',
           instruction: 'Pick up the outlined new crystal, not the other one.',
           target: 'cell',
           sourceIndex: pair?.source,
@@ -212,26 +212,18 @@ export class CrystalariumGuide {
         return {
           stage: 'merge',
           lessonStep: step,
-          title: '3 of 5 • Merge',
+          title: '3 of 4 • Merge',
           instruction: 'Drop it onto the outlined matching twin.',
           target: 'cell',
           sourceIndex: pair?.source,
           targetIndex: pair?.target,
         };
-      case 'inspect':
-        return {
-          stage: 'offer',
-          lessonStep: step,
-          title: '4 of 5 • Match the picture',
-          instruction: 'Look at the new crystal. Tap the matching goal picture.',
-          target: 'goal',
-        };
       case 'offer':
         return {
           stage: 'offer',
           lessonStep: step,
-          title: '5 of 5 • Offer',
-          instruction: 'The crystal matches! Only Offer Pattern works now.',
+          title: '4 of 4 • Offer',
+          instruction: 'The crystal matches! Tap the glowing order card once to offer it.',
           target: 'offer',
         };
     }
@@ -249,11 +241,6 @@ export class CrystalariumGuide {
     if (firstLessonAllows(this.lesson.step, this.lesson.pair, { kind: 'pick', index })) {
       this.lesson.step = 'merge';
     }
-  }
-
-  public inspected(state: CrystalariumFullState): void {
-    if (!this.lesson || this.lesson.step !== 'inspect' || !canOfferPattern(state)) return;
-    this.lesson.step = 'offer';
   }
 
   public replay(state: CrystalariumFullState): void {
@@ -278,7 +265,7 @@ export class CrystalariumGuide {
         if (pair) this.lesson = { step: 'pick-up', pair };
         else this.finish(); // An unusual saved board may not support this choreography.
       } else if (this.lesson.step === 'merge' && after.merges > before.merges) {
-        this.lesson = { step: 'inspect', pair: null };
+        this.lesson = { step: 'offer', pair: null };
       }
       return;
     }

@@ -31,7 +31,6 @@ export interface CrystalariumPortraitActions {
   grow(): void;
   growRefined(): void;
   offer(): void;
-  inspectGoal(): void;
   harmony(): void;
   polish(): void;
   shelve(): void;
@@ -232,7 +231,7 @@ export class CrystalariumPortraitView {
       this.activeMenu =
         lesson === 'grow'
           ? 'growing'
-          : lesson === 'inspect' || lesson === 'offer'
+          : lesson === 'offer'
             ? 'pattern'
             : null;
       this.lastLessonStep = lesson;
@@ -246,11 +245,9 @@ export class CrystalariumPortraitView {
           ? 'cell-' + view.guide?.sourceIndex
           : lesson === 'merge'
             ? 'cell-' + view.guide?.targetIndex
-            : lesson === 'inspect'
-              ? 'inspect-goal'
-              : lesson === 'offer'
-                ? 'offer'
-                : null;
+            : lesson === 'offer'
+              ? 'offer'
+              : null;
     const advanceFocus =
       this.previousLessonFocus !== null &&
       nextLessonFocus !== null &&
@@ -330,15 +327,7 @@ export class CrystalariumPortraitView {
     const goals = makeElement('div', 'crystalarium-portrait-goals');
     if (pattern) {
       for (const [goalIndex, goal] of pattern.goals.entries()) {
-        const inspecting = lesson === 'inspect' && goalIndex === 0;
-        const tile = inspecting
-          ? makeElement('button', 'crystalarium-portrait-goal is-guide-focus')
-          : makeElement('div', 'crystalarium-portrait-goal');
-        if (tile instanceof HTMLButtonElement) {
-          tile.type = 'button';
-          tile.dataset.crystalariumAction = 'inspect-goal';
-          tile.addEventListener('click', () => this.actions.inspectGoal());
-        }
+        const tile = makeElement('div', 'crystalarium-portrait-goal');
         tile.append(createCrystalArtElement({ family: goal.family, tier: goal.tier }));
         const owned = [...state.cells, ...state.shelf].filter(
           (piece) => piece?.family === goal.family && piece.tier === goal.tier,

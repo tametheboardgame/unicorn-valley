@@ -97,6 +97,7 @@ export class CrystalariumIllustratedView {
         },
         wash: actions.dragWash,
         restore: actions.dragRestore,
+        tapShelf: actions.restore,
         invalid: actions.dragInvalid,
       },
       ({ kind, index }) =>
@@ -312,20 +313,11 @@ export class CrystalariumIllustratedView {
     const orderRow = node('div', 'crystalarium-live-orders-row');
     const rail = node('div', 'crystalarium-live-orders-scroll');
     rail.setAttribute('aria-label', 'Current Resonance Order');
-    const inspecting = activeLesson === 'inspect';
     const offering = isReady && (!firstLesson || activeLesson === 'offer');
-    const card = this.button(
-      '',
-      inspecting ? 'inspect-goal' : 'offer',
-      inspecting ? this.actions.inspectGoal : this.actions.offer,
-      !(pattern && (inspecting || offering)),
-    );
+    const card = this.button('', 'offer', this.actions.offer, !(pattern && offering));
     card.classList.add('crystalarium-live-order-card');
-    card.classList.toggle('is-guide-focus', inspecting || activeLesson === 'offer');
-    card.setAttribute(
-      'aria-label',
-      inspecting ? 'Inspect the matching crystal goal' : 'Offer Resonance Order',
-    );
+    card.classList.toggle('is-guide-focus', activeLesson === 'offer');
+    card.setAttribute('aria-label', 'Offer Resonance Order');
     card.classList.toggle('is-ready', isReady);
     card.classList.toggle('is-complete', !pattern);
     card.dataset.cardArt = isReady ? 'ready' : 'in-progress';

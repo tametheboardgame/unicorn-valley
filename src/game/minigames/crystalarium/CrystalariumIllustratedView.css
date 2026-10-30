@@ -10,8 +10,8 @@
   gap: clamp(3px, 0.5vh, 7px);
   padding: clamp(5px, 0.7vh, 9px) clamp(8px, 1vw, 18px);
   color: #eaf7ff;
+  /* Show the approved garden illustration at its natural brightness. */
   background:
-    linear-gradient(125deg, #07172dc7, #0a2944bb 45%, #121a36bb),
     url("/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp") center / cover
     no-repeat;
   font:
@@ -508,6 +508,18 @@
   flex: 0 0 auto;
   min-height: 48px;
   padding: 4px 12px;
+}
+.crystalarium-live-guide [data-crystalarium-action="skip-guide"] {
+  color: #fff4cb;
+  background: #19466a;
+  border: 2px solid #d4aa59;
+  font-weight: 700;
+}
+.crystalarium-live-guide [data-crystalarium-action="skip-guide"]:hover,
+.crystalarium-live-guide [data-crystalarium-action="skip-guide"]:focus-visible {
+  color: #142b42;
+  background: #ffe4a0;
+  border-color: #775223;
 }
 .crystalarium-live-tool.is-guide-focus,
 .crystalarium-live-cell.is-guide-focus,

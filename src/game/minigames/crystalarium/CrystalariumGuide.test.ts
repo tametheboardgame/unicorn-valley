@@ -36,10 +36,8 @@ describe('H6.9C9 optional child-first guide', () => {
     expect(merged.accepted).toBe(true);
     if (!merged.accepted) return;
     guide.observe(grown.state, merged.state);
-    expect(guide.getPrompt()?.lessonStep).toBe('inspect');
-    expect(guide.allows({ kind: 'offer' })).toBe(false);
-    guide.inspected(merged.state);
     expect(guide.getPrompt()?.lessonStep).toBe('offer');
+    expect(guide.allows({ kind: 'offer' })).toBe(true);
     const offered = offerResonancePattern(merged.state);
     expect(offered.accepted).toBe(true);
     if (!offered.accepted) return;

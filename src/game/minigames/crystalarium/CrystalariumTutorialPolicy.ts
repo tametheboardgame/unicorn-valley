@@ -1,12 +1,11 @@
 import { canOfferPattern, type CrystalariumFullState } from './CrystalariumFullRules';
 import { combineCrystalPieces } from './CrystalariumOpeningRules';
 
-export type FirstLessonStep = 'grow' | 'pick-up' | 'merge' | 'inspect' | 'offer';
+export type FirstLessonStep = 'grow' | 'pick-up' | 'merge' | 'offer';
 export type FirstLessonCommand =
   | { readonly kind: 'grow' }
   | { readonly kind: 'pick'; readonly index: number }
   | { readonly kind: 'merge'; readonly source: number; readonly target: number }
-  | { readonly kind: 'inspect' }
   | { readonly kind: 'offer' }
   | { readonly kind: 'other' };
 
@@ -38,7 +37,7 @@ export function feasibleFirstLesson(
   state: CrystalariumFullState,
 ): { readonly step: FirstLessonStep; readonly pair: TutorialPair | null } | null {
   if (state.completed !== 0) return null;
-  if (canOfferPattern(state)) return { step: 'inspect', pair: null };
+  if (canOfferPattern(state)) return { step: 'offer', pair: null };
   if (state.merges > 0) return null;
   if (state.cells.filter(Boolean).length < 3) {
     return state.cells.some((cell) => cell === null) ? { step: 'grow', pair: null } : null;
@@ -72,8 +71,6 @@ export function firstLessonAllows(
         action.source === pair.source &&
         action.target === pair.target
       );
-    case 'inspect':
-      return action.kind === 'inspect';
     case 'offer':
       return action.kind === 'offer';
   }

@@ -1425,7 +1425,14 @@ test('C21 Storage only has an accessible close and tappable saved crystal slots'
   expect(stored.cells[0]).toBeNull();
   expect(stored.shelf[0]).toEqual({ family: 'low', tier: 0 });
 
-  await dialog.locator('[data-crystalarium-action="shelf-0"]').click();
+  // A single pointer tap must restore immediately, without waiting for
+  // a second click or relying on the browser to synthesise a click.
+  const occupied = dialog.locator('[data-crystalarium-action="shelf-0"]');
+  const bounds = await occupied.boundingBox();
+  if (!bounds) throw new Error('Missing occupied storage slot');
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.down();
+  await page.mouse.up();
   await expect(dialog).toContainText('0 / 4 slots used');
   const restored = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
@@ -1534,7 +1541,7 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   const guide = live.locator('.crystalarium-live-guide');
   const grow = live.locator('[data-crystalarium-action="well-low"]');
   await expect(guide).toBeVisible();
-  await expect(guide).toContainText('1 of 5');
+  await expect(guide).toContainText('1 of 4');
   await expect(grow).toBeEnabled();
   await expect(grow).toHaveAttribute('data-crystalarium-guide-target', 'true');
   await expect(live.locator('[data-crystalarium-action="grow"]')).toHaveCount(0);
@@ -1563,19 +1570,27 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   expect(initial.insideFrame).toBe(true);
   expect(initial.guidePosition).not.toBe('absolute');
   await expect(live.locator('.crystalarium-live-orders > .crystalarium-live-guide')).toBeVisible();
+  const artwork = await live.evaluate((root) => {
+    const background = getComputedStyle(root).backgroundImage;
+    const skip = root.querySelector<HTMLElement>('[data-crystalarium-action="skip-guide"]');
+    if (!skip) throw new Error('Skip guide must stay visible');
+    const style = getComputedStyle(skip);
+    return { background, skipColour: style.color, skipBackground: style.backgroundColor };
+  });
+  expect(artwork.background).toContain('garden-desktop-approved-1920x1080.webp');
+  expect(artwork.background).not.toContain('linear-gradient');
+  expect(artwork.skipColour).toBe('rgb(255, 244, 203)');
+  expect(artwork.skipBackground).toBe('rgb(25, 70, 106)');
 
   await grow.click();
-  await expect(guide).toContainText('2 of 5');
+  await expect(guide).toContainText('2 of 4');
   // The policy chooses the correct pair from the saved board, not fixed indices.
   await expect(live.locator('.crystalarium-live-cell.is-guide-focus')).toHaveCount(1);
   await live.locator('.crystalarium-live-cell.is-guide-focus').click();
-  await expect(guide).toContainText('3 of 5');
+  await expect(guide).toContainText('3 of 4');
   await live.locator('.crystalarium-live-cell.is-guide-focus').click();
-  await expect(guide).toContainText('4 of 5');
-  const inspect = live.locator('[data-crystalarium-action="inspect-goal"]');
-  await expect(inspect).toBeEnabled();
-  await inspect.click();
-  await expect(guide).toContainText('5 of 5');
+  await expect(guide).toContainText('4 of 4');
+  await expect(live.locator('[data-crystalarium-action="inspect-goal"]')).toHaveCount(0);
   const offer = live.locator('[data-crystalarium-action="offer"]');
   await expect(offer).toBeEnabled();
   await offer.click();

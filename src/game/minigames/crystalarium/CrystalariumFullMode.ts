@@ -116,7 +116,6 @@ export class CrystalariumFullMode {
       grow: () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
       growRefined: () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
       offer: () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
-      inspectGoal: () => this.inspectGoal(),
       harmony: () => this.run({ kind: 'other' }, () => createHarmony(this.state)),
       polish: () => this.polishSelected(),
       shelve: () => this.shelveSelected(),
@@ -241,13 +240,6 @@ export class CrystalariumFullMode {
         ? { kind: 'grow' as const }
         : { kind: 'other' as const };
     this.run(command, () => growCrystalFromWell(this.state, family));
-  }
-
-  private inspectGoal(): void {
-    if (!this.permitted({ kind: 'inspect' })) return;
-    this.guide.inspected(this.state);
-    this.message = 'The crystal matches the picture. Offer it now!';
-    this.render();
   }
 
   private apply(result: FullActionResult, note?: CrystalFamily): void {

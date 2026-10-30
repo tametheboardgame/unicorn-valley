@@ -6,6 +6,7 @@ export interface CrystalariumDragActions {
   shelve(source: number): void;
   wash(source: number): void;
   restore(source: number, target: number): void;
+  tapShelf(source: number): void;
   invalid(): void;
 }
 type Origin = { kind: 'cell' | 'shelf'; index: number; piece: CrystalPiece };
@@ -22,6 +23,8 @@ interface CurrentDrag {
 export class CrystalariumPointerDrag {
   private current: CurrentDrag | null = null;
   private lastDropAt = 0;
+  private lastShelfTapAt = 0;
+  private lastShelfTapIndex = -1;
 
   public constructor(
     private readonly root: HTMLElement,
@@ -39,6 +42,21 @@ export class CrystalariumPointerDrag {
   }
 
   private readonly onClickCapture = (event: MouseEvent): void => {
+    // The pointer-up already restored an occupied Storage slot. Ignore only
+    // the synthetic follow-up click for that exact slot, not other controls.
+    const tappedShelf =
+      event.target instanceof Element
+        ? event.target.closest<HTMLElement>('[data-crystalarium-action^="shelf-"]')
+        : null;
+    if (
+      tappedShelf &&
+      Date.now() - this.lastShelfTapAt < 500 &&
+      Number(tappedShelf.dataset.crystalariumAction?.slice(6)) === this.lastShelfTapIndex
+    ) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
     if (Date.now() - this.lastDropAt > 250) return;
     // A drag may generate a synthetic click on the board/drop source. Never
     // swallow a subsequent genuine tap on a stored crystal or the close cross.
@@ -109,6 +127,11 @@ export class CrystalariumPointerDrag {
     if (!current || current.pointerId !== event.pointerId) return;
     if (!current.dragging) {
       this.clear();
+      if (current.origin.kind === 'shelf') {
+        this.lastShelfTapAt = Date.now();
+        this.lastShelfTapIndex = current.origin.index;
+        this.actions.tapShelf(current.origin.index);
+      }
       return;
     }
     event.preventDefault();
@@ -134,6 +157,14 @@ export class CrystalariumPointerDrag {
       }
     } else if (cell) {
       this.actions.restore(current.origin.index, Number(cell.dataset.crystalariumCell));
+    } else if (
+      shelf &&
+      Number(shelf.dataset.crystalariumAction?.slice(6)) === current.origin.index
+    ) {
+      // Small touch movement inside the same slot is still one tap.
+      this.lastShelfTapAt = Date.now();
+      this.lastShelfTapIndex = current.origin.index;
+      this.actions.tapShelf(current.origin.index);
     } else {
       this.actions.invalid();
     }

@@ -33,9 +33,7 @@ describe('H6.9C11B first-play action authorisation foundation', () => {
     const merged = moveOrMergeCrystal(result.state, 2, 0);
     expect(merged.accepted).toBe(true);
     if (!merged.accepted) return;
-    expect(feasibleFirstLesson(merged.state)).toEqual({ step: 'inspect', pair: null });
-    expect(firstLessonAllows('inspect', null, { kind: 'offer' })).toBe(false);
-    expect(firstLessonAllows('inspect', null, { kind: 'inspect' })).toBe(true);
+    expect(feasibleFirstLesson(merged.state)).toEqual({ step: 'offer', pair: null });
     expect(firstLessonAllows('offer', null, { kind: 'offer' })).toBe(true);
     const completed = offerResonancePattern(merged.state);
     expect(completed.accepted).toBe(true);
@@ -57,11 +55,11 @@ describe('H6.9C11B first-play action authorisation foundation', () => {
 
   it('only permits exactly its own target and rejects unrelated gameplay', () => {
     const pair = { source: 13, target: 7 };
-    for (const step of ['grow', 'pick-up', 'merge', 'inspect', 'offer'] as const) {
+    for (const step of ['grow', 'pick-up', 'merge', 'offer'] as const) {
       expect(firstLessonAllows(step, pair, { kind: 'other' })).toBe(false);
     }
     expect(firstLessonAllows('merge', null, { kind: 'merge', source: 13, target: 7 })).toBe(false);
     expect(firstLessonAllows('pick-up', pair, { kind: 'pick', index: 7 })).toBe(false);
-    expect(firstLessonAllows('offer', pair, { kind: 'inspect' })).toBe(false);
+    expect(firstLessonAllows('offer', pair, { kind: 'pick', index: 13 })).toBe(false);
   });
 });
