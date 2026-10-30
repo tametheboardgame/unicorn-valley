@@ -1601,8 +1601,26 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   const effects = live.locator('.crystalarium-live-growth-fx');
   await expect(effects).toHaveAttribute('data-crystalarium-growth-id', '1');
   await expect(effects).toHaveAttribute('data-crystalarium-growth-family', 'low');
-  await expect(effects.locator('.crystalarium-live-pour-frame')).toHaveCount(1);
-  await expect(effects.locator('.crystalarium-live-crystal-emergence')).toHaveCount(1);
+  // Predecoded, fixed-source image layers prevent blank frames during
+  // Chrome/Firefox/WebKit animation. They are never re-src'd mid-pour.
+  await expect(effects.locator('.crystalarium-live-pour-frame')).toHaveCount(12);
+  await expect(effects.locator('.crystalarium-live-pour-splash')).toHaveCount(4);
+  await expect(effects.locator('.crystalarium-live-crystal-emergence')).toHaveCount(4);
+  const sourcesBefore = await effects.evaluate((layer) => {
+    const frames = Array.from(layer.querySelectorAll<HTMLImageElement>(
+      '.crystalarium-live-pour-frame',
+    ));
+    if (!frames.every((frame) => frame.complete && frame.naturalWidth > 0)) {
+      throw new Error('Pour frames must be fully decoded before playback');
+    }
+    return frames.map((frame) => frame.currentSrc);
+  });
+  await expect.poll(async () => Number(await effects.getAttribute('data-crystalarium-pour-frame'))).toBeGreaterThanOrEqual(5);
+  const sourcesAfter = await effects.locator('.crystalarium-live-pour-frame').evaluateAll(
+    (frames) => frames.map((frame) => (frame as HTMLImageElement).currentSrc),
+  );
+  expect(sourcesAfter).toEqual(sourcesBefore);
+  expect(new Set(sourcesBefore).size).toBe(12);
   const cell = await effects.getAttribute('data-crystalarium-growth-cell');
   expect(cell).not.toBeNull();
   const state = await page.evaluate(

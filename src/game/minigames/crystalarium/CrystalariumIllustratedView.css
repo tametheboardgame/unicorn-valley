@@ -351,6 +351,9 @@
   max-height: none;
   object-fit: contain;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 38ms linear;
+  will-change: opacity;
   filter: drop-shadow(0 0 8px #6efce78c);
 }
 .crystalarium-live-pour-frame {
