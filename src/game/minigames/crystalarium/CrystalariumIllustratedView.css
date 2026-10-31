@@ -335,6 +335,23 @@
   color: #f6dcb9;
   font-size: 10px;
 }
+.crystalarium-live-potion-count {
+  font-size: 13px;
+  color: #ffe9b0;
+  font-variant-numeric: tabular-nums;
+}
+.crystalarium-live-potion-meter {
+  width: 88%;
+  height: 9px;
+  accent-color: #62dcf0;
+}
+.crystalarium-live-potion [data-crystalarium-action="potion-refill"] {
+  width: 93%;
+  min-height: 48px;
+  padding: 2px;
+  font-size: 11px;
+  border-color: #b6e8d7;
+}
 /* C20 visual-only approved Growth Potion frames. Coordinates follow the
    actual well and new socket. Effects are never gameplay input targets. */
 .crystalarium-live-growth-fx {
