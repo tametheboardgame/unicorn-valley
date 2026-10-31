@@ -1380,10 +1380,7 @@ test('C18 real illustrated game reveals two scrollable active cards and fulfils 
     SANDBOX_KEY,
   );
   expect(after.version).toBe(2);
-  expect(after.completedPatternIds).toEqual([
-    'crystalarium:1-1',
-    'crystalarium:1-2',
-  ]);
+  expect(after.completedPatternIds).toEqual(['crystalarium:1-1', 'crystalarium:1-2']);
   expect(after.revealedCount).toBe(4);
   await expect(cards).toHaveCount(2);
   await expect(cards.nth(0)).toContainText('Clearer Tone');
@@ -1409,10 +1406,7 @@ test('C18 ready later card can be offered without consuming an earlier incomplet
     SANDBOX_KEY,
   );
   expect(after.completed).toBe(2);
-  expect(after.completedPatternIds).toEqual([
-    'crystalarium:1-1',
-    'crystalarium:1-3',
-  ]);
+  expect(after.completedPatternIds).toEqual(['crystalarium:1-1', 'crystalarium:1-3']);
   await expect(cards).toHaveCount(2);
   await expect(cards.nth(0)).toContainText('Double Echo');
   await expect(cards.nth(1)).toContainText('Pair of Crystals');

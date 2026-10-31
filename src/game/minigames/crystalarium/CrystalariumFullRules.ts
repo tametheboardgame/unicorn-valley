@@ -217,9 +217,11 @@ export function createCrystalariumFullState(): CrystalariumFullState {
 export function activeResonancePattern(state: CrystalariumFullState): ResonancePattern | null {
   if (state.version === 2 && state.completedPatternIds && state.revealedCount !== undefined) {
     const finished = new Set(state.completedPatternIds);
-    return RESONANCE_PATTERNS.slice(0, state.revealedCount).find(
-      (pattern) => !finished.has(pattern.id),
-    ) ?? null;
+    return (
+      RESONANCE_PATTERNS.slice(0, state.revealedCount).find(
+        (pattern) => !finished.has(pattern.id),
+      ) ?? null
+    );
   }
   return RESONANCE_PATTERNS[state.completed] ?? null;
 }

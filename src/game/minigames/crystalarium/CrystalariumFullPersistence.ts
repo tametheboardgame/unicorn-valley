@@ -1,9 +1,6 @@
 import type { SaveService } from '../../save/SaveService';
 import type { MiniGameSession } from '../MiniGameSession';
-import {
-  createCrystalariumFullState,
-  type CrystalariumFullState,
-} from './CrystalariumFullRules';
+import { createCrystalariumFullState, type CrystalariumFullState } from './CrystalariumFullRules';
 import {
   migrateCrystalariumQueue,
   readCrystalariumQueue,

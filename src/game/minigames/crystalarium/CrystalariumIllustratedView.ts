@@ -197,7 +197,7 @@ export class CrystalariumIllustratedView {
     const queue = readCrystalariumQueue(state);
     const patterns = queue ? activeResonanceQueue(queue) : [];
     const pattern = patterns[0] ?? activeResonancePattern(state);
-    const isReady = pattern ? (queue ? canOfferQueuedPattern(queue, pattern.id) : canOfferPattern(state)) : false;
+
     const unlocked = unlockedCrystalFamilies(state);
     const storedCount = state.shelf.filter(Boolean).length;
 
@@ -358,9 +358,7 @@ export class CrystalariumIllustratedView {
     rail.setAttribute('aria-label', 'Current Resonance Orders');
     const visible = patterns.length > 0 ? patterns : pattern ? [pattern] : [];
     for (const [index, activePattern] of visible.entries()) {
-      const ready = queue
-        ? canOfferQueuedPattern(queue, activePattern.id)
-        : canOfferPattern(state);
+      const ready = queue ? canOfferQueuedPattern(queue, activePattern.id) : canOfferPattern(state);
       const offering = ready && (!firstLesson || (index === 0 && activeLesson === 'offer'));
       const card = this.button(
         '',

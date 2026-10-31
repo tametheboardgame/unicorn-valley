@@ -36,6 +36,7 @@ export interface CrystalariumPortraitActions {
   grow(): void;
   growRefined(): void;
   offer(): void;
+  offerPattern(patternId: string): void;
   harmony(): void;
   polish(): void;
   shelve(): void;

@@ -319,9 +319,14 @@ describe('migrateSaveRecord', () => {
     const shelf = [...old.shelf];
     shelf[2] = { family: 'bell' as const, tier: 4 as const };
     const oldCrystalarium = { ...old, cells, shelf, completed: 7, merges: 40, harmonies: 2 };
-    const previous = { ...world, schemaVersion: 10, activities: {
-      ...world.activities, crystalarium: oldCrystalarium,
-    } };
+    const previous = {
+      ...world,
+      schemaVersion: 10,
+      activities: {
+        ...world.activities,
+        crystalarium: oldCrystalarium,
+      },
+    };
     const before = JSON.stringify(previous);
     const migrated = migrateSaveRecord(previous);
     expect(migrated && isSaveGame(migrated)).toBe(true);
