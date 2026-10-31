@@ -79,6 +79,23 @@ describe('C20 Gate D pure economic candidates (not live gameplay)', () => {
     expect(trialC20Potion(candidate, dry, 'refill', saved).accepted).toBe(false);
   });
 
+  it('does not strand one remaining drop when a future candidate costs two', () => {
+    const candidate = {
+      ...createC20PotionTrial(100, 'free-basic-at-zero'),
+      basicCost: 2,
+      refinedCost: 3,
+    };
+    const saved = { accepted: true, saved: true };
+    const remainder = { remaining: 1 };
+    const basic = trialC20Potion(candidate, remainder, 'basic', saved);
+    expect(basic).toMatchObject({ accepted: true, state: { remaining: 1 }, spent: 0 });
+    expect(trialC20Potion(candidate, remainder, 'refined', saved)).toMatchObject({
+      accepted: false,
+      state: remainder,
+      spent: 0,
+    });
+  });
+
   it('repeated actions are never silently charged after the last drop', () => {
     const candidate = createC20PotionTrial(150, 'brook-spring');
     const saved = { accepted: true, saved: true };
