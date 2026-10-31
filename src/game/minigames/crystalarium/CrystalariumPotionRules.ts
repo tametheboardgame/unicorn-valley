@@ -47,6 +47,9 @@ export function potionChamber(state: CrystalariumPotionState): CrystalariumChamb
 }
 
 export type PotionGrowthKind = 'basic' | 'refined' | undefined;
+export type PotionActionResult =
+  | { readonly accepted: true; readonly state: CrystalariumPotionState; readonly message: string }
+  | { readonly accepted: false; readonly state: CrystalariumPotionState; readonly reason: string };
 
 /**
  * Transform an accepted canonical gameplay action and its potion effects as
@@ -58,7 +61,7 @@ export function applyCrystalariumPotion(
   prior: CrystalariumPotionState,
   result: FullActionResult,
   growth: PotionGrowthKind,
-): FullActionResult {
+): PotionActionResult {
   if (!result.accepted) return { accepted: false, state: prior, reason: result.reason };
   const cost =
     growth === 'basic' ? POTION_BASIC_COST : growth === 'refined' ? POTION_REFINED_COST : 0;
