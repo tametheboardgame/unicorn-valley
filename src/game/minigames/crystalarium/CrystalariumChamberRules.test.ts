@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { makeCrystalPiece } from './CrystalariumOpeningRules';
-import { createCrystalariumFullState } from './CrystalariumFullRules';
+import { RESONANCE_PATTERNS, createCrystalariumFullState } from './CrystalariumFullRules';
 import { migrateCrystalariumQueue } from './CrystalariumMultiOrderRules';
 import {
-  CHAMBER_CAMPAIGN_ORDER_COUNT,
   CHAMBER_CAPACITY,
   CHAMBER_COLUMNS,
   CHAMBER_ROWS,
@@ -45,7 +44,7 @@ describe('C19 Crystalarium Storage Chamber pure transfer contract', () => {
     expect(migrated?.revealedCount).toBe(queue?.revealedCount);
     expect(migrateCrystalariumChamber(migrated!)).toBe(migrated);
     expect(CHAMBER_COLUMNS * CHAMBER_ROWS).toBe(CHAMBER_CAPACITY);
-    expect(CHAMBER_CAMPAIGN_ORDER_COUNT).toBe(50);
+    expect(RESONANCE_PATTERNS).toHaveLength(50);
   });
 
   it('moves into the first free slot and exact free slots without mutation or duplication', () => {
