@@ -320,7 +320,16 @@ export class CrystalariumIllustratedView {
     producers.setAttribute('aria-label', 'Growth Potion and crystal wells');
     const potion = node('section', 'crystalarium-live-potion');
     const fill = state.potion / POTION_CAPACITY;
-    const bottle = fill === 0 ? 'empty' : fill < 0.26 ? 'low' : fill < 0.64 ? 'medium' : fill < 0.9 ? 'high' : 'full';
+    const bottle =
+      fill === 0
+        ? 'empty'
+        : fill < 0.26
+          ? 'low'
+          : fill < 0.64
+            ? 'medium'
+            : fill < 0.9
+              ? 'high'
+              : 'full';
     const progress = node('progress', 'crystalarium-live-potion-meter');
     progress.max = POTION_CAPACITY;
     progress.value = state.potion;
