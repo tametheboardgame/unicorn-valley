@@ -250,6 +250,11 @@ export class CrystalariumPointerDrag {
     }
   }
 
+  /** A redraw, resize or orientation change invalidates an in-flight gesture. */
+  public cancelActiveGesture(): void {
+    this.clear();
+  }
+
   public destroy(): void {
     this.clear();
     this.root.removeEventListener('pointerdown', this.onDown);
