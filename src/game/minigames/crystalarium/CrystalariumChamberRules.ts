@@ -1,7 +1,6 @@
 import {
   CRYSTAL_FAMILIES,
   FULL_CELL_COUNT,
-  RESONANCE_PATTERNS,
   type CrystalariumFullState,
 } from './CrystalariumFullRules';
 import {
@@ -151,6 +150,3 @@ export function returnStoredCrystal(
   shelf[sourceSlot] = null;
   return accept({ ...state, cells, shelf }, 'Crystal returned safely to the board.');
 }
-
-/** Chapter and order counts never depend on the number of storage slots. */
-export const CHAMBER_CAMPAIGN_ORDER_COUNT = RESONANCE_PATTERNS.length;
