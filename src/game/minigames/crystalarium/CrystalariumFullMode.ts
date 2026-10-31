@@ -26,7 +26,11 @@ import {
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
-import { storeBoardCrystal, returnStoredCrystal, moveStoredCrystal } from './CrystalariumChamberRules';
+import {
+  storeBoardCrystal,
+  returnStoredCrystal,
+  moveStoredCrystal,
+} from './CrystalariumChamberRules';
 import {
   applyCrystalariumPotion,
   potionChamber,
@@ -132,7 +136,12 @@ export class CrystalariumFullMode {
       refillPotion: () => this.refillPotion(),
       growRefined: () => {
         if (!this.permitted({ kind: 'other' })) return;
-        this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily, 'refined');
+        this.apply(
+          spawnRefinedCrystal(this.state),
+          undefined,
+          this.state.selectedFamily,
+          'refined',
+        );
       },
       offer: () => this.offerPattern(),
       offerPattern: (patternId) => this.offerPattern(patternId),
