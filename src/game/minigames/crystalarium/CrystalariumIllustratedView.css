@@ -744,6 +744,9 @@
     serif;
 }
 .crystalarium-live-storage-help {
+  /* The close cross occupies the upper-right corner of the chamber.
+     Reserve that space for the full caption, including when it wraps. */
+  width: calc(100% - 64px);
   margin: 7px 0 10px !important;
   color: #c4eaf4;
   font-size: clamp(11px, 1.65dvh, 13px);
