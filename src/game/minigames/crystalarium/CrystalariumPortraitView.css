@@ -5,6 +5,8 @@
   display: none;
 }
 
+/* Responsive potion HUD lives above the board's menus; a refill must never
+   require opening a hidden drawer at zero. */
 @media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
   .crystalarium-portrait {
     position: fixed;
@@ -21,6 +23,30 @@
     color: #eaf8ff;
     font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .crystalarium-portrait-potion {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 5px 10px;
+    background: #153453;
+    border: 2px solid #8fc8df;
+    border-radius: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .crystalarium-portrait-potion strong { color: #fce6b2; font-size: 13px; }
+  .crystalarium-portrait-potion .crystalarium-portrait-action {
+    min-height: 48px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  .crystalarium-portrait-potion-meter {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 9px;
+    accent-color: #65dfe8;
   }
 
   .crystalarium-portrait h1,
