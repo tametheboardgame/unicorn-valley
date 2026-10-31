@@ -23,15 +23,19 @@ export interface CrystalariumQueueState extends Omit<CrystalariumFullState, 'ver
   readonly revealedCount: number;
 }
 
-export type QueueActionResult =
+export type CrystalariumOrderState = Omit<CrystalariumQueueState, 'version'> & {
+  readonly version: 2 | 3;
+};
+
+export type QueueActionResult<T extends CrystalariumOrderState = CrystalariumQueueState> =
   | {
       readonly accepted: true;
-      readonly state: CrystalariumQueueState;
+      readonly state: T;
       readonly message: string;
     }
   | {
       readonly accepted: false;
-      readonly state: CrystalariumQueueState;
+      readonly state: T;
       readonly reason: string;
     };
 
@@ -91,7 +95,7 @@ export function isCrystalariumQueueState(value: unknown): value is CrystalariumQ
 }
 
 /** Active, stable, authored order cards in the original reveal order. */
-export function activeResonanceQueue(state: CrystalariumQueueState): readonly ResonancePattern[] {
+export function activeResonanceQueue(state: CrystalariumOrderState): readonly ResonancePattern[] {
   const completed = new Set(state.completedPatternIds);
   return RESONANCE_PATTERNS.slice(0, state.revealedCount).filter(
     (pattern) => !completed.has(pattern.id),
@@ -99,7 +103,7 @@ export function activeResonanceQueue(state: CrystalariumQueueState): readonly Re
 }
 
 function requiredIndices(
-  state: CrystalariumQueueState,
+  state: CrystalariumOrderState,
   goals: readonly CrystalGoal[],
 ): number[] | null {
   const inventory = [...state.cells, ...state.shelf];
@@ -117,7 +121,7 @@ function requiredIndices(
   return [...taken];
 }
 
-export function canOfferQueuedPattern(state: CrystalariumQueueState, patternId: string): boolean {
+export function canOfferQueuedPattern(state: CrystalariumOrderState, patternId: string): boolean {
   const active = activeResonanceQueue(state).find((pattern) => pattern.id === patternId);
   return Boolean(
     active && state.harmonies >= active.harmonies && requiredIndices(state, active.goals) !== null,
@@ -129,10 +133,10 @@ export function canOfferQueuedPattern(state: CrystalariumQueueState, patternId: 
  * Only a revealed, uncompleted and currently affordable order may consume
  * crystals, and only the exact indexed pieces are removed. No partial spend.
  */
-export function offerQueuedPattern(
-  state: CrystalariumQueueState,
+export function offerQueuedPattern<T extends CrystalariumOrderState>(
+  state: T,
   patternId: string,
-): QueueActionResult {
+): QueueActionResult<T> {
   const pattern = PATTERNS_BY_ID.get(patternId);
   if (!pattern || !activeResonanceQueue(state).some((active) => active.id === patternId)) {
     return { accepted: false, state, reason: 'That Resonance Order is not active.' };
@@ -155,7 +159,7 @@ export function offerQueuedPattern(
   const remainingActive = state.revealedCount - completed;
   const desiredActive = Math.min(activeSlots(completed), LEGACY_COUNT - completed);
   const newlyRevealed = Math.max(0, desiredActive - remainingActive);
-  const next: CrystalariumQueueState = {
+  const next = {
     ...state,
     cells,
     shelf,
@@ -164,7 +168,7 @@ export function offerQueuedPattern(
     completed,
     offers: state.offers + 1,
     revealedCount: Math.min(LEGACY_COUNT, state.revealedCount + newlyRevealed),
-  };
+  } as T;
   return {
     accepted: true,
     state: next,
