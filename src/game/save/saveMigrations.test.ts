@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
 import { createCrystalariumFullState } from '../minigames/crystalarium/CrystalariumFullRules';
-import { isCrystalariumQueueState } from '../minigames/crystalarium/CrystalariumMultiOrderRules';
+import { isCrystalariumChamberState } from '../minigames/crystalarium/CrystalariumChamberRules';
 import {
   grantCottageStarterDecorations,
   migrateSaveRecord,
@@ -311,7 +311,7 @@ describe('migrateSaveRecord', () => {
     expect(migrated.world).toEqual(save.world);
   });
 
-  it('migrates schema-ten Crystalarium progress to v2 without losing existing pieces or other world data', () => {
+  it('migrates schema-ten Crystalarium progress to 12-slot v3 without losing pieces or world data', () => {
     const world = createR4LongRunningSaveFixture();
     const old = createCrystalariumFullState();
     const cells = [...old.cells];
@@ -330,13 +330,15 @@ describe('migrateSaveRecord', () => {
     const before = JSON.stringify(previous);
     const migrated = migrateSaveRecord(previous);
     expect(migrated && isSaveGame(migrated)).toBe(true);
-    if (!migrated || !isSaveGame(migrated)) throw new Error('V11 migration failed');
-    expect(migrated.schemaVersion).toBe(11);
-    expect(isCrystalariumQueueState(migrated.activities.crystalarium)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) throw new Error('V12 migration failed');
+    expect(migrated.schemaVersion).toBe(12);
+    expect(isCrystalariumChamberState(migrated.activities.crystalarium)).toBe(true);
     const queue = migrated.activities.crystalarium;
-    expect(queue?.version).toBe(2);
+    expect(queue?.version).toBe(3);
     expect(queue?.cells).toEqual(cells);
-    expect(queue?.shelf).toEqual(shelf);
+    expect(queue?.shelf.slice(0, 4)).toEqual(shelf);
+    expect(queue?.shelf).toHaveLength(12);
+    expect(queue?.shelf.slice(4).every((piece) => piece === null)).toBe(true);
     expect(queue?.completed).toBe(7);
     expect(queue?.harmonies).toBe(2);
     expect(queue?.merges).toBe(40);
@@ -406,6 +408,10 @@ describe('migrateSaveRecord', () => {
       schemaVersion: 11,
       eleventhMigration: true,
     });
+    const toVersionTwelve: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 12,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
@@ -418,6 +424,7 @@ describe('migrateSaveRecord', () => {
       [8, toVersionNine],
       [9, toVersionTen],
       [10, toVersionEleven],
+      [11, toVersionTwelve],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
