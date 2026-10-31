@@ -10,6 +10,11 @@ import {
 import { CRYSTAL_TIER_NAMES, type CrystalPiece } from './CrystalariumOpeningRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
 import { CrystalariumGrowthPotionFx } from './CrystalariumGrowthPotionFx';
+import {
+  activeResonanceQueue,
+  canOfferQueuedPattern,
+  readCrystalariumQueue,
+} from './CrystalariumMultiOrderRules';
 import type {
   CrystalariumPortraitActions,
   CrystalariumPortraitPresentation,
@@ -189,8 +194,10 @@ export class CrystalariumIllustratedView {
     const prompt = view.guide;
     const activeLesson = prompt?.lessonStep;
     const firstLesson = activeLesson !== undefined;
-    const isReady = canOfferPattern(state);
-    const pattern = activeResonancePattern(state);
+    const queue = readCrystalariumQueue(state);
+    const patterns = queue ? activeResonanceQueue(queue) : [];
+    const pattern = patterns[0] ?? activeResonancePattern(state);
+    const isReady = pattern ? (queue ? canOfferQueuedPattern(queue, pattern.id) : canOfferPattern(state)) : false;
     const unlocked = unlockedCrystalFamilies(state);
     const storedCount = state.shelf.filter(Boolean).length;
 
@@ -348,21 +355,30 @@ export class CrystalariumIllustratedView {
     );
     const orderRow = node('div', 'crystalarium-live-orders-row');
     const rail = node('div', 'crystalarium-live-orders-scroll');
-    rail.setAttribute('aria-label', 'Current Resonance Order');
-    const offering = isReady && (!firstLesson || activeLesson === 'offer');
-    const card = this.button('', 'offer', this.actions.offer, !(pattern && offering));
-    card.classList.add('crystalarium-live-order-card');
-    card.classList.toggle('has-two-goals', pattern?.goals.length === 2);
-    card.classList.toggle('has-three-goals', Boolean(pattern && pattern.goals.length >= 3));
-    card.classList.toggle('is-guide-focus', activeLesson === 'offer');
-    card.setAttribute('aria-label', 'Offer Resonance Order');
-    card.classList.toggle('is-ready', isReady);
-    card.classList.toggle('is-complete', !pattern);
-    card.dataset.cardArt = isReady ? 'ready' : 'in-progress';
-    if (pattern) {
-      card.append(node('strong', '', pattern.title));
+    rail.setAttribute('aria-label', 'Current Resonance Orders');
+    const visible = patterns.length > 0 ? patterns : pattern ? [pattern] : [];
+    for (const [index, activePattern] of visible.entries()) {
+      const ready = queue
+        ? canOfferQueuedPattern(queue, activePattern.id)
+        : canOfferPattern(state);
+      const offering = ready && (!firstLesson || (index === 0 && activeLesson === 'offer'));
+      const card = this.button(
+        '',
+        index === 0 ? 'offer' : 'offer-' + activePattern.id,
+        () => this.actions.offerPattern(activePattern.id),
+        !offering,
+      );
+      card.classList.add('crystalarium-live-order-card');
+      card.classList.toggle('has-two-goals', activePattern.goals.length === 2);
+      card.classList.toggle('has-three-goals', activePattern.goals.length >= 3);
+      card.classList.toggle('is-guide-focus', index === 0 && activeLesson === 'offer');
+      card.setAttribute('aria-label', 'Offer Resonance Order: ' + activePattern.title);
+      card.classList.toggle('is-ready', ready);
+      card.dataset.crystalariumPatternId = activePattern.id;
+      card.dataset.cardArt = ready ? 'ready' : 'in-progress';
+      card.append(node('strong', '', activePattern.title));
       const goals = node('div', 'crystalarium-live-goals');
-      for (const goal of pattern.goals) {
+      for (const goal of activePattern.goals) {
         const count = [...state.cells, ...state.shelf].filter(
           (piece) => piece?.family === goal.family && piece.tier === goal.tier,
         ).length;
@@ -374,16 +390,23 @@ export class CrystalariumIllustratedView {
         goals.append(item);
       }
       card.append(goals);
-      if (pattern.harmonies)
-        card.append(node('small', '', 'Harmony ' + state.harmonies + ' / ' + pattern.harmonies));
-      card.append(node('em', '', isReady ? 'Ready to offer' : 'In progress'));
-    } else {
+      if (activePattern.harmonies) {
+        card.append(
+          node('small', '', 'Harmony ' + state.harmonies + ' / ' + activePattern.harmonies),
+        );
+      }
+      card.append(node('em', '', ready ? 'Ready to offer' : 'In progress'));
+      rail.append(card);
+    }
+    if (visible.length === 0) {
+      const card = this.button('', 'offer', this.actions.offer, true);
+      card.classList.add('crystalarium-live-order-card', 'is-complete');
       card.append(
         node('strong', '', 'All orders complete'),
         node('small', '', 'Enjoy free crystal growing'),
       );
+      rail.append(card);
     }
-    rail.append(card);
     orderRow.append(rail);
     const orderFooter = node(
       'p',

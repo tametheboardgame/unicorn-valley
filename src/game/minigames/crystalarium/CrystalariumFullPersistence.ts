@@ -2,9 +2,13 @@ import type { SaveService } from '../../save/SaveService';
 import type { MiniGameSession } from '../MiniGameSession';
 import {
   createCrystalariumFullState,
-  isCrystalariumFullState,
   type CrystalariumFullState,
 } from './CrystalariumFullRules';
+import {
+  migrateCrystalariumQueue,
+  readCrystalariumQueue,
+  type CrystalariumQueueState,
+} from './CrystalariumMultiOrderRules';
 import { CRYSTALARIUM_FULL_VARIANT_ID, CRYSTALARIUM_GAME_ID } from './CrystalariumOpeningRules';
 
 export const CRYSTALARIUM_SANDBOX_STORAGE_KEY = 'unicorn-valley:just-games:crystalarium:v1';
@@ -41,18 +45,20 @@ export function loadCrystalariumProgress(
   session: MiniGameSession | null,
   saves: SaveService,
   storage: CrystalariumProgressStorage | null = browserStorage(),
-): CrystalariumFullState {
-  if (!isFullCrystalariumSession(session)) return createCrystalariumFullState();
+): CrystalariumQueueState {
+  const fresh = migrateCrystalariumQueue(createCrystalariumFullState());
+  if (!fresh) throw new Error('Crystalarium default save migration failed');
+  if (!isFullCrystalariumSession(session)) return fresh;
   if (session?.source === 'world') {
     const value = saves.load()?.activities.crystalarium;
-    return isCrystalariumFullState(value) ? value : createCrystalariumFullState();
+    return readCrystalariumQueue(value) ?? fresh;
   }
   try {
     const raw = storage?.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
     const value: unknown = raw ? JSON.parse(raw) : null;
-    return isCrystalariumFullState(value) ? value : createCrystalariumFullState();
+    return readCrystalariumQueue(value) ?? fresh;
   } catch {
-    return createCrystalariumFullState();
+    return fresh;
   }
 }
 /** Fail closed. Callers must not claim a persistent move when its write failed. */
@@ -62,19 +68,27 @@ export function saveCrystalariumProgress(
   saves: SaveService,
   storage: CrystalariumProgressStorage | null = browserStorage(),
 ): boolean {
-  if (!isFullCrystalariumSession(session) || !isCrystalariumFullState(progress)) return false;
+  const queue = readCrystalariumQueue(progress);
+  if (!isFullCrystalariumSession(session) || !queue) return false;
   if (session?.source === 'world') {
     const existing = saves.load();
     if (!existing) return false;
     const next = {
       ...existing,
-      activities: { ...existing.activities, crystalarium: progress },
+      activities: { ...existing.activities, crystalarium: queue },
     };
     return saves.saveWithResult(next).status === 'saved';
   }
   try {
     if (!storage) return false;
-    storage.setItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY, JSON.stringify(progress));
+    // Never replace an unreadable or future-version sandbox record with
+    // an apparently fresh game: the user may return with a newer client.
+    const stored = storage.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
+    if (stored !== null) {
+      const previous: unknown = JSON.parse(stored);
+      if (!readCrystalariumQueue(previous)) return false;
+    }
+    storage.setItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY, JSON.stringify(queue));
     return true;
   } catch {
     return false;

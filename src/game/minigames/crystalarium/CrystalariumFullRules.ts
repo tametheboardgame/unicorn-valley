@@ -27,7 +27,10 @@ export interface ResonancePattern {
   readonly harmonies: number;
 }
 export interface CrystalariumFullState {
-  readonly version: 1;
+  readonly version: 1 | 2;
+  /** C18 version 2 ledger. Absent for historical version 1 records. */
+  readonly completedPatternIds?: readonly string[];
+  readonly revealedCount?: number;
   readonly cells: readonly (CrystalPiece | null)[];
   readonly shelf: readonly (CrystalPiece | null)[];
   readonly completed: number;
@@ -155,7 +158,7 @@ export function isCrystalariumFullState(value: unknown): value is CrystalariumFu
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const state = value as Partial<CrystalariumFullState>;
   return (
-    state.version === FULL_PROGRESS_VERSION &&
+    (state.version === FULL_PROGRESS_VERSION || state.version === 2) &&
     Array.isArray(state.cells) &&
     state.cells.length === FULL_CELL_COUNT &&
     state.cells.every((p) => p === null || validPiece(p)) &&
@@ -171,7 +174,25 @@ export function isCrystalariumFullState(value: unknown): value is CrystalariumFu
     Array.isArray(state.discovered) &&
     state.discovered.length <= 25 &&
     state.discovered.every((d) => typeof d === 'string' && /^(low|bright|bell):[0-5]$/.test(d)) &&
-    CRYSTAL_FAMILIES.includes(state.selectedFamily as CrystalFamily)
+    CRYSTAL_FAMILIES.includes(state.selectedFamily as CrystalFamily) &&
+    (state.version === 1 ||
+      (Array.isArray(state.completedPatternIds) &&
+        state.completedPatternIds.length === state.completed &&
+        new Set(state.completedPatternIds).size === state.completed &&
+        state.completedPatternIds.every(
+          (id) =>
+            typeof id === 'string' &&
+            RESONANCE_PATTERNS.slice(0, state.revealedCount).some((pattern) => pattern.id === id),
+        ) &&
+        Number.isInteger(state.revealedCount) &&
+        Number(state.revealedCount) >= state.completed &&
+        Number(state.revealedCount) <= RESONANCE_PATTERNS.length &&
+        Number(state.revealedCount) >=
+          Math.min(
+            RESONANCE_PATTERNS.length,
+            Number(state.completed) +
+              (Number(state.completed) === 0 ? 1 : Number(state.completed) < 10 ? 2 : 3),
+          )))
   );
 }
 
@@ -194,6 +215,12 @@ export function createCrystalariumFullState(): CrystalariumFullState {
 }
 
 export function activeResonancePattern(state: CrystalariumFullState): ResonancePattern | null {
+  if (state.version === 2 && state.completedPatternIds && state.revealedCount !== undefined) {
+    const finished = new Set(state.completedPatternIds);
+    return RESONANCE_PATTERNS.slice(0, state.revealedCount).find(
+      (pattern) => !finished.has(pattern.id),
+    ) ?? null;
+  }
   return RESONANCE_PATTERNS[state.completed] ?? null;
 }
 export function unlockedCrystalFamilies(state: CrystalariumFullState): readonly CrystalFamily[] {
@@ -475,6 +502,9 @@ export function startFreshCrystalariumBoard(state: CrystalariumFullState): Cryst
   const fresh = createCrystalariumFullState();
   return {
     ...fresh,
+    version: state.version,
+    completedPatternIds: state.completedPatternIds,
+    revealedCount: state.revealedCount,
     completed: state.completed,
     merges: state.merges,
     offers: state.offers,

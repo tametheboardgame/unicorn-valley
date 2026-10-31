@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
+import { createCrystalariumFullState } from '../minigames/crystalarium/CrystalariumFullRules';
+import { isCrystalariumQueueState } from '../minigames/crystalarium/CrystalariumMultiOrderRules';
 import {
   grantCottageStarterDecorations,
   migrateSaveRecord,
@@ -309,6 +311,37 @@ describe('migrateSaveRecord', () => {
     expect(migrated.world).toEqual(save.world);
   });
 
+  it('migrates schema-ten Crystalarium progress to v2 without losing existing pieces or other world data', () => {
+    const world = createR4LongRunningSaveFixture();
+    const old = createCrystalariumFullState();
+    const cells = [...old.cells];
+    cells[7] = { family: 'bright' as const, tier: 3 as const };
+    const shelf = [...old.shelf];
+    shelf[2] = { family: 'bell' as const, tier: 4 as const };
+    const oldCrystalarium = { ...old, cells, shelf, completed: 7, merges: 40, harmonies: 2 };
+    const previous = { ...world, schemaVersion: 10, activities: {
+      ...world.activities, crystalarium: oldCrystalarium,
+    } };
+    const before = JSON.stringify(previous);
+    const migrated = migrateSaveRecord(previous);
+    expect(migrated && isSaveGame(migrated)).toBe(true);
+    if (!migrated || !isSaveGame(migrated)) throw new Error('V11 migration failed');
+    expect(migrated.schemaVersion).toBe(11);
+    expect(isCrystalariumQueueState(migrated.activities.crystalarium)).toBe(true);
+    const queue = migrated.activities.crystalarium;
+    expect(queue?.version).toBe(2);
+    expect(queue?.cells).toEqual(cells);
+    expect(queue?.shelf).toEqual(shelf);
+    expect(queue?.completed).toBe(7);
+    expect(queue?.harmonies).toBe(2);
+    expect(queue?.merges).toBe(40);
+    expect(migrated.quests).toEqual(world.quests);
+    expect(migrated.inventory).toEqual(world.inventory);
+    expect(migrated.world).toEqual(world.world);
+    expect(JSON.stringify(previous)).toBe(before);
+    expect(migrateSaveRecord(migrated)).toEqual(migrated);
+  });
+
   it('applies migrations sequentially', () => {
     const toVersionOne: SaveMigration = (save) => ({
       ...save,
@@ -361,6 +394,12 @@ describe('migrateSaveRecord', () => {
       ...save,
       schemaVersion: 10,
       tenthMigration: true,
+      eleventhMigration: true,
+    });
+    const toVersionEleven: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 11,
+      eleventhMigration: true,
     });
     const migrations = new Map([
       [0, toVersionOne],
@@ -373,6 +412,7 @@ describe('migrateSaveRecord', () => {
       [7, toVersionEight],
       [8, toVersionNine],
       [9, toVersionTen],
+      [10, toVersionEleven],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({

@@ -53,7 +53,7 @@ function minimumRevealed(completed: number): number {
 export function migrateCrystalariumQueue(
   old: CrystalariumFullState,
 ): CrystalariumQueueState | null {
-  if (!isCrystalariumFullState(old)) return null;
+  if (!isCrystalariumFullState(old) || old.version !== 1) return null;
   const completedPatternIds = RESONANCE_PATTERNS.slice(0, old.completed).map(
     (pattern) => pattern.id,
   );

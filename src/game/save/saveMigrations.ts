@@ -1,4 +1,5 @@
 import { createDefaultSave } from './createDefaultSave';
+import { readCrystalariumQueue } from '../minigames/crystalarium/CrystalariumMultiOrderRules';
 import { CURRENT_SAVE_SCHEMA_VERSION } from './saveSchema';
 
 export type SaveRecord = Record<string, unknown>;
@@ -236,6 +237,23 @@ const migrateV9ToV10: SaveMigration = (save) => {
   };
 };
 
+/** V11 blocks older clients from overwriting the new nested Crystalarium queue. */
+const migrateV10ToV11: SaveMigration = (save) => {
+  const activities = isRecord(save.activities) ? save.activities : {};
+  const existing = activities.crystalarium;
+  return {
+    ...save,
+    schemaVersion: 11,
+    activities: {
+      ...activities,
+      crystalarium:
+        existing === null || existing === undefined
+          ? null
+          : (readCrystalariumQueue(existing) ?? existing),
+    },
+  };
+};
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
@@ -246,6 +264,7 @@ export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [7, migrateV7ToV8],
   [8, migrateV8ToV9],
   [9, migrateV9ToV10],
+  [10, migrateV10ToV11],
 ]);
 
 export function migrateSaveRecord(

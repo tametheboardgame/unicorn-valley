@@ -61,7 +61,25 @@
     background: #1d3658;
   }
 
-  .crystalarium-portrait-pattern {
+  .crystalarium-portrait-order-rail {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overscroll-behaviour-x: contain;
+  min-width: 0;
+  width: 100%;
+  padding: 4px 0;
+}
+.crystalarium-portrait-extra-order {
+  flex: 0 0 min(70vw, 230px);
+  min-height: 52px;
+  white-space: normal;
+}
+.crystalarium-portrait-extra-order.is-ready {
+  border-color: #ffe4a0;
+  box-shadow: 0 0 10px #fbe59966;
+}
+.crystalarium-portrait-pattern {
     gap: 5px;
     border-color: #a2cce0;
     background: #25476c;

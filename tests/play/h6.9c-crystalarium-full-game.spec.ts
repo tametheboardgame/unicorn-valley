@@ -1351,6 +1351,74 @@ test('C17 viewport-fit v2 deploy preview keeps the entire desktop composition vi
   expect(result.railExtraWidth).toBeGreaterThan(0);
 });
 
+test('C18 real illustrated game reveals two scrollable active cards and fulfils a later one first', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  const cells = [...seed.cells];
+  cells[0] = { family: 'low' as const, tier: 1 as const };
+  cells[1] = { family: 'low' as const, tier: 1 as const };
+  await enterResonanceGarden(page, false, true, {
+    ...seed,
+    completed: 1,
+    cells,
+  });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const cards = live.locator('.crystalarium-live-order-card');
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText('Double Echo');
+  await expect(cards.nth(1)).toContainText('Clearer Tone');
+  await expect(cards.nth(0)).toBeEnabled();
+  await expect(cards.nth(1)).toBeDisabled();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+
+  // Complete Double Echo with two tier-one pieces from the real saved board.
+  await cards.nth(0).click();
+  const after = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(after.version).toBe(2);
+  expect(after.completedPatternIds).toEqual([
+    'crystalarium:1-1',
+    'crystalarium:1-2',
+  ]);
+  expect(after.revealedCount).toBe(4);
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText('Clearer Tone');
+  await expect(cards.nth(1)).toContainText('Pair of Crystals');
+});
+
+test('C18 ready later card can be offered without consuming an earlier incomplete order', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  const cells = [...seed.cells];
+  cells[0] = { family: 'low' as const, tier: 2 as const };
+  await enterResonanceGarden(page, false, true, { ...seed, completed: 1, cells });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const cards = live.locator('.crystalarium-live-order-card');
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toBeDisabled();
+  await expect(cards.nth(1)).toBeEnabled();
+  await cards.nth(1).click();
+  const after = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(after.completed).toBe(2);
+  expect(after.completedPatternIds).toEqual([
+    'crystalarium:1-1',
+    'crystalarium:1-3',
+  ]);
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText('Double Echo');
+  await expect(cards.nth(1)).toContainText('Pair of Crystals');
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
 test('C21 staged illustrated live game uses canonical state, actions and isolated save', async ({
   page,
 }, testInfo) => {

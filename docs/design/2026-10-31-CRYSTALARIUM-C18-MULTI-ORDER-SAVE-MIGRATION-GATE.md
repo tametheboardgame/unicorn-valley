@@ -37,3 +37,12 @@ A proposed `offerQueuedPattern(state, patternId)` must reject unknown, unreveale
 Pure tests cover legacy preservation, duplicate/forged/future state refusal, deterministic initial/2/3-card reveals, non-sequential offering, overlap/double spend, harmony deduction, specific board/shelf pieces and a 50-order queue completion pass. The older `CrystalariumCampaignSolvability.test.ts` independently proves all 50 formations can be grown using legal v1 growth/merges; after v2 activation, extend that solver through queued offers and persistence.
 
 **Hard stop:** No writes to nested v2 records, no world `SaveGame` migration, no real-time order cards and no declaration of C18 completion until the Gate B save design is accepted, exact-head CI is green and the owner has reviewed the staged behaviour. PR #337 remains draft and unmerged.
+
+
+## Human gate B approved, 31 October 2026
+
+The owner explicitly approved the version-2 queue model and the **1 → 2 → 3** active order cadence and requested full implementation. This authorises the coordinated v2 persistence migration and native gameplay UI on the existing draft World PR #337. It does **not** authorise merging the PR or changing C19 Storage capacity or C20 potion balance.
+
+The integration uses adventure global **schema 11** (with explicit v10 → v11 migration and existing schema-checkpoint/backup protection); Crystalarium nested version 2. This prevents older schema-10 code from silently writing over version-2 nested queue saves. The world converter preserves all 42 cells, four original shelf slots, counters, discoveries, world quests/inventory/flags and source isolation. The sandbox keeps its dedicated key and upgrades v1 in memory before a successful save, refusing to overwrite unreadable or future-version records. The first active card maintains tutorial compatibility. The illustrated order rail renders every revealed active card with per-card readiness and targeted atomic offer. Portrait retains primary pattern and adds a sideways scroll strip for additional live cards pending C23 full layout refinement. The resource economy and Storage schema are unchanged.
+
+Next qualification: exact-head static/units/browser/saved-world regression, v10 checkpoint migration and newer-client overwrite defence, repeated offers and overlapping ready states, 50-order solver, 0/4/7 and chapter unlock, world/Just Games return and 42-cell no-scroll checks. Any unqualified items remain open, and PR #337 stays draft.

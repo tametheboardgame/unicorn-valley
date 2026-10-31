@@ -60,7 +60,9 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     expect(saveCrystalariumProgress(world, first, saves, storage)).toBe(true);
     expect(saveCrystalariumProgress(sandbox, second, saves, storage)).toBe(true);
     expect(loadCrystalariumProgress(world, saves, storage).completed).toBe(3);
+    expect(loadCrystalariumProgress(world, saves, storage).version).toBe(2);
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(12);
+    expect(loadCrystalariumProgress(sandbox, saves, storage).version).toBe(2);
     expect(JSON.parse(values.get(CRYSTALARIUM_SANDBOX_STORAGE_KEY) ?? '{}').completed).toBe(12);
     expect(saves.load()?.activities.crystalarium?.completed).toBe(3);
     expect(JSON.stringify(saves.load()?.quests)).toBe(beforeQuest);
@@ -130,6 +132,17 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{broken');
     expect(isCrystalariumFullState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(true);
   });
+  it('blocks overwriting future or corrupted sandbox records after returning a fresh in-memory view', () => {
+    const { saves, sandbox, storage, values } = harness();
+    for (const raw of ['{"version":99}', '{invalid']) {
+      values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, raw);
+      const recovered = loadCrystalariumProgress(sandbox, saves, storage);
+      expect(recovered.completed).toBe(0);
+      expect(saveCrystalariumProgress(sandbox, recovered, saves, storage)).toBe(false);
+      expect(values.get(CRYSTALARIUM_SANDBOX_STORAGE_KEY)).toBe(raw);
+    }
+  });
+
   it('does not acknowledge failed sandbox writes', () => {
     const { saves, sandbox } = harness();
     const brokenStorage = {

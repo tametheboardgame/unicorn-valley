@@ -14,7 +14,6 @@ import {
   createHarmony,
   growCrystalFromWell,
   moveOrMergeCrystal,
-  offerResonancePattern,
   polishCrystal,
   restoreCrystal,
   restoreCrystalToCell,
@@ -29,6 +28,11 @@ import {
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
+import {
+  activeResonanceQueue,
+  offerQueuedPattern,
+  readCrystalariumQueue,
+} from './CrystalariumMultiOrderRules';
 import {
   CrystalariumPortraitView,
   type CrystalariumPortraitActions,
@@ -120,7 +124,8 @@ export class CrystalariumFullMode {
         if (!this.permitted({ kind: 'other' })) return;
         this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily);
       },
-      offer: () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
+      offer: () => this.offerPattern(),
+      offerPattern: (patternId) => this.offerPattern(patternId),
       harmony: () => this.run({ kind: 'other' }, () => createHarmony(this.state)),
       polish: () => this.polishSelected(),
       shelve: () => this.shelveSelected(),
@@ -232,6 +237,14 @@ export class CrystalariumFullMode {
     return false;
   }
 
+  private offerPattern(patternId?: string): void {
+    const queue = readCrystalariumQueue(this.state);
+    if (!queue) return;
+    const id = patternId ?? activeResonanceQueue(queue)[0]?.id;
+    if (!id) return;
+    this.run({ kind: 'offer' }, () => offerQueuedPattern(queue, id));
+  }
+
   private run(action: FirstLessonCommand, execute: () => FullActionResult): void {
     if (this.permitted(action)) this.apply(execute());
   }
@@ -331,7 +344,7 @@ export class CrystalariumFullMode {
         this.run({ kind: 'grow' }, () => spawnCrystal(this.state));
         return;
       case 'KeyO':
-        this.run({ kind: 'offer' }, () => offerResonancePattern(this.state));
+        this.offerPattern();
         return;
       case 'KeyS':
         this.shelveSelected();
@@ -874,7 +887,7 @@ export class CrystalariumFullMode {
       pattern?.harmonies ? 147 : 444,
       ready ? '✦ Offer pattern ✓' : 'Offer pattern',
       'crystalarium-full-offer',
-      () => this.run({ kind: 'offer' }, () => offerResonancePattern(this.state)),
+      () => this.offerPattern(),
       ready,
     );
     if (ready && pattern?.harmonies) {

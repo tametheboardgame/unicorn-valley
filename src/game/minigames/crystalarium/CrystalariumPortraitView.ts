@@ -15,6 +15,11 @@ import {
   type CrystalFamily,
 } from './CrystalariumOpeningRules';
 import { createCrystalArtElement } from './CrystalariumCrystalArt';
+import {
+  activeResonanceQueue,
+  canOfferQueuedPattern,
+  readCrystalariumQueue,
+} from './CrystalariumMultiOrderRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
 import type { CrystalariumGuidePrompt } from './CrystalariumGuide';
 import './CrystalariumPortraitView.css';
@@ -257,7 +262,9 @@ export class CrystalariumPortraitView {
       nextLessonFocus !== null &&
       this.previousLessonFocus !== nextLessonFocus;
     this.previousLessonFocus = nextLessonFocus;
-    const pattern = activeResonancePattern(state);
+    const queue = readCrystalariumQueue(state);
+    const activeOrders = queue ? activeResonanceQueue(queue) : [];
+    const pattern = activeOrders[0] ?? activeResonancePattern(state);
     const header = makeElement('header', 'crystalarium-portrait-header');
     const heading = makeElement('h1', 'crystalarium-portrait-heading', '✦ Crystalarium');
     const subtitle = makeElement(
@@ -369,6 +376,26 @@ export class CrystalariumPortraitView {
       offer.setAttribute('aria-label', 'Pattern complete. Ready to offer.');
     }
     task.append(label, title, goals, offer);
+    if (activeOrders.length > 1) {
+      const overflow = makeElement('div', 'crystalarium-portrait-order-rail');
+      overflow.setAttribute('aria-label', 'Other active Resonance Orders, swipe sideways');
+      for (const candidate of activeOrders.slice(1)) {
+        const ready = queue ? canOfferQueuedPattern(queue, candidate.id) : false;
+        const tile = this.button(
+          candidate.title + (ready ? ' · Ready to offer' : ' · In progress'),
+          () => this.actions.offerPattern(candidate.id),
+          'quiet',
+          !ready || locked,
+          'offer-' + candidate.id,
+        );
+        tile.classList.add('crystalarium-portrait-extra-order');
+        tile.dataset.crystalariumPatternId = candidate.id;
+        tile.classList.toggle('is-ready', ready);
+        tile.setAttribute('aria-label', 'Resonance Order: ' + candidate.title);
+        overflow.append(tile);
+      }
+      task.append(overflow);
+    }
 
     const guidePanel = makeElement('aside', 'crystalarium-portrait-guide');
     guidePanel.dataset.crystalariumGuide = view.guide?.stage ?? 'hidden';
