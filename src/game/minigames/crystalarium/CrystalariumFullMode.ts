@@ -190,8 +190,17 @@ export class CrystalariumFullMode {
   }
 
   private readonly syncPortraitInput = (): void => {
+    // A change of presentation invalidates any pending canvas drag.
+    this.clearDrag();
     this.render();
   };
+
+  /** Native overlays own pointer gestures; the hidden Phaser board must not
+   * process those same gestures, even when Phaser listens at document capture.
+   * Keep the scene input plugin enabled for diagnostics and scene lifecycle. */
+  private nativePointerControlsActive(): boolean {
+    return this.illustrated !== null || Boolean(this.portraitQuery?.matches);
+  }
 
   private leave(): void {
     if (this.leaving) return;
@@ -434,6 +443,7 @@ export class CrystalariumFullMode {
   }
 
   private pointerMove(pointer: Phaser.Input.Pointer): void {
+    if (this.nativePointerControlsActive()) return;
     if (
       this.dragSource === null ||
       !this.dragStart ||
@@ -465,6 +475,10 @@ export class CrystalariumFullMode {
   }
 
   private pointerUp(pointer: Phaser.Input.Pointer): void {
+    if (this.nativePointerControlsActive()) {
+      this.clearDrag();
+      return;
+    }
     const wasDragging = this.dragGhost !== null;
     const source = this.dragSource;
     const kind = this.dragSourceKind;
@@ -668,7 +682,7 @@ export class CrystalariumFullMode {
       .setInteractive({ useHandCursor: enabled });
     // Retain named objects for diagnostics; disabled tutorial controls cannot fire.
     back.on('pointerdown', () => {
-      if (enabled) action();
+      if (enabled && !this.nativePointerControlsActive()) action();
     });
     holder.add(back);
     this.addText(
@@ -775,6 +789,7 @@ export class CrystalariumFullMode {
         .setName('crystalarium-full-cell:' + i)
         .setInteractive({ useHandCursor: true });
       cell.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (this.nativePointerControlsActive()) return;
         if (this.selected === null && this.state.cells[i]) {
           this.dragSource = i;
           this.dragSourceKind = 'cell';
@@ -1012,7 +1027,7 @@ export class CrystalariumFullMode {
         () => {},
       );
       shelfTarget.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-        if (!this.state.shelf[i]) return;
+        if (this.nativePointerControlsActive() || !this.state.shelf[i]) return;
         this.selected = null;
         this.dragSource = i;
         this.dragSourceKind = 'shelf';
