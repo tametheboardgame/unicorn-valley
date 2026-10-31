@@ -4,6 +4,7 @@ import {
   growCrystalFromWell,
   moveOrMergeCrystal,
   spawnRefinedCrystal,
+  washCrystal,
 } from './CrystalariumFullRules';
 import {
   POTION_CAPACITY,
