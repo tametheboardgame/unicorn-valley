@@ -261,6 +261,7 @@ export class CrystalariumPortraitView {
   }
 
   public render(view: CrystalariumPortraitPresentation): void {
+    this.dragging.cancelActiveGesture();
     this.currentView = view;
     this.root.dataset.crystalariumCelebration = view.celebration ?? 'none';
     // Replacing view nodes is safe because the game mode owns all persistent state.
