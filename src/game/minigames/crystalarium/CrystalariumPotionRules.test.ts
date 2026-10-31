@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { createCrystalariumFullState, growCrystalFromWell, moveOrMergeCrystal, spawnRefinedCrystal } from './CrystalariumFullRules';
+import {
+  createCrystalariumFullState,
+  growCrystalFromWell,
+  moveOrMergeCrystal,
+  spawnRefinedCrystal,
+} from './CrystalariumFullRules';
 import {
   POTION_CAPACITY,
   POTION_BASIC_COST,
@@ -61,7 +66,11 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     if (!result.accepted) return;
     expect(result.state.potion).toBe(POTION_MERGE_REWARD);
     expect(result.state.merges).toBe(state.merges + 1);
-    const next = applyCrystalariumPotion(result.state, moveOrMergeCrystal(result.state, 0, 1), undefined);
+    const next = applyCrystalariumPotion(
+      result.state,
+      moveOrMergeCrystal(result.state, 0, 1),
+      undefined,
+    );
     expect(next.accepted).toBe(false);
     expect(next.state).toBe(result.state);
     expect(state.potion).toBe(0);
@@ -107,7 +116,11 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     expect(full.accepted).toBe(false);
     expect(full.state).toBe(state);
     const almostFull = { ...state, potion: 90 };
-    const capped = applyCrystalariumPotion(almostFull, refillCrystalariumPotion(almostFull), 'refill');
+    const capped = applyCrystalariumPotion(
+      almostFull,
+      refillCrystalariumPotion(almostFull),
+      'refill',
+    );
     expect(capped.accepted).toBe(true);
     if (capped.accepted) expect(capped.state.potion).toBe(100);
   });
