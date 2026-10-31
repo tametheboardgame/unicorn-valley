@@ -602,7 +602,8 @@ export class CrystalariumFullMode {
     }
     if (!this.washArmed) {
       this.washArmed = true;
-      this.message = 'Tap Brook Wash again to recycle the crystal and recover 1 Growth Potion drop.';
+      this.message =
+        'Tap Brook Wash again to recycle the crystal and recover 1 Growth Potion drop.';
       this.render();
       return;
     }
