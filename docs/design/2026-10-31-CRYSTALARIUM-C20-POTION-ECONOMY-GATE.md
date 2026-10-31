@@ -64,3 +64,20 @@ Repository inspection confirms `CURRENT_SAVE_SCHEMA_VERSION` currently protects 
 **Single-transaction contract:** an approved successful growth/refined action must derive both the updated crystal state and its potion debit from the *same immutable input*; the save service writes one combined state, and on failure the old inventory and potion stay untouched. Accepted merges/Offers award potion exactly once in the same transaction, capped at approved capacity; do not award from transient animation, rendering, reload, a repeated click, a rejected merge, a failed write or an already fulfilled card. No separate localStorage potion counter, new world inventory resource or duplicated Crystalarium controller. Tests will exercise both source paths and future-version fail-closed policy before rollout.
 
 This verification is a **design safeguard only**, not authorisation to change schema 12, Chamber v3 or the live controller.
+
+## Gate D authorised and runtime implementation started, 31 October 2026
+
+**Owner explicitly approved the recommended values**, superseding the design-only comparison restriction for these exact rules:
+
+- Reservoir capacity **100 drops**, full initially for new games and valid legacy-save migration.
+- Successful basic crystal growth: **−1** drop.
+- Successful refined crystal growth: **−2** drops, retaining its existing 20/40-pattern availability.
+- Successful canonical merge: **+1** drop (capped at 100). No reward for a simple move, a failed merge or a completed order.
+- **Brook Spring:** always-available, immediate, unlimited **+25** drops per successful refill, capped at 100. No delay, daily claim, purchase, paid refill, world quest requirement, other premium resource or time gate.
+- Basic shards must remain accessible by a free instant refill even with zero potion. No merged game progression or corrupted/future record is silently overwritten.
+
+**Runtime implementation:** `CrystalariumPotionRules.ts` provides a strict nested Crystalarium **v4** state and canonical pure potion debit/reward/refill adapter. `CrystalariumFullMode.apply` combines the legal board action and potion into a single candidate, saves it once, and only then updates the in-memory state and emits growth animation/feedback. The accepted C17 12-frame sprite animation remains unchanged. The illustrated desktop reservoir now shows 0–100 status with fill-art variants, numeric amount, progress meter and Brook Spring button; portrait has a compact persistent potion HUD with an accessible 25-drop refill without opening a drawer. Keyboard **R** offers a free refill for classic Phaser controls.
+
+**Persistence:** adventure **schema v13** adds a single nested upgrade from v12, preserving world inventory/quests and upgrading valid nested v1/v2/v3 Crystalarium records to v4 with 100 starting drops. Just Games retains its original sandbox key, upgrades the nested record independently and refuses a malformed/future record. Both paths retain all 42 board cells, 12 Storage slots, 50-order ledger, unlocks and counters. Current valid v4 potion amounts are idempotently preserved. A save that fails must leave the running Crystalarium state untouched.
+
+**Validation:** approved pure rules and world/sandbox persistence tests cover 100/99/0/25, merge +1, no offer bonus, refined cost 2, initial/legacy save upgrade, bad/future saves, save failures and free recovery. Owned browser coverage verifies a live well tap at 1 and 0, repeatable refill and accepted merge credit. **Technical CI and playable human acceptance remain outstanding**, and PR #337 stays draft and unmerged pending C20 sign-off, C21–C24 and H6.9D release qualification.
