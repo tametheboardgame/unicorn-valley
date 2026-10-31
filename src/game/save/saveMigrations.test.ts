@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
 import { createCrystalariumFullState } from '../minigames/crystalarium/CrystalariumFullRules';
-import { isCrystalariumChamberState } from '../minigames/crystalarium/CrystalariumChamberRules';
+import { isCrystalariumPotionState, POTION_CAPACITY } from '../minigames/crystalarium/CrystalariumPotionRules';
 import {
   grantCottageStarterDecorations,
   migrateSaveRecord,
@@ -331,10 +331,11 @@ describe('migrateSaveRecord', () => {
     const migrated = migrateSaveRecord(previous);
     expect(migrated && isSaveGame(migrated)).toBe(true);
     if (!migrated || !isSaveGame(migrated)) throw new Error('V12 migration failed');
-    expect(migrated.schemaVersion).toBe(12);
-    expect(isCrystalariumChamberState(migrated.activities.crystalarium)).toBe(true);
+    expect(migrated.schemaVersion).toBe(13);
+    expect(isCrystalariumPotionState(migrated.activities.crystalarium)).toBe(true);
     const queue = migrated.activities.crystalarium;
-    expect(queue?.version).toBe(3);
+    expect(queue?.version).toBe(4);
+    expect(queue && 'potion' in queue ? queue.potion : null).toBe(POTION_CAPACITY);
     expect(queue?.cells).toEqual(cells);
     expect(queue?.shelf.slice(0, 4)).toEqual(shelf);
     expect(queue?.shelf).toHaveLength(12);
