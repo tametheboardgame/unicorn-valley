@@ -56,9 +56,7 @@ export function estimateC20CampaignEconomy(candidate: C20PotionCandidate): C20Ca
       goalPieces: pattern.goals.reduce((sum, goal) => sum + goal.quantity, 0),
       harmonies: pattern.harmonies,
       netPotion:
-        -basicShards * candidate.basicCost +
-        merges * candidate.mergeReward +
-        candidate.offerReward,
+        -basicShards * candidate.basicCost + merges * candidate.mergeReward + candidate.offerReward,
     };
   });
   return {
