@@ -739,7 +739,9 @@
 .crystalarium-live-storage h2 {
   padding: 4px 48px 0;
   color: #ffe8af;
-  font: 700 clamp(18px, 2.7dvh, 24px) Georgia, serif;
+  font:
+    700 clamp(18px, 2.7dvh, 24px) Georgia,
+    serif;
 }
 .crystalarium-live-storage-help {
   margin: 7px 0 10px !important;
