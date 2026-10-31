@@ -2,10 +2,10 @@ import type { SaveService } from '../../save/SaveService';
 import type { MiniGameSession } from '../MiniGameSession';
 import { createCrystalariumFullState, type CrystalariumFullState } from './CrystalariumFullRules';
 import {
-  migrateCrystalariumQueue,
-  readCrystalariumQueue,
-  type CrystalariumQueueState,
-} from './CrystalariumMultiOrderRules';
+  migrateCrystalariumChamber,
+  readCrystalariumChamber,
+  type CrystalariumChamberState,
+} from './CrystalariumChamberRules';
 import { CRYSTALARIUM_FULL_VARIANT_ID, CRYSTALARIUM_GAME_ID } from './CrystalariumOpeningRules';
 
 export const CRYSTALARIUM_SANDBOX_STORAGE_KEY = 'unicorn-valley:just-games:crystalarium:v1';
@@ -42,13 +42,13 @@ export function loadCrystalariumProgress(
   session: MiniGameSession | null,
   saves: SaveService,
   storage: CrystalariumProgressStorage | null = browserStorage(),
-): CrystalariumQueueState {
-  const fresh = migrateCrystalariumQueue(createCrystalariumFullState());
+): CrystalariumChamberState {
+  const fresh = migrateCrystalariumChamber(createCrystalariumFullState());
   if (!fresh) throw new Error('Crystalarium default save migration failed');
   if (!isFullCrystalariumSession(session)) return fresh;
   if (session?.source === 'world') {
     const value = saves.load()?.activities.crystalarium;
-    return readCrystalariumQueue(value) ?? fresh;
+    return readCrystalariumChamber(value) ?? fresh;
   }
   try {
     const raw = storage?.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
@@ -65,7 +65,7 @@ export function saveCrystalariumProgress(
   saves: SaveService,
   storage: CrystalariumProgressStorage | null = browserStorage(),
 ): boolean {
-  const queue = readCrystalariumQueue(progress);
+  const queue = readCrystalariumChamber(progress);
   if (!isFullCrystalariumSession(session) || !queue) return false;
   if (session?.source === 'world') {
     const existing = saves.load();
@@ -83,7 +83,7 @@ export function saveCrystalariumProgress(
     const stored = storage.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
     if (stored !== null) {
       const previous: unknown = JSON.parse(stored);
-      if (!readCrystalariumQueue(previous)) return false;
+      if (!readCrystalariumChamber(previous)) return false;
     }
     storage.setItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY, JSON.stringify(queue));
     return true;
