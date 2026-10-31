@@ -12,6 +12,7 @@ import {
   POTION_MERGE_REWARD,
   POTION_REFINED_COST,
   POTION_SPRING_REFILL,
+  POTION_WASH_REFUND,
   applyCrystalariumPotion,
   isCrystalariumPotionState,
   potionChamber,
