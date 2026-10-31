@@ -4,7 +4,11 @@ import type { SaveRepository } from '../../save/SaveRepository';
 import { SaveService } from '../../save/SaveService';
 import { createDefaultSave } from '../../save/createDefaultSave';
 import { createCrystalariumFullState } from './CrystalariumFullRules';
-import { isCrystalariumPotionState, POTION_CAPACITY, readCrystalariumPotion } from './CrystalariumPotionRules';
+import {
+  isCrystalariumPotionState,
+  POTION_CAPACITY,
+  readCrystalariumPotion,
+} from './CrystalariumPotionRules';
 import {
   CRYSTALARIUM_SANDBOX_STORAGE_KEY,
   loadCrystalariumProgress,
@@ -131,9 +135,7 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{"version":999}');
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{broken');
-    expect(isCrystalariumPotionState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(
-      true,
-    );
+    expect(isCrystalariumPotionState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(true);
   });
   it('blocks overwriting future or corrupted sandbox records after returning a fresh in-memory view', () => {
     const { saves, sandbox, storage, values } = harness();
@@ -182,7 +184,11 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     const worldState = {
       ...initial,
       potion: 37,
-      cells: [...initial.cells.slice(0, 4), { family: 'bright' as const, tier: 2 as const }, ...initial.cells.slice(5)],
+      cells: [
+        ...initial.cells.slice(0, 4),
+        { family: 'bright' as const, tier: 2 as const },
+        ...initial.cells.slice(5),
+      ],
     };
     const sandboxState = { ...initial, potion: 0 };
     expect(saveCrystalariumProgress(world, worldState, saves, storage)).toBe(true);
