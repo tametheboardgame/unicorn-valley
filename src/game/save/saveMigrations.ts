@@ -1,6 +1,7 @@
 import { createDefaultSave } from './createDefaultSave';
 import { readCrystalariumQueue } from '../minigames/crystalarium/CrystalariumMultiOrderRules';
 import { readCrystalariumChamber } from '../minigames/crystalarium/CrystalariumChamberRules';
+import { readCrystalariumPotion } from '../minigames/crystalarium/CrystalariumPotionRules';
 import { CURRENT_SAVE_SCHEMA_VERSION } from './saveSchema';
 
 export type SaveRecord = Record<string, unknown>;
@@ -272,6 +273,23 @@ const migrateV11ToV12: SaveMigration = (save) => {
   };
 };
 
+/** V13 atomically carries the approved C20 potion with the C19 12-slot chamber. */
+const migrateV12ToV13: SaveMigration = (save) => {
+  const activities = isRecord(save.activities) ? save.activities : {};
+  const existing = activities.crystalarium;
+  return {
+    ...save,
+    schemaVersion: 13,
+    activities: {
+      ...activities,
+      crystalarium:
+        existing === null || existing === undefined
+          ? null
+          : (readCrystalariumPotion(existing) ?? existing),
+    },
+  };
+};
+
 export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [1, migrateV1ToV2],
   [2, migrateV2ToV3],
@@ -284,6 +302,7 @@ export const SAVE_MIGRATIONS: ReadonlyMap<number, SaveMigration> = new Map([
   [9, migrateV9ToV10],
   [10, migrateV10ToV11],
   [11, migrateV11ToV12],
+  [12, migrateV12ToV13],
 ]);
 
 export function migrateSaveRecord(
