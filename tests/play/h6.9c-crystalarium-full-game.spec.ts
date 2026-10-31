@@ -558,7 +558,7 @@ test('H6.9C6 Crystal Grotto altar launches and returns to the cave, keeping adve
 
 test.describe('H6.9C8 native touch and mouse carrying', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
-  test('physically merges pieces, shelves one and returns it to an explicit socket', async ({
+  test('physically merges pieces, shelves one and returns it to the board with one tap', async ({
     page,
   }) => {
     // The full touch path includes several physical gestures, DOM redraws
@@ -614,17 +614,17 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
     );
     expect(afterShelf.shelf[0].tier).toBe(1);
     expect(afterShelf.cells[1]).toBeNull();
-    // The chamber sheet covers the board: choose a stored piece, close the
-    // sheet, then tap the exact vacant socket instead of dragging blindly.
-    await region.locator('[data-crystalarium-action="storage-arrange"]').click();
+    // A single tap on an occupied slot returns it to the first free board socket.
+    // No rearrange mode, Board or Choose socket buttons are displayed.
+    await expect(region.locator('[data-crystalarium-action="storage-arrange"]')).toHaveCount(0);
+    await expect(region.locator('[data-crystalarium-action="storage-return"]')).toHaveCount(0);
+    await expect(region.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
     await region.locator('[data-crystalarium-action="shelf-0"]').click();
-    await region.locator('[data-crystalarium-action="storage-choose-socket"]').click();
-    await region.locator('[data-crystalarium-cell="5"]').click();
     const restored = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
       SANDBOX_KEY,
     );
-    expect(restored.cells[5].tier).toBe(1);
+    expect(restored.cells[0].tier).toBe(1);
     expect(restored.shelf[0]).toBeNull();
   });
 });
@@ -1470,7 +1470,7 @@ test('C21 staged illustrated live game uses canonical state, actions and isolate
   await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
   await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(12);
   await expect(live.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
-  await expect(live.locator('[data-crystalarium-action="storage-choose-socket"]')).toBeDisabled();
+  await expect(live.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
   const close = live.getByRole('button', { name: 'Close Storage' });
   await expect(close).toHaveText('×');
   await close.click();
@@ -1495,12 +1495,35 @@ test('C19 Storage offers twelve safe slots with one-tap return and accessible cl
   const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('1 / 12 slots used');
-  await expect(dialog).toContainText('Tap a stored crystal');
+  await expect(dialog).toContainText('Tap to return to the board');
   await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
-  await expect(dialog.locator('.crystalarium-live-storage-slot:enabled')).toHaveCount(1);
+  await expect(dialog.locator('.crystalarium-live-storage-slot img')).toHaveCount(1);
   await expect(dialog.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
-  await expect(dialog.locator('[data-crystalarium-action="storage-choose-socket"]')).toBeDisabled();
+  await expect(dialog.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
   await expect(dialog.getByRole('button', { name: 'Close Storage' })).toHaveText('×');
+  for (const action of ['storage-arrange', 'storage-return', 'storage-choose-socket']) {
+    await expect(dialog.locator('[data-crystalarium-action="' + action + '"]')).toHaveCount(0);
+  }
+  // The entire 4 × 3 chamber fits without an internal scroll bar, even at the
+  // 1006 × 810 viewport where the user identified the oversized panel.
+  await page.setViewportSize({ width: 1006, height: 810 });
+  const chamberSize = await dialog.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    const slots = Array.from(element.querySelectorAll('.crystalarium-live-storage-slot'));
+    const rows = [...new Set(slots.map((slot) => Math.round(slot.getBoundingClientRect().top)))];
+    return {
+      height: bounds.height,
+      internalOverflow: element.scrollHeight > element.clientHeight + 1,
+      slots: slots.length,
+      rows: rows.length,
+      insideViewport: bounds.top >= 0 && bounds.bottom <= innerHeight,
+    };
+  });
+  expect(chamberSize.slots).toBe(12);
+  expect(chamberSize.rows).toBe(3);
+  expect(chamberSize.height).toBeLessThan(510);
+  expect(chamberSize.internalOverflow).toBe(false);
+  expect(chamberSize.insideViewport).toBe(true);
 
   const stored = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
@@ -1555,9 +1578,10 @@ test('C21 drag a crystal onto the Storage dock without opening the modal', async
   expect(saved.shelf[0]).toEqual({ family: 'low', tier: 0 });
 });
 
-test('C19 chamber rearranges and returns a chosen slot to an exact socket without losing progress', async ({
+test('C19 chamber drag-rearranges and one-tap returns to the first vacant board socket', async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   const seed = createCrystalariumFullState();
   await enterResonanceGarden(page, false, true, {
@@ -1568,38 +1592,62 @@ test('C19 chamber rearranges and returns a chosen slot to an exact socket withou
   await live.locator('[data-crystalarium-action="storage"]').click();
   const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
   await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
-  await dialog.locator('[data-crystalarium-action="storage-arrange"]').click();
-  // The Phaser board must not steal the modal tap or reset the chamber.
-  await expect(dialog.locator('[data-crystalarium-action="storage-arrange"]')).toHaveText(
-    'Finish arranging',
+  for (const command of ['storage-arrange', 'storage-return', 'storage-choose-socket']) {
+    await expect(dialog.locator('[data-crystalarium-action="' + command + '"]')).toHaveCount(0);
+  }
+
+  const dragSlot = async (source: number, destination: number) => {
+    const from = await dialog.locator('[data-crystalarium-action="shelf-' + source + '"]').boundingBox();
+    const to = await dialog.locator('[data-crystalarium-action="shelf-' + destination + '"]').boundingBox();
+    if (!from || !to) throw new Error('Storage sockets must remain visible drag targets');
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+    await expect(dialog.locator('[data-crystalarium-action="shelf-' + destination + '"]')).toHaveAttribute(
+      'data-crystalarium-drop',
+      'valid',
+    );
+    await page.mouse.up();
+  };
+
+  // Drag onto an empty socket, then onto an occupied socket to prove swapping.
+  await dragSlot(0, 11);
+  let saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(saved.version).toBe(3);
+  expect(saved.shelf[0]).toBeNull();
+  expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
+  expect(saved.shelf[1]).toEqual({ family: 'bright', tier: 2 });
+  await dragSlot(1, 11);
+  saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(saved.shelf[1]).toEqual({ family: 'bell', tier: 3 });
+  expect(saved.shelf[11]).toEqual({ family: 'bright', tier: 2 });
+
+  // Shift+Enter offers keyboard users an equivalent move without mode buttons.
+  await dialog.locator('[data-crystalarium-action="shelf-1"]').focus();
+  await page.keyboard.press('Shift+Enter');
+  await expect(dialog.locator('[data-crystalarium-action="shelf-1"]')).toHaveAttribute(
+    'aria-pressed', 'true',
   );
-  await dialog.locator('[data-crystalarium-action="shelf-0"]').click();
-  await expect(dialog.locator('[data-crystalarium-action="shelf-11"]')).toBeEnabled();
-  await dialog.locator('[data-crystalarium-action="shelf-11"]').click();
-  const shuffled = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
-    SANDBOX_KEY,
-  );
-  expect(shuffled.version).toBe(3);
-  expect(shuffled.shelf[0]).toBeNull();
-  expect(shuffled.shelf[11]).toEqual({ family: 'bell', tier: 3 });
-  expect(shuffled.shelf[1]).toEqual({ family: 'bright', tier: 2 });
-  await dialog.locator('[data-crystalarium-action="shelf-11"]').click();
-  await dialog.locator('[data-crystalarium-action="storage-choose-socket"]').click();
-  await expect(dialog).toHaveCount(0);
-  const target = live.locator('[data-crystalarium-cell="41"]');
-  await expect(target).toBeEnabled();
-  await target.click();
+  await dialog.locator('[data-crystalarium-action="shelf-10"]').focus();
+  await page.keyboard.press('Shift+Enter');
+  saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(saved.shelf[1]).toBeNull();
+  expect(saved.shelf[10]).toEqual({ family: 'bell', tier: 3 });
+
+  // Ordinary click returns immediately, without closing the compact chamber.
+  await dialog.locator('[data-crystalarium-action="shelf-10"]').click();
   const restored = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(restored.cells[41]).toEqual({ family: 'bell', tier: 3 });
-  expect(restored.shelf[11]).toBeNull();
-  expect(restored.shelf[1]).toEqual({ family: 'bright', tier: 2 });
+  expect(restored.cells[2]).toEqual({ family: 'bell', tier: 3 });
+  expect(restored.shelf[10]).toBeNull();
+  expect(restored.shelf[11]).toEqual({ family: 'bright', tier: 2 });
   expect(restored.cells).toHaveLength(42);
   expect(restored.shelf).toHaveLength(12);
-  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close Storage' }).click();
+  await expect(dialog).toHaveCount(0);
 });
 
 test('C21 top Guide is retained while four expanded Garden Tools omit the duplicate', async ({
