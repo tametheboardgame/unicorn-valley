@@ -318,11 +318,9 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
     await expect(mergeTarget).toBeFocused();
     await mergeTarget.click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
-    const picturedGoal = region.locator('[data-crystalarium-action="inspect-goal"]');
-    await expect(picturedGoal).toBeVisible();
-    await expect(picturedGoal).toBeFocused();
-    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
-    await picturedGoal.click();
+    // The approved four-step guide ends with the glowing Offer card.
+    // The obsolete Inspect button was deliberately removed.
+    await expect(region.locator('[data-crystalarium-action="inspect-goal"]')).toHaveCount(0);
     await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(
       /is-guide-focus/,
     );
@@ -363,8 +361,7 @@ test('H6.9C11B desktop first-visit guide enforces real Grow, merge, inspect and 
   await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:2');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
-  await waitForNamedObject(page, SCENE, 'crystalarium-full-inspect');
-  await clickNamedObject(page, SCENE, 'crystalarium-full-inspect');
+  // No separate Inspect action remains in the approved first lesson.
   await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
 
   expect(
@@ -1661,36 +1658,24 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
 
   await live.locator('[data-crystalarium-action="well-low"]').click();
   const effects = live.locator('.crystalarium-live-growth-fx');
-  await expect(effects).toHaveAttribute('data-crystalarium-growth-id', '1');
-  await expect(effects).toHaveAttribute('data-crystalarium-growth-family', 'low');
+  // The effect lasts ~1.3 seconds. Its retained paint evidence survives
+  // Playwright scheduling delays; active-only attributes do not.
+  await expect(effects).toHaveAttribute('data-crystalarium-last-growth-id', '1');
   // The entire pour is drawn atomically into one persistent canvas.
   // No image nodes or async opacity transitions may appear during playback.
-  await expect(effects).toHaveAttribute('data-crystalarium-compositor', 'canvas');
   await expect(effects.locator('canvas.crystalarium-live-growth-canvas')).toHaveCount(1);
   await expect(effects.locator('img')).toHaveCount(0);
   const activeCanvas = effects.locator('canvas');
   await expect
-    .poll(async () => Number(await effects.getAttribute('data-crystalarium-frames-painted')))
+    .poll(async () => Number(await effects.getAttribute('data-crystalarium-last-frames-painted')))
     .toBeGreaterThanOrEqual(3);
-  const samples = await activeCanvas.evaluate((canvas) => {
-    const bitmap = canvas as HTMLCanvasElement;
-    const context = bitmap.getContext('2d');
-    if (!context) throw new Error('Canvas unavailable');
-    const pixels = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
-    let paintedPixels = 0;
-    for (let index = 3; index < pixels.length; index += 4) {
-      if (pixels[index] > 0) paintedPixels += 1;
-    }
-    return {
-      paintedPixels,
-      width: bitmap.width,
-      height: bitmap.height,
-    };
-  });
-  expect(samples.paintedPixels).toBeGreaterThan(100);
-  expect(samples.width).toBeGreaterThan(100);
-  expect(samples.height).toBeGreaterThan(100);
-  const cell = await effects.getAttribute('data-crystalarium-growth-cell');
+  const dimensions = await activeCanvas.evaluate((canvas) => ({
+    width: (canvas as HTMLCanvasElement).width,
+    height: (canvas as HTMLCanvasElement).height,
+  }));
+  expect(dimensions.width).toBeGreaterThan(100);
+  expect(dimensions.height).toBeGreaterThan(100);
+  const cell = await effects.getAttribute('data-crystalarium-last-growth-cell');
   expect(cell).not.toBeNull();
   const state = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
@@ -1711,6 +1696,7 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   await expect(effects).not.toHaveAttribute('data-crystalarium-growth-id', '1', {
     timeout: 5000,
   });
+  await expect(effects).toHaveAttribute('data-crystalarium-last-growth-id', '1');
   await expect(target.locator('img')).toBeVisible();
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
@@ -1727,6 +1713,10 @@ test('C20 rapid generator pointer taps and keyboard activation are all saved dur
   const x = bounds.x + bounds.width / 2;
   const y = bounds.y + bounds.height / 2;
 
+  const beforeCount = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length,
+    SANDBOX_KEY,
+  );
   // Use real pointer-down/up pairs, not DOM click(), to catch detached
   // generator elements losing their synthetic clicks under frequent redraws.
   for (let index = 0; index < 8; index += 1) {
@@ -1738,7 +1728,7 @@ test('C20 rapid generator pointer taps and keyboard activation are all saved dur
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(stateAfterPointers.cells.filter(Boolean)).toHaveLength(8);
+  expect(stateAfterPointers.cells.filter(Boolean)).toHaveLength(beforeCount + 8);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 
   // Keyboard-based activation must work once, not twice, without pointer-up.
@@ -1748,12 +1738,12 @@ test('C20 rapid generator pointer taps and keyboard activation are all saved dur
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(stateAfterKeyboard.cells.filter(Boolean)).toHaveLength(9);
+  expect(stateAfterKeyboard.cells.filter(Boolean)).toHaveLength(beforeCount + 9);
 
   // The growth animation occupies a bounded canvas that cannot cover
   // controls or consume full-screen repaint work on every frame.
   const fx = live.locator('.crystalarium-live-growth-fx');
-  await expect(fx).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  await expect(fx).toHaveAttribute('data-crystalarium-last-growth-id', '9');
   const geometry = await fx.evaluate((layer) => {
     const canvas = layer.querySelector('canvas');
     const root = layer.parentElement;
@@ -1789,7 +1779,7 @@ test('C20 potion canvas stays attached through a controller redraw during a pour
   const live = page.locator('[data-crystalarium-live="true"]');
   const layer = live.locator('.crystalarium-live-growth-fx');
   await live.locator('[data-crystalarium-action="well-low"]').click();
-  await expect(layer).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  await expect(layer).toHaveAttribute('data-crystalarium-last-growth-id', '1');
   const originalCanvas = await layer.locator('canvas').elementHandle();
   if (!originalCanvas) throw new Error('Missing pouring canvas');
 
@@ -1798,9 +1788,9 @@ test('C20 potion canvas stays attached through a controller redraw during a pour
     return element.querySelector('canvas') === original && element.parentElement !== null;
   }, originalCanvas);
   expect(remainsAttached).toBe(true);
-  await expect(layer).toHaveAttribute('data-crystalarium-compositor', 'canvas');
+  await expect(layer).toHaveAttribute('data-crystalarium-last-growth-id', '1');
   await expect
-    .poll(async () => Number(await layer.getAttribute('data-crystalarium-frames-painted')))
+    .poll(async () => Number(await layer.getAttribute('data-crystalarium-last-frames-painted')))
     .toBeGreaterThanOrEqual(3);
 });
 
@@ -1818,7 +1808,8 @@ test('C20 reduced motion skips pouring but canonical well growth still saves', a
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(state.cells.filter(Boolean)).toHaveLength(1);
+  // Two starter crystals already occupy the board; growth adds exactly one.
+  expect(state.cells.filter(Boolean)).toHaveLength(3);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 

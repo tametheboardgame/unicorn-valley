@@ -126,8 +126,7 @@ test('H6.9C Crystalarium full-game pattern persists in Just Games without advent
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-grow');
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:2');
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-cell:0');
-  await waitForNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-inspect');
-  await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-inspect');
+  // The accepted first lesson now offers directly after the merge.
   await clickNamedObject(page, 'CrystalariumActivityScene', 'crystalarium-full-offer');
 
   const progress = (await page.evaluate(() =>
