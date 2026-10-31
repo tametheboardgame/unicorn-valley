@@ -2392,6 +2392,20 @@ test('C20 Gate D preview compares capacities and dry recovery without touching s
   await expect(page.locator('#balance')).toHaveText('25 / 150');
   await page.locator('input[value="free-basic-at-zero"]').check();
   await expect(page.locator('[data-step="refill"]')).toBeHidden();
+  // Alternative rewards must affect the preview only, not the game's saves.
+  await page.locator('input[name="rewards"][value="merge-only"]').check();
+  await expect(page.locator('#merge-reward')).toContainText('(+1)');
+  await expect(page.locator('#offer-reward')).toContainText('(+0)');
+  await page.locator('#empty').click();
+  await page.locator('[data-step="offer"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="merge"]').click();
+  await expect(page.locator('#balance')).toHaveText('1 / 150');
+  await page.locator('input[name="rewards"][value="offer-only"]').check();
+  await expect(page.locator('#merge-reward')).toContainText('(+0)');
+  await expect(page.locator('#offer-reward')).toContainText('(+3)');
+  await page.locator('[data-step="offer"]').click();
+  await expect(page.locator('#balance')).toHaveText('4 / 150');
   await page.locator('#empty').click();
   await page.locator('[data-step="basic"]').click();
   await expect(page.locator('#balance')).toHaveText('0 / 150');
