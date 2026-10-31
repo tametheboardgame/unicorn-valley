@@ -278,7 +278,7 @@ export class CrystalariumFullMode {
 
   private refillPotion(): void {
     // Recovery is always free, including during the first lesson or at zero.
-    this.apply(refillCrystalariumPotion(this.state));
+    this.apply(refillCrystalariumPotion(this.state), undefined, undefined, 'refill');
   }
 
   private growFromWell(family: CrystalFamily): void {
