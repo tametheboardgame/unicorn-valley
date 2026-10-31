@@ -208,6 +208,7 @@ export class CrystalariumIllustratedView {
   }
 
   public render(view: CrystalariumPortraitPresentation): void {
+    this.dragging.cancelActiveGesture();
     this.latest = view;
     const active = document.activeElement;
     const selectedKey =
