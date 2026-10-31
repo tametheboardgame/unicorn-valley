@@ -1548,12 +1548,7 @@ test('C19 chamber rearranges and returns a chosen slot to an exact socket withou
   const seed = createCrystalariumFullState();
   await enterResonanceGarden(page, false, true, {
     ...seed,
-    shelf: [
-      { family: 'bell', tier: 3 },
-      { family: 'bright', tier: 2 },
-      null,
-      null,
-    ],
+    shelf: [{ family: 'bell', tier: 3 }, { family: 'bright', tier: 2 }, null, null],
   });
   const live = page.locator('[data-crystalarium-live="true"]');
   await live.locator('[data-crystalarium-action="storage"]').click();
@@ -1563,7 +1558,8 @@ test('C19 chamber rearranges and returns a chosen slot to an exact socket withou
   await dialog.locator('[data-crystalarium-action="shelf-0"]').click();
   await dialog.locator('[data-crystalarium-action="shelf-11"]').click();
   const shuffled = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY,
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
   );
   expect(shuffled.version).toBe(3);
   expect(shuffled.shelf[0]).toBeNull();
@@ -1576,7 +1572,8 @@ test('C19 chamber rearranges and returns a chosen slot to an exact socket withou
   await expect(target).toBeEnabled();
   await target.click();
   const restored = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY,
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
   );
   expect(restored.cells[41]).toEqual({ family: 'bell', tier: 3 });
   expect(restored.shelf[11]).toBeNull();
