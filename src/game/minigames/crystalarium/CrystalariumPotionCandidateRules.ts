@@ -100,7 +100,9 @@ export function trialC20Potion(
   switch (action) {
     case 'basic':
       spent =
-        candidate.recovery === 'free-basic-at-zero' && state.remaining === 0
+        // Also cover the stranded remainder if a later approved design makes
+        // basicCost > 1 (e.g. 1 drop remaining against a 2-drop basic cost).
+        candidate.recovery === 'free-basic-at-zero' && state.remaining < candidate.basicCost
           ? 0
           : candidate.basicCost;
       break;
