@@ -53,7 +53,7 @@ export function loadCrystalariumProgress(
   try {
     const raw = storage?.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
     const value: unknown = raw ? JSON.parse(raw) : null;
-    return readCrystalariumQueue(value) ?? fresh;
+    return readCrystalariumChamber(value) ?? fresh;
   } catch {
     return fresh;
   }
