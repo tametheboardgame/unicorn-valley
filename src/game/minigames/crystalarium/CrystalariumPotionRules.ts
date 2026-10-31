@@ -77,13 +77,19 @@ export function applyCrystalariumPotion(
   const potion = Math.min(POTION_CAPACITY, prior.potion - cost + earned + refill);
   return {
     accepted: true,
-    state: { ...result.state, version: CRYSTALARIUM_POTION_VERSION, potion },
+    state: {
+      ...result.state,
+      completedPatternIds: result.state.completedPatternIds ?? prior.completedPatternIds,
+      revealedCount: result.state.revealedCount ?? prior.revealedCount,
+      version: CRYSTALARIUM_POTION_VERSION,
+      potion,
+    },
     message: result.message,
   };
 }
 
 /** Free, immediate and repeatable, without a timer or second save store. */
-export function refillCrystalariumPotion(prior: CrystalariumPotionState): FullActionResult {
+export function refillCrystalariumPotion(prior: CrystalariumPotionState): PotionActionResult {
   if (prior.potion === POTION_CAPACITY) {
     return { accepted: false, state: prior, reason: 'Growth Potion is already full.' };
   }
