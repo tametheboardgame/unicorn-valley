@@ -25,8 +25,14 @@ describe('C20 Gate D complete authored order economy projection (no saves)', () 
     expect(
       result.positiveNetOrders + result.neutralNetOrders + result.negativeNetOrders,
     ).toBe(50);
-    expect(result.basicShards).toBeGreaterThan(100);
-    expect(result.merges).toBeGreaterThan(0);
+    // Exact current authored campaign totals; a future recipe edit must
+    // explicitly requalify the preview's corresponding balancing figures.
+    expect(result.basicShards).toBe(950);
+    expect(result.merges).toBe(812);
+    expect(result.netPotion).toBe(12);
+    expect(result.positiveNetOrders).toBe(38);
+    expect(result.neutralNetOrders).toBe(3);
+    expect(result.negativeNetOrders).toBe(9);
   });
 
   it('detects when positive merge and offer rewards largely neutralise growth costs', () => {
