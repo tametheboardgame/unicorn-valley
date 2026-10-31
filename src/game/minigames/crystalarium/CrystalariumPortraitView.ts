@@ -17,7 +17,8 @@ import {
 import { createCrystalArtElement } from './CrystalariumCrystalArt';
 import { activeResonanceQueue, canOfferQueuedPattern } from './CrystalariumMultiOrderRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
-import { readCrystalariumChamber } from './CrystalariumChamberRules';
+import { potionChamber, POTION_CAPACITY } from './CrystalariumPotionRules';
+import type { CrystalariumPotionState } from './CrystalariumPotionRules';
 import type { CrystalariumGuidePrompt } from './CrystalariumGuide';
 import './CrystalariumPortraitView.css';
 
@@ -33,6 +34,7 @@ export interface CrystalariumPortraitActions {
   growFromWell(family: CrystalFamily): void;
   grow(): void;
   growRefined(): void;
+  refillPotion(): void;
   offer(): void;
   offerPattern(patternId: string): void;
   harmony(): void;
@@ -55,7 +57,7 @@ export interface CrystalariumGrowthCue {
 }
 
 export interface CrystalariumPortraitPresentation {
-  state: CrystalariumFullState;
+  state: CrystalariumPotionState;
   selected: number | null;
   message: string;
   quiet: boolean;
@@ -327,7 +329,7 @@ export class CrystalariumPortraitView {
       nextLessonFocus !== null &&
       this.previousLessonFocus !== nextLessonFocus;
     this.previousLessonFocus = nextLessonFocus;
-    const queue = readCrystalariumChamber(state);
+    const queue = potionChamber(state);
     const activeOrders = queue ? activeResonanceQueue(queue) : [];
     const pattern = activeOrders[0] ?? activeResonancePattern(state);
     const header = makeElement('header', 'crystalarium-portrait-header');
@@ -344,6 +346,17 @@ export class CrystalariumPortraitView {
       this.button(view.guide ? 'Skip guide' : 'Help', this.actions.guide, 'quiet', false, 'guide'),
       this.button('Leave', this.actions.exit, 'quiet', false, 'exit'),
     );
+    const potionHud = makeElement('section', 'crystalarium-portrait-potion');
+    potionHud.setAttribute('aria-label', 'Growth Potion reservoir');
+    potionHud.append(
+      makeElement('strong', '', 'Growth Potion ' + state.potion + ' / ' + POTION_CAPACITY),
+      this.button('Brook Spring +25', this.actions.refillPotion, 'quiet', state.potion === POTION_CAPACITY, 'potion-refill'),
+    );
+    const potionMeter = makeElement('progress', 'crystalarium-portrait-potion-meter');
+    potionMeter.max = POTION_CAPACITY;
+    potionMeter.value = state.potion;
+    potionMeter.setAttribute('aria-label', 'Growth Potion remaining');
+    potionHud.append(potionMeter);
     const menuStrip = makeElement('nav', 'crystalarium-portrait-menu-strip');
     menuStrip.setAttribute('aria-label', 'Crystalarium panels');
     const patternName = activeResonancePattern(state)?.title ?? 'Free play';
@@ -546,7 +559,7 @@ export class CrystalariumPortraitView {
       well.setAttribute(
         'aria-label',
         unlocked
-          ? `Grow one free ${family} crystal from the board well`
+          ? `Grow one ${family} crystal for 1 Growth Potion drop`
           : `${family} well locked until ${family === 'bright' ? 4 : 7} patterns`,
       );
       well.classList.toggle('is-selected', state.selectedFamily === family);
@@ -569,7 +582,7 @@ export class CrystalariumPortraitView {
       makeElement(
         'p',
         'crystalarium-portrait-growing-hint',
-        'Tap a well attached to the board for a free shard. The Grow button below uses your selected family.',
+        'Tap a well to spend 1 Growth Potion drop. Brook Spring adds 25 drops for free.',
       ),
     );
     const primary = makeElement('div', 'crystalarium-portrait-primary-actions');
@@ -769,6 +782,7 @@ export class CrystalariumPortraitView {
     menuPanel.append(menuHead, task, controls, tools);
     this.root.replaceChildren(
       header,
+      potionHud,
       menuStrip,
       backdrop,
       menuPanel,
