@@ -817,8 +817,8 @@
 @media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
   .crystalarium-portrait-shelf.is-open {
     z-index: 20;
-    max-height: min(78dvh, 650px);
-    overflow-y: auto;
+    max-height: min(78dvh, 450px);
+    overflow: hidden;
     padding: 12px;
     border-color: #f1d99b;
     box-shadow: 0 0 0 100vmax rgb(4 14 34 / 75%);
@@ -836,15 +836,12 @@
     padding: 3px;
   }
 
-  .crystalarium-portrait-storage-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
+  .crystalarium-portrait-shelf-slots .is-empty {
+    opacity: 0.58;
   }
 
-  .crystalarium-portrait-storage-actions button {
-    min-height: 48px;
-    flex: 1 1 100px;
+  .crystalarium-portrait-shelf-slots .crystalarium-portrait-action {
+    touch-action: none;
   }
 
   .crystalarium-portrait-shelf-slots .is-selected {
