@@ -629,6 +629,63 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
   });
 });
 
+test.describe('C19 portrait Storage direct manipulation', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('drag rearranges without controls and tap returns a crystal safely', async ({ page }) => {
+    test.setTimeout(90_000);
+    const seed = createCrystalariumFullState();
+    await enterResonanceGarden(page, false, false, {
+      ...seed,
+      shelf: [{ family: 'bell', tier: 3 }, { family: 'bright', tier: 2 }, null, null],
+    });
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await portrait.locator('[data-crystalarium-action="storage-toggle"]').click();
+    const slots = portrait.locator('.crystalarium-portrait-shelf-slots');
+    await expect(slots.locator('[data-crystalarium-action^="shelf-"]')).toHaveCount(12);
+    for (const command of ['storage-arrange', 'storage-return', 'storage-choose-socket']) {
+      await expect(portrait.locator('[data-crystalarium-action="' + command + '"]')).toHaveCount(0);
+    }
+    const from = await slots.locator('[data-crystalarium-action="shelf-0"]').boundingBox();
+    const to = await slots.locator('[data-crystalarium-action="shelf-11"]').boundingBox();
+    if (!from || !to) throw new Error('Portrait Storage must expose all twelve slots');
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+    await expect(slots.locator('[data-crystalarium-action="shelf-11"]')).toHaveAttribute(
+      'data-crystalarium-drop',
+      'valid',
+    );
+    await page.mouse.up();
+    let saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(saved.shelf[0]).toBeNull();
+    expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
+    const chamberLayout = await portrait.locator('.crystalarium-portrait-shelf.is-open').evaluate(
+      (panel) => ({
+        hasOverflow: panel.scrollHeight > panel.clientHeight + 1,
+        rows: [...new Set(
+          Array.from(panel.querySelectorAll('.crystalarium-portrait-shelf-slots button')).map(
+            (slot) => Math.round(slot.getBoundingClientRect().top),
+          ),
+        )].length,
+      }),
+    );
+    expect(chamberLayout.hasOverflow).toBe(false);
+    expect(chamberLayout.rows).toBe(3);
+    await slots.locator('[data-crystalarium-action="shelf-11"]').click();
+    saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(saved.shelf[11]).toBeNull();
+    expect(saved.cells[2]).toEqual({ family: 'bell', tier: 3 });
+    await portrait.locator('[data-crystalarium-action="storage-toggle"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-shelf.is-open')).toHaveCount(0);
+  });
+});
+
 test.describe('H6.9C8 invalid portrait drop protection', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
