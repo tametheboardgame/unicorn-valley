@@ -2433,14 +2433,20 @@ test('C20 approved live potion: spend, reject dry growth, refill and reward a re
   await expect(count).toHaveText('1 / 100');
   await live.locator('[data-crystalarium-action="well-low"]').click();
   await expect(count).toHaveText('0 / 100');
-  const spent = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  const spent = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
   expect(spent.version).toBe(4);
   expect(spent.cells.filter(Boolean)).toHaveLength(3);
   expect(spent.potion).toBe(0);
   // A rejected action cannot spend potion, add crystals or claim a save.
   await live.locator('[data-crystalarium-action="well-low"]').click();
   await expect(count).toHaveText('0 / 100');
-  const blocked = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  const blocked = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
   expect(blocked).toEqual(spent);
   await live.locator('[data-crystalarium-action="potion-refill"]').click();
   await expect(count).toHaveText('25 / 100');
@@ -2454,7 +2460,10 @@ test('C20 approved live potion: spend, reject dry growth, refill and reward a re
   await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
   await page.mouse.up();
   await expect(count).toHaveText('25 / 100');
-  const merged = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  const merged = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
   expect(merged.version).toBe(4);
   expect(merged.potion).toBe(25);
   expect(merged.merges).toBe(1);
