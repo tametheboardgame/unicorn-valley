@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { createR4LongRunningSaveFixture } from './fixtures/r4LongRunningSaveFixture';
 import { createCrystalariumFullState } from '../minigames/crystalarium/CrystalariumFullRules';
-import { isCrystalariumPotionState, POTION_CAPACITY } from '../minigames/crystalarium/CrystalariumPotionRules';
+import {
+  isCrystalariumPotionState,
+  POTION_CAPACITY,
+} from '../minigames/crystalarium/CrystalariumPotionRules';
 import {
   grantCottageStarterDecorations,
   migrateSaveRecord,
