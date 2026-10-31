@@ -27,12 +27,14 @@ import {
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
+import { storeBoardCrystal, returnStoredCrystal, moveStoredCrystal } from './CrystalariumChamberRules';
 import {
-  readCrystalariumChamber,
-  storeBoardCrystal,
-  returnStoredCrystal,
-  moveStoredCrystal,
-} from './CrystalariumChamberRules';
+  applyCrystalariumPotion,
+  potionChamber,
+  refillCrystalariumPotion,
+  type CrystalariumPotionState,
+  type PotionGrowthKind,
+} from './CrystalariumPotionRules';
 import { activeResonanceQueue, offerQueuedPattern } from './CrystalariumMultiOrderRules';
 import {
   CrystalariumPortraitView,
@@ -57,7 +59,7 @@ const TOP = 181;
 const FONT = 'system-ui, sans-serif';
 
 export class CrystalariumFullMode {
-  private state: CrystalariumFullState;
+  private state: CrystalariumPotionState;
   private readonly guide: CrystalariumGuide;
   private holder: Phaser.GameObjects.Container | null = null;
   private portrait: CrystalariumPortraitView | null = null;
@@ -104,7 +106,7 @@ export class CrystalariumFullMode {
       dragShelve: (source, targetSlot) => {
         if (!this.permitted({ kind: 'other' })) return;
         this.selected = null;
-        const chamber = readCrystalariumChamber(this.state);
+        const chamber = potionChamber(this.state);
         if (chamber) this.apply(storeBoardCrystal(chamber, source, targetSlot));
       },
       dragWash: (source) => {
@@ -113,11 +115,11 @@ export class CrystalariumFullMode {
         this.washSelected();
       },
       dragRestore: (slot, target) => {
-        const chamber = readCrystalariumChamber(this.state);
+        const chamber = potionChamber(this.state);
         if (chamber) this.run({ kind: 'other' }, () => returnStoredCrystal(chamber, slot, target));
       },
       moveStored: (source, target) => {
-        const chamber = readCrystalariumChamber(this.state);
+        const chamber = potionChamber(this.state);
         if (chamber) this.run({ kind: 'other' }, () => moveStoredCrystal(chamber, source, target));
       },
       dragInvalid: () => {
@@ -127,10 +129,11 @@ export class CrystalariumFullMode {
       source: (family) =>
         this.run({ kind: 'other' }, () => chooseCrystalSource(this.state, family)),
       growFromWell: (family) => this.growFromWell(family),
-      grow: () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
+      grow: () => this.growSelected(),
+      refillPotion: () => this.refillPotion(),
       growRefined: () => {
         if (!this.permitted({ kind: 'other' })) return;
-        this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily);
+        this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily, 'refined');
       },
       offer: () => this.offerPattern(),
       offerPattern: (patternId) => this.offerPattern(patternId),
@@ -141,7 +144,7 @@ export class CrystalariumFullMode {
       fresh: () => this.freshBoard(),
       restore: (index) => {
         this.selected = null;
-        const chamber = readCrystalariumChamber(this.state);
+        const chamber = potionChamber(this.state);
         if (chamber) this.run({ kind: 'other' }, () => returnStoredCrystal(chamber, index));
       },
       sound: () => {
@@ -256,7 +259,7 @@ export class CrystalariumFullMode {
   }
 
   private offerPattern(patternId?: string): void {
-    const queue = readCrystalariumChamber(this.state);
+    const queue = potionChamber(this.state);
     if (!queue) return;
     const id = patternId ?? activeResonanceQueue(queue)[0]?.id;
     if (!id) return;
@@ -268,6 +271,16 @@ export class CrystalariumFullMode {
   }
 
   /** The physical well grows once, with one atomic source-and-spawn save. */
+  private growSelected(): void {
+    if (!this.permitted({ kind: 'grow' })) return;
+    this.apply(spawnCrystal(this.state), undefined, this.state.selectedFamily, 'basic');
+  }
+
+  private refillPotion(): void {
+    // Recovery is always free, including during the first lesson or at zero.
+    this.apply(refillCrystalariumPotion(this.state));
+  }
+
   private growFromWell(family: CrystalFamily): void {
     // A generator is the actual Grow control in the illustrated design.
     // The first-lesson policy must allow the same atomic source+spawn action.
@@ -276,14 +289,16 @@ export class CrystalariumFullMode {
         ? { kind: 'grow' as const }
         : { kind: 'other' as const };
     if (!this.permitted(command)) return;
-    this.apply(growCrystalFromWell(this.state, family), undefined, family);
+    this.apply(growCrystalFromWell(this.state, family), undefined, family, 'basic');
   }
 
   private apply(
     result: FullActionResult,
     note?: CrystalFamily,
     growthFamily?: CrystalFamily,
+    growth: PotionGrowthKind = undefined,
   ): void {
+    result = applyCrystalariumPotion(this.state, result, growth);
     if (!result.accepted) {
       this.celebration = null;
       this.message = result.reason;
@@ -359,10 +374,13 @@ export class CrystalariumFullMode {
         this.toggleGuide();
         return;
       case 'KeyN':
-        this.run({ kind: 'grow' }, () => spawnCrystal(this.state));
+        this.growSelected();
         return;
       case 'KeyO':
         this.offerPattern();
+        return;
+      case 'KeyR':
+        this.refillPotion();
         return;
       case 'KeyS':
         this.shelveSelected();
@@ -563,7 +581,7 @@ export class CrystalariumFullMode {
     }
     const source = this.selected;
     this.selected = null;
-    const chamber = readCrystalariumChamber(this.state);
+    const chamber = potionChamber(this.state);
     if (chamber) this.apply(storeBoardCrystal(chamber, source));
   }
 
@@ -608,7 +626,7 @@ export class CrystalariumFullMode {
     this.selected = null;
     this.apply({
       accepted: true,
-      state: startFreshCrystalariumBoard(this.state),
+      state: { ...startFreshCrystalariumBoard(this.state), potion: this.state.potion },
       message: 'Fresh board ready. Your songbook progress is safe.',
     });
   }
@@ -981,7 +999,7 @@ export class CrystalariumFullMode {
         203,
         'Grow ' + this.state.selectedFamily + ' shard',
         'crystalarium-full-grow',
-        () => this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
+        () => this.growSelected(),
       );
       // Fresh Board belongs to Tools below, not the growing bed.
     } else {
