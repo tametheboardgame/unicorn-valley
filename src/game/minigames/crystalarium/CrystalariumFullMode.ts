@@ -298,14 +298,14 @@ export class CrystalariumFullMode {
     growthFamily?: CrystalFamily,
     growth: PotionGrowthKind = undefined,
   ): void {
-    result = applyCrystalariumPotion(this.state, result, growth);
-    if (!result.accepted) {
+    const updated = applyCrystalariumPotion(this.state, result, growth);
+    if (!updated.accepted) {
       this.celebration = null;
-      this.message = result.reason;
+      this.message = updated.reason;
       this.render();
       return;
     }
-    if (!saveCrystalariumProgress(this.session, result.state, getBrowserSaveService())) {
+    if (!saveCrystalariumProgress(this.session, updated.state, getBrowserSaveService())) {
       this.message = 'Progress could not be saved. Check browser storage before continuing.';
       this.render();
       return;
@@ -313,19 +313,19 @@ export class CrystalariumFullMode {
     const grownIndex =
       growthFamily === undefined
         ? -1
-        : result.state.cells.findIndex((piece, index) => piece && !this.state.cells[index]);
-    const merged = result.state.merges > this.state.merges;
-    const completed = result.state.completed > this.state.completed;
-    const craftedHarmony = result.state.harmonies > this.state.harmonies;
-    this.guide.observe(this.state, result.state);
-    this.state = result.state;
+        : updated.state.cells.findIndex((piece, index) => piece && !this.state.cells[index]);
+    const merged = updated.state.merges > this.state.merges;
+    const completed = updated.state.completed > this.state.completed;
+    const craftedHarmony = updated.state.harmonies > this.state.harmonies;
+    this.guide.observe(this.state, updated.state);
+    this.state = updated.state;
     // The visual cue must only follow a *saved* accepted growth. Never fire
     // for full-board failures, tutorial rejection, cancelled moves or reload.
     this.growthCue =
       growthFamily && grownIndex >= 0
         ? { id: ++this.growthSequence, family: growthFamily, cellIndex: grownIndex }
         : null;
-    this.message = result.message;
+    this.message = updated.message;
     this.celebration = completed ? 'offer' : craftedHarmony ? 'harmony' : merged ? 'merge' : null;
     this.washArmed = false;
     this.resetArmed = false;
@@ -985,7 +985,7 @@ export class CrystalariumFullMode {
       holder,
       698,
       412,
-      'Tap a well on the board frame to grow a free shard, or use Grow below.',
+      'Tap a well to grow a shard for 1 potion drop. Brook Spring refills for free.',
       13,
       '#c3e9df',
       447,
@@ -1004,7 +1004,7 @@ export class CrystalariumFullMode {
       // Fresh Board belongs to Tools below, not the growing bed.
     } else {
       this.button(holder, 698, 455, 133, 'Grow shard', 'crystalarium-full-grow', () =>
-        this.run({ kind: 'grow' }, () => spawnCrystal(this.state)),
+        this.growSelected(),
       );
       this.button(
         holder,
@@ -1013,7 +1013,11 @@ export class CrystalariumFullMode {
         133,
         refinedTier === 2 ? 'Grow crystal' : 'Grow polished',
         'crystalarium-full-grow-refined',
-        () => this.run({ kind: 'other' }, () => spawnRefinedCrystal(this.state)),
+        (() => {
+          if (this.permitted({ kind: 'other' })) {
+            this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily, 'refined');
+          }
+        }),
       );
       // Tools always hold the same Fresh Board control.
     }
