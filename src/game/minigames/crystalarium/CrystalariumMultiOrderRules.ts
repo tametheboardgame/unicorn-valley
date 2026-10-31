@@ -24,7 +24,7 @@ export interface CrystalariumQueueState extends Omit<CrystalariumFullState, 'ver
 }
 
 export type CrystalariumOrderState = Omit<CrystalariumQueueState, 'version'> & {
-  readonly version: 2 | 3;
+  readonly version: 2 | 3 | 4;
 };
 
 export type QueueActionResult<T extends CrystalariumOrderState = CrystalariumQueueState> =
