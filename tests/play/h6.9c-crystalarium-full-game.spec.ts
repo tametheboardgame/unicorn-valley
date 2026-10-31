@@ -558,6 +558,9 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
   test('physically merges pieces, shelves one and returns it to an explicit socket', async ({
     page,
   }) => {
+    // The full touch path includes several physical gestures, DOM redraws
+    // and a scrollable chamber. Preserve the complete assertions on CI.
+    test.setTimeout(90_000);
     await enterResonanceGarden(page);
     const region = page.locator('[data-crystalarium-portrait="true"]');
     // No floating status/shelf layer may intercept an occupied first-row crystal.
@@ -1560,7 +1563,12 @@ test('C19 chamber rearranges and returns a chosen slot to an exact socket withou
   const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
   await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
   await dialog.locator('[data-crystalarium-action="storage-arrange"]').click();
+  // The Phaser board must not steal the modal tap or reset the chamber.
+  await expect(dialog.locator('[data-crystalarium-action="storage-arrange"]')).toHaveText(
+    'Finish arranging',
+  );
   await dialog.locator('[data-crystalarium-action="shelf-0"]').click();
+  await expect(dialog.locator('[data-crystalarium-action="shelf-11"]')).toBeEnabled();
   await dialog.locator('[data-crystalarium-action="shelf-11"]').click();
   const shuffled = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
