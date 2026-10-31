@@ -181,6 +181,7 @@ export class CrystalariumPortraitView {
     kind = 'standard',
     disabled = false,
     name?: string,
+    pointerActivate = false,
   ): HTMLButtonElement {
     const button = makeElement('button', 'crystalarium-portrait-action is-' + kind, label);
     button.type = 'button';
@@ -199,6 +200,33 @@ export class CrystalariumPortraitView {
     // onto its newly revealed backdrop. Consume the matching synthetic click,
     // while retaining keyboard and assistive-technology activation.
     let menuPointerHandled = false;
+    let slotPointerHandled = false;
+    if (pointerActivate) {
+      let down: { id: number; x: number; y: number } | null = null;
+      button.addEventListener('pointerdown', (event) => {
+        if (!button.disabled && event.isPrimary && event.button === 0) {
+          down = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        }
+      });
+      button.addEventListener('pointercancel', () => {
+        down = null;
+      });
+      button.addEventListener('pointerup', (event) => {
+        const start = down;
+        down = null;
+        if (!start || button.disabled || event.pointerId !== start.id) return;
+        if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 12) return;
+        const bounds = button.getBoundingClientRect();
+        if (
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom
+        ) return;
+        slotPointerHandled = true;
+        action();
+      });
+    }
     if (name?.startsWith('menu-')) {
       button.addEventListener('pointerdown', () => {
         menuPointerHandled = false;
@@ -212,11 +240,13 @@ export class CrystalariumPortraitView {
     }
     button.addEventListener('click', (event) => {
       event.stopPropagation();
-      if (menuPointerHandled && event.detail > 0) {
+      if ((menuPointerHandled || slotPointerHandled) && event.detail > 0) {
         menuPointerHandled = false;
+        slotPointerHandled = false;
         return;
       }
       menuPointerHandled = false;
+      slotPointerHandled = false;
       if (!button.disabled) action();
     });
     return button;
@@ -675,6 +705,7 @@ export class CrystalariumPortraitView {
           'shelf',
           locked || (piece === null && (!this.arrangingStorage || this.storageMoveSource === null)),
           'shelf-' + index,
+          true,
         );
         slot.classList.toggle(
           'is-selected',
