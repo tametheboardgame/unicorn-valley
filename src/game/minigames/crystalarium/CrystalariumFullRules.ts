@@ -27,7 +27,7 @@ export interface ResonancePattern {
   readonly harmonies: number;
 }
 export interface CrystalariumFullState {
-  readonly version: 1 | 2;
+  readonly version: 1 | 2 | 3;
   /** C18 version 2 ledger. Absent for historical version 1 records. */
   readonly completedPatternIds?: readonly string[];
   readonly revealedCount?: number;
@@ -355,16 +355,16 @@ export function shelveCrystal(state: CrystalariumFullState, cellIndex: number): 
   if (!indexOK(cellIndex, FULL_CELL_COUNT) || !state.cells[cellIndex])
     return rejected(state, 'Select a crystal first.');
   const slot = state.shelf.indexOf(null);
-  if (slot < 0) return rejected(state, 'The shelf is full. Return a crystal first.');
+  if (slot < 0) return rejected(state, 'Storage is full. Return a crystal first.');
   const cells = [...state.cells],
     shelf = [...state.shelf];
   shelf[slot] = cells[cellIndex];
   cells[cellIndex] = null;
-  return accepted({ ...state, cells, shelf }, 'Stored safely on the shelf.');
+  return accepted({ ...state, cells, shelf }, 'Crystal stored safely.');
 }
 export function restoreCrystal(state: CrystalariumFullState, shelfIndex: number): FullActionResult {
-  if (!indexOK(shelfIndex, FULL_SHELF_COUNT) || !state.shelf[shelfIndex])
-    return rejected(state, 'That shelf slot is empty.');
+  if (!indexOK(shelfIndex, state.shelf.length) || !state.shelf[shelfIndex])
+    return rejected(state, 'That Storage slot is empty.');
   const target = state.cells.indexOf(null);
   if (target < 0) return rejected(state, 'Use Brook Wash to clear a space first.');
   const cells = [...state.cells],
@@ -379,8 +379,8 @@ export function restoreCrystalToCell(
   shelfIndex: number,
   targetIndex: number,
 ): FullActionResult {
-  if (!indexOK(shelfIndex, FULL_SHELF_COUNT) || !state.shelf[shelfIndex]) {
-    return rejected(state, 'Choose a crystal on the shelf first.');
+  if (!indexOK(shelfIndex, state.shelf.length) || !state.shelf[shelfIndex]) {
+    return rejected(state, 'Choose a stored crystal first.');
   }
   if (!indexOK(targetIndex, FULL_CELL_COUNT) || state.cells[targetIndex]) {
     return rejected(state, 'Drop the shelf crystal into an empty socket.');
@@ -505,6 +505,7 @@ export function startFreshCrystalariumBoard(state: CrystalariumFullState): Cryst
   return {
     ...fresh,
     version: state.version,
+    shelf: Array.from({ length: state.shelf.length }, () => null),
     completedPatternIds: state.completedPatternIds,
     revealedCount: state.revealedCount,
     completed: state.completed,
