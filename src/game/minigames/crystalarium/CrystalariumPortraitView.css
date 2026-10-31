@@ -812,3 +812,48 @@
     animation: none;
   }
 }
+
+/* C19: closed chest stays compact; opened 4 x 3 chamber is a bounded sheet. */
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait-shelf.is-open {
+    z-index: 20;
+    max-height: min(78dvh, 650px);
+    overflow-y: auto;
+    padding: 12px;
+    border-color: #f1d99b;
+    box-shadow: 0 0 0 100vmax rgb(4 14 34 / 75%);
+  }
+
+  .crystalarium-portrait-shelf-slots {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .crystalarium-portrait-shelf-slots .crystalarium-portrait-action {
+    min-height: 56px;
+    aspect-ratio: 1;
+    padding: 3px;
+  }
+
+  .crystalarium-portrait-storage-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .crystalarium-portrait-storage-actions button {
+    min-height: 48px;
+    flex: 1 1 100px;
+  }
+
+  .crystalarium-portrait-shelf-slots .is-selected {
+    outline: 4px solid #ffe39b;
+    outline-offset: -3px;
+  }
+
+  .crystalarium-portrait-cell.is-storage-target {
+    border-color: #a8f8d1;
+    box-shadow: inset 0 0 0 3px #79e5b8;
+  }
+}
