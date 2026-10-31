@@ -405,6 +405,9 @@ test.describe('H6.9C native-to-canvas rotation contract', () => {
 });
 
 test('H6.9C10 consecutive visual offerings unlock the next goal', async ({ page }) => {
+  // The full two-pattern sequence passes all assertions but can exhaust the
+  // generic 45s budget during browser/trace clean-up on busy CI runners.
+  test.setTimeout(90_000);
   await enterResonanceGarden(page);
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
   await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
@@ -632,6 +635,9 @@ test.describe('H6.9C8 invalid portrait drop protection', () => {
   test('marks valid and blocked drops and preserves crystals after an incompatible merge', async ({
     page,
   }) => {
+    // Two genuine drag gestures and the growing drawer passed their final
+    // assertions in CI, then timed out in Playwright's fixture clean-up.
+    test.setTimeout(90_000);
     await enterResonanceGarden(page);
     const region = page.locator('[data-crystalarium-portrait="true"]');
     const first = region.locator('[data-crystalarium-cell="0"]');
