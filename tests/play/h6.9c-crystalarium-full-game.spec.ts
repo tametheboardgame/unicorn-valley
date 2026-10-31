@@ -2378,7 +2378,9 @@ test('C20 Gate D preview compares capacities and dry recovery without touching s
   page,
 }) => {
   await page.goto('/design-previews/crystalarium-c20-potion-balance.html');
-  await expect(page.getByRole('heading', { name: 'Growth Potion · C20 balancing study' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Growth Potion · C20 balancing study' }),
+  ).toBeVisible();
   await page.evaluate(() => localStorage.setItem('crystalarium-c20-guard', 'unchanged'));
   await page.locator('[data-capacity="150"]').click();
   await expect(page.locator('#balance')).toHaveText('150 / 150');
