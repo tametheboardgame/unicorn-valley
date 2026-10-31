@@ -1458,10 +1458,10 @@ test('C21 staged illustrated live game uses canonical state, actions and isolate
 
   await live.locator('[data-crystalarium-action="storage"]').click();
   await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toBeVisible();
-  await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(4);
-  await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(4);
+  await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
+  await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(12);
   await expect(live.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
-  await expect(live.locator('[data-crystalarium-action="storage-choose"]')).toHaveCount(0);
+  await expect(live.locator('[data-crystalarium-action="storage-choose-socket"]')).toBeDisabled();
   const close = live.getByRole('button', { name: 'Close Storage' });
   await expect(close).toHaveText('×');
   await close.click();
@@ -1760,10 +1760,9 @@ test('C20 rapid generator pointer taps and keyboard activation are all saved dur
   const x = bounds.x + bounds.width / 2;
   const y = bounds.y + bounds.height / 2;
 
-  const beforeCount = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length,
-    SANDBOX_KEY,
-  );
+  // A new sandbox has two starter pieces in memory but no persisted record
+  // until its first accepted action. Count the actual board, not a missing save.
+  const beforeCount = await live.locator('.crystalarium-live-cell img').count();
   // Use real pointer-down/up pairs, not DOM click(), to catch detached
   // generator elements losing their synthetic clicks under frequent redraws.
   for (let index = 0; index < 8; index += 1) {
