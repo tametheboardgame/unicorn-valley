@@ -1451,7 +1451,7 @@ test('C18 real illustrated game reveals two scrollable active cards and fulfils 
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(after.version).toBe(3);
+  expect(after.version).toBe(4);
   expect(after.completedPatternIds).toEqual(['crystalarium:1-1', 'crystalarium:1-2']);
   expect(after.revealedCount).toBe(4);
   await expect(cards).toHaveCount(2);
@@ -1698,7 +1698,7 @@ test('C19 chamber drag-rearranges and one-tap returns to the first vacant board 
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(saved.version).toBe(3);
+  expect(saved.version).toBe(4);
   expect(saved.shelf[0]).toBeNull();
   expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
   expect(saved.shelf[1]).toEqual({ family: 'bright', tier: 2 });
