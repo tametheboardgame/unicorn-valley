@@ -13,8 +13,8 @@ import { CrystalariumGrowthPotionFx } from './CrystalariumGrowthPotionFx';
 import {
   activeResonanceQueue,
   canOfferQueuedPattern,
-  readCrystalariumQueue,
 } from './CrystalariumMultiOrderRules';
+import { readCrystalariumChamber } from './CrystalariumChamberRules';
 import type {
   CrystalariumPortraitActions,
   CrystalariumPortraitPresentation,
@@ -68,6 +68,9 @@ export class CrystalariumIllustratedView {
   private readonly growthFx = new CrystalariumGrowthPotionFx();
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
+  private arrangingStorage = false;
+  private storageMoveSource: number | null = null;
+  private pendingBoardSlot: number | null = null;
 
   public constructor(actions: CrystalariumPortraitActions) {
     this.actions = actions;
@@ -85,6 +88,11 @@ export class CrystalariumIllustratedView {
         event.preventDefault();
         if (this.storageOpen) {
           this.storageOpen = false;
+          this.arrangingStorage = false;
+          this.storageMoveSource = null;
+          this.renderCurrent();
+        } else if (this.pendingBoardSlot !== null) {
+          this.pendingBoardSlot = null;
           this.renderCurrent();
         } else if (this.latest?.guide) {
           this.actions.skipGuide();
@@ -98,19 +106,42 @@ export class CrystalariumIllustratedView {
       this.root,
       {
         move: actions.dragMove,
-        shelve: (index) => {
+        shelve: (index, targetSlot) => {
           this.storageOpen = true;
-          actions.dragShelve(index);
+          actions.dragShelve(index, targetSlot);
         },
         wash: actions.dragWash,
         restore: actions.dragRestore,
-        tapShelf: actions.restore,
+        tapShelf: (index) => this.activateStoredSlot(index),
+        rearrange: (source, target) => {
+          this.storageMoveSource = null;
+          actions.moveStored(source, target);
+        },
         invalid: actions.dragInvalid,
       },
       ({ kind, index }) =>
         (kind === 'cell' ? this.latest?.state.cells[index] : this.latest?.state.shelf[index]) ??
         null,
     );
+  }
+
+  private activateStoredSlot(index: number): void {
+    const piece = this.latest?.state.shelf[index];
+    if (!this.arrangingStorage) {
+      if (piece) this.actions.restore(index);
+      return;
+    }
+    if (this.storageMoveSource === null) {
+      if (piece) {
+        this.storageMoveSource = index;
+        this.renderCurrent();
+      }
+      return;
+    }
+    const source = this.storageMoveSource;
+    this.storageMoveSource = null;
+    if (source === index) this.renderCurrent();
+    else this.actions.moveStored(source, index);
   }
 
   private button(
@@ -191,10 +222,11 @@ export class CrystalariumIllustratedView {
     const scrollLeft =
       this.root.querySelector<HTMLElement>('.crystalarium-live-orders-scroll')?.scrollLeft ?? 0;
     const { state } = view;
+    this.root.dataset.crystalariumShelfCapacity = String(state.shelf.length);
     const prompt = view.guide;
     const activeLesson = prompt?.lessonStep;
     const firstLesson = activeLesson !== undefined;
-    const queue = readCrystalariumQueue(state);
+    const queue = readCrystalariumChamber(state);
     const patterns = queue ? activeResonanceQueue(queue) : [];
     const pattern = patterns[0] ?? activeResonancePattern(state);
 
@@ -245,12 +277,21 @@ export class CrystalariumIllustratedView {
       const cell = this.button(
         '',
         'cell-' + index,
-        () => this.actions.cell(index),
-        firstLesson && !lessonCell,
+        () => {
+          if (this.pendingBoardSlot !== null) {
+            if (!piece) {
+              const slot = this.pendingBoardSlot;
+              this.pendingBoardSlot = null;
+              this.actions.dragRestore(slot, index);
+            }
+          } else this.actions.cell(index);
+        },
+        (firstLesson && !lessonCell) || (this.pendingBoardSlot !== null && piece !== null),
       );
       cell.classList.add('crystalarium-live-cell');
       cell.dataset.crystalariumCell = String(index);
       cell.classList.toggle('is-selected', view.selected === index);
+      cell.classList.toggle('is-storage-target', this.pendingBoardSlot !== null && !piece);
       cell.classList.toggle(
         'is-guide-focus',
         Boolean(activeLesson === 'pick-up' && prompt?.sourceIndex === index) ||
@@ -275,6 +316,7 @@ export class CrystalariumIllustratedView {
       'storage',
       () => {
         this.storageOpen = true;
+        this.pendingBoardSlot = null;
         this.renderCurrent();
       },
       firstLesson,
@@ -288,6 +330,12 @@ export class CrystalariumIllustratedView {
     );
     storageButton.prepend(image(ASSETS + 'storage-chamber/storage-chest-closed.svg'));
     gardenFooter.append(storageButton);
+    if (this.pendingBoardSlot !== null) {
+      gardenFooter.append(this.button('Cancel placement', 'storage-cancel', () => {
+        this.pendingBoardSlot = null;
+        this.renderCurrent();
+      }));
+    }
     garden.append(gardenTitle, boardViewport, gardenFooter);
 
     const producers = node('aside', 'crystalarium-live-producers');
@@ -472,6 +520,8 @@ export class CrystalariumIllustratedView {
       chamber.setAttribute('aria-label', 'Storage Chamber');
       const closeStorage = this.button('×', 'storage-close', () => {
         this.storageOpen = false;
+        this.arrangingStorage = false;
+        this.storageMoveSource = null;
         this.renderCurrent();
       });
       closeStorage.classList.add('crystalarium-live-storage-close');
@@ -486,9 +536,38 @@ export class CrystalariumIllustratedView {
           storedCount +
             ' / ' +
             state.shelf.length +
-            ' slots used. Drag a crystal onto Storage to keep it safe. Tap a stored crystal to return it to the board.',
+            ' slots used. Tap a stored crystal to return it, drag onto Board to return it, or rearrange the grid.',
         ),
       );
+      const controls = node('div', 'crystalarium-live-storage-actions');
+      controls.append(this.button(
+        this.arrangingStorage ? 'Finish arranging' : 'Rearrange',
+        'storage-arrange',
+        () => {
+          this.arrangingStorage = !this.arrangingStorage;
+          this.storageMoveSource = null;
+          this.renderCurrent();
+        },
+      ));
+      const boardReturn = this.button('↩ Board', 'storage-return', () => {
+        if (this.storageMoveSource !== null) {
+          const slot = this.storageMoveSource;
+          this.storageMoveSource = null;
+          this.actions.restore(slot);
+        }
+      });
+      boardReturn.dataset.crystalariumBoardReturn = 'true';
+      boardReturn.setAttribute('aria-label', 'Drag a stored crystal here to return it to the first empty board socket');
+      controls.append(boardReturn);
+      controls.append(this.button('Choose board socket', 'storage-choose-socket', () => {
+        if (this.storageMoveSource !== null) {
+          this.pendingBoardSlot = this.storageMoveSource;
+          this.storageMoveSource = null;
+          this.storageOpen = false;
+          this.renderCurrent();
+        }
+      }, this.storageMoveSource === null));
+      chamber.append(controls);
       const slots = node('div', 'crystalarium-live-storage-grid');
       for (let index = 0; index < state.shelf.length; index += 1) {
         const piece = state.shelf[index];
@@ -496,15 +575,16 @@ export class CrystalariumIllustratedView {
           '',
           'shelf-' + index,
           () => {
-            if (piece) this.actions.restore(index);
+            this.activateStoredSlot(index);
           },
-          !piece,
+          !piece && (!this.arrangingStorage || this.storageMoveSource === null),
         );
         slot.classList.add('crystalarium-live-storage-slot');
+        slot.classList.toggle('is-selected', this.arrangingStorage && this.storageMoveSource === index);
         slot.setAttribute(
           'aria-label',
           piece
-            ? 'Return stored crystal ' + (index + 1) + ' to the board'
+            ? (this.arrangingStorage ? 'Select stored crystal ' : 'Return stored crystal ') + (index + 1) + (this.arrangingStorage ? ' for rearranging' : ' to the board')
             : 'Empty storage slot ' + (index + 1),
         );
         if (piece) slot.append(image(sprite(piece)));
@@ -527,9 +607,10 @@ export class CrystalariumIllustratedView {
     this.growthFx.render(this.root, view.growthCue);
     rail.scrollLeft = scrollLeft;
     if (this.storageOpen) {
-      this.root
-        .querySelector<HTMLButtonElement>('[data-crystalarium-action="storage-close"]')
-        ?.focus({ preventScroll: true });
+      const focusSelector = selectedKey?.startsWith('shelf-')
+        ? '[data-crystalarium-action="' + selectedKey + '"]'
+        : '[data-crystalarium-action="storage-close"]';
+      this.root.querySelector<HTMLButtonElement>(focusSelector)?.focus({ preventScroll: true });
     } else if (selectedKey) {
       const query =
         selectedKey === 'storage-close'
