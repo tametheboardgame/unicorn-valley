@@ -40,3 +40,17 @@ Do not mistake the visual artwork being approved for numeric refill/cost approva
 - **C19 Gate C:** User accepted the compact drag-first 4×3 chamber, close/instructions layout and working return. The previous final C19 browser re-run had not finished before a C20 commit superseded the PR head; C19 technical gate requires new exact-head passing evidence.
 - **C20 Gate D:** Not approved until actual resource economy choices are selected. Pure candidate model and preview are safe work *within* the requested start, but must not debit or migrate live saves.
 - **After Gate D:** Implementation and gameplay tests, followed by existing C21–C23 polish, C24 hardening and H6.9D full qualification. Keep PR #337 draft and unmerged.
+
+## C20 candidate-economy findings, authored campaign audit (31 October)
+
+A dedicated pure analysis, `CrystalariumPotionBalanceAnalysis.ts`, now reads all **50** actual `RESONANCE_PATTERNS` instead of relying on an invented sample. It estimates the **tier-zero shard requirements and mandatory pairwise merges** for each pattern, including three tier-one crystals (6 shards and 3 merges) for each harmony. Across the 50 separately constructed recipes:
+
+- **950 basic shard growth actions**, **812 merges**, **50 offers**, **14 crafted harmonies** (an estimate that ignores initial starter shards and optional stock re-use).
+- At proposed basic cost **1**, merge reward **1**, offer reward **3**, the simple net is **−950 + 812 + 150 = +12** drops. **38** patterns are individually potion-positive, **3** neutral and **9** negative. This is before clipping when the reservoir is full, so it does not mean the player's actual saved stock increases by 12.
+- Same shard costs with **merge reward 1, offer reward 0** gives a net **−138**. With **merge reward 0, offer reward 3**, net **−800**. No rewards yields **−950**.
+- Merely changing capacity from 100 to 150 or 200 **does not change those net crafting requirements**. Capacity determines the buffer; recovery/reward policy determines whether it is useful.
+- These are **analytical recipe costs, not timed 5/15/45-minute playtests, full board/storage operation or a legal gameplay solver**. C18's simultaneous orders, legacy starter crystals, reusing materials, occasional polished/refined growth, full bottle reward clipping and actual action interleaving affect the outcome.
+
+**Implication:** The originally proposed +1/+3 reward structure nearly self-funds the whole campaign, which may make a visible Growth Potion meter feel inconsequential. Comparing at least one lower-reward candidate at Gate D is now advisable, rather than assuming 100/100/+1/+3 is balanced. No numeric option has been approved.
+
+**No-hardlock correction:** The isolated `free-basic-at-zero` trial model now treats basic growth as free whenever the remaining stock is **less than the basic cost**, not only when literally zero. Otherwise a future 2-drop candidate with 1 drop remaining could softlock basic creation. This is still an unconnected test rule, not a live game change.
