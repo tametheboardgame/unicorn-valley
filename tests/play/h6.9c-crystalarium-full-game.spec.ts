@@ -601,14 +601,19 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
     await expect(
       region.locator('.crystalarium-portrait-goal [data-crystal-art]').first(),
     ).toHaveAttribute('data-crystal-art', 'low-tier-1');
-    await drag('[data-crystalarium-cell="1"]', '[data-crystalarium-action="shelf-0"]');
+    await drag('[data-crystalarium-cell="1"]', '[data-crystalarium-action="storage-toggle"]');
     const afterShelf = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
       SANDBOX_KEY,
     );
     expect(afterShelf.shelf[0].tier).toBe(1);
     expect(afterShelf.cells[1]).toBeNull();
-    await drag('[data-crystalarium-action="shelf-0"]', '[data-crystalarium-cell="5"]');
+    // The chamber sheet covers the board: choose a stored piece, close the
+    // sheet, then tap the exact vacant socket instead of dragging blindly.
+    await region.locator('[data-crystalarium-action="storage-arrange"]').click();
+    await region.locator('[data-crystalarium-action="shelf-0"]').click();
+    await region.locator('[data-crystalarium-action="storage-choose-socket"]').click();
+    await region.locator('[data-crystalarium-cell="5"]').click();
     const restored = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
       SANDBOX_KEY,
