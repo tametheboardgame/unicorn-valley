@@ -46,7 +46,7 @@ export function potionChamber(state: CrystalariumPotionState): CrystalariumChamb
   return { ...state, version: 3 };
 }
 
-export type PotionGrowthKind = 'basic' | 'refined' | undefined;
+export type PotionGrowthKind = 'basic' | 'refined' | 'refill' | undefined;
 export type PotionActionResult =
   | { readonly accepted: true; readonly state: CrystalariumPotionState; readonly message: string }
   | { readonly accepted: false; readonly state: CrystalariumPotionState; readonly reason: string };
@@ -73,7 +73,8 @@ export function applyCrystalariumPotion(
     };
   }
   const earned = result.state.merges > prior.merges ? POTION_MERGE_REWARD : 0;
-  const potion = Math.min(POTION_CAPACITY, prior.potion - cost + earned);
+  const refill = growth === 'refill' ? POTION_SPRING_REFILL : 0;
+  const potion = Math.min(POTION_CAPACITY, prior.potion - cost + earned + refill);
   return {
     accepted: true,
     state: { ...result.state, version: CRYSTALARIUM_POTION_VERSION, potion },
