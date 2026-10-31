@@ -15,11 +15,8 @@ import {
   growCrystalFromWell,
   moveOrMergeCrystal,
   polishCrystal,
-  restoreCrystal,
-  restoreCrystalToCell,
   refinedSourceTier,
   spawnRefinedCrystal,
-  shelveCrystal,
   spawnCrystal,
   startFreshCrystalariumBoard,
   unlockedCrystalFamilies,
@@ -105,11 +102,11 @@ export class CrystalariumFullMode {
         this.selected = null;
         this.apply(moveOrMergeCrystal(this.state, source, target));
       },
-      dragShelve: (source) => {
+      dragShelve: (source, targetSlot) => {
         if (!this.permitted({ kind: 'other' })) return;
         this.selected = null;
         const chamber = readCrystalariumChamber(this.state);
-        if (chamber) this.apply(storeBoardCrystal(chamber, source));
+        if (chamber) this.apply(storeBoardCrystal(chamber, source, targetSlot));
       },
       dragWash: (source) => {
         if (!this.permitted({ kind: 'other' })) return;
