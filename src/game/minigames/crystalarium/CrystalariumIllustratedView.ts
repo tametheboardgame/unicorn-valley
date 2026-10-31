@@ -590,7 +590,12 @@ export class CrystalariumIllustratedView {
             this.activateStoredSlot(index);
           },
           !piece && (!this.arrangingStorage || this.storageMoveSource === null),
+          true,
         );
+        // Match the generator's reliable pointer-up activation: a plain
+        // pointer tap completes before the browser can lose its synthetic
+        // click to a synchronous DOM redraw. Keyboard activation still
+        // uses the native click; genuine drags skip this path.
         slot.classList.add('crystalarium-live-storage-slot');
         slot.classList.toggle(
           'is-selected',
