@@ -15,6 +15,8 @@ import {
   growCrystalFromWell,
   moveOrMergeCrystal,
   polishCrystal,
+  restoreCrystal,
+  restoreCrystalToCell,
   refinedSourceTier,
   spawnRefinedCrystal,
   spawnCrystal,
