@@ -1529,7 +1529,7 @@ test('C21 staged illustrated live game uses canonical state, actions and isolate
   await live.locator('[data-crystalarium-action="storage"]').click();
   await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toBeVisible();
   await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
-  await expect(live.locator('.crystalarium-live-storage-slot:disabled')).toHaveCount(12);
+  await expect(live.locator('.crystalarium-live-storage-slot.is-empty')).toHaveCount(12);
   await expect(live.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
   await expect(live.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
   const close = live.getByRole('button', { name: 'Close Storage' });
