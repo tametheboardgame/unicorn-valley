@@ -61,11 +61,11 @@
     background: #1d3658;
   }
 
-    .crystalarium-portrait-order-rail {
+  .crystalarium-portrait-order-rail {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    overscroll-behaviour-x: contain;
+    overscroll-behavior-x: contain;
     min-width: 0;
     width: 100%;
     padding: 4px 0;
