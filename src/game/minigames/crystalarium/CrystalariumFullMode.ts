@@ -23,7 +23,6 @@ import {
   startFreshCrystalariumBoard,
   unlockedCrystalFamilies,
   washCrystal,
-  type CrystalariumFullState,
   type FullActionResult,
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
