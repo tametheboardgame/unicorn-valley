@@ -3,7 +3,8 @@ import { createMiniGameSession } from '../MiniGameSession';
 import type { SaveRepository } from '../../save/SaveRepository';
 import { SaveService } from '../../save/SaveService';
 import { createDefaultSave } from '../../save/createDefaultSave';
-import { createCrystalariumFullState, isCrystalariumFullState } from './CrystalariumFullRules';
+import { createCrystalariumFullState } from './CrystalariumFullRules';
+import { isCrystalariumChamberState } from './CrystalariumChamberRules';
 import {
   CRYSTALARIUM_SANDBOX_STORAGE_KEY,
   loadCrystalariumProgress,
@@ -60,9 +61,9 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     expect(saveCrystalariumProgress(world, first, saves, storage)).toBe(true);
     expect(saveCrystalariumProgress(sandbox, second, saves, storage)).toBe(true);
     expect(loadCrystalariumProgress(world, saves, storage).completed).toBe(3);
-    expect(loadCrystalariumProgress(world, saves, storage).version).toBe(2);
+    expect(loadCrystalariumProgress(world, saves, storage).version).toBe(3);
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(12);
-    expect(loadCrystalariumProgress(sandbox, saves, storage).version).toBe(2);
+    expect(loadCrystalariumProgress(sandbox, saves, storage).version).toBe(3);
     expect(JSON.parse(values.get(CRYSTALARIUM_SANDBOX_STORAGE_KEY) ?? '{}').completed).toBe(12);
     expect(saves.load()?.activities.crystalarium?.completed).toBe(3);
     expect(JSON.stringify(saves.load()?.quests)).toBe(beforeQuest);
@@ -130,7 +131,7 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{"version":999}');
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{broken');
-    expect(isCrystalariumFullState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(true);
+    expect(isCrystalariumChamberState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(true);
   });
   it('blocks overwriting future or corrupted sandbox records after returning a fresh in-memory view', () => {
     const { saves, sandbox, storage, values } = harness();
@@ -143,7 +144,7 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     }
   });
 
-  it('loads an existing adventure v1 board as a v2 queue without writing until a valid action saves', () => {
+  it('loads an existing adventure v1 board as a v3 chamber without writing until a valid action saves', () => {
     const { saves, storage, world, sandbox } = harness();
     const old = createCrystalariumFullState();
     const cells = [...old.cells];
@@ -156,15 +157,17 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     saves.save({ ...save, activities: { ...save.activities, crystalarium: legacy } });
     const baseline = JSON.stringify(saves.load());
     const migrated = loadCrystalariumProgress(world, saves, storage);
-    expect(migrated.version).toBe(2);
+    expect(migrated.version).toBe(3);
     expect(migrated.completedPatternIds).toEqual(['crystalarium:1-1']);
     expect(migrated.revealedCount).toBe(3);
     expect(migrated.cells).toEqual(cells);
-    expect(migrated.shelf).toEqual(shelf);
+    expect(migrated.shelf.slice(0, 4)).toEqual(shelf);
+    expect(migrated.shelf).toHaveLength(12);
+    expect(migrated.shelf.slice(4).every((piece) => piece === null)).toBe(true);
     expect(migrated.harmonies).toBe(2);
     expect(JSON.stringify(saves.load())).toBe(baseline);
     expect(saveCrystalariumProgress(world, migrated, saves, storage)).toBe(true);
-    expect(saves.load()?.activities.crystalarium?.version).toBe(2);
+    expect(saves.load()?.activities.crystalarium?.version).toBe(3);
     expect(loadCrystalariumProgress(world, saves, storage)).toEqual(migrated);
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
   });
