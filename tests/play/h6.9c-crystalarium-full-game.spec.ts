@@ -2475,6 +2475,48 @@ test('C20 approved live potion: spend, reject dry growth, refill and reward a re
   expect(merged.cells[1]).toMatchObject({ tier: 1 });
 });
 
+test('C20 Brook Wash refunds 1 Growth Potion drop only on confirmed saved removal', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = readCrystalariumPotion(createCrystalariumFullState());
+  if (!seed) throw new Error('C20 refund seed migration failed');
+  await enterResonanceGarden(page, false, true, { ...seed, potion: 23 });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const count = live.locator('.crystalarium-live-potion-count');
+  await expect(count).toHaveText('23 / 100');
+  await live.locator('[data-crystalarium-cell="0"]').click();
+  await live.locator('[data-crystalarium-action="wash"]').click();
+  // The first tap arms the confirmation; neither the crystal nor potion has changed.
+  await expect(count).toHaveText('23 / 100');
+  const before = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(before.cells[0]).not.toBeNull();
+  expect(before.washes).toBe(0);
+  await live.locator('[data-crystalarium-action="wash"]').click();
+  await expect(count).toHaveText('24 / 100');
+  const after = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(after.version).toBe(4);
+  expect(after.potion).toBe(24);
+  expect(after.cells[0]).toBeNull();
+  expect(after.washes).toBe(1);
+  await expect(live).toContainText('returned 1 Growth Potion drop');
+  // Repeating the action without a selected crystal cannot credit another drop.
+  await live.locator('[data-crystalarium-action="wash"]').click();
+  await expect(count).toHaveText('24 / 100');
+  const noDuplicate = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(noDuplicate).toEqual(after);
+});
+
 test.describe('C20 approved mobile potion recovery', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
   test('keeps free Brook Spring visible and restores basic growth from zero', async ({ page }) => {
