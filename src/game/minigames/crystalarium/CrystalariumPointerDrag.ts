@@ -170,7 +170,10 @@ export class CrystalariumPointerDrag {
       this.lastShelfTapIndex = current.origin.index;
       this.actions.tapShelf(current.origin.index);
     } else if (shelf) {
-      this.actions.rearrange(current.origin.index, Number(shelf.dataset.crystalariumAction?.slice(6)));
+      this.actions.rearrange(
+        current.origin.index,
+        Number(shelf.dataset.crystalariumAction?.slice(6)),
+      );
     } else {
       this.actions.invalid();
     }
@@ -200,8 +203,12 @@ export class CrystalariumPointerDrag {
       const occupied = this.getPiece({ kind: 'shelf', index: slot });
       shelf.dataset.crystalariumDrop =
         origin.kind === 'shelf'
-          ? slot !== origin.index ? 'valid' : 'origin'
-          : !occupied ? 'valid' : 'blocked';
+          ? slot !== origin.index
+            ? 'valid'
+            : 'origin'
+          : !occupied
+            ? 'valid'
+            : 'blocked';
     }
     for (const storageDock of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-storage-drop]',
