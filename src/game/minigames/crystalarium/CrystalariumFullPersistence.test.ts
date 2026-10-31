@@ -4,7 +4,7 @@ import type { SaveRepository } from '../../save/SaveRepository';
 import { SaveService } from '../../save/SaveService';
 import { createDefaultSave } from '../../save/createDefaultSave';
 import { createCrystalariumFullState } from './CrystalariumFullRules';
-import { isCrystalariumPotionState, POTION_CAPACITY } from './CrystalariumPotionRules';
+import { isCrystalariumPotionState, POTION_CAPACITY, readCrystalariumPotion } from './CrystalariumPotionRules';
 import {
   CRYSTALARIUM_SANDBOX_STORAGE_KEY,
   loadCrystalariumProgress,
@@ -173,6 +173,65 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     expect(saves.load()?.activities.crystalarium?.version).toBe(4);
     expect(loadCrystalariumProgress(world, saves, storage)).toEqual(migrated);
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
+  });
+
+  it('atomically saves the 100-drop v4 potion alongside board and shelf in independent stores', () => {
+    const { saves, storage, values, sandbox, world } = harness();
+    const initial = readCrystalariumPotion(createCrystalariumFullState());
+    if (!initial) throw new Error('C20 migration fixture invalid');
+    const worldState = {
+      ...initial,
+      potion: 37,
+      cells: [...initial.cells.slice(0, 4), { family: 'bright' as const, tier: 2 as const }, ...initial.cells.slice(5)],
+    };
+    const sandboxState = { ...initial, potion: 0, completed: 2 };
+    expect(saveCrystalariumProgress(world, worldState, saves, storage)).toBe(true);
+    expect(saveCrystalariumProgress(sandbox, sandboxState, saves, storage)).toBe(true);
+    expect(saves.load()?.schemaVersion).toBe(13);
+    expect(loadCrystalariumProgress(world, saves, storage)).toEqual(worldState);
+    expect(loadCrystalariumProgress(sandbox, saves, storage)).toEqual(sandboxState);
+    expect(JSON.parse(values.get(CRYSTALARIUM_SANDBOX_STORAGE_KEY) ?? '{}').potion).toBe(0);
+    expect(saves.load()?.activities.crystalarium?.cells[4]).toEqual({
+      family: 'bright',
+      tier: 2,
+    });
+  });
+
+  it('refuses future potion or corrupt v4 sandbox updates without replacing the record', () => {
+    const { saves, sandbox, storage, values } = harness();
+    const initial = readCrystalariumPotion(createCrystalariumFullState());
+    if (!initial) throw new Error('C20 migration fixture invalid');
+    for (const raw of [
+      JSON.stringify({ ...initial, version: 5 }),
+      JSON.stringify({ ...initial, potion: -1 }),
+      JSON.stringify({ ...initial, potion: 101 }),
+      JSON.stringify({ ...initial, shelf: [] }),
+    ]) {
+      values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, raw);
+      const recovered = loadCrystalariumProgress(sandbox, saves, storage);
+      expect(recovered.potion).toBe(POTION_CAPACITY);
+      expect(saveCrystalariumProgress(sandbox, initial, saves, storage)).toBe(false);
+      expect(values.get(CRYSTALARIUM_SANDBOX_STORAGE_KEY)).toBe(raw);
+    }
+  });
+
+  it('does not write a partial potion decrease when sandbox storage fails', () => {
+    const { saves, sandbox } = harness();
+    const initial = readCrystalariumPotion(createCrystalariumFullState());
+    if (!initial) throw new Error('C20 migration fixture invalid');
+    let recorded: string | null = null;
+    const broken = {
+      getItem: () => null,
+      setItem: (_key: string, value: string): void => {
+        recorded = value;
+        throw new Error('quota exceeded');
+      },
+    };
+    const candidate = { ...initial, potion: 99 };
+    expect(saveCrystalariumProgress(sandbox, candidate, saves, broken)).toBe(false);
+    expect(recorded).not.toBeNull();
+    expect(initial.potion).toBe(100);
+    expect(saves.load()?.activities.crystalarium).toBeNull();
   });
 
   it('does not acknowledge failed sandbox writes', () => {
