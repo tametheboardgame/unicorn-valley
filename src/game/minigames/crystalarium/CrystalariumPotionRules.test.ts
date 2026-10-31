@@ -97,7 +97,7 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     for (let i = 0; i < 4; i += 1) {
       const refilled = refillCrystalariumPotion(state);
       expect(refilled.accepted).toBe(true);
-      const transition = applyCrystalariumPotion(state, refilled, undefined);
+      const transition = applyCrystalariumPotion(state, refilled, 'refill');
       expect(transition.accepted).toBe(true);
       if (!transition.accepted) return;
       state = transition.state;
@@ -107,7 +107,7 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     expect(full.accepted).toBe(false);
     expect(full.state).toBe(state);
     const almostFull = { ...state, potion: 90 };
-    const capped = applyCrystalariumPotion(almostFull, refillCrystalariumPotion(almostFull), undefined);
+    const capped = applyCrystalariumPotion(almostFull, refillCrystalariumPotion(almostFull), 'refill');
     expect(capped.accepted).toBe(true);
     if (capped.accepted) expect(capped.state.potion).toBe(100);
   });
@@ -133,7 +133,7 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     let state = { ...fresh(), potion: 0 };
     for (let i = 0; i < 250; i += 1) {
       if (state.potion === 0) {
-        const refill = applyCrystalariumPotion(state, refillCrystalariumPotion(state), undefined);
+        const refill = applyCrystalariumPotion(state, refillCrystalariumPotion(state), 'refill');
         expect(refill.accepted).toBe(true);
         if (!refill.accepted) return;
         state = refill.state;
