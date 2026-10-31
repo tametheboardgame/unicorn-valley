@@ -695,9 +695,7 @@ export class CrystalariumPortraitView {
                 ' ' +
                 CRYSTAL_TIER_NAMES[piece.tier] +
                 '. Activate to return to board; Shift+Enter to rearrange.'
-            : 'Empty Storage slot ' +
-                (index + 1) +
-                '. Shift+Enter to place a selected crystal.',
+            : 'Empty Storage slot ' + (index + 1) + '. Shift+Enter to place a selected crystal.',
         );
         slot.addEventListener('keydown', (event) => {
           if (event.shiftKey && (event.key === 'Enter' || event.key === ' ')) {
