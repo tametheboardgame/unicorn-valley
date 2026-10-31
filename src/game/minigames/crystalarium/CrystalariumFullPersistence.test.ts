@@ -184,7 +184,7 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
       potion: 37,
       cells: [...initial.cells.slice(0, 4), { family: 'bright' as const, tier: 2 as const }, ...initial.cells.slice(5)],
     };
-    const sandboxState = { ...initial, potion: 0, completed: 2 };
+    const sandboxState = { ...initial, potion: 0 };
     expect(saveCrystalariumProgress(world, worldState, saves, storage)).toBe(true);
     expect(saveCrystalariumProgress(sandbox, sandboxState, saves, storage)).toBe(true);
     expect(saves.load()?.schemaVersion).toBe(13);
