@@ -1021,11 +1021,16 @@ export class CrystalariumFullMode {
         133,
         refinedTier === 2 ? 'Grow crystal' : 'Grow polished',
         'crystalarium-full-grow-refined',
-        (() => {
+        () => {
           if (this.permitted({ kind: 'other' })) {
-            this.apply(spawnRefinedCrystal(this.state), undefined, this.state.selectedFamily, 'refined');
+            this.apply(
+              spawnRefinedCrystal(this.state),
+              undefined,
+              this.state.selectedFamily,
+              'refined',
+            );
           }
-        }),
+        },
       );
       // Tools always hold the same Fresh Board control.
     }
