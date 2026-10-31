@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C20 Growth Potion balance study | Unicorn Valley</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+      color: #edf6ff;
+      background: #081b34;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(#06162bc7, #071933e8),
+        url("/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp") center / cover fixed;
+    }
+    main { width: min(1100px, calc(100% - 24px)); margin: auto; padding: 24px 0 40px; }
+    .intro {
+      padding: 18px 25px;
+      border: 2px solid #dcb77b;
+      border-radius: 22px;
+      background: #132b4be8;
+    }
+    h1, h2, h3 {
+      color: #f7db9b;
+      font-family: Georgia, serif;
+    }
+    h1 { font-size: clamp(24px, 3vw, 39px); margin: 0 0 10px; }
+    h2 { margin: 0 0 14px; font-size: 24px; }
+    h3 { font-size: 19px; margin: 0 0 7px; }
+    p { margin: 8px 0; line-height: 1.5; }
+    .caution { color: #f8dfa9; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 18px; }
+    .panel {
+      min-width: 0;
+      padding: clamp(14px, 2.6vw, 24px);
+      border: 2px solid #a1cee4;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #234564ee, #12253fea);
+      box-shadow: 0 9px 30px #07122a73;
+    }
+    .wide { grid-column: 1 / -1; }
+    .capacity-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 16px; }
+    button {
+      min-height: 48px;
+      padding: 9px 14px;
+      border: 2px solid #96c9df;
+      border-radius: 13px;
+      color: #fff8e9;
+      background: linear-gradient(140deg, #356280, #1a3657);
+      font: 700 15px system-ui, sans-serif;
+      cursor: pointer;
+    }
+    button[aria-pressed="true"] { border-color: #f8dd9b; box-shadow: 0 0 0 2px #f7d98d65; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #f8df98; outline-offset: 3px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .comparison > div {
+      border: 1px solid #6597b4;
+      border-radius: 12px;
+      text-align: center;
+      padding: 10px 4px;
+      background: #071e3a;
+    }
+    .comparison strong { color: #f9dfa2; font-size: 24px; }
+    .comparison small { display: block; color: #bfdfeb; font-size: 12px; }
+    .choice { display: flex; align-items: flex-start; gap: 12px; padding: 11px; border: 1px solid #628ba3; border-radius: 12px; margin: 8px 0; }
+    .choice input { width: 20px; height: 20px; accent-color: #c1f3ff; margin-top: 3px; flex: none; }
+    .choice small { display: block; color: #bad9e6; margin-top: 4px; }
+    .potion-view { display: grid; grid-template-columns: minmax(0, 1fr) 1fr; gap: 12px; align-items: center; }
+    .potion-view img { display: block; width: min(100%, 260px); height: 275px; object-fit: contain; margin: auto; }
+    .count { font: 700 clamp(25px, 3.5vw, 36px) Georgia, serif; color: #ffdfa2; }
+    .meter { height: 17px; overflow: hidden; background: #04152e; border: 1px solid #83c8dd; border-radius: 10px; margin-top: 12px; }
+    .meter div { height: 100%; width: 100%; background: linear-gradient(90deg, #278baf, #67eff5); transition: width 160ms linear; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 13px 0; }
+    .actions button { flex: 1 1 140px; }
+    .footnote { color: #bdd8e8; font-size: 13px; }
+    .status { color: #eaf6ff; min-height: 24px; }
+    .rule { border-left: 3px solid #e4be80; padding-left: 12px; }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .wide { grid-column: auto; }
+      .potion-view { grid-template-columns: 125px 1fr; }
+      .potion-view img { height: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="intro">
+      <h1>Growth Potion · C20 balancing study</h1>
+      <p class="caution"><strong>Design preview only.</strong> These capacities, costs and rewards are proposals, not approved game rules. Nothing on this page writes a save or changes the playable Crystalarium.</p>
+      <p>Try the same reservoir using the two approaches to always-free continuation. The existing approved pouring animation, crystals and Storage Chamber are unchanged.</p>
+    </header>
+    <div class="layout">
+      <section class="panel">
+        <h2>1 · Reservoir size</h2>
+        <p>Choose how many potion drops a full bottle could hold.</p>
+        <div class="capacity-row" aria-label="Candidate Growth Potion capacity" role="group">
+          <button type="button" data-capacity="100" aria-pressed="true">100 drops</button>
+          <button type="button" data-capacity="150" aria-pressed="false">150 drops</button>
+          <button type="button" data-capacity="200" aria-pressed="false">200 drops</button>
+        </div>
+        <div class="comparison" aria-label="Candidate capacity comparison">
+          <div><strong>100</strong><small>Frequent recovery</small></div>
+          <div><strong>150</strong><small>Middle ground</small></div>
+          <div><strong>200</strong><small>Longer sessions</small></div>
+        </div>
+        <p class="footnote">Illustrative starting stock: full bottle. Basic growth costs 1; optional refined growth costs 2. Proposed saved merge rewards 1 and saved orders 3.</p>
+      </section>
+      <section class="panel">
+        <h2>2 · Free continuation</h2>
+        <label class="choice">
+          <input type="radio" name="recovery" value="brook-spring" checked>
+          <span><strong>Brook Spring</strong><small>A visible free refill tap instantly restores 25 drops. No timer or daily reward.</small></span>
+        </label>
+        <label class="choice">
+          <input type="radio" name="recovery" value="free-basic-at-zero">
+          <span><strong>Free basic crystals at zero</strong><small>The bottle powers normal growth until empty, then basic crystals stay free automatically. Refined growth requires potion.</small></span>
+        </label>
+        <p class="rule">Neither proposal may prevent a child from continuing to play or completing the 50 orders.</p>
+      </section>
+      <section class="panel wide">
+        <h2>3 · Try the proposed balance</h2>
+        <div class="potion-view">
+          <img id="reservoir" src="/design-assets/crystalarium-c17/growth-potion-assets/reservoir-full.webp" alt="Approved Growth Potion reservoir illustration, with a demonstration fill level">
+          <div>
+            <div class="count" id="balance" aria-live="polite">100 / 100</div>
+            <div id="potion-description">Full reservoir</div>
+            <div class="meter" role="progressbar" aria-label="Candidate potion remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="meter"><div id="fill"></div></div>
+            <p class="footnote" id="zero-note">Successful saved growth consumes potion in this simulation only.</p>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" data-step="basic">Grow basic (−1)</button>
+          <button type="button" data-step="refined">Grow refined (−2)</button>
+          <button type="button" data-step="merge">Successful merge (+1)</button>
+          <button type="button" data-step="offer">Offer order (+3)</button>
+          <button type="button" data-step="refill" id="spring">Free Brook Spring (+25)</button>
+          <button type="button" id="empty">Show empty bottle</button>
+          <button type="button" id="reset">Reset full</button>
+        </div>
+        <p class="status" role="status" aria-live="polite" id="status">Pick a hypothetical action to see how the numbers behave.</p>
+      </section>
+      <section class="panel wide">
+        <h2>Review before connecting to real gameplay</h2>
+        <p>The final design must settle the capacity, refill method, normal and refined growth costs, merge/Offer rewards, old-save migration, and what the reservoir shows at zero. Costs and rewards will only apply to successful, saved actions. Blocked growth, a full board, failed saves, and cancelled gestures must never spend potion.</p>
+        <p class="footnote">The visual deliberately uses existing approved C17 artwork. This page is independent of the game controller and never calls localStorage, sessionStorage, any API or the save service.</p>
+      </section>
+    </div>
+  </main>
+  <script>
+    const assets = '/design-assets/crystalarium-c17/growth-potion-assets/';
+    let capacity = 100;
+    let remaining = capacity;
+    let recovery = 'brook-spring';
+    const status = document.getElementById('status');
+    const reservoir = document.getElementById('reservoir');
+    const meter = document.getElementById('meter');
+    const fill = document.getElementById('fill');
+    const spring = document.getElementById('spring');
+    const change = (message) => { status.textContent = message; render(); };
+    function render() {
+      const ratio = remaining / capacity;
+      const art = ratio === 0 ? 'empty' : ratio < 0.26 ? 'low' : ratio < 0.64 ? 'medium' : ratio < 0.9 ? 'high' : 'full';
+      reservoir.src = assets + 'reservoir-' + art + '.webp';
+      document.getElementById('balance').textContent = remaining + ' / ' + capacity;
+      document.getElementById('potion-description').textContent = Math.round(ratio * 100) + '% full · Candidate, not saved';
+      fill.style.width = Math.round(ratio * 100) + '%';
+      meter.setAttribute('aria-valuemax', String(capacity));
+      meter.setAttribute('aria-valuenow', String(remaining));
+      spring.hidden = recovery !== 'brook-spring';
+      document.getElementById('zero-note').textContent =
+        ratio === 0 && recovery === 'free-basic-at-zero'
+          ? 'At zero, basic growth remains free. Refined growth waits for potion.'
+          : ratio === 0
+            ? 'At zero, the Brook Spring can instantly refill the bottle for free.'
+            : 'Only successful, saved actions would spend potion in the future real game.';
+      for (const button of document.querySelectorAll('[data-capacity]')) {
+        button.setAttribute('aria-pressed', String(Number(button.dataset.capacity) === capacity));
+      }
+    }
+    for (const button of document.querySelectorAll('[data-capacity]')) {
+      button.addEventListener('click', () => {
+        capacity = Number(button.dataset.capacity);
+        remaining = capacity;
+        change('New ' + capacity + '-drop candidate selected. Nothing saved.');
+      });
+    }
+    for (const radio of document.querySelectorAll('input[name="recovery"]')) {
+      radio.addEventListener('change', () => {
+        if (!radio.checked) return;
+        recovery = radio.value;
+        change(recovery === 'brook-spring' ? 'Brook Spring candidate enabled.' : 'Free-basic-at-zero candidate enabled.');
+      });
+    }
+    const steps = { basic: 1, refined: 2, merge: -1, offer: -3, refill: -25 };
+    for (const button of document.querySelectorAll('[data-step]')) {
+      button.addEventListener('click', () => {
+        const key = button.dataset.step;
+        if (key === 'refill' && recovery !== 'brook-spring') return;
+        let cost = steps[key];
+        if (key === 'basic' && recovery === 'free-basic-at-zero' && remaining === 0) cost = 0;
+        if (cost > remaining) {
+          change('Not enough potion for this hypothetical action. Free continuation is still available.');
+          return;
+        }
+        const previous = remaining;
+        remaining = Math.min(capacity, Math.max(0, remaining - cost));
+        change(key + ': ' + previous + ' → ' + remaining + ' drops, demonstration only.');
+      });
+    }
+    document.getElementById('empty').addEventListener('click', () => {
+      remaining = 0;
+      change('Empty bottle scenario selected. Try a free recovery.');
+    });
+    document.getElementById('reset').addEventListener('click', () => {
+      remaining = capacity;
+      change('Bottle reset to full. No saved game state changed.');
+    });
+    render();
+  </script>
+</body>
+</html>
