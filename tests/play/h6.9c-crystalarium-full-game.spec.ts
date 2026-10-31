@@ -1585,6 +1585,21 @@ test('C19 Storage offers twelve safe slots with one-tap return and accessible cl
   expect(chamberSize.height).toBeLessThan(510);
   expect(chamberSize.internalOverflow).toBe(false);
   expect(chamberSize.insideViewport).toBe(true);
+  // The upper-right close cross must never cover the instructions. Reserve
+  // clear horizontal space while keeping the compact non-scrolling chamber.
+  const captionClearance = await dialog.evaluate((element) => {
+    const help = element.querySelector('.crystalarium-live-storage-help');
+    const close = element.querySelector('.crystalarium-live-storage-close');
+    if (!help || !close) throw new Error('Missing Storage caption or close control');
+    const helpRect = help.getBoundingClientRect();
+    const closeRect = close.getBoundingClientRect();
+    return {
+      gap: closeRect.left - helpRect.right,
+      textOverflow: help.scrollWidth > help.clientWidth + 1,
+    };
+  });
+  expect(captionClearance.gap).toBeGreaterThanOrEqual(8);
+  expect(captionClearance.textOverflow).toBe(false);
 
   const stored = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
