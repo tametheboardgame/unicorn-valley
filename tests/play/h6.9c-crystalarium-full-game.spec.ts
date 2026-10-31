@@ -2373,3 +2373,32 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
   expect(await cardSource.text()).not.toContain('id="grain"');
   expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
 });
+
+test('C20 Gate D preview compares capacities and dry recovery without touching saves', async ({
+  page,
+}) => {
+  await page.goto('/design-previews/crystalarium-c20-potion-balance.html');
+  await expect(page.getByRole('heading', { name: 'Growth Potion · C20 balancing study' })).toBeVisible();
+  await page.evaluate(() => localStorage.setItem('crystalarium-c20-guard', 'unchanged'));
+  await page.locator('[data-capacity="150"]').click();
+  await expect(page.locator('#balance')).toHaveText('150 / 150');
+  await page.locator('#empty').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="basic"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="refill"]').click();
+  await expect(page.locator('#balance')).toHaveText('25 / 150');
+  await page.locator('input[value="free-basic-at-zero"]').check();
+  await expect(page.locator('[data-step="refill"]')).toBeHidden();
+  await page.locator('#empty').click();
+  await page.locator('[data-step="basic"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="refined"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  const retained = await page.evaluate(() => ({
+    sentinel: localStorage.getItem('crystalarium-c20-guard'),
+    sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+    world: localStorage.getItem('unicorn-valley.save'),
+  }));
+  expect(retained).toEqual({ sentinel: 'unchanged', sandbox: null, world: null });
+});
