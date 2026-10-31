@@ -22,9 +22,7 @@ describe('C20 Gate D complete authored order economy projection (no saves)', () 
       );
     }
     expect(result.totalOfferRewards).toBe(50 * candidate.offerReward);
-    expect(
-      result.positiveNetOrders + result.neutralNetOrders + result.negativeNetOrders,
-    ).toBe(50);
+    expect(result.positiveNetOrders + result.neutralNetOrders + result.negativeNetOrders).toBe(50);
     // Exact current authored campaign totals; a future recipe edit must
     // explicitly requalify the preview's corresponding balancing figures.
     expect(result.basicShards).toBe(950);
@@ -76,8 +74,6 @@ describe('C20 Gate D complete authored order economy projection (no saves)', () 
       basicCost: 2,
       refinedCost: 3,
     });
-    expect(moreExpensive.netPotion).toBe(
-      inexpensive.netPotion - inexpensive.basicShards,
-    );
+    expect(moreExpensive.netPotion).toBe(inexpensive.netPotion - inexpensive.basicShards);
   });
 });
