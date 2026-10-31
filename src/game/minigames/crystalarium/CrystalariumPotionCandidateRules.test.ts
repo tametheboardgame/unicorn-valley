@@ -20,16 +20,18 @@ describe('C20 Gate D pure economic candidates (not live gameplay)', () => {
         const candidate = createC20PotionTrial(capacity, recovery);
         const state = { remaining: 7 };
         for (const action of ['basic', 'refined', 'merge', 'offer', 'refill'] as const) {
-          expect(trialC20Potion(candidate, state, action, { accepted: false, saved: true })).toEqual({
+          expect(
+            trialC20Potion(candidate, state, action, { accepted: false, saved: true }),
+          ).toEqual({
             accepted: false,
             state,
             spent: 0,
             awarded: 0,
             reason: 'No accepted, saved action.',
           });
-          expect(trialC20Potion(candidate, state, action, { accepted: true, saved: false }).state).toBe(
-            state,
-          );
+          expect(
+            trialC20Potion(candidate, state, action, { accepted: true, saved: false }).state,
+          ).toBe(state);
         }
       });
 
