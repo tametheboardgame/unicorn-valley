@@ -10,6 +10,8 @@ export const POTION_CAPACITY = 100;
 export const POTION_BASIC_COST = 1;
 export const POTION_REFINED_COST = 2;
 export const POTION_MERGE_REWARD = 1;
+/** Brook Wash recovers the net one-drop cost of a held crystal after merge rebates. */
+export const POTION_WASH_REFUND = 1;
 export const POTION_SPRING_REFILL = 25;
 
 /** Gate D approved: numeric potion and chamber are one atomic save record. */
@@ -73,8 +75,13 @@ export function applyCrystalariumPotion(
     };
   }
   const earned = result.state.merges > prior.merges ? POTION_MERGE_REWARD : 0;
+  // A Brook Wash permanently removes exactly one crystal from the board.
+  // Credit its one-drop net investment once, with the board and potion saved
+  // atomically. Never credit failed, cancelled or repeated wash attempts.
+  const washed = result.state.washes === prior.washes + 1;
+  const washRefund = washed ? POTION_WASH_REFUND : 0;
   const refill = growth === 'refill' ? POTION_SPRING_REFILL : 0;
-  const potion = Math.min(POTION_CAPACITY, prior.potion - cost + earned + refill);
+  const potion = Math.min(POTION_CAPACITY, prior.potion - cost + earned + washRefund + refill);
   return {
     accepted: true,
     state: {
@@ -84,7 +91,11 @@ export function applyCrystalariumPotion(
       version: CRYSTALARIUM_POTION_VERSION,
       potion,
     },
-    message: result.message,
+    message: washed
+      ? potion > prior.potion
+        ? 'Brook Wash returned ' + (potion - prior.potion) + ' Growth Potion drop.'
+        : 'Brook Wash cleared a crystal. Growth Potion is already full.'
+      : result.message,
   };
 }
 
