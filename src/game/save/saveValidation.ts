@@ -144,8 +144,8 @@ function isActivityState(value: unknown): boolean {
     isRecordOf(value.miniGameRecords, (entry) => typeof entry === 'number' && entry >= 0) &&
     (value.crystalarium === undefined ||
       value.crystalarium === null ||
-      (isCrystalariumFullState(value.crystalarium) ||
-        isCrystalariumChamberState(value.crystalarium)))
+      isCrystalariumFullState(value.crystalarium) ||
+      isCrystalariumChamberState(value.crystalarium))
   );
 }
 
