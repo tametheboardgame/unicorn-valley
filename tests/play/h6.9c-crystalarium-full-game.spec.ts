@@ -1376,7 +1376,7 @@ test('C18 real illustrated game reveals two scrollable active cards and fulfils 
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
   );
-  expect(after.version).toBe(2);
+  expect(after.version).toBe(3);
   expect(after.completedPatternIds).toEqual(['crystalarium:1-1', 'crystalarium:1-2']);
   expect(after.revealedCount).toBe(4);
   await expect(cards).toHaveCount(2);
@@ -1464,7 +1464,7 @@ test('C21 staged illustrated live game uses canonical state, actions and isolate
   await page.screenshot({ path: testInfo.outputPath('c21-live-art-1440.png'), fullPage: true });
 });
 
-test('C21 Storage only has an accessible close and tappable saved crystal slots', async ({
+test('C19 Storage offers twelve safe slots with one-tap return and accessible close', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -1480,12 +1480,12 @@ test('C21 Storage only has an accessible close and tappable saved crystal slots'
 
   const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText('1 / 4 slots used');
-  await expect(dialog).toContainText('Drag a crystal onto Storage');
-  await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(4);
+  await expect(dialog).toContainText('1 / 12 slots used');
+  await expect(dialog).toContainText('Tap a stored crystal');
+  await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
   await expect(dialog.locator('.crystalarium-live-storage-slot:enabled')).toHaveCount(1);
   await expect(dialog.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
-  await expect(dialog.locator('[data-crystalarium-action="storage-choose"]')).toHaveCount(0);
+  await expect(dialog.locator('[data-crystalarium-action="storage-choose-socket"]')).toBeDisabled();
   await expect(dialog.getByRole('button', { name: 'Close Storage' })).toHaveText('×');
 
   const stored = await page.evaluate(
@@ -1503,7 +1503,7 @@ test('C21 Storage only has an accessible close and tappable saved crystal slots'
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await page.mouse.down();
   await page.mouse.up();
-  await expect(dialog).toContainText('0 / 4 slots used');
+  await expect(dialog).toContainText('0 / 12 slots used');
   const restored = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
     SANDBOX_KEY,
@@ -1515,7 +1515,7 @@ test('C21 Storage only has an accessible close and tappable saved crystal slots'
   await expect(dialog).toHaveCount(0);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
   await live.locator('[data-crystalarium-action="storage"]').click();
-  await expect(dialog).toContainText('0 / 4 slots used');
+  await expect(dialog).toContainText('0 / 12 slots used');
   await dialog.getByRole('button', { name: 'Close Storage' }).click();
   await expect(dialog).toHaveCount(0);
 });
@@ -1539,6 +1539,51 @@ test('C21 drag a crystal onto the Storage dock without opening the modal', async
   );
   expect(saved.cells[0]).toBeNull();
   expect(saved.shelf[0]).toEqual({ family: 'low', tier: 0 });
+});
+
+test('C19 chamber rearranges and returns a chosen slot to an exact socket without losing progress', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  await enterResonanceGarden(page, false, true, {
+    ...seed,
+    shelf: [
+      { family: 'bell', tier: 3 },
+      { family: 'bright', tier: 2 },
+      null,
+      null,
+    ],
+  });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="storage"]').click();
+  const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
+  await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
+  await dialog.locator('[data-crystalarium-action="storage-arrange"]').click();
+  await dialog.locator('[data-crystalarium-action="shelf-0"]').click();
+  await dialog.locator('[data-crystalarium-action="shelf-11"]').click();
+  const shuffled = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY,
+  );
+  expect(shuffled.version).toBe(3);
+  expect(shuffled.shelf[0]).toBeNull();
+  expect(shuffled.shelf[11]).toEqual({ family: 'bell', tier: 3 });
+  expect(shuffled.shelf[1]).toEqual({ family: 'bright', tier: 2 });
+  await dialog.locator('[data-crystalarium-action="shelf-11"]').click();
+  await dialog.locator('[data-crystalarium-action="storage-choose-socket"]').click();
+  await expect(dialog).toHaveCount(0);
+  const target = live.locator('[data-crystalarium-cell="41"]');
+  await expect(target).toBeEnabled();
+  await target.click();
+  const restored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY,
+  );
+  expect(restored.cells[41]).toEqual({ family: 'bell', tier: 3 });
+  expect(restored.shelf[11]).toBeNull();
+  expect(restored.shelf[1]).toEqual({ family: 'bright', tier: 2 });
+  expect(restored.cells).toHaveLength(42);
+  expect(restored.shelf).toHaveLength(12);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
 test('C21 top Guide is retained while four expanded Garden Tools omit the duplicate', async ({
