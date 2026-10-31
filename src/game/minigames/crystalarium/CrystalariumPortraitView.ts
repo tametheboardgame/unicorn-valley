@@ -27,9 +27,10 @@ import './CrystalariumPortraitView.css';
 export interface CrystalariumPortraitActions {
   cell(index: number): void;
   dragMove(source: number, target: number): void;
-  dragShelve(source: number): void;
+  dragShelve(source: number, targetSlot?: number): void;
   dragWash(source: number): void;
   dragRestore(shelfIndex: number, target: number): void;
+  moveStored(source: number, target: number): void;
   dragInvalid(): void;
   source(family: CrystalFamily): void;
   growFromWell(family: CrystalFamily): void;
@@ -129,6 +130,7 @@ export class CrystalariumPortraitView {
         wash: actions.dragWash,
         restore: actions.dragRestore,
         tapShelf: actions.restore,
+        rearrange: actions.moveStored,
         invalid: actions.dragInvalid,
       },
       ({ kind, index }) => {
