@@ -701,30 +701,33 @@
 }
 .crystalarium-live-storage {
   position: relative;
-  width: min(540px, 98vw);
-  padding: 24px;
-  max-height: 92dvh;
-  overflow: auto;
-  background: linear-gradient(140deg, #193e5c, #161e3c);
+  /* All 12 sockets must fit on screen; no nested scrollbar. Keep this a
+     compact chamber, not a full-page inventory or second game board. */
+  width: min(416px, calc(100vw - 24px), 70dvh);
+  max-height: calc(100dvh - 24px);
+  overflow: hidden;
+  padding: clamp(9px, 1.8dvh, 16px);
   border: 3px solid #d4b574;
-  border-radius: 24px;
+  border-radius: 20px;
   text-align: center;
+  background: linear-gradient(140deg, #193e5c, #161e3c);
 }
 .crystalarium-live-storage-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 7px;
+  right: 7px;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   padding: 0;
   border: 2px solid #96cce1;
   border-radius: 12px;
   background: #1b3655;
   color: #fff0c4;
-  font-size: 30px;
+  font-size: 27px;
   line-height: 1;
   cursor: pointer;
 }
@@ -734,44 +737,36 @@
   outline-offset: 2px;
 }
 .crystalarium-live-storage h2 {
+  padding: 4px 48px 0;
   color: #ffe8af;
-  font:
-    700 22px Georgia,
-    serif;
+  font: 700 clamp(18px, 2.7dvh, 24px) Georgia, serif;
 }
-.crystalarium-live-storage p {
-  margin: 8px 0;
+.crystalarium-live-storage-help {
+  margin: 7px 0 10px !important;
   color: #c4eaf4;
+  font-size: clamp(11px, 1.65dvh, 13px);
+  line-height: 1.35;
 }
 .crystalarium-live-storage-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(48px, 1fr));
-  gap: 8px;
-  margin: 10px 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(4px, 0.9dvh, 8px);
+  width: 100%;
 }
 .crystalarium-live-storage-slot {
+  min-width: 0;
+  min-height: 0;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  padding: 4px;
+  padding: 3px;
+  touch-action: none;
   background:
     #152945 url("/design-assets/crystalarium-c17/storage-chamber/storage-socket-empty.svg") center /
     contain no-repeat !important;
 }
-.crystalarium-live-storage-slot:disabled {
-  opacity: 0.34;
-}
-.crystalarium-live-storage-actions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding-block: 8px;
-}
-.crystalarium-live-storage-actions button {
-  min-width: 100px;
-  flex: 1 1 auto;
-  font-weight: 700;
+.crystalarium-live-storage-slot.is-empty {
+  opacity: 0.58;
 }
 .crystalarium-live-storage-slot.is-selected {
   outline: 4px solid #ffe6a2;
