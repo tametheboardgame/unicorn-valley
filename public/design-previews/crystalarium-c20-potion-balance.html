@@ -126,7 +126,23 @@
         <p class="rule">Neither proposal may prevent a child from continuing to play or completing the 50 orders.</p>
       </section>
       <section class="panel wide">
-        <h2>3 · Try the proposed balance</h2>
+        <h2>3 · Reward strength</h2>
+        <p>The starting proposal mostly pays back the cost of growth. Compare fewer rewards before choosing the actual rules.</p>
+        <label class="choice">
+          <input type="radio" name="rewards" value="generous" checked>
+          <span><strong>Gentle rewards</strong><small>+1 for every successful merge and +3 for each completed order. Estimated campaign change: +12 before capacity clipping.</small></span>
+        </label>
+        <label class="choice">
+          <input type="radio" name="rewards" value="merge-only">
+          <span><strong>Earn back potion by merging</strong><small>+1 per merge, no order bonus. Estimated campaign change: −138.</small></span>
+        </label>
+        <label class="choice">
+          <input type="radio" name="rewards" value="offer-only">
+          <span><strong>Celebrate finished orders</strong><small>No merge bonus, +3 per completed order. Estimated campaign change: −800, so free recovery will be used much more often.</small></span>
+        </label>
+      </section>
+      <section class="panel wide">
+        <h2>4 · Try the proposed balance</h2>
         <div class="potion-view">
           <img id="reservoir" src="/design-assets/crystalarium-c17/growth-potion-assets/reservoir-full.webp" alt="Approved Growth Potion reservoir illustration, with a demonstration fill level">
           <div>
@@ -139,8 +155,8 @@
         <div class="actions">
           <button type="button" data-step="basic">Grow basic (−1)</button>
           <button type="button" data-step="refined">Grow refined (−2)</button>
-          <button type="button" data-step="merge">Successful merge (+1)</button>
-          <button type="button" data-step="offer">Offer order (+3)</button>
+          <button type="button" data-step="merge" id="merge-reward">Successful merge (+1)</button>
+          <button type="button" data-step="offer" id="offer-reward">Offer order (+3)</button>
           <button type="button" data-step="refill" id="spring">Free Brook Spring (+25)</button>
           <button type="button" id="empty">Show empty bottle</button>
           <button type="button" id="reset">Reset full</button>
@@ -169,6 +185,12 @@
     let capacity = 100;
     let remaining = capacity;
     let recovery = 'brook-spring';
+    let rewards = 'generous';
+    const rewardAmounts = {
+      generous: { merge: 1, offer: 3 },
+      'merge-only': { merge: 1, offer: 0 },
+      'offer-only': { merge: 0, offer: 3 },
+    };
     const status = document.getElementById('status');
     const reservoir = document.getElementById('reservoir');
     const meter = document.getElementById('meter');
@@ -185,6 +207,8 @@
       meter.setAttribute('aria-valuemax', String(capacity));
       meter.setAttribute('aria-valuenow', String(remaining));
       spring.hidden = recovery !== 'brook-spring';
+      document.getElementById('merge-reward').textContent = 'Successful merge (+' + rewardAmounts[rewards].merge + ')';
+      document.getElementById('offer-reward').textContent = 'Offer order (+' + rewardAmounts[rewards].offer + ')';
       document.getElementById('zero-note').textContent =
         ratio === 0 && recovery === 'free-basic-at-zero'
           ? 'At zero, basic growth remains free. Refined growth waits for potion.'
@@ -209,12 +233,19 @@
         change(recovery === 'brook-spring' ? 'Brook Spring candidate enabled.' : 'Free-basic-at-zero candidate enabled.');
       });
     }
-    const steps = { basic: 1, refined: 2, merge: -1, offer: -3, refill: -25 };
+    for (const radio of document.querySelectorAll('input[name="rewards"]')) {
+      radio.addEventListener('change', () => {
+        if (!radio.checked) return;
+        rewards = radio.value;
+        change('Reward proposal changed. Nothing saved.');
+      });
+    }
+    const steps = { basic: 1, refined: 2, refill: -25 };
     for (const button of document.querySelectorAll('[data-step]')) {
       button.addEventListener('click', () => {
         const key = button.dataset.step;
         if (key === 'refill' && recovery !== 'brook-spring') return;
-        let cost = steps[key];
+        let cost = key === 'merge' || key === 'offer' ? -rewardAmounts[rewards][key] : steps[key];
         if (key === 'basic' && recovery === 'free-basic-at-zero' && remaining === 0) cost = 0;
         if (cost > remaining) {
           change('Not enough potion for this hypothetical action. Free continuation is still available.');
