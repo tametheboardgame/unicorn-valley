@@ -222,7 +222,8 @@ export class CrystalariumPortraitView {
           event.clientX > bounds.right ||
           event.clientY < bounds.top ||
           event.clientY > bounds.bottom
-        ) return;
+        )
+          return;
         slotPointerHandled = true;
         action();
       });
