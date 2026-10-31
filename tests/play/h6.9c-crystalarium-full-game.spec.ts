@@ -2460,3 +2460,26 @@ test('C20 approved live potion: spend, reject dry growth, refill and reward a re
   expect(merged.merges).toBe(1);
   expect(merged.cells[1]).toMatchObject({ tier: 1 });
 });
+
+test.describe('C20 approved mobile potion recovery', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('keeps free Brook Spring visible and restores basic growth from zero', async ({ page }) => {
+    test.setTimeout(90_000);
+    const seed = readCrystalariumPotion(createCrystalariumFullState());
+    if (!seed) throw new Error('C20 portrait seed migration failed');
+    await enterResonanceGarden(page, false, false, { ...seed, potion: 0 });
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('0 / 100');
+    await portrait.locator('[data-crystalarium-action="potion-refill"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('25 / 100');
+    await portrait.locator('[data-crystalarium-action="well-low"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('24 / 100');
+    const saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(saved.version).toBe(4);
+    expect(saved.potion).toBe(24);
+    expect(saved.cells.filter(Boolean)).toHaveLength(3);
+  });
+});
