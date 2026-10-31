@@ -11,7 +11,7 @@ import { CRYSTAL_TIER_NAMES, type CrystalPiece } from './CrystalariumOpeningRule
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
 import { CrystalariumGrowthPotionFx } from './CrystalariumGrowthPotionFx';
 import { activeResonanceQueue, canOfferQueuedPattern } from './CrystalariumMultiOrderRules';
-import { readCrystalariumChamber } from './CrystalariumChamberRules';
+import { POTION_CAPACITY, potionChamber } from './CrystalariumPotionRules';
 import type {
   CrystalariumPortraitActions,
   CrystalariumPortraitPresentation,
@@ -220,7 +220,7 @@ export class CrystalariumIllustratedView {
     const prompt = view.guide;
     const activeLesson = prompt?.lessonStep;
     const firstLesson = activeLesson !== undefined;
-    const queue = readCrystalariumChamber(state);
+    const queue = potionChamber(state);
     const patterns = queue ? activeResonanceQueue(queue) : [];
     const pattern = patterns[0] ?? activeResonancePattern(state);
 
@@ -319,13 +319,28 @@ export class CrystalariumIllustratedView {
     const producers = node('aside', 'crystalarium-live-producers');
     producers.setAttribute('aria-label', 'Growth Potion and crystal wells');
     const potion = node('section', 'crystalarium-live-potion');
+    const fill = state.potion / POTION_CAPACITY;
+    const bottle = fill === 0 ? 'empty' : fill < 0.26 ? 'low' : fill < 0.64 ? 'medium' : fill < 0.9 ? 'high' : 'full';
+    const progress = node('progress', 'crystalarium-live-potion-meter');
+    progress.max = POTION_CAPACITY;
+    progress.value = state.potion;
+    progress.setAttribute('aria-label', 'Growth Potion remaining');
+    const spring = this.button(
+      'Brook Spring +25',
+      'potion-refill',
+      this.actions.refillPotion,
+      state.potion === POTION_CAPACITY,
+    );
+    spring.setAttribute('aria-label', 'Refill Growth Potion with 25 free drops from Brook Spring');
     potion.append(
       node('h2', '', 'Growth Potion'),
       image(
-        ASSETS + 'growth-potion-assets/reservoir-full.webp',
-        'Decorative Growth Potion reservoir',
+        ASSETS + 'growth-potion-assets/reservoir-' + bottle + '.webp',
+        'Growth Potion reservoir, ' + state.potion + ' of ' + POTION_CAPACITY + ' drops',
       ),
-      node('small', '', 'Free growth'),
+      node('strong', 'crystalarium-live-potion-count', state.potion + ' / ' + POTION_CAPACITY),
+      progress,
+      spring,
     );
     producers.append(potion);
     CRYSTAL_FAMILIES.forEach((family) => {
