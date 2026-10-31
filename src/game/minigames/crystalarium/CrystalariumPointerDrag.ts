@@ -3,10 +3,11 @@ import { combineCrystalPieces, type CrystalPiece } from './CrystalariumOpeningRu
 
 export interface CrystalariumDragActions {
   move(source: number, target: number): void;
-  shelve(source: number): void;
+  shelve(source: number, targetSlot?: number): void;
   wash(source: number): void;
   restore(source: number, target: number): void;
   tapShelf(source: number): void;
+  rearrange(source: number, target: number): void;
   invalid(): void;
 }
 type Origin = { kind: 'cell' | 'shelf'; index: number; piece: CrystalPiece };
@@ -137,6 +138,7 @@ export class CrystalariumPointerDrag {
     const cell = target?.closest<HTMLElement>('[data-crystalarium-cell]');
     const shelf = target?.closest<HTMLElement>('[data-crystalarium-action^="shelf-"]');
     const storageDock = target?.closest<HTMLElement>('[data-crystalarium-storage-drop]');
+    const boardReturn = target?.closest<HTMLElement>('[data-crystalarium-board-return]');
     const wash = target?.closest<HTMLElement>(
       '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
     );
@@ -146,7 +148,10 @@ export class CrystalariumPointerDrag {
       if (cell && Number(cell.dataset.crystalariumCell) !== current.origin.index) {
         this.actions.move(current.origin.index, Number(cell.dataset.crystalariumCell));
       } else if (shelf || storageDock) {
-        this.actions.shelve(current.origin.index);
+        this.actions.shelve(
+          current.origin.index,
+          shelf ? Number(shelf.dataset.crystalariumAction?.slice(6)) : undefined,
+        );
       } else if (wash) {
         this.actions.wash(current.origin.index);
       } else {
@@ -154,6 +159,8 @@ export class CrystalariumPointerDrag {
       }
     } else if (cell) {
       this.actions.restore(current.origin.index, Number(cell.dataset.crystalariumCell));
+    } else if (boardReturn) {
+      this.actions.tapShelf(current.origin.index);
     } else if (
       shelf &&
       Number(shelf.dataset.crystalariumAction?.slice(6)) === current.origin.index
@@ -162,6 +169,8 @@ export class CrystalariumPointerDrag {
       this.lastShelfTapAt = Date.now();
       this.lastShelfTapIndex = current.origin.index;
       this.actions.tapShelf(current.origin.index);
+    } else if (shelf) {
+      this.actions.rearrange(current.origin.index, Number(shelf.dataset.crystalariumAction?.slice(6)));
     } else {
       this.actions.invalid();
     }
@@ -180,19 +189,30 @@ export class CrystalariumPointerDrag {
       cell.dataset.crystalariumDrop =
         origin.kind === 'cell' && index === origin.index ? 'origin' : valid ? 'valid' : 'blocked';
     }
-    const shelfFull = Array.from({ length: 4 }, (_, index) =>
+    const shelfCount = Number(this.root.dataset.crystalariumShelfCapacity) || 4;
+    const shelfFull = Array.from({ length: shelfCount }, (_, index) =>
       this.getPiece({ kind: 'shelf', index }),
     ).every(Boolean);
     for (const shelf of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-action^="shelf-"]',
     )) {
-      shelf.dataset.crystalariumDrop = origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
+      const slot = Number(shelf.dataset.crystalariumAction?.slice(6));
+      const occupied = this.getPiece({ kind: 'shelf', index: slot });
+      shelf.dataset.crystalariumDrop =
+        origin.kind === 'shelf'
+          ? slot !== origin.index ? 'valid' : 'origin'
+          : !occupied ? 'valid' : 'blocked';
     }
     for (const storageDock of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-storage-drop]',
     )) {
       storageDock.dataset.crystalariumDrop =
         origin.kind === 'cell' && !shelfFull ? 'valid' : 'blocked';
+    }
+    for (const boardReturn of this.root.querySelectorAll<HTMLElement>(
+      '[data-crystalarium-board-return]',
+    )) {
+      boardReturn.dataset.crystalariumDrop = origin.kind === 'shelf' ? 'valid' : 'blocked';
     }
     for (const wash of this.root.querySelectorAll<HTMLElement>(
       '[data-crystalarium-action="wash"], [data-crystalarium-action="wash-dock"]',
