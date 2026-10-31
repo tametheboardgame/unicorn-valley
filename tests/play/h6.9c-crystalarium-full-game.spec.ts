@@ -1848,8 +1848,10 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
   await page.setViewportSize({ width: 1440, height: 900 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
-  await expect(live.locator('.crystalarium-live-potion')).toContainText('Free growth');
-  await expect(live.locator('.crystalarium-live-potion')).not.toContainText('Balance pending');
+  // C20 Gate D replaced the old visual-only "Free growth" caption with the
+  // approved 100-drop saved reservoir, one-drop normal growth and free refills.
+  await expect(live.locator('.crystalarium-live-potion-count')).toHaveText('100 / 100');
+  await expect(live.locator('[data-crystalarium-action="potion-refill"]')).toBeDisabled();
   await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
 
   await live.locator('[data-crystalarium-action="well-low"]').click();
@@ -1878,6 +1880,9 @@ test('C20 Growth Potion uses approved twelve-frame art after a saved generator g
     SANDBOX_KEY,
   );
   expect(state.cells[Number(cell)]).toEqual({ family: 'low', tier: 0 });
+  expect(state.potion).toBe(99);
+  await expect(live.locator('.crystalarium-live-potion-count')).toHaveText('99 / 100');
+  await expect(live.locator('[data-crystalarium-action="potion-refill"]')).toBeEnabled();
   const target = live.locator('[data-crystalarium-cell="' + cell + '"]');
   await expect(target.locator('img')).toBeVisible();
 
