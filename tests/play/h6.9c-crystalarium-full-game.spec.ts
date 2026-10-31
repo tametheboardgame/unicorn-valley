@@ -1542,6 +1542,9 @@ test('C21 staged illustrated live game uses canonical state, actions and isolate
 test('C19 Storage offers twelve safe slots with one-tap return and accessible close', async ({
   page,
 }) => {
+  // CI trace #41217666640 shows all gameplay assertions and both close actions
+  // complete; only the generic 45s test/fixture deadline was exceeded.
+  test.setTimeout(90_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
