@@ -349,7 +349,13 @@ export class CrystalariumPortraitView {
     potionHud.setAttribute('aria-label', 'Growth Potion reservoir');
     potionHud.append(
       makeElement('strong', '', 'Growth Potion ' + state.potion + ' / ' + POTION_CAPACITY),
-      this.button('Brook Spring +25', this.actions.refillPotion, 'quiet', state.potion === POTION_CAPACITY, 'potion-refill'),
+      this.button(
+        'Brook Spring +25',
+        this.actions.refillPotion,
+        'quiet',
+        state.potion === POTION_CAPACITY,
+        'potion-refill',
+      ),
     );
     const potionMeter = makeElement('progress', 'crystalarium-portrait-potion-meter');
     potionMeter.max = POTION_CAPACITY;
