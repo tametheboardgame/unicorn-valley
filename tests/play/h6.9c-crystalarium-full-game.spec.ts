@@ -4,6 +4,7 @@ import {
   createCrystalariumFullState,
   type CrystalariumFullState,
 } from '../../src/game/minigames/crystalarium/CrystalariumFullRules';
+import { readCrystalariumPotion } from '../../src/game/minigames/crystalarium/CrystalariumPotionRules';
 import { CRYSTAL_BROOK_CRYSTALARIUM_NURSERY } from '../../src/game/world/CrystalBrookMap';
 import {
   clickNamedObject,
@@ -2417,4 +2418,45 @@ test('C20 Gate D preview compares capacities and dry recovery without touching s
     world: localStorage.getItem('unicorn-valley.save'),
   }));
   expect(retained).toEqual({ sentinel: 'unchanged', sandbox: null, world: null });
+});
+
+test('C20 approved live potion: spend, reject dry growth, refill and reward a real merge', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const baseline = readCrystalariumPotion(createCrystalariumFullState());
+  if (!baseline) throw new Error('Cannot initialise C20 potion state');
+  await enterResonanceGarden(page, false, true, { ...baseline, potion: 1 });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const count = live.locator('.crystalarium-live-potion-count');
+  await expect(count).toHaveText('1 / 100');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(count).toHaveText('0 / 100');
+  const spent = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(spent.version).toBe(4);
+  expect(spent.cells.filter(Boolean)).toHaveLength(3);
+  expect(spent.potion).toBe(0);
+  // A rejected action cannot spend potion, add crystals or claim a save.
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(count).toHaveText('0 / 100');
+  const blocked = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(blocked).toEqual(spent);
+  await live.locator('[data-crystalarium-action="potion-refill"]').click();
+  await expect(count).toHaveText('25 / 100');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(count).toHaveText('24 / 100');
+  const from = await live.locator('[data-crystalarium-cell="0"]').boundingBox();
+  const to = await live.locator('[data-crystalarium-cell="1"]').boundingBox();
+  if (!from || !to) throw new Error('C20 needs real occupied board targets for its merge reward');
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await expect(count).toHaveText('25 / 100');
+  const merged = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(merged.version).toBe(4);
+  expect(merged.potion).toBe(25);
+  expect(merged.merges).toBe(1);
+  expect(merged.cells[1]).toMatchObject({ tier: 1 });
 });
