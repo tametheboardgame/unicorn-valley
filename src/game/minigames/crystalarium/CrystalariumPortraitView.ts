@@ -625,42 +625,82 @@ export class CrystalariumPortraitView {
     }
     tools.append(utility);
     const shelf = makeElement('div', 'crystalarium-portrait-shelf');
-    shelf.append(
-      makeElement(
-        'p',
-        'crystalarium-portrait-shelf-heading',
-        `Safe shelf • ${state.harmonies} harmonies`,
-      ),
+    shelf.classList.toggle('is-open', this.storageOpen);
+    const storedCount = state.shelf.filter(Boolean).length;
+    const storageToggle = this.button(
+      this.storageOpen ? '× Close Storage' : `Storage Chest ${storedCount}/${state.shelf.length}`,
+      () => {
+        this.storageOpen = !this.storageOpen;
+        this.storageMoveSource = null;
+        if (this.currentView) this.render(this.currentView);
+      },
+      'quiet',
+      locked,
+      'storage-toggle',
     );
-    const shelfSlots = makeElement('div', 'crystalarium-portrait-shelf-slots');
-    for (let index = 0; index < state.shelf.length; index += 1) {
-      const piece = state.shelf[index];
-      const slot = this.button(
-        piece ? CRYSTAL_TIER_NAMES[piece.tier] : 'Empty',
-        () => this.actions.restore(index),
-        'shelf',
-        locked || piece === null,
-        'shelf-' + index,
-      );
-      if (piece) {
-        slot.replaceChildren(createCrystalArtElement(piece));
-        slot.setAttribute(
-          'aria-label',
-          'Return ' + piece.family + ' ' + CRYSTAL_TIER_NAMES[piece.tier] + ' to board',
-        );
-      }
-      shelfSlots.append(slot);
+    storageToggle.dataset.crystalariumStorageDrop = 'true';
+    storageToggle.setAttribute('aria-expanded', String(this.storageOpen));
+    shelf.append(storageToggle);
+    if (this.pendingBoardSlot !== null) {
+      shelf.append(this.button('Cancel placement', () => {
+        this.pendingBoardSlot = null;
+        if (this.currentView) this.render(this.currentView);
+      }, 'quiet', false, 'storage-cancel'));
     }
-    shelfSlots.append(
-      this.button(
-        view.washArmed ? 'Confirm' : '♻ Wash',
-        this.actions.wash,
-        'warning',
-        locked,
-        'wash-dock',
-      ),
-    );
-    shelf.append(shelfSlots);
+    if (this.storageOpen) {
+      shelf.append(
+        makeElement('p', 'crystalarium-portrait-shelf-heading',
+          `Storage Chamber • ${storedCount} of ${state.shelf.length} slots used`),
+      );
+      const shelfSlots = makeElement('div', 'crystalarium-portrait-shelf-slots');
+      shelfSlots.setAttribute('role', 'group');
+      shelfSlots.setAttribute('aria-label', 'Four by three Storage Chamber');
+      for (let index = 0; index < state.shelf.length; index += 1) {
+        const piece = state.shelf[index];
+        const slot = this.button(
+          piece ? CRYSTAL_TIER_NAMES[piece.tier] : 'Empty',
+          () => this.activateStoredSlot(index),
+          'shelf',
+          locked || (piece === null && (!this.arrangingStorage || this.storageMoveSource === null)),
+          'shelf-' + index,
+        );
+        slot.classList.toggle('is-selected', this.arrangingStorage && this.storageMoveSource === index);
+        slot.setAttribute('aria-label',
+          piece ? `Stored crystal ${index + 1}: ${piece.family} ${CRYSTAL_TIER_NAMES[piece.tier]}` :
+            `Empty Storage slot ${index + 1}`);
+        if (piece) slot.replaceChildren(createCrystalArtElement(piece));
+        shelfSlots.append(slot);
+      }
+      shelf.append(shelfSlots);
+      const storageActions = makeElement('div', 'crystalarium-portrait-storage-actions');
+      storageActions.append(this.button(
+        this.arrangingStorage ? 'Finish arranging' : 'Rearrange',
+        () => {
+          this.arrangingStorage = !this.arrangingStorage;
+          this.storageMoveSource = null;
+          if (this.currentView) this.render(this.currentView);
+        }, 'quiet', locked, 'storage-arrange',
+      ));
+      const boardReturn = this.button('↩ Board', () => {
+        if (this.storageMoveSource !== null) {
+          const slot = this.storageMoveSource;
+          this.storageMoveSource = null;
+          this.actions.restore(slot);
+        }
+      }, 'quiet', false, 'storage-return');
+      boardReturn.dataset.crystalariumBoardReturn = 'true';
+      boardReturn.setAttribute('aria-label', 'Drop a stored crystal to return to the first empty board socket');
+      storageActions.append(boardReturn);
+      storageActions.append(this.button('Choose board socket', () => {
+        if (this.storageMoveSource !== null) {
+          this.pendingBoardSlot = this.storageMoveSource;
+          this.storageMoveSource = null;
+          this.storageOpen = false;
+          if (this.currentView) this.render(this.currentView);
+        }
+      }, 'quiet', this.storageMoveSource === null, 'storage-choose-socket'));
+      shelf.append(storageActions);
+    }
     tools.append(
       this.button(
         view.resetArmed ? 'Confirm fresh board' : 'Fresh board',
