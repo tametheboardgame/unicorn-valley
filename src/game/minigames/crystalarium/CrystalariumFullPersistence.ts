@@ -1,11 +1,7 @@
 import type { SaveService } from '../../save/SaveService';
 import type { MiniGameSession } from '../MiniGameSession';
 import { createCrystalariumFullState, type CrystalariumFullState } from './CrystalariumFullRules';
-import {
-  migrateCrystalariumChamber,
-  readCrystalariumChamber,
-  type CrystalariumChamberState,
-} from './CrystalariumChamberRules';
+import { readCrystalariumPotion, type CrystalariumPotionState } from './CrystalariumPotionRules';
 import { CRYSTALARIUM_FULL_VARIANT_ID, CRYSTALARIUM_GAME_ID } from './CrystalariumOpeningRules';
 
 export const CRYSTALARIUM_SANDBOX_STORAGE_KEY = 'unicorn-valley:just-games:crystalarium:v1';
@@ -42,18 +38,18 @@ export function loadCrystalariumProgress(
   session: MiniGameSession | null,
   saves: SaveService,
   storage: CrystalariumProgressStorage | null = browserStorage(),
-): CrystalariumChamberState {
-  const fresh = migrateCrystalariumChamber(createCrystalariumFullState());
+): CrystalariumPotionState {
+  const fresh = readCrystalariumPotion(createCrystalariumFullState());
   if (!fresh) throw new Error('Crystalarium default save migration failed');
   if (!isFullCrystalariumSession(session)) return fresh;
   if (session?.source === 'world') {
     const value = saves.load()?.activities.crystalarium;
-    return readCrystalariumChamber(value) ?? fresh;
+    return readCrystalariumPotion(value) ?? fresh;
   }
   try {
     const raw = storage?.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
     const value: unknown = raw ? JSON.parse(raw) : null;
-    return readCrystalariumChamber(value) ?? fresh;
+    return readCrystalariumPotion(value) ?? fresh;
   } catch {
     return fresh;
   }
@@ -65,7 +61,7 @@ export function saveCrystalariumProgress(
   saves: SaveService,
   storage: CrystalariumProgressStorage | null = browserStorage(),
 ): boolean {
-  const queue = readCrystalariumChamber(progress);
+  const queue = readCrystalariumPotion(progress);
   if (!isFullCrystalariumSession(session) || !queue) return false;
   if (session?.source === 'world') {
     const existing = saves.load();
@@ -83,7 +79,7 @@ export function saveCrystalariumProgress(
     const stored = storage.getItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY);
     if (stored !== null) {
       const previous: unknown = JSON.parse(stored);
-      if (!readCrystalariumChamber(previous)) return false;
+      if (!readCrystalariumPotion(previous)) return false;
     }
     storage.setItem(CRYSTALARIUM_SANDBOX_STORAGE_KEY, JSON.stringify(queue));
     return true;
