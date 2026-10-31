@@ -218,7 +218,8 @@ export class CrystalariumGrowthPotionFx {
         // regression can verify real painting without a frame-timing race.
         this.layer.dataset.crystalariumLastGrowthId = String(cue.id);
         this.layer.dataset.crystalariumLastGrowthCell = String(cue.cellIndex);
-        this.layer.dataset.crystalariumLastFramesPainted = this.layer.dataset.crystalariumFramesPainted;
+        this.layer.dataset.crystalariumLastFramesPainted =
+          this.layer.dataset.crystalariumFramesPainted;
         if (elapsed < POUR_FRAMES * FRAME_MS + END_FADE_MS) {
           this.frameRequest = window.requestAnimationFrame(draw);
         } else {
