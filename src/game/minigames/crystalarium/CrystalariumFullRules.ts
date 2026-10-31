@@ -27,7 +27,7 @@ export interface ResonancePattern {
   readonly harmonies: number;
 }
 export interface CrystalariumFullState {
-  readonly version: 1 | 2 | 3;
+  readonly version: 1 | 2 | 3 | 4;
   /** C18 version 2 ledger. Absent for historical version 1 records. */
   readonly completedPatternIds?: readonly string[];
   readonly revealedCount?: number;
