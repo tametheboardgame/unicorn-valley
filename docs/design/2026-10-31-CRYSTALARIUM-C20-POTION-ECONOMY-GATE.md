@@ -1,0 +1,42 @@
+# C20 Growth Potion economic gate D: non-saving balance study
+
+**Status:** Candidate design and test model, **NOT APPROVED ECONOMY**  
+**Stream:** World; existing draft PR #337; no merge or production authorisation  
+**Owner instruction:** Start C20 (31 October 2026). The earlier C20 artwork, 12-frame pouring animation, generator interaction and bright painted layout are accepted and must remain unchanged.
+
+## What C20 already has
+
+The illustrated game has the locked Growth Potion reservoir artwork and a real pouring/emergence cue emitted *only after the controller has accepted and persisted a growth action*. The gauge currently displays **Free growth**. There is **no potion quantity, cost, refill, spending or resource persistence**; changing that requires a separate economic Gate D decision.
+
+Do not mistake the visual artwork being approved for numeric refill/cost approval. Retain the canonical 42 sockets, Low/Bright/Bell wells, 0/4/7 unlocks, 50 authored patterns, separate Just Games saves, atomic Growth/Offer and no-hard-wait promise.
+
+## Three capacity candidates, two recovery mechanics
+
+| Option | Capacity | Basic crystal | Refined crystal | Free continuation | Candidate rewards |
+| --- | --- | --- | --- | --- | --- |
+| S100/S150/S200 | 100, 150 or 200 drops | 1 drop | 2 drops | A free Brook Spring button instantly restores 25 drops at any remaining balance | +1 on accepted saved merge, +3 on accepted saved Offer |
+| B100/B150/B200 | 100, 150 or 200 drops | 1 drop while stocked | 2 drops | When potion reaches zero, basic crystal growth costs **zero**; a refined growth still needs potion | +1 on accepted saved merge, +3 on accepted saved Offer |
+
+**All numbers, rewards and recovery options are proposals**, not decisions. The pure `CrystalariumPotionCandidateRules.ts` module explicitly does not connect to the live game, renderer or persistence. Its tests protect no-charge-on-failure, no-negative-stock, capped reward, idempotent outcome and long-run free continuation.
+
+### Design trade-offs to test
+
+- **Brook Spring** communicates that liquid is being replenished, fits the bottle visual story and introduces one extra button/tap when low. It must be always available, instant, and free in both Just Games and Crystal Brook. Prefer a compact refill affordance beside the reservoir, not a new full-size panel.
+- **Free basic at zero** avoids any interruption to exploration, but makes the meter function mainly as a refined-growth acceleration pool. It may be easier for a seven-year-old, and should announce clearly that basic crystals are still free.
+- **100 vs 150 vs 200:** Lower stocks make the refill or reserve rule more visible; larger stocks reduce interruptions over long sessions. Choose based on 5, 15 and 45-minute playtest rather than assuming a larger number adds fun.
+- **Rewards:** Proposed +1 merge/+3 Offer, but awards must follow accepted *saved* results only. Cap at capacity, never award on rejected/cancelled/failing transactions or double-credit on reload. Consider omitting rewards entirely if it obscures cause and effect.
+- **Advanced source:** The existing optional free refined vein unlocks late, and must never become a mandatory potion-paid route for completing the authored campaign. Keep the original free basic loop as a reliable fallback.
+
+## Gate D implementation boundary
+
+1. Show a clearly labelled **no-save economic design preview** with the locked reservoir/gauge art, exact 100/150/200 numbers, proposed recovery comparison and safe input/keyboard controls. It cannot be mistaken for a live save or synced game.
+2. Capture owner choice for capacity, minimum/max fill, refill method, basic/refined cost, merge/Offer rewards, whether free basic at zero is always on, and reset/new/legacy save behaviour. Reject passive timers, microtransactions, world/quest awards and extra charges.
+3. Before production code, plan an explicit versioned upgrade for *both* adventure and Just Games stores, and a safe handling of old, invalid, future and write-failed records. A saved accepted growth must update the crystal and potion atomically, or neither.
+4. Only after owner approval wire the chosen rules into the canonical controller, complete bottle/gauge visual, level-dependent fill art, low/zero/sufficient feedback and an accessible refill control if selected. Potion must not block Help, Skip, exit, Wash, storage or other safe recovery.
+5. Validate 50-offer dry-state solvability and 5/15/45-minute sessions with a device/browser matrix, no resource duplication after retry, real stored crystals, muted/reduced-motion, return/reload, 320/390 touch and desktop 1006/1280/1440. Record exact-head CI and human playable acceptance separately.
+
+## Acceptance and next stage
+
+- **C19 Gate C:** User accepted the compact drag-first 4×3 chamber, close/instructions layout and working return. The previous final C19 browser re-run had not finished before a C20 commit superseded the PR head; C19 technical gate requires new exact-head passing evidence.
+- **C20 Gate D:** Not approved until actual resource economy choices are selected. Pure candidate model and preview are safe work *within* the requested start, but must not debit or migrate live saves.
+- **After Gate D:** Implementation and gameplay tests, followed by existing C21–C23 polish, C24 hardening and H6.9D full qualification. Keep PR #337 draft and unmerged.
