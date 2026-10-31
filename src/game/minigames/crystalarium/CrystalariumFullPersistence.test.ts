@@ -131,7 +131,9 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{"version":999}');
     expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
     values.set(CRYSTALARIUM_SANDBOX_STORAGE_KEY, '{broken');
-    expect(isCrystalariumChamberState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(true);
+    expect(isCrystalariumChamberState(loadCrystalariumProgress(sandbox, saves, storage))).toBe(
+      true,
+    );
   });
   it('blocks overwriting future or corrupted sandbox records after returning a fresh in-memory view', () => {
     const { saves, sandbox, storage, values } = harness();
