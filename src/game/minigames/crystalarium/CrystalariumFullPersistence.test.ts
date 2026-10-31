@@ -143,6 +143,32 @@ describe('H6.9C source-isolated Crystalarium persistence', () => {
     }
   });
 
+  it('loads an existing adventure v1 board as a v2 queue without writing until a valid action saves', () => {
+    const { saves, storage, world, sandbox } = harness();
+    const old = createCrystalariumFullState();
+    const cells = [...old.cells];
+    cells[9] = { family: 'bell' as const, tier: 3 as const };
+    const shelf = [...old.shelf];
+    shelf[3] = { family: 'bright' as const, tier: 2 as const };
+    const legacy = { ...old, cells, shelf, completed: 1, harmonies: 2 };
+    const save = saves.load();
+    if (!save) throw new Error('No adventure fixture');
+    saves.save({ ...save, activities: { ...save.activities, crystalarium: legacy } });
+    const baseline = JSON.stringify(saves.load());
+    const migrated = loadCrystalariumProgress(world, saves, storage);
+    expect(migrated.version).toBe(2);
+    expect(migrated.completedPatternIds).toEqual(['crystalarium:1-1']);
+    expect(migrated.revealedCount).toBe(3);
+    expect(migrated.cells).toEqual(cells);
+    expect(migrated.shelf).toEqual(shelf);
+    expect(migrated.harmonies).toBe(2);
+    expect(JSON.stringify(saves.load())).toBe(baseline);
+    expect(saveCrystalariumProgress(world, migrated, saves, storage)).toBe(true);
+    expect(saves.load()?.activities.crystalarium?.version).toBe(2);
+    expect(loadCrystalariumProgress(world, saves, storage)).toEqual(migrated);
+    expect(loadCrystalariumProgress(sandbox, saves, storage).completed).toBe(0);
+  });
+
   it('does not acknowledge failed sandbox writes', () => {
     const { saves, sandbox } = harness();
     const brokenStorage = {
