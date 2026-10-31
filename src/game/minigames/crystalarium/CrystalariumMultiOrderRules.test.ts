@@ -73,8 +73,15 @@ describe('C18 gate B multi-order pure model', () => {
         RESONANCE_PATTERNS.slice(0, completed).map((pattern) => pattern.id),
       );
       for (const key of [
-        'cells', 'shelf', 'merges', 'washes', 'offers', 'harmonies',
-        'discovered', 'selectedFamily', 'completed',
+        'cells',
+        'shelf',
+        'merges',
+        'washes',
+        'offers',
+        'harmonies',
+        'discovered',
+        'selectedFamily',
+        'completed',
       ] as const) {
         expect(newState[key]).toEqual(legacy[key]);
       }
@@ -97,19 +104,17 @@ describe('C18 gate B multi-order pure model', () => {
     expect(offered.state.completed).toBe(1);
     expect(offered.state.revealedCount).toBe(3);
     expect(activeResonanceQueue(offered.state).map((order) => order.title)).toEqual([
-      'Double Echo', 'Clearer Tone',
+      'Double Echo',
+      'Clearer Tone',
     ]);
     expect(isCrystalariumQueueState(offered.state)).toBe(true);
   });
 
   it('consumes one chosen ready card atomically, then recalculates overlapping readiness', () => {
-    const start = withPieces(
-      migrate(1),
-      [
-        { family: 'low', tier: 1 },
-        { family: 'low', tier: 1 },
-      ],
-    );
+    const start = withPieces(migrate(1), [
+      { family: 'low', tier: 1 },
+      { family: 'low', tier: 1 },
+    ]);
     const firstId = RESONANCE_PATTERNS[1].id;
     const secondId = RESONANCE_PATTERNS[2].id;
     expect(canOfferQueuedPattern(start, firstId)).toBe(true);
@@ -118,10 +123,7 @@ describe('C18 gate B multi-order pure model', () => {
     expect(firstResult.accepted).toBe(true);
     if (!firstResult.accepted) return;
     const next = firstResult.state;
-    expect(next.completedPatternIds).toEqual([
-      RESONANCE_PATTERNS[0].id,
-      secondId,
-    ]);
+    expect(next.completedPatternIds).toEqual([RESONANCE_PATTERNS[0].id, secondId]);
     expect(next.offers).toBe(start.offers + 1);
     expect(next.cells.filter(Boolean)).toHaveLength(1);
     expect(next.revealedCount).toBe(4);
@@ -151,10 +153,14 @@ describe('C18 gate B multi-order pure model', () => {
     }
     expect(offerQueuedPattern(original, RESONANCE_PATTERNS[1].id).accepted).toBe(false);
     expect(JSON.stringify(original)).toBe(snapshot);
-    const ready = withPieces(original, [], [
-      { family: 'low', tier: 1 },
-      { family: 'low', tier: 1 },
-    ]);
+    const ready = withPieces(
+      original,
+      [],
+      [
+        { family: 'low', tier: 1 },
+        { family: 'low', tier: 1 },
+      ],
+    );
     const once = offerQueuedPattern(ready, RESONANCE_PATTERNS[1].id);
     expect(once.accepted).toBe(true);
     if (!once.accepted) return;
@@ -193,7 +199,10 @@ describe('C18 gate B multi-order pure model', () => {
       { ...state, completed: 50 },
       { ...state, completedPatternIds: [RESONANCE_PATTERNS[0].id, RESONANCE_PATTERNS[0].id] },
       { ...state, completedPatternIds: [...state.completedPatternIds, 'forged'] },
-      { ...state, completedPatternIds: [RESONANCE_PATTERNS[49].id, ...state.completedPatternIds.slice(1)] },
+      {
+        ...state,
+        completedPatternIds: [RESONANCE_PATTERNS[49].id, ...state.completedPatternIds.slice(1)],
+      },
       { ...state, revealedCount: 1 },
       { ...state, revealedCount: 99 },
       { ...state, shelf: [] },
@@ -202,7 +211,9 @@ describe('C18 gate B multi-order pure model', () => {
       expect(isCrystalariumQueueState(malformed)).toBe(false);
       expect(readCrystalariumQueue(malformed)).toBeNull();
     }
-    expect(migrateCrystalariumQueue({ ...createCrystalariumFullState(), version: 9 } as never)).toBeNull();
+    expect(
+      migrateCrystalariumQueue({ ...createCrystalariumFullState(), version: 9 } as never),
+    ).toBeNull();
   });
 
   it('can complete all 50 authored orders in nonsequential selection with stable reveal cursor', () => {

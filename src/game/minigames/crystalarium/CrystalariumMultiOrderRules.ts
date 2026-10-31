@@ -91,9 +91,7 @@ export function isCrystalariumQueueState(value: unknown): value is CrystalariumQ
 }
 
 /** Active, stable, authored order cards in the original reveal order. */
-export function activeResonanceQueue(
-  state: CrystalariumQueueState,
-): readonly ResonancePattern[] {
+export function activeResonanceQueue(state: CrystalariumQueueState): readonly ResonancePattern[] {
   const completed = new Set(state.completedPatternIds);
   return RESONANCE_PATTERNS.slice(0, state.revealedCount).filter(
     (pattern) => !completed.has(pattern.id),
@@ -119,15 +117,10 @@ function requiredIndices(
   return [...taken];
 }
 
-export function canOfferQueuedPattern(
-  state: CrystalariumQueueState,
-  patternId: string,
-): boolean {
+export function canOfferQueuedPattern(state: CrystalariumQueueState, patternId: string): boolean {
   const active = activeResonanceQueue(state).find((pattern) => pattern.id === patternId);
   return Boolean(
-    active &&
-      state.harmonies >= active.harmonies &&
-      requiredIndices(state, active.goals) !== null,
+    active && state.harmonies >= active.harmonies && requiredIndices(state, active.goals) !== null,
   );
 }
 
@@ -159,8 +152,7 @@ export function offerQueuedPattern(
   }
   const completedPatternIds = [...state.completedPatternIds, patternId];
   const completed = completedPatternIds.length;
-  const remainingActive =
-    state.revealedCount - completed;
+  const remainingActive = state.revealedCount - completed;
   const desiredActive = Math.min(activeSlots(completed), LEGACY_COUNT - completed);
   const newlyRevealed = Math.max(0, desiredActive - remainingActive);
   const next: CrystalariumQueueState = {
