@@ -99,7 +99,11 @@ export class CrystalariumPointerDrag {
     if (!current || current.pointerId !== event.pointerId) return;
     const dx = event.clientX - current.x;
     const dy = event.clientY - current.y;
-    if (!current.dragging && Math.hypot(dx, dy) < 10) return;
+    // Shelf tap activation tolerates 12px of movement. Start a genuine drag
+    // above that threshold so the same gesture cannot also return the crystal.
+    if (!current.dragging && Math.hypot(dx, dy) < (current.origin.kind === 'shelf' ? 13 : 10)) {
+      return;
+    }
     if (!current.dragging) {
       current.dragging = true;
       // A plain tap must complete as a native button click; only a genuine
