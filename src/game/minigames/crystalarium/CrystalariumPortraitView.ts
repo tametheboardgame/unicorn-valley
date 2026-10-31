@@ -18,9 +18,9 @@ import { createCrystalArtElement } from './CrystalariumCrystalArt';
 import {
   activeResonanceQueue,
   canOfferQueuedPattern,
-  readCrystalariumQueue,
 } from './CrystalariumMultiOrderRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
+import { readCrystalariumChamber } from './CrystalariumChamberRules';
 import type { CrystalariumGuidePrompt } from './CrystalariumGuide';
 import './CrystalariumPortraitView.css';
 
@@ -97,6 +97,10 @@ export class CrystalariumPortraitView {
   private previousLessonFocus: string | null = null;
   private activeMenu: 'pattern' | 'growing' | 'tools' | null = null;
   private lastLessonStep: string | undefined;
+  private storageOpen = false;
+  private arrangingStorage = false;
+  private storageMoveSource: number | null = null;
+  private pendingBoardSlot: number | null = null;
 
   public constructor(actions: CrystalariumPortraitActions) {
     this.actions = actions;
@@ -113,7 +117,15 @@ export class CrystalariumPortraitView {
       if (event.key === 'Escape') {
         event.preventDefault();
         event.stopPropagation();
-        if (this.activeMenu !== null) {
+        if (this.storageOpen) {
+          this.storageOpen = false;
+          this.arrangingStorage = false;
+          this.storageMoveSource = null;
+          if (this.currentView) this.render(this.currentView);
+        } else if (this.pendingBoardSlot !== null) {
+          this.pendingBoardSlot = null;
+          if (this.currentView) this.render(this.currentView);
+        } else if (this.activeMenu !== null) {
           const menu = this.activeMenu;
           this.toggleMenu(menu);
         } else {
@@ -126,11 +138,17 @@ export class CrystalariumPortraitView {
       this.root,
       {
         move: actions.dragMove,
-        shelve: actions.dragShelve,
+        shelve: (index, slot) => {
+          this.storageOpen = true;
+          actions.dragShelve(index, slot);
+        },
         wash: actions.dragWash,
         restore: actions.dragRestore,
-        tapShelf: actions.restore,
-        rearrange: actions.moveStored,
+        tapShelf: (index) => this.activateStoredSlot(index),
+        rearrange: (source, target) => {
+          this.storageMoveSource = null;
+          actions.moveStored(source, target);
+        },
         invalid: actions.dragInvalid,
       },
       ({ kind, index }) => {
@@ -138,6 +156,26 @@ export class CrystalariumPortraitView {
         return (kind === 'cell' ? view?.state.cells[index] : view?.state.shelf[index]) ?? null;
       },
     );
+  }
+
+  private activateStoredSlot(index: number): void {
+    const piece = this.currentView?.state.shelf[index];
+    if (!this.arrangingStorage) {
+      if (piece) this.actions.restore(index);
+      return;
+    }
+    if (this.storageMoveSource === null) {
+      if (piece) {
+        this.storageMoveSource = index;
+        if (this.currentView) this.render(this.currentView);
+      }
+      return;
+    }
+    const source = this.storageMoveSource;
+    this.storageMoveSource = null;
+    if (source === index) {
+      if (this.currentView) this.render(this.currentView);
+    } else this.actions.moveStored(source, index);
   }
 
   private button(
@@ -240,6 +278,7 @@ export class CrystalariumPortraitView {
     const focusIsCell =
       active instanceof HTMLElement && active.dataset.crystalariumCell !== undefined;
     const { state } = view;
+    this.root.dataset.crystalariumShelfCapacity = String(state.shelf.length);
     const lesson = view.guide?.lessonStep;
     const locked = lesson !== undefined;
     // The first-play spotlight opens only the panel needed for that action.
@@ -265,7 +304,7 @@ export class CrystalariumPortraitView {
       nextLessonFocus !== null &&
       this.previousLessonFocus !== nextLessonFocus;
     this.previousLessonFocus = nextLessonFocus;
-    const queue = readCrystalariumQueue(state);
+    const queue = readCrystalariumChamber(state);
     const activeOrders = queue ? activeResonanceQueue(queue) : [];
     const pattern = activeOrders[0] ?? activeResonancePattern(state);
     const header = makeElement('header', 'crystalarium-portrait-header');
@@ -446,7 +485,8 @@ export class CrystalariumPortraitView {
         (lesson === 'pick-up' && index === view.guide?.sourceIndex) ||
         (lesson === 'merge' &&
           (index === view.guide?.sourceIndex || index === view.guide?.targetIndex));
-      button.disabled = !allowedCell;
+      button.disabled = !allowedCell || (this.pendingBoardSlot !== null && piece !== null);
+      button.classList.toggle('is-storage-target', this.pendingBoardSlot !== null && piece === null);
       button.classList.toggle('is-guide-focus', locked && allowedCell);
       button.setAttribute('aria-pressed', view.selected === index ? 'true' : 'false');
       button.setAttribute(
@@ -459,7 +499,13 @@ export class CrystalariumPortraitView {
       else button.textContent = '·';
       button.addEventListener('click', (event) => {
         event.stopPropagation();
-        this.actions.cell(index);
+        if (this.pendingBoardSlot !== null) {
+          if (piece === null) {
+            const slot = this.pendingBoardSlot;
+            this.pendingBoardSlot = null;
+            this.actions.dragRestore(slot, index);
+          }
+        } else this.actions.cell(index);
       });
       grid.append(button);
     }
