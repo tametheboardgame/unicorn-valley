@@ -7,7 +7,6 @@ import {
   canOfferPattern,
   refinedSourceTier,
   unlockedCrystalFamilies,
-  type CrystalariumFullState,
 } from './CrystalariumFullRules';
 import {
   CRYSTAL_NOTE_PRESENTATION,
