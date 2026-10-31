@@ -29,9 +29,14 @@ import {
 } from './CrystalariumFullRules';
 import { loadCrystalariumProgress, saveCrystalariumProgress } from './CrystalariumFullPersistence';
 import {
+  readCrystalariumChamber,
+  storeBoardCrystal,
+  returnStoredCrystal,
+  moveStoredCrystal,
+} from './CrystalariumChamberRules';
+import {
   activeResonanceQueue,
   offerQueuedPattern,
-  readCrystalariumQueue,
 } from './CrystalariumMultiOrderRules';
 import {
   CrystalariumPortraitView,
@@ -103,15 +108,22 @@ export class CrystalariumFullMode {
       dragShelve: (source) => {
         if (!this.permitted({ kind: 'other' })) return;
         this.selected = null;
-        this.apply(shelveCrystal(this.state, source));
+        const chamber = readCrystalariumChamber(this.state);
+        if (chamber) this.apply(storeBoardCrystal(chamber, source));
       },
       dragWash: (source) => {
         if (!this.permitted({ kind: 'other' })) return;
         this.selected = source;
         this.washSelected();
       },
-      dragRestore: (slot, target) =>
-        this.run({ kind: 'other' }, () => restoreCrystalToCell(this.state, slot, target)),
+      dragRestore: (slot, target) => {
+        const chamber = readCrystalariumChamber(this.state);
+        if (chamber) this.run({ kind: 'other' }, () => returnStoredCrystal(chamber, slot, target));
+      },
+      moveStored: (source, target) => {
+        const chamber = readCrystalariumChamber(this.state);
+        if (chamber) this.run({ kind: 'other' }, () => moveStoredCrystal(chamber, source, target));
+      },
       dragInvalid: () => {
         this.message = 'Try an empty socket, a matching crystal, the shelf or Brook Wash.';
         this.render();
@@ -133,7 +145,8 @@ export class CrystalariumFullMode {
       fresh: () => this.freshBoard(),
       restore: (index) => {
         this.selected = null;
-        this.run({ kind: 'other' }, () => restoreCrystal(this.state, index));
+        const chamber = readCrystalariumChamber(this.state);
+        if (chamber) this.run({ kind: 'other' }, () => returnStoredCrystal(chamber, index));
       },
       sound: () => {
         this.quiet = !this.quiet;
@@ -238,7 +251,7 @@ export class CrystalariumFullMode {
   }
 
   private offerPattern(patternId?: string): void {
-    const queue = readCrystalariumQueue(this.state);
+    const queue = readCrystalariumChamber(this.state);
     if (!queue) return;
     const id = patternId ?? activeResonanceQueue(queue)[0]?.id;
     if (!id) return;
@@ -540,7 +553,8 @@ export class CrystalariumFullMode {
     }
     const source = this.selected;
     this.selected = null;
-    this.apply(shelveCrystal(this.state, source));
+    const chamber = readCrystalariumChamber(this.state);
+    if (chamber) this.apply(storeBoardCrystal(chamber, source));
   }
 
   private washSelected(): void {
