@@ -625,7 +625,7 @@ export class CrystalariumFullMode {
     this.selected = null;
     this.apply({
       accepted: true,
-      state: { ...startFreshCrystalariumBoard(this.state), potion: this.state.potion },
+      state: startFreshCrystalariumBoard(this.state),
       message: 'Fresh board ready. Your songbook progress is safe.',
     });
   }
