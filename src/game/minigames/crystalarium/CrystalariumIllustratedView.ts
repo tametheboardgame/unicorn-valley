@@ -86,7 +86,6 @@ export class CrystalariumIllustratedView {
           this.storageOpen = false;
           this.storageKeyboardSource = null;
           this.renderCurrent();
- 
         } else if (this.latest?.guide) {
           this.actions.skipGuide();
         } else {
