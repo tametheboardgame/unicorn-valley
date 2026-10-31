@@ -20,7 +20,8 @@ export const CHAMBER_COLUMNS = 4;
 export const CHAMBER_ROWS = 3;
 export const CHAMBER_CAPACITY = CHAMBER_COLUMNS * CHAMBER_ROWS;
 
-export interface CrystalariumChamberState extends Omit<CrystalariumQueueState, 'version' | 'shelf'> {
+export interface CrystalariumChamberState
+  extends Omit<CrystalariumQueueState, 'version' | 'shelf'> {
   readonly version: typeof CHAMBER_VERSION;
   readonly shelf: readonly (CrystalPiece | null)[];
 }
