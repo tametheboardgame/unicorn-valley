@@ -311,7 +311,7 @@ describe('migrateSaveRecord', () => {
     expect(migrated.world).toEqual(save.world);
   });
 
-  it('migrates schema-ten Crystalarium progress to 12-slot v3 without losing pieces or world data', () => {
+  it('migrates schema-ten Crystalarium progress to 12-slot v4 with full potion without losing world data', () => {
     const world = createR4LongRunningSaveFixture();
     const old = createCrystalariumFullState();
     const cells = [...old.cells];
@@ -330,7 +330,7 @@ describe('migrateSaveRecord', () => {
     const before = JSON.stringify(previous);
     const migrated = migrateSaveRecord(previous);
     expect(migrated && isSaveGame(migrated)).toBe(true);
-    if (!migrated || !isSaveGame(migrated)) throw new Error('V12 migration failed');
+    if (!migrated || !isSaveGame(migrated)) throw new Error('V13 migration failed');
     expect(migrated.schemaVersion).toBe(13);
     expect(isCrystalariumPotionState(migrated.activities.crystalarium)).toBe(true);
     const queue = migrated.activities.crystalarium;
@@ -413,6 +413,10 @@ describe('migrateSaveRecord', () => {
       ...save,
       schemaVersion: 12,
     });
+    const toVersionThirteen: SaveMigration = (save) => ({
+      ...save,
+      schemaVersion: 13,
+    });
     const migrations = new Map([
       [0, toVersionOne],
       [1, toVersionTwo],
@@ -426,6 +430,7 @@ describe('migrateSaveRecord', () => {
       [9, toVersionTen],
       [10, toVersionEleven],
       [11, toVersionTwelve],
+      [12, toVersionThirteen],
     ]);
 
     expect(migrateSaveRecord({ schemaVersion: 0 }, migrations)).toEqual({
