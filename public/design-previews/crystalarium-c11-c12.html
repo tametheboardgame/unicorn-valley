@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#162d4d">
+<title>Crystalarium — C11/C12 Design Review Concept</title>
+<style>
+:root{color-scheme:dark;--night:#0e203b;--deep:#172f50;--blue:#294e72;--pale:#dcf4ff;--aqua:#a0e2ec;--gold:#ffe4a0;--lilac:#d9c5f9;--green:#b4f3d4;--line:rgba(157,211,236,.65)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--pale);font-family:"Trebuchet MS","Segoe UI",sans-serif;background:radial-gradient(ellipse at 78% -20%,#4f5681 0%,transparent 52%),linear-gradient(150deg,#102745,#233b60 70%,#302b54);min-height:100vh}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:4px solid #fff0a8;outline-offset:3px}
+button:disabled{cursor:not-allowed;opacity:.42;filter:saturate(.45)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px 11px;max-width:1300px;margin:auto}
+.brand{display:flex;flex-direction:column;gap:3px}
+.brand h1{font-size:clamp(23px,3vw,31px);margin:0;color:#f4fbff;letter-spacing:.02em}
+.brand small,.eyebrow{color:var(--aqua);font-size:12px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+.head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{border:1px solid #8db9d0;background:#284b70;color:#effbff;padding:9px 13px;border-radius:99px;font-weight:800;min-height:44px}
+.review-bar{max-width:1256px;margin:0 auto 10px;padding:9px 15px;border:1px dashed #c1adda;border-radius:14px;font-size:12px;color:#e0d5f8;background:#242846}
+main{max-width:1300px;margin:0 auto;padding:0 22px 20px;display:grid;grid-template-columns:minmax(480px,1fr) minmax(332px,395px);gap:18px;align-items:start}
+.board-area,.surface,.tutor{border:2px solid var(--line);border-radius:23px;background:linear-gradient(155deg,rgba(49,85,119,.93),rgba(20,43,72,.97));box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 12px 25px rgba(8,17,40,.25)}
+.board-area{padding:17px 19px}
+.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.panel-heading h2,.surface h2{margin:0;font-size:20px}
+.panel-heading .mini{font-size:13px;color:#c5e5f6}
+.board-hint{font-size:13px;margin:7px 0 12px;color:#cbe7f3}
+.board-scroller{overflow:auto;overscroll-behavior-x:contain;border-radius:18px;padding:9px;background:radial-gradient(ellipse at center,#274d70,#10243f);border:1px solid #6a91ad}
+.board-grid{display:grid;grid-template-columns:repeat(7,53px);grid-template-rows:repeat(6,53px);gap:5px;width:max-content;margin:0 auto;border:0;padding:0;min-inline-size:0}
+.cell{position:relative;min-width:53px;min-height:53px;padding:2px;border-radius:13px;border:2px solid #698ba8;background:linear-gradient(150deg,#36618b,#244462);color:#d7f1fa;display:grid;place-items:center}
+.cell.empty{background:#1d3857;color:#658ba8}
+.cell.allowed{border-color:#fff0aa;box-shadow:0 0 0 3px rgba(255,230,158,.27),0 0 20px #fff0a855}
+.cell.origin{background:#486c9b;border-color:#fff0aa}
+.cell:disabled{opacity:.55}
+.cell.allowed:disabled{opacity:1}
+.legend{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px;color:#d2e9f1;font-size:12px}
+.legend b{color:var(--gold)}
+.shelf{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px;border-radius:17px;border:1px solid #9cd2e8;background:linear-gradient(90deg,#233f62,#345475)}
+.shelf>span{font-size:13px;font-weight:900;color:#dcf3fa;white-space:nowrap}
+.shelf-slots{display:grid;grid-template-columns:repeat(4,minmax(44px,1fr));gap:7px;flex:1}
+.slot{height:40px;border:1px dashed #b7d8e7;border-radius:10px;background:#1c3454;color:#8eabc2;display:grid;place-items:center;font-size:13px}
+.rail{display:grid;gap:11px}
+.surface{padding:15px;position:relative}
+.pattern{border-color:#ccbee9;background:linear-gradient(145deg,#42547e,#233659 65%,#362d59)}
+.pattern .eyebrow{color:#e1cbfd;margin-bottom:5px}
+.pattern h2{font-size:23px}
+.pattern .sub{font-size:13px;margin:5px 0 9px;color:#ddd2f7}
+.goal-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.goal{border:2px solid #afcde8;background:linear-gradient(125deg,#425f86,#273656);border-radius:15px;min-width:82px;min-height:82px;padding:6px;display:grid;place-items:center;gap:2px;color:#fff4d2;font-weight:900}
+.gem{display:block;width:42px;height:48px;filter:drop-shadow(0 3px 2px #102340aa);pointer-events:none}
+.goal .gem{width:42px;height:45px}
+.goal.ready{border-color:#ecdaa0;background:#52668a}
+.count{font-size:13px}
+.primary{min-height:49px;padding:8px 14px;border-radius:13px;border:2px solid #b0d6d9;background:linear-gradient(120deg,#307e78,#376a7d);color:white;font-weight:900;width:100%;font-size:16px}
+.primary.offer{border-color:#b4aeda;background:#61567f}
+.pattern.is-ready{border-color:#ffe2a0;box-shadow:0 0 0 2px #ffd58455,0 0 28px #ffdb8060,inset 0 2px 0 rgba(255,255,255,.12)}
+.pattern.is-ready .primary.offer{border-color:#ffe8ab;background:linear-gradient(115deg,#488f88,#78659d);box-shadow:0 0 17px #e5d291a8}
+.ready-text{font-size:12px;color:#dcf4e8;font-weight:900;margin:6px 0 0}
+.tutor{padding:12px 14px;background:linear-gradient(100deg,#455f80,#344e70);border-color:#ffe4a0;display:grid;gap:5px}
+.tutor .eyebrow{color:#ffe8ac;margin:0}
+.tutor strong{font-size:16px;color:#fff4c9}
+.tutor p{font-size:14px;margin:0;line-height:1.36}
+.tutor.done{border-color:#9ce8ce;background:#28566b}
+.growing{background:linear-gradient(160deg,#264c68,#1d3858);border-color:#8cdecf}
+.growing .eyebrow{color:#b6f1e1}
+.grow-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}
+.vein{min-height:62px;padding:6px 2px;border-radius:12px;border:2px solid #739aaa;background:#244767;color:#e6f9ff;font-size:12px;font-weight:900;display:grid;place-items:center;gap:2px}
+.vein .gem{width:21px;height:23px}
+.vein.selected{border-color:#ffe3a0;background:#3d6587}
+.vein.locked{opacity:.5}
+.grow-buttons{display:flex;gap:8px}
+.grow-buttons button{flex:1}
+.tools{padding:12px 15px}
+.tools h2{font-size:17px}
+.tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+.tool-grid .pill{border-radius:11px;font-size:13px;width:100%;padding:9px 4px}
+.muted-action{opacity:.52;filter:saturate(.6)}
+.note{font-size:12px;color:#e1d7fc;margin:8px 0 0}
+.spotlight{border-color:#ffe5a0;box-shadow:0 0 0 4px #ffe5a04a,0 0 23px #ffdc8480;opacity:1}
+#status{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);padding:10px 17px;color:#fff5d8;background:#1d3155;border:1px solid #e3c895;border-radius:14px;max-width:min(96vw,650px);font-size:13px;z-index:12;box-shadow:0 6px 25px #0006;text-align:center}
+#status[hidden]{display:none}
+@media(min-width:970px) and (max-height:760px){header{padding-block:10px}.surface{padding:11px 14px}.goal{min-height:68px}.goal .gem{height:37px}.rail{gap:8px}.board-area{padding:12px 17px}.board-grid{grid-template-columns:repeat(7,51px);grid-template-rows:repeat(6,51px)}}
+@media(max-width:850px){main{display:flex;flex-direction:column;gap:9px;padding:0 11px 145px}header{padding:9px 11px;gap:5px}.brand h1{font-size:23px}.brand small{font-size:10px}.head-actions{gap:4px}.pill{padding:8px 9px;font-size:12px;min-height:42px}.review-bar{margin:0 11px 9px}.rail{display:contents}.pattern{order:1;width:100%}.tutor{order:2;width:100%}.growing{order:3;width:100%}.board-area{order:4;width:100%;padding:11px 9px}.tools{order:5;width:100%}.surface{padding:9px 11px;border-radius:17px}.pattern .eyebrow{font-size:11px}.pattern h2{font-size:18px}.pattern .sub{display:none}.goal-line{margin:5px 0 7px}.goal{min-width:64px;min-height:64px;padding:2px}.goal .gem{height:37px;width:33px}.primary.offer{min-height:47px}.growing .grow-row{margin:5px 0}.vein{min-height:43px;grid-template-columns:20px 1fr;font-size:11px}.vein .gem{width:17px;height:18px}.tutor{padding:8px 11px}.tutor p{font-size:13px}.board-hint{margin:3px 0 7px}.board-grid{grid-template-columns:repeat(7,48px);grid-template-rows:repeat(6,48px);gap:4px;margin:0}.cell{min-height:48px;min-width:48px;border-radius:10px}.board-scroller{padding:4px}.shelf{position:fixed;bottom:max(9px,env(safe-area-inset-bottom));left:9px;right:9px;z-index:10;margin:0;padding:7px;border-radius:13px;box-shadow:0 3px 15px #0008}.shelf>span{font-size:11px}.slot{height:43px}.legend{display:none}.review-bar{font-size:10px}.grow-buttons .primary{min-height:45px}#status{bottom:89px}}
+@media(max-width:360px){.brand small{display:none}.brand h1{font-size:20px}.head-actions .pill{font-size:11px;padding:6px}.goal{min-height:60px}.pattern h2{font-size:17px}.eyebrow{letter-spacing:0}.tutor{gap:2px}.tutor strong{font-size:14px}.tutor p{font-size:12px}.growing h2{font-size:17px}.grow-row{gap:4px}.board-hint{font-size:12px}}
+@media(prefers-reduced-motion:no-preference){.spotlight{animation:halo 1.8s ease-in-out infinite alternate}@keyframes halo{from{filter:brightness(1)}to{filter:brightness(1.1)}}}
+@media(prefers-reduced-motion:reduce){.spotlight{animation:none}*,:before,:after{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>✦ Crystalarium</h1><small>Resonance Garden • interaction & interface review</small></div>
+  <nav class="head-actions" aria-label="Demo options">
+    <button id="replay" class="pill" type="button">↺ Replay</button>
+    <button id="skip" class="pill" type="button">Skip guide</button>
+    <button id="sound" class="pill" type="button">Sound: Off</button>
+    <button id="leave" class="pill" type="button">Leave</button>
+  </nav>
+</header>
+<div class="review-bar" role="note">DESIGN CONCEPT ONLY • Mock tutorial and visuals, not the real Crystalarium • No game saves are read or changed • C11A/C12A awaiting approval</div>
+<main>
+  <section class="board-area" aria-label="Crystal merging board">
+    <div class="panel-heading"><h2>✧ Crystal Board</h2><span class="mini">7 × 6 • 42 sockets</span></div>
+    <p class="board-hint">Pick up matching twins. The glowing outline shows your next step.</p>
+    <div class="board-scroller"><fieldset class="board-grid" id="board" aria-label="Crystal board"></fieldset></div>
+    <div class="legend"><span><b>Gold ring:</b> next action</span><span><b>Blue:</b> Low</span><span><b>Lilac:</b> Bell</span><span><b>Green:</b> Bright</span></div>
+    <div class="shelf"><span>✦ Safe shelf</span><div class="shelf-slots" aria-hidden="true"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
+  </section>
+  <div class="rail">
+    <section class="surface pattern" id="pattern" aria-label="Resonance Pattern Altar">
+      <div class="eyebrow">♫ First Notes • Pattern 1 of 50</div>
+      <h2>Resonance Pattern</h2>
+      <p class="sub">A Little Crystal Song</p>
+      <div class="goal-line"><button id="goal" class="goal" type="button" aria-label="Examine matching pictured tier-one Low crystal"><span id="goal-art"></span><span class="count" id="owned">0 / 1</span></button><div style="font-size:13px;line-height:1.4"><strong>Match this crystal</strong><div id="ready-copy">Find a matching tier-one shard</div></div></div>
+      <button id="offer" class="primary offer" type="button" disabled>✧ Offer Pattern</button>
+      <div class="ready-text" id="offer-message" role="status">Collect the pictured crystal first</div>
+    </section>
+    <section class="tutor" id="tutorial" aria-live="polite">
+      <div class="eyebrow" id="step-counter">Guided first play • Step 1 of 5</div>
+      <strong id="step-heading">1. Grow a crystal</strong>
+      <p id="step-text">Only Grow Shard is available. Tap the glowing button to start!</p>
+    </section>
+    <section class="surface growing" aria-label="Crystal Growing">
+      <div class="eyebrow">✦ Crystal nursery</div><div class="panel-heading"><h2>Crystal Growing</h2><span class="mini">Basic shards are always free</span></div>
+      <div class="grow-row" id="sources">
+        <button class="vein selected" type="button" disabled><span id="low-art"></span>Low</button>
+        <button class="vein locked" type="button" disabled>✦ Bright 🔒</button>
+        <button class="vein locked" type="button" disabled>✦ Bell 🔒</button>
+      </div>
+      <div class="grow-buttons"><button id="grow" class="primary" type="button">✦ Grow Shard — Free</button></div>
+    </section>
+    <section class="surface tools" aria-label="Crystal Tools">
+      <h2>✦ Crystal Tools</h2>
+      <div class="tool-grid"><button class="pill" type="button" disabled>♫ Harmony</button><button class="pill" type="button" disabled>✧ Polish</button><button class="pill" type="button" disabled>◌ Brook Wash</button><button class="pill" type="button" disabled>↺ Fresh Board</button></div>
+      <p class="note">Tools are separate from crystal growing and the offering altar. More abilities unlock later.</p>
+    </section>
+  </div>
+</main>
+<div id="status" role="status" hidden></div>
+<script>
+(()=>{
+  "use strict";
+  // Standalone review simulation. Intentionally no localStorage, network or game imports.
+  let stage=0, grown=false, merged=false, picked=false, inspected=false, offered=false;
+  const board=document.getElementById("board");
+  const goal=document.getElementById("goal");
+  const grow=document.getElementById("grow");
+  const offer=document.getElementById("offer");
+  const pattern=document.getElementById("pattern");
+  const texts=[
+    ["1. Grow a crystal","Only Grow Shard is available. Tap the glowing button to start!"],
+    ["2. Pick up a shard","Now tap the new, glowing blue crystal in the top row."],
+    ["3. Merge matching twins","Tap or drop it onto the highlighted matching blue crystal."],
+    ["4. Match the picture","That's the same shape! Tap the crystal picture in the Resonance Pattern altar."],
+    ["5. Offer the pattern","The altar is ready! Tap the glowing Offer Pattern button."],
+    ["6. Well done!","You completed the pattern. In the full game, ordinary controls would now be available."],
+    ["Free-play preview","This is a visual demo. Replay the tutorial to inspect each spotlighted step."]
+  ];
+  const gem = (tier, colour) => {
+    const a = colour === "bright" ? "#fff2ab" : colour === "bell" ? "#dfb8ff" : "#aeeaff";
+    const b = colour === "bright" ? "#b58f3d" : colour === "bell" ? "#865fb7" : "#3b86c1";
+    const extra = tier > 0 ? `<path d='M25 1 L18 12 L32 12 Z' fill='#e5f9ff' opacity='.76'/><path d='M9 15 L3 5 L17 13 M41 15 L48 4 L34 13' fill='none' stroke='${a}' stroke-width='2.5'/>` : '';
+    return `<svg class='gem' aria-hidden='true' viewBox='0 0 50 55'><path d='M25 2 L37 11 L45 30 L26 53 L5 30 L13 11 Z' fill='${b}' stroke='${a}' stroke-width='2'/><path d='M25 2 L13 11 L20 31 L26 53 L32 30 L37 11 Z' fill='${a}' opacity='.55'/><path d='M5 30 L20 31 L26 53 Z' fill='#132a56' opacity='.5'/><path d='M45 30 L32 30 L26 53 Z' fill='#1b396c' opacity='.43'/><path d='M13 11 L37 11 L32 30 L20 31 Z' fill='#f7ffff' opacity='.15'/>${extra}</svg>`;
+  };
+  const notify = (s) => {const t=document.getElementById("status");t.textContent=s;t.hidden=false;};
+  const cellPiece = (i) => {if(merged){if(i===0)return 1;if(i===1)return 0;return -1;}if(i===0||i===1)return 0;if(i===2&&grown)return 0;return -1;}
+  const cellAction = (i) => {
+    if(stage===1&&i===2){picked=true;stage=2;notify("Picked up. Now tap the glowing matching crystal.");render();return;}
+    if(stage===2&&i===0&&picked){merged=true;stage=3;notify("Resonance! The crystals have merged.");render();return;}
+    notify("The tutorial allows only the glowing gameplay target. Skip is always available.");
+  }
+  const render = () => {
+    board.replaceChildren();
+    for(let i=0;i<42;i++){
+      const el=document.createElement("button"),piece=cellPiece(i),allowed=(stage===1&&i===2)||(stage===2&&i===0);
+      el.type="button";el.className=`cell${piece<0?" empty":""}${allowed?" spotlight allowed":""}${stage===2&&i===2?" origin":""}`;
+      el.disabled=!allowed;el.setAttribute("aria-label",piece<0?`Empty socket ${i+1}`:`Low ${piece===1?"polished":"shard"} socket ${i+1}`);
+      el.innerHTML=piece<0?"·":gem(piece,"low");
+      el.addEventListener("click",()=>cellAction(i));board.append(el);
+    }
+    document.getElementById("goal-art").innerHTML=gem(1,"low");
+    document.getElementById("low-art").innerHTML=gem(0,"low");
+    document.getElementById("owned").textContent=`${merged&&!offered?"1":"0"} / 1`;
+    document.getElementById("ready-copy").textContent=offered?"Pattern complete":merged?"Your crystal matches!":"Find a matching tier-one shard";
+    document.getElementById("step-heading").textContent=texts[stage][0];
+    document.getElementById("step-text").textContent=texts[stage][1];
+    document.getElementById("step-counter").textContent=stage>=5?"Tutorial complete":`Guided first play • Step ${stage+1} of 5`;
+    const ready=merged&&!offered;
+    pattern.classList.toggle("is-ready",ready);
+    document.getElementById("offer-message").textContent=offered?"✓ Resonance restored — free play":ready?"✦ Ready to offer":"Collect the pictured crystal first";
+    grow.disabled=stage!==0;grow.classList.toggle("spotlight",stage===0);
+    goal.disabled=stage!==3;goal.classList.toggle("spotlight",stage===3);
+    offer.disabled=stage!==4;offer.classList.toggle("spotlight",stage===4);
+    document.getElementById("tutorial").classList.toggle("done",stage>=5);
+    document.getElementById("skip").textContent=stage<5?"Skip guide":"View freely";
+  }
+  const reset = () => {stage=0;grown=false;merged=false;picked=false;inspected=false;offered=false;document.getElementById("status").hidden=true;render();}
+  grow.addEventListener("click",()=>{if(stage!==0)return;grown=true;stage=1;notify("A new real-looking crystal appeared. Pick up the highlighted one.");render();});
+  goal.addEventListener("click",()=>{if(stage!==3)return;inspected=true;stage=4;notify("The crystal matches the recipe. Offer is unlocked!");render();});
+  offer.addEventListener("click",()=>{if(stage!==4||!merged||!inspected)return;offered=true;stage=5;notify("Pattern complete! This demo does not save progress.");render();});
+  document.getElementById("replay").addEventListener("click",reset);
+  document.getElementById("skip").addEventListener("click",()=>{stage=6;notify("Guide skipped. Demo controls are illustrative only; use Replay to inspect steps.");render();});
+  document.getElementById("sound").addEventListener("click",()=>{notify("Sound remains off in this visual concept; the real game keeps its audio settings.");});
+  document.getElementById("leave").addEventListener("click",()=>{notify("This is the safe design concept only. Open the actual Crystalarium game separately to play.");});
+  reset();
+})();
+</script>
+</body>
+</html>

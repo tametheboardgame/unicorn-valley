@@ -1,3 +1,6 @@
+import { isCrystalariumFullState } from '../minigames/crystalarium/CrystalariumFullRules';
+import { isCrystalariumChamberState } from '../minigames/crystalarium/CrystalariumChamberRules';
+import { isCrystalariumPotionState } from '../minigames/crystalarium/CrystalariumPotionRules';
 import { CURRENT_SAVE_SCHEMA_VERSION, type SaveGame } from './saveSchema';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -139,7 +142,12 @@ function isActivityState(value: unknown): boolean {
 
   return (
     validRaces &&
-    isRecordOf(value.miniGameRecords, (entry) => typeof entry === 'number' && entry >= 0)
+    isRecordOf(value.miniGameRecords, (entry) => typeof entry === 'number' && entry >= 0) &&
+    (value.crystalarium === undefined ||
+      value.crystalarium === null ||
+      isCrystalariumFullState(value.crystalarium) ||
+      isCrystalariumChamberState(value.crystalarium) ||
+      isCrystalariumPotionState(value.crystalarium))
   );
 }
 

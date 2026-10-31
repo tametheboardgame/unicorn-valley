@@ -1,0 +1,2485 @@
+import { expect, test, type Page } from '@playwright/test';
+import { createDefaultSave } from '../../src/game/save/createDefaultSave';
+import {
+  createCrystalariumFullState,
+  type CrystalariumFullState,
+} from '../../src/game/minigames/crystalarium/CrystalariumFullRules';
+import { readCrystalariumPotion } from '../../src/game/minigames/crystalarium/CrystalariumPotionRules';
+import { CRYSTAL_BROOK_CRYSTALARIUM_NURSERY } from '../../src/game/world/CrystalBrookMap';
+import {
+  clickNamedObject,
+  dragNamedObjectTo,
+  getDiagnosticSnapshot,
+  openDiagnostics,
+  setArcadeSpritePosition,
+  waitForNamedObject,
+  waitForScene,
+} from '../support/browserDiagnostics';
+
+const SCENE = 'CrystalariumActivityScene';
+const SANDBOX_KEY = 'unicorn-valley:just-games:crystalarium:v1';
+
+async function enterResonanceGarden(
+  page: Page,
+  teach = false,
+  illustrated = false,
+  seededState?: CrystalariumFullState,
+): Promise<void> {
+  await page.addInitScript(() => window.localStorage.clear());
+  await openDiagnostics(
+    page,
+    illustrated ? '/?diagnostics=1&crystalariumLiveArt=1' : '/?diagnostics=1',
+  );
+  await waitForScene(page, 'TitleScene');
+  await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
+  await waitForScene(page, 'JustGamesScene');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  if (seededState) {
+    await page.evaluate(({ key, state }) => localStorage.setItem(key, JSON.stringify(state)), {
+      key: SANDBOX_KEY,
+      state: seededState,
+    });
+  }
+  // Existing free-play regressions intentionally skip the new first-time lesson.
+  // The dedicated C11B scenario below tests it from a completely fresh save.
+  if (!teach) {
+    await page.evaluate(() =>
+      localStorage.setItem('unicorn-valley:crystalarium:guide:just-games:v1', 'seen'),
+    );
+  }
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+}
+
+async function fullBoardSnapshot(page: Page) {
+  const snapshot = await getDiagnosticSnapshot(page);
+  const scene = snapshot.scenes.find((candidate) => candidate.key === SCENE);
+  if (!scene) throw new Error('Full Crystalarium scene not active');
+  return scene;
+}
+
+test.describe('H6.9C first complete playable Crystalarium visual evidence', () => {
+  test('desktop board, source, shelf and controls remain visible', async ({ page }, testInfo) => {
+    await enterResonanceGarden(page);
+    const scene = await fullBoardSnapshot(page);
+    expect(scene.objects.filter((o) => o.name.startsWith('crystalarium-full-cell:'))).toHaveLength(
+      42,
+    );
+    for (const name of [
+      'crystalarium-full-grow',
+      'crystalarium-full-sound',
+      'crystalarium-full-offer',
+      'crystalarium-full-harmony',
+      'crystalarium-full-polish',
+      'crystalarium-full-shelve',
+      'crystalarium-full-wash',
+      'crystalarium-full-fresh',
+      'crystalarium-full-exit',
+    ]) {
+      expect(scene.objects.some((o) => o.name === name && o.visible && o.interactive)).toBe(true);
+    }
+    await page.screenshot({ path: testInfo.outputPath('h6.9c-desktop-board.png'), fullPage: true });
+  });
+
+  test('quiet play, confirmed wash and fresh board do not change adventure data', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    await clickNamedObject(page, SCENE, 'crystalarium-full-sound');
+    expect((await fullBoardSnapshot(page)).objects.some((o) => o.text === 'Sound: Off')).toBe(true);
+
+    await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+    await clickNamedObject(page, SCENE, 'crystalarium-full-wash');
+    await clickNamedObject(page, SCENE, 'crystalarium-full-wash');
+    const washed = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(washed.washes).toBe(1);
+    expect(washed.cells[0]).toBeNull();
+
+    await clickNamedObject(page, SCENE, 'crystalarium-full-fresh');
+    await clickNamedObject(page, SCENE, 'crystalarium-full-fresh');
+    const fresh = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(fresh.cells.filter(Boolean)).toHaveLength(2);
+    expect(fresh.washes).toBe(1);
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+  });
+});
+
+test('H6.9C8 desktop carries crystals through merge, shelf and explicit return socket', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:0', 264, 209);
+  const merged = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(merged.merges).toBe(1);
+  expect(merged.cells[1].tier).toBe(1);
+  // C12B moved the physical shelf below the independent Crystal Tools panel.
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:1', 748, 608);
+  const shelved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(shelved.shelf[0].tier).toBe(1);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-shelf:0', 512, 209);
+  const restored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(restored.cells[5].tier).toBe(1);
+  expect(restored.shelf[0]).toBeNull();
+});
+
+test('H6.9C10 desktop rejects mismatched drops without losing progress', async ({ page }) => {
+  await enterResonanceGarden(page);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:0', 264, 209);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+  await dragNamedObjectTo(page, SCENE, 'crystalarium-full-cell:0', 264, 209);
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  expect(
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+      SANDBOX_KEY,
+    ),
+  ).toBe(1);
+});
+
+test('H6.9C13A live desktop frame wells grow free shards atomically without losing sockets', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page);
+  const scene = await fullBoardSnapshot(page);
+  expect(scene.objects.filter((o) => o.name.startsWith('crystalarium-full-cell:'))).toHaveLength(
+    42,
+  );
+  for (const family of ['low', 'bright', 'bell']) {
+    expect(
+      scene.objects.some((o) => o.name === 'crystalarium-full-producer:' + family && o.visible),
+    ).toBe(true);
+  }
+  const original = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-producer:bright');
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(original);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-producer:low');
+  const grown = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(grown.cells[2]).toEqual({ family: 'low', tier: 0 });
+  expect(grown.cells).toHaveLength(42);
+  expect(grown.selectedFamily).toBe('low');
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
+test.describe('H6.9C13A portrait board-frame wells', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+  test('retains 42 cells and grows from well while locked wells cannot spend', async ({
+    page,
+  }, testInfo) => {
+    await enterResonanceGarden(page);
+    const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    const wells = portrait.locator('.crystalarium-portrait-rooted-wells');
+    await expect(wells.locator('[data-crystalarium-well]')).toHaveCount(3);
+    await expect(portrait.locator('[data-crystalarium-cell]')).toHaveCount(42);
+    for (const well of await wells.locator('[data-crystalarium-well]').all()) {
+      const rect = await well.boundingBox();
+      expect(rect?.height).toBeGreaterThanOrEqual(48);
+      expect(rect?.width).toBeGreaterThanOrEqual(48);
+    }
+    const locked = wells.locator('[data-crystalarium-well="bright"]');
+    await expect(locked).toHaveAttribute('data-crystalarium-unlocked', 'false');
+    const previous = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    await locked.click();
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(previous);
+    await wells.locator('[data-crystalarium-well="low"]').click();
+    await expect(portrait.locator('[data-crystalarium-cell="2"]')).toHaveAttribute(
+      'data-family',
+      'low',
+    );
+    const state = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(state.cells).toHaveLength(42);
+    expect(state.cells[2]).toEqual({ family: 'low', tier: 0 });
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-live-wells-320.png'),
+      fullPage: true,
+    });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  });
+});
+
+test.describe('H6.9C landscape touch evidence', () => {
+  test.use({ viewport: { width: 844, height: 390 }, hasTouch: true });
+  test('shows the game board on phone landscape without hiding the playable scene', async ({
+    page,
+  }, testInfo) => {
+    await enterResonanceGarden(page);
+    const scene = await fullBoardSnapshot(page);
+    expect(
+      scene.objects.filter((o) => o.name.startsWith('crystalarium-full-cell:') && o.visible),
+    ).toHaveLength(42);
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-phone-landscape.png'),
+      fullPage: true,
+    });
+  });
+});
+
+test.describe('H6.9C portrait touch evidence', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('preserves a playable board and return action in portrait orientation', async ({
+    page,
+  }, testInfo) => {
+    await enterResonanceGarden(page);
+    const scene = await fullBoardSnapshot(page);
+    expect(
+      scene.objects.filter((o) => o.name.startsWith('crystalarium-full-cell:') && o.visible),
+    ).toHaveLength(42);
+    const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    await expect(portrait).toBeVisible();
+    const tiles = portrait.locator('[data-crystalarium-cell]');
+    await expect(tiles).toHaveCount(42);
+    const first = tiles.first();
+    const bounds = await first.boundingBox();
+    expect(bounds?.width).toBeGreaterThanOrEqual(48);
+    expect(bounds?.height).toBeGreaterThanOrEqual(48);
+    const initial = await portrait.boundingBox();
+    expect(initial?.width).toBeLessThanOrEqual(390);
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-phone-portrait.png'),
+      fullPage: true,
+    });
+
+    const altar = portrait.locator('.crystalarium-portrait-pattern');
+    const growing = portrait.locator('.crystalarium-portrait-controls');
+    const tools = portrait.locator('.crystalarium-portrait-tools');
+    const offer = altar.locator('[data-crystalarium-action="offer"]');
+    await expect(altar).toHaveAttribute('data-crystalarium-ready', 'false');
+    await expect(offer).toBeDisabled();
+    await expect(growing.locator('[data-crystalarium-action="grow"]')).toHaveCount(1);
+    await expect(growing.locator('[data-crystalarium-action="offer"]')).toHaveCount(0);
+    await expect(tools.locator('[data-crystalarium-action="wash"]')).toHaveCount(1);
+    await portrait.locator('[data-crystalarium-cell="0"]').click();
+    await portrait.locator('[data-crystalarium-cell="1"]').click();
+    await expect(altar).toHaveAttribute('data-crystalarium-ready', 'true');
+    await expect(offer).toHaveClass(/is-ready/);
+    await expect(offer).toBeEnabled();
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
+    await offer.click();
+    expect(
+      await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+        SANDBOX_KEY,
+      ),
+    ).toBe(1);
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+    await expect(portrait).toHaveCount(0);
+  });
+});
+
+test.describe('H6.9C9 illustrated first-play guidance', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test('teaches accepted actions, allows replay and keeps the adventure save untouched', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page, true);
+    const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    const step = region.locator('[data-crystalarium-guide]');
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'grow');
+    await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveClass(/is-guide-focus/);
+    // Only the spotlighted Grow control can mutate the fresh songbook.
+    await expect(region.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
+    await region.locator('[data-crystalarium-action="grow"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'merge');
+    await expect(region.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
+    const newShard = region.locator('[data-crystalarium-cell="2"]');
+    await expect(newShard).toHaveClass(/is-guide-focus/);
+    await expect(newShard).toBeFocused();
+    await newShard.click();
+    const mergeTarget = region.locator('[data-crystalarium-cell="0"]');
+    await expect(mergeTarget).toBeEnabled();
+    await expect(mergeTarget).toBeFocused();
+    await mergeTarget.click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
+    // The approved four-step guide ends with the glowing Offer card.
+    // The obsolete Inspect button was deliberately removed.
+    await expect(region.locator('[data-crystalarium-action="inspect-goal"]')).toHaveCount(0);
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(
+      /is-guide-focus/,
+    );
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeEnabled();
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeFocused();
+    await region.locator('[data-crystalarium-action="offer"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'hidden');
+    expect(
+      await page.evaluate(() =>
+        localStorage.getItem('unicorn-valley:crystalarium:guide:just-games:v1'),
+      ),
+    ).toBe('seen');
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+    await region.locator('[data-crystalarium-action="guide"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'explore');
+    await region.locator('[data-crystalarium-action="guide"]').click();
+    await expect(step).toHaveAttribute('data-crystalarium-guide', 'hidden');
+    expect(
+      await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+        SANDBOX_KEY,
+      ),
+    ).toBe(1);
+  });
+});
+
+test('H6.9C11B desktop first-visit guide enforces real Grow, merge, inspect and Offer', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page, true);
+  const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+
+  // Disabled non-tutorial controls remain named for browser diagnostics but
+  // reject input at the canonical controller, without a save mutation.
+  await clickNamedObject(page, SCENE, 'crystalarium-full-harmony');
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:2');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  // No separate Inspect action remains in the approved first lesson.
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+
+  expect(
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}').completed,
+      SANDBOX_KEY,
+    ),
+  ).toBe(1);
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem('unicorn-valley:crystalarium:guide:just-games:v1'),
+    ),
+  ).toBe('seen');
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
+test.describe('H6.9C native-to-canvas rotation contract', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test('changes presentation on rotation and restores a functioning portrait Leave', async ({
+    page,
+  }) => {
+    await enterResonanceGarden(page);
+    const portrait = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    await expect(portrait).toBeVisible();
+
+    await page.setViewportSize({ width: 844, height: 390 });
+    await expect(portrait).toBeHidden();
+    expect(
+      (await fullBoardSnapshot(page)).objects.filter((o) =>
+        o.name.startsWith('crystalarium-full-cell:'),
+      ),
+    ).toHaveLength(42);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(portrait).toBeVisible();
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+    await expect(portrait).toHaveCount(0);
+  });
+});
+
+test('H6.9C10 consecutive visual offerings unlock the next goal', async ({ page }) => {
+  // The full two-pattern sequence passes all assertions but can exhaust the
+  // generic 45s budget during browser/trace clean-up on busy CI runners.
+  test.setTimeout(90_000);
+  await enterResonanceGarden(page);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  let state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(state.completed).toBe(1);
+  expect(state.offers).toBe(1);
+  // Pattern two needs two identical tier-one crystals, with no hidden charge or timer.
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-grow');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:2');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  state = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(state.completed).toBe(2);
+  expect(state.offers).toBe(2);
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
+// Keep the return/resume contract independently covered without packing both
+// consecutive crafting and scene re-entry into Playwright's 45-second budget.
+test('H6.9C10 an offered pattern survives leaving and restarting Just Games', async ({ page }) => {
+  await enterResonanceGarden(page);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
+  await waitForScene(page, 'JustGamesScene');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  const resumed = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(resumed.completed).toBe(1);
+  expect(resumed.offers).toBe(1);
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+});
+
+test('H6.9C Crystal Brook nursery saves world progress and returns without reopening the Grotto', async ({
+  page,
+}) => {
+  await page.addInitScript(({ key, save }) => localStorage.setItem(key, JSON.stringify(save)), {
+    key: 'unicorn-valley.save',
+    save: createDefaultSave('2026-10-24T11:00:00.000Z'),
+  });
+  await openDiagnostics(page, '/?scene=brook&diagnostics=1');
+  await waitForScene(page, 'CrystalBrookScene');
+  await setArcadeSpritePosition(
+    page,
+    'CrystalBrookScene',
+    'world-player-unicorn',
+    CRYSTAL_BROOK_CRYSTALARIUM_NURSERY.x,
+    CRYSTAL_BROOK_CRYSTALARIUM_NURSERY.y + 50,
+  );
+  await expect
+    .poll(async () => {
+      const snapshot = await getDiagnosticSnapshot(page);
+      return snapshot.scenes
+        .find((s) => s.key === 'CrystalBrookScene')
+        ?.objects.find((o) => o.name === 'exploration-tablet-hint' && o.visible)?.text;
+    })
+    .toBe('Crystalarium Nursery');
+
+  // This scenario verifies world save/return, not the novice lesson; first-time
+  // world guidance is checked independently and cannot be bypassed in production.
+  await page.evaluate(() =>
+    localStorage.setItem('unicorn-valley:crystalarium:guide:world:v1', 'seen'),
+  );
+  await page.keyboard.press('KeyE');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+
+  const save = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'),
+  );
+  expect(save.activities.crystalarium.completed).toBe(1);
+  expect(save.world.flags['flag:r6-crystal-grotto-open']).not.toBe(true);
+  expect(
+    await page.evaluate(() => localStorage.getItem('unicorn-valley:just-games:crystalarium:v1')),
+  ).toBeNull();
+
+  await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
+  await waitForScene(page, 'CrystalBrookScene');
+});
+
+test('H6.9C6 Crystal Grotto altar launches and returns to the cave, keeping adventure saves', async ({
+  page,
+}) => {
+  await page.addInitScript(({ key, save }) => localStorage.setItem(key, JSON.stringify(save)), {
+    key: 'unicorn-valley.save',
+    save: createDefaultSave('2026-10-27T12:00:00.000Z'),
+  });
+  await openDiagnostics(page);
+  await page.evaluate(() => {
+    const api = (
+      window as typeof window & {
+        __UNICORN_VALLEY_DIAGNOSTICS__?: { startScene(sceneKey: string): void };
+      }
+    ).__UNICORN_VALLEY_DIAGNOSTICS__;
+    api?.startScene('CrystalGrottoScene');
+  });
+  await waitForScene(page, 'CrystalGrottoScene');
+  await waitForNamedObject(page, 'CrystalGrottoScene', 'crystal-grotto:crystalarium-altar');
+  await setArcadeSpritePosition(page, 'CrystalGrottoScene', 'world-player-unicorn', 1090, 205);
+  await expect
+    .poll(async () => {
+      const snapshot = await getDiagnosticSnapshot(page);
+      return snapshot.scenes
+        .find((scene) => scene.key === 'CrystalGrottoScene')
+        ?.objects.find((o) => o.name === 'exploration-tablet-hint' && o.visible)?.text;
+    })
+    .toBe('Crystalarium Altar');
+  // This scenario verifies world save/return, not the novice lesson; first-time
+  // world guidance is checked independently and cannot be bypassed in production.
+  await page.evaluate(() =>
+    localStorage.setItem('unicorn-valley:crystalarium:guide:world:v1', 'seen'),
+  );
+  await page.keyboard.press('KeyE');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-cell:1');
+  await clickNamedObject(page, SCENE, 'crystalarium-full-offer');
+  const save = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('unicorn-valley.save') ?? '{}'),
+  );
+  expect(save.activities.crystalarium.completed).toBe(1);
+  expect(save.world.flags['flag:r6-crystal-grotto-open']).not.toBe(true);
+  await clickNamedObject(page, SCENE, 'crystalarium-full-exit');
+  await waitForScene(page, 'CrystalGrottoScene');
+  expect(
+    (await getDiagnosticSnapshot(page)).scenes
+      .find((scene) => scene.key === 'CrystalGrottoScene')
+      ?.objects.some((obj) => obj.name === 'crystal-grotto:bright-crystal'),
+  ).toBe(true);
+});
+
+test.describe('H6.9C8 native touch and mouse carrying', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('physically merges pieces, shelves one and returns it to the board with one tap', async ({
+    page,
+  }) => {
+    // The full touch path includes several physical gestures, DOM redraws
+    // and a scrollable chamber. Preserve the complete assertions on CI.
+    test.setTimeout(90_000);
+    await enterResonanceGarden(page);
+    const region = page.locator('[data-crystalarium-portrait="true"]');
+    // No floating status/shelf layer may intercept an occupied first-row crystal.
+    for (const index of [0, 1]) {
+      const selector = '[data-crystalarium-cell="' + index + '"]';
+      const crystal = region.locator(selector);
+      const bounds = await crystal.boundingBox();
+      if (!bounds) throw new Error('Crystal must have a visible hit area');
+      const hit = await page.evaluate(
+        ({ x, y }) =>
+          document
+            .elementFromPoint(x, y)
+            ?.closest('[data-crystalarium-cell]')
+            ?.getAttribute('data-crystalarium-cell'),
+        { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 },
+      );
+      expect(hit).toBe(String(index));
+    }
+    const drag = async (source: string, target: string) => {
+      const from = await region.locator(source).boundingBox();
+      const to = await region.locator(target).boundingBox();
+      if (!from || !to) throw new Error('Missing draggable Crystalarium control');
+      await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+      await page.mouse.up();
+    };
+    await drag('[data-crystalarium-cell="0"]', '[data-crystalarium-cell="1"]');
+    const afterMerge = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(afterMerge.merges).toBe(1);
+    expect(afterMerge.cells[0]).toBeNull();
+    expect(afterMerge.cells[1].tier).toBe(1);
+    // Recipes and physical pieces must share the exact illustrated tier identity.
+    await expect(region.locator('[data-crystalarium-cell="1"] [data-crystal-art]')).toHaveAttribute(
+      'data-crystal-art',
+      'low-tier-1',
+    );
+    await expect(
+      region.locator('.crystalarium-portrait-goal [data-crystal-art]').first(),
+    ).toHaveAttribute('data-crystal-art', 'low-tier-1');
+    await drag('[data-crystalarium-cell="1"]', '[data-crystalarium-action="storage-toggle"]');
+    const afterShelf = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(afterShelf.shelf[0].tier).toBe(1);
+    expect(afterShelf.cells[1]).toBeNull();
+    // A single tap on an occupied slot returns it to the first free board socket.
+    // No rearrange mode, Board or Choose socket buttons are displayed.
+    await expect(region.locator('[data-crystalarium-action="storage-arrange"]')).toHaveCount(0);
+    await expect(region.locator('[data-crystalarium-action="storage-return"]')).toHaveCount(0);
+    await expect(region.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(
+      0,
+    );
+    await region.locator('[data-crystalarium-action="shelf-0"]').click();
+    const restored = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(restored.cells[0].tier).toBe(1);
+    expect(restored.shelf[0]).toBeNull();
+  });
+});
+
+test.describe('C19 portrait Storage direct manipulation', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('drag rearranges without controls and tap returns a crystal safely', async ({ page }) => {
+    test.setTimeout(90_000);
+    const seed = createCrystalariumFullState();
+    await enterResonanceGarden(page, false, false, {
+      ...seed,
+      shelf: [{ family: 'bell', tier: 3 }, { family: 'bright', tier: 2 }, null, null],
+    });
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await portrait.locator('[data-crystalarium-action="storage-toggle"]').click();
+    const slots = portrait.locator('.crystalarium-portrait-shelf-slots');
+    await expect(slots.locator('[data-crystalarium-action^="shelf-"]')).toHaveCount(12);
+    for (const command of ['storage-arrange', 'storage-return', 'storage-choose-socket']) {
+      await expect(portrait.locator('[data-crystalarium-action="' + command + '"]')).toHaveCount(0);
+    }
+    const from = await slots.locator('[data-crystalarium-action="shelf-0"]').boundingBox();
+    const to = await slots.locator('[data-crystalarium-action="shelf-11"]').boundingBox();
+    if (!from || !to) throw new Error('Portrait Storage must expose all twelve slots');
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+    await expect(slots.locator('[data-crystalarium-action="shelf-11"]')).toHaveAttribute(
+      'data-crystalarium-drop',
+      'valid',
+    );
+    await page.mouse.up();
+    let saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(saved.shelf[0]).toBeNull();
+    expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
+    const chamberLayout = await portrait
+      .locator('.crystalarium-portrait-shelf.is-open')
+      .evaluate((panel) => ({
+        hasOverflow: panel.scrollHeight > panel.clientHeight + 1,
+        rows: [
+          ...new Set(
+            Array.from(panel.querySelectorAll('.crystalarium-portrait-shelf-slots button')).map(
+              (slot) => Math.round(slot.getBoundingClientRect().top),
+            ),
+          ),
+        ].length,
+      }));
+    expect(chamberLayout.hasOverflow).toBe(false);
+    expect(chamberLayout.rows).toBe(3);
+    await slots.locator('[data-crystalarium-action="shelf-11"]').click();
+    saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(saved.shelf[11]).toBeNull();
+    expect(saved.cells[2]).toEqual({ family: 'bell', tier: 3 });
+    await portrait.locator('[data-crystalarium-action="storage-toggle"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-shelf.is-open')).toHaveCount(0);
+  });
+});
+
+test.describe('H6.9C8 invalid portrait drop protection', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test('marks valid and blocked drops and preserves crystals after an incompatible merge', async ({
+    page,
+  }) => {
+    // Two genuine drag gestures and the growing drawer passed their final
+    // assertions in CI, then timed out in Playwright's fixture clean-up.
+    test.setTimeout(90_000);
+    await enterResonanceGarden(page);
+    const region = page.locator('[data-crystalarium-portrait="true"]');
+    const first = region.locator('[data-crystalarium-cell="0"]');
+    const second = region.locator('[data-crystalarium-cell="1"]');
+    const drag = async () => {
+      // Grow now lives below the board; returning to the board must restore
+      // its visible viewport before a real mouse/touch drag begins.
+      await first.scrollIntoViewIfNeeded();
+      const from = await first.boundingBox();
+      const to = await second.boundingBox();
+      if (!from || !to) throw new Error('Missing Crystalarium drag targets');
+      await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
+    };
+    await drag();
+    await expect(second).toHaveAttribute('data-crystalarium-drop', 'valid');
+    await page.mouse.up();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await region.locator('[data-crystalarium-action="grow"]').click();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    const savedBeforeInvalidDrop = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      SANDBOX_KEY,
+    );
+    await drag();
+    await expect(second).toHaveAttribute('data-crystalarium-drop', 'blocked');
+    await expect(region.locator('[data-crystalarium-cell="2"]')).toHaveAttribute(
+      'data-crystalarium-drop',
+      'valid',
+    );
+    await page.mouse.up();
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(
+      savedBeforeInvalidDrop,
+    );
+    await expect(region.locator('[data-crystalarium-drop]')).toHaveCount(0);
+  });
+});
+
+test.describe('H6.9C narrow portrait touch acceptance', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+  test('retains real-size scrollable sockets, readable actions and a saved return', async ({
+    page,
+  }, testInfo) => {
+    await enterResonanceGarden(page);
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await expect(portrait).toBeVisible();
+    const grid = portrait.locator('.crystalarium-portrait-grid');
+    const cell = portrait.locator('[data-crystalarium-cell="0"]');
+    await expect(cell).toBeVisible();
+    const bounds = await cell.boundingBox();
+    expect(bounds?.width).toBeGreaterThanOrEqual(48);
+    expect(bounds?.height).toBeGreaterThanOrEqual(48);
+    // A passing hit-target test is insufficient if the dock visually covers
+    // the entire first row. On the first screen a new player must see one row.
+    const dockBounds = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
+    if (!bounds || !dockBounds) throw new Error('Missing board or shelf on narrow portrait');
+    expect(bounds.y + bounds.height).toBeLessThan(dockBounds.y);
+    const scroll = await portrait
+      .locator('.crystalarium-portrait-board-scroll')
+      .evaluate((node) => node.scrollWidth > node.clientWidth);
+    expect(scroll).toBe(true);
+    await expect(portrait.locator('.crystalarium-portrait-scroll-cue')).toContainText(
+      'Swipe sideways',
+    );
+    await expect(grid.locator('button')).toHaveCount(42);
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-narrow-portrait.png'),
+      fullPage: true,
+    });
+    const scroller = portrait.locator('.crystalarium-portrait-board-scroll');
+    await scroller.evaluate((node) => {
+      node.scrollLeft = node.scrollWidth - node.clientWidth;
+    });
+    const rightmostScroll = await scroller.evaluate((node) => node.scrollLeft);
+    expect(rightmostScroll).toBeGreaterThan(0);
+    await portrait.locator('[data-crystalarium-menu="growing"]').click();
+    await portrait.locator('[data-crystalarium-action="grow"]').click();
+    await portrait.locator('[data-crystalarium-menu="growing"]').click();
+    expect(await scroller.evaluate((node) => node.scrollLeft)).toBe(rightmostScroll);
+    await portrait.locator('[data-crystalarium-cell="6"]').click();
+    expect(await scroller.evaluate((node) => node.scrollLeft)).toBe(rightmostScroll);
+    expect(
+      await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}').cells.filter(Boolean).length,
+        SANDBOX_KEY,
+      ),
+    ).toBe(3);
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+  });
+});
+
+test.describe('H6.9C10 final-chapter 320px experience', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+  test('shows three rare recipes and completes the Symphony without ending free play', async ({
+    page,
+  }, testInfo) => {
+    // The isolated 320px finale exercises exit/re-entry, a complete offer and
+    // post-campaign refined growth. CI evidence reached its final assertion at
+    // the 45s limit: retain every assertion with a bounded end-to-end budget.
+    test.setTimeout(90_000);
+    await enterResonanceGarden(page);
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await portrait.locator('[data-crystalarium-action="exit"]').click();
+    await waitForScene(page, 'JustGamesScene');
+
+    // A structurally valid endgame save is injected only into isolated Just Games
+    // for late-UI coverage; the 50-pattern legal-action run is independently
+    // covered by CrystalariumCampaignSolvability.test.ts.
+    const cells: CrystalariumFullState['cells'][number][] = Array.from({ length: 42 }, () => null);
+    cells[0] = { family: 'low', tier: 5 };
+    cells[1] = { family: 'bright', tier: 5 };
+    cells[2] = { family: 'bell', tier: 5 };
+    const seeded: CrystalariumFullState = {
+      ...createCrystalariumFullState(),
+      cells,
+      completed: 49,
+      harmonies: 3,
+      selectedFamily: 'bell',
+      discovered: ['low:0', 'low:5', 'bright:5', 'bell:5'],
+    };
+    await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify(value)), [
+      SANDBOX_KEY,
+      seeded,
+    ] as const);
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+    await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+    await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+    await expect(portrait).toBeVisible();
+    // The board is the default view even for the 50th pattern. The title and
+    // recipe cards belong to the explicitly opened Pattern menu.
+    await expect(portrait.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
+      'Crystalarium Symphony',
+    );
+    const finalChapterLabel = portrait.locator('.crystalarium-portrait-eyebrow');
+    await expect(finalChapterLabel).toHaveText('Great Harmonic Garden • 50 of 50');
+    const labelBounds = await finalChapterLabel.boundingBox();
+    expect(labelBounds?.height).toBeLessThan(25);
+    await expect(portrait.locator('.crystalarium-portrait-goal')).toHaveCount(3);
+    for (const [index, family] of ['low', 'bright', 'bell'].entries()) {
+      await expect(
+        portrait.locator('.crystalarium-portrait-goal [data-crystal-art]').nth(index),
+      ).toHaveAttribute('data-crystal-art', family + '-tier-5');
+    }
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-final-chapter-pattern-menu-320.png'),
+      fullPage: true,
+    });
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
+    const first = await portrait.locator('[data-crystalarium-cell="0"]').boundingBox();
+    const dock = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
+    if (!first || !dock) throw new Error('Finale board or safe shelf not visible');
+    expect(first.y + first.height).toBeLessThan(dock.y);
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c-final-chapter-320.png'),
+      fullPage: true,
+    });
+
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
+    await portrait.locator('[data-crystalarium-action="offer"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-pattern-title')).toHaveText(
+      'Crystalarium Symphony complete',
+    );
+    const completed = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(completed.completed).toBe(50);
+    expect(completed.offers).toBe(1);
+    expect(completed.harmonies).toBe(0);
+    await portrait.locator('[data-crystalarium-menu="growing"]').click();
+    await portrait.locator('[data-crystalarium-action="grow-refined"]').click();
+    const freePlay = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(freePlay.completed).toBe(50);
+    expect(freePlay.cells[0]).toEqual({ family: 'bell', tier: 2 });
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+  });
+});
+
+test.describe('H6.9C13A isolated producer-placement visual concept', () => {
+  test('compares 42 frame sockets against 39 fixed-cell sockets without game saves', async ({
+    page,
+  }, testInfo) => {
+    await page.goto('/design-previews/crystalarium-c13a-generators.html');
+    await expect(page.getByRole('heading', { name: /Where should crystals grow/ })).toBeVisible();
+    const board = page.locator('#board');
+    const grow = page.locator('#grow');
+    const message = page.locator('#message');
+    await expect(board.locator('.cell')).toHaveCount(42);
+    await expect(page.locator('#space')).toHaveText('42 / 42');
+    await expect(page.locator('#frame-sources .root-control')).toHaveCount(3);
+    await expect(page.locator('#frame-sources .root-control.locked')).toHaveCount(2);
+    await expect(page.locator('#unlocks')).toHaveText('1 / 3');
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-frame-desktop.png'),
+      fullPage: true,
+    });
+
+    // A locked well explains the requirement but cannot grow or change progress.
+    await page.locator('#frame-sources .root-control').nth(1).click();
+    await expect(page.locator('#total')).toHaveText('2');
+    await expect(message).toContainText('unlocks after 4 completed patterns');
+    // The rooted on-board Low well produces immediately, without a second click.
+    await page.locator('#frame-sources .root-control').first().click();
+    await expect(page.locator('#total')).toHaveText('3');
+    await expect(message).toContainText('No charges, fluid or timers were used');
+    // The comparison's separate Grow action also remains available.
+    await grow.click();
+    await expect(page.locator('#total')).toHaveText('4');
+
+    await page.locator('#grid-choice').click();
+    await expect(page.locator('#space')).toHaveText('39 / 42');
+    await expect(board.locator('.cell.occupied-producer')).toHaveCount(3);
+    await expect(page.locator('#frame-sources')).toBeHidden();
+    await page.screenshot({
+      path: testInfo.outputPath('h6.9c13a-three-fixed-cells.png'),
+      fullPage: true,
+    });
+
+    // B permits direct growth from fixed wells, though it sacrifices three sockets.
+    await board.locator('.cell.occupied-producer').first().click();
+    await expect(page.locator('#total')).toHaveText('3');
+    await page.locator('[data-progress="4"]').click();
+    await expect(page.locator('#unlocks')).toHaveText('2 / 3');
+    await page.locator('#source-cards .source-card').nth(1).click();
+    await expect(grow).toHaveText('✦ Grow free Bright crystal');
+    await grow.click();
+    await expect(page.locator('#total')).toHaveText('4');
+
+    await page.locator('[data-progress="7"]').click();
+    await expect(page.locator('#unlocks')).toHaveText('3 / 3');
+    await page.locator('#source-cards .source-card').nth(2).click();
+    await expect(grow).toHaveText('✦ Grow free Bell crystal');
+    await board.locator('.cell.occupied-producer').nth(2).click();
+    await expect(page.locator('#total')).toHaveText('5');
+    await expect(
+      await page.evaluate(() => ({
+        keys: Object.keys(localStorage),
+        sessionKeys: Object.keys(sessionStorage),
+      })),
+    ).toEqual({ keys: [], sessionKeys: [] });
+  });
+
+  test.describe('320px first-play placement review', () => {
+    test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+    test('keeps generator targets legible, the board horizontally scrollable and 42 cells intact', async ({
+      page,
+    }, testInfo) => {
+      await page.goto('/design-previews/crystalarium-c13a-generators.html');
+      const frame = page.locator('#frame-sources .root-control');
+      await expect(frame).toHaveCount(3);
+      for (const producer of await frame.all()) {
+        const box = await producer.boundingBox();
+        expect(box?.height).toBeGreaterThanOrEqual(48);
+        expect(box?.width).toBeGreaterThanOrEqual(48);
+      }
+      await expect(page.locator('#board .cell')).toHaveCount(42);
+      await expect(page.locator('#space')).toHaveText('42 / 42');
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      ).toBe(true);
+      const scroller = page.locator('.board-window');
+      expect(await scroller.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+        true,
+      );
+      await page.screenshot({
+        path: testInfo.outputPath('h6.9c13a-narrow-frame.png'),
+        fullPage: true,
+      });
+      await page.locator('#grid-choice').click();
+      await expect(page.locator('#board .cell.occupied-producer')).toHaveCount(3);
+      await expect(page.locator('#space')).toHaveText('39 / 42');
+      await page.screenshot({
+        path: testInfo.outputPath('h6.9c13a-narrow-occupied.png'),
+        fullPage: true,
+      });
+    });
+  });
+});
+
+test.describe('H6.9C13A board-first mobile drawer contract', () => {
+  test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
+
+  test('the default view prioritises the usable board, with reversible Pattern, Grow and Tools panels', async ({
+    page,
+  }) => {
+    // The full touch, keyboard, focus, drawer and save sequence completed its
+    // assertions but timed out in fixture teardown on shared Chromium CI.
+    // Preserve the entire interaction contract; only bound its time budget.
+    test.setTimeout(90_000);
+    await enterResonanceGarden(page);
+    const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
+    const board = region.locator('.crystalarium-portrait-board-section');
+    const first = region.locator('[data-crystalarium-cell="0"]');
+    const shelf = region.locator('.crystalarium-portrait-shelf');
+    await expect(board).toBeVisible();
+    await expect(region.locator('[data-crystalarium-menu]')).toHaveCount(3);
+    await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await expect(region.locator('.crystalarium-portrait-pattern')).toBeHidden();
+    await expect(region.locator('.crystalarium-portrait-controls')).toBeHidden();
+    await expect(region.locator('.crystalarium-portrait-tools')).toBeHidden();
+    const a = await first.boundingBox();
+    const b = await shelf.boundingBox();
+    if (!a || !b) throw new Error('Missing first board row or safe shelf');
+    expect(a.y + a.height).toBeLessThan(b.y);
+    const toolsMenu = region.locator('[data-crystalarium-menu="tools"]');
+    const patternMenu = region.locator('[data-crystalarium-menu="pattern"]');
+    await toolsMenu.click();
+    await expect(toolsMenu).toHaveAttribute('aria-expanded', 'true');
+    await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
+    await expect(region.locator('[data-crystalarium-action="close-menu"]')).toBeFocused();
+    await region.locator('[data-crystalarium-action="sound"]').click();
+    await expect(region.locator('.crystalarium-portrait-tools')).toBeVisible();
+    await region.locator('[data-crystalarium-action="close-menu"]').click();
+    await expect(board).toBeVisible();
+    await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await patternMenu.click();
+    await expect(patternMenu).toHaveAttribute('aria-expanded', 'true');
+    await expect(region.locator('.crystalarium-portrait-pattern')).toBeVisible();
+    await patternMenu.click();
+    await expect(patternMenu).toHaveAttribute('aria-expanded', 'false');
+    // Escape closes the drawer, never exits the session or loses its save.
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await page.keyboard.press('Escape');
+    await expect(region.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+    await expect(region).toBeVisible();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await expect(region.locator('[data-crystalarium-action="grow"]')).toBeVisible();
+    await region.locator('[data-crystalarium-action="grow"]').click();
+    await region.locator('[data-crystalarium-menu="growing"]').click();
+    await expect(region.locator('[data-crystalarium-cell="2"]')).toHaveAttribute(
+      'data-family',
+      'low',
+    );
+    expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+  });
+});
+
+const C17_PREVIEW = '/design-previews/crystalarium-c17-illustrated-layout.html';
+
+test.describe('H6.9C17 non-saving illustrated Garden composition', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 390, height: 844 },
+    { width: 1280, height: 720 },
+    { width: 1440, height: 900 },
+  ]) {
+    test(`renders separate artwork, 42 sockets and reachable growers at ${viewport.width}x${viewport.height}`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto(C17_PREVIEW);
+      await expect(page.getByRole('heading', { name: /Crystalarium/ })).toBeVisible();
+      await expect(page.locator('#board .cell')).toHaveCount(42);
+      await expect(page.locator('.wells .well')).toHaveCount(3);
+      await expect(page.locator('#orders .order-card')).toHaveCount(5);
+      await expect(page.locator('#stock')).toHaveText('100 / 100');
+      await expect(page.locator('#low')).toBeVisible();
+      await expect
+        .poll(() => page.locator('body').getAttribute('data-background-art'))
+        .toBe('painted');
+
+      const boardPanel = await page.locator('.board-panel').boundingBox();
+      const wellsPanel = await page.locator('.wells').boundingBox();
+      const ordersPanel = await page.locator('.orders-panel').boundingBox();
+      const toolsPanel = await page.locator('.tools').boundingBox();
+      if (!boardPanel || !wellsPanel || !ordersPanel || !toolsPanel) {
+        throw new Error('C17 composition regions missing');
+      }
+      if (viewport.width <= 390) {
+        expect(boardPanel.y).toBeLessThan(wellsPanel.y);
+        expect(wellsPanel.y).toBeLessThan(ordersPanel.y);
+      } else {
+        expect(wellsPanel.x).toBeLessThan(boardPanel.x);
+        expect(toolsPanel.x).toBeGreaterThan(boardPanel.x);
+        expect(ordersPanel.y).toBeLessThan(boardPanel.y);
+      }
+
+      // A 320px screen can scroll its 42 real-size sockets horizontally,
+      // rather than shrinking away game controls or clipping the first row.
+      const first = await page.locator('#board .cell').first().boundingBox();
+      expect(first).not.toBeNull();
+      expect(first!.y).toBeGreaterThanOrEqual(0);
+      expect(first!.y).toBeLessThan(viewport.height);
+      if (viewport.width <= 390) {
+        const size = await page
+          .locator('#board .cell')
+          .first()
+          .evaluate((node) => node.getBoundingClientRect().width);
+        expect(size).toBeGreaterThanOrEqual(48);
+      }
+
+      for (const image of [
+        '.potion img',
+        '.wells .well img',
+        '.board-foot img',
+        '#orders .order-card .goal img',
+      ]) {
+        await expect
+          .poll(() =>
+            page
+              .locator(image)
+              .first()
+              .evaluate((node) => {
+                const img = node as HTMLImageElement;
+                return img.complete && img.naturalWidth > 0;
+              }),
+          )
+          .toBe(true);
+      }
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-layout-${viewport.width}x${viewport.height}.png`),
+        fullPage: true,
+      });
+    });
+  }
+
+  test('order rail, storage, help and potion preview stay isolated from adventure saves', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(C17_PREVIEW);
+    const rail = page.locator('#orders');
+    const before = await rail.evaluate((el) => el.scrollLeft);
+    await page.locator('#next').click();
+    await expect.poll(() => rail.evaluate((el) => el.scrollLeft)).toBeGreaterThan(before);
+
+    await page.locator('#storage').click();
+    await expect(page.locator('#storage-dialog')).toBeVisible();
+    await expect(page.locator('#stored-sample .cell')).toHaveCount(12);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#storage-dialog')).toBeHidden();
+
+    await page.locator('#help').click();
+    await expect(page.locator('#low')).toHaveClass(/focus-target/);
+    await page.locator('#skip').click();
+    await expect(page.locator('#guide')).toBeHidden();
+
+    await page.locator('#low').click();
+    await expect(page.locator('#stock')).toHaveText('99 / 100');
+    expect(
+      await page.evaluate(() => ({
+        adventure: localStorage.getItem('unicorn-valley.save'),
+        sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+      })),
+    ).toEqual({ adventure: null, sandbox: null });
+  });
+});
+
+test.describe('H6.9C17 separate ornate board art candidate', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`renders all 42 independent sockets and frame at ${viewport.width}px`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/design-previews/crystalarium-c17-board-frame.html');
+      await expect(page.getByRole('heading', { name: /Ornate Board Study/ })).toBeVisible();
+      await expect(page.locator('#sockets .socket')).toHaveCount(42);
+      await expect(page.locator('#frame')).not.toHaveClass(/show-board/);
+      await expect(page.locator('#frame')).not.toHaveClass(/show-garden/);
+      const hasTransparency = await page.locator('.frame-art').evaluate(async (img) => {
+        const frame = img as HTMLImageElement;
+        if (!frame.complete)
+          await new Promise((resolve) => frame.addEventListener('load', resolve, { once: true }));
+        const canvas = document.createElement('canvas');
+        canvas.width = frame.naturalWidth;
+        canvas.height = frame.naturalHeight;
+        const context = canvas.getContext('2d');
+        if (!context) throw new Error('Canvas missing');
+        context.drawImage(frame, 0, 0);
+        const alphaAt = (x: number, y: number) => context.getImageData(x, y, 1, 1).data[3];
+        return (
+          alphaAt(0, 0) === 0 &&
+          alphaAt(canvas.width - 1, 0) === 0 &&
+          alphaAt(0, canvas.height - 1) === 0 &&
+          alphaAt(canvas.width - 1, canvas.height - 1) === 0 &&
+          alphaAt(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2)) === 0
+        );
+      });
+      expect(hasTransparency).toBe(true);
+      await page.getByRole('button', { name: 'Show 7×6 grid' }).click();
+      await expect(page.locator('#frame')).toHaveClass(/show-board/);
+      await expect
+        .poll(() =>
+          page.locator('.frame-art').evaluate((node) => {
+            const img = node as HTMLImageElement;
+            return img.complete && img.naturalWidth > 0;
+          }),
+        )
+        .toBe(true);
+      const socket = page.locator('#sockets .socket').first();
+      await socket.click();
+      await expect(socket).toHaveAttribute('data-state', 'selected');
+      await page.getByRole('button', { name: 'Valid drop', exact: true }).click();
+      await socket.click();
+      await expect(socket).toHaveAttribute('data-state', 'valid-drop');
+      expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-board-frame-${viewport.width}.png`),
+        fullPage: true,
+      });
+    });
+  }
+});
+
+test.describe('H6.9C17 generator asset gallery', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 390, height: 844 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`renders five individually loaded generators at ${viewport.width}px without saving`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/design-previews/crystalarium-c17-generators.html');
+      await expect(page.getByRole('heading', { name: /Generator Art/ })).toBeVisible();
+      const images = page.locator('.grid img');
+      await expect(images).toHaveCount(5);
+      for (let index = 0; index < 5; index++) {
+        await expect
+          .poll(() =>
+            images.nth(index).evaluate((node) => {
+              const img = node as HTMLImageElement;
+              return img.complete && img.naturalWidth === 320 && img.naturalHeight === 480;
+            }),
+          )
+          .toBe(true);
+      }
+      expect(
+        await page.evaluate(() => ({
+          adventure: localStorage.getItem('unicorn-valley.save'),
+          sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+        })),
+      ).toEqual({ adventure: null, sandbox: null });
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-generators-${viewport.width}.png`),
+        fullPage: true,
+      });
+    });
+  }
+});
+
+test.describe('H6.9C17 Bell violet family asset gallery', () => {
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 390, height: 844 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`loads six independent Bell crystal sprites at ${viewport.width}px without saving`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/design-previews/crystalarium-c17-bell-crystals.html');
+      await expect(page.getByRole('heading', { name: /Bell · Violet crystals/ })).toBeVisible();
+      const large = page.locator('.gallery img.large');
+      await expect(large).toHaveCount(6);
+      await expect(page.locator('.gallery .cell img')).toHaveCount(6);
+      for (let index = 0; index < 6; index++) {
+        await expect
+          .poll(() =>
+            large.nth(index).evaluate((element) => {
+              const img = element as HTMLImageElement;
+              return img.complete && img.naturalWidth === 512 && img.naturalHeight === 512;
+            }),
+          )
+          .toBe(true);
+      }
+      expect(
+        await page.evaluate(() => ({
+          adventure: localStorage.getItem('unicorn-valley.save'),
+          sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+        })),
+      ).toEqual({ adventure: null, sandbox: null });
+      await page.screenshot({
+        path: testInfo.outputPath(`c17-bell-${viewport.width}.png`),
+        fullPage: true,
+      });
+    });
+  }
+});
+
+const C17_COMPOSITION_PREVIEW = '/design-previews/crystalarium-c17-final-composition.html';
+
+async function measureC17FrameGeometry(page: Page) {
+  return page.evaluate(() => {
+    const frame = document.querySelector<HTMLElement>('#frame');
+    const board = document.querySelector<HTMLElement>('#board-scroll');
+    const rail = document.querySelector<HTMLElement>('#rail');
+    const cells = Array.from(document.querySelectorAll<HTMLElement>('#board-cells > .socket'));
+    if (!frame || !board || !rail || cells.length !== 42) {
+      throw new Error('Incomplete C17 review composition');
+    }
+    const bounds = frame.getBoundingClientRect();
+    const boxes = cells.map((cell) => cell.getBoundingClientRect());
+    return {
+      count: boxes.length,
+      fits: boxes.every(
+        (box) =>
+          box.left >= bounds.left &&
+          box.right <= bounds.right &&
+          box.top >= bounds.top &&
+          box.bottom <= bounds.bottom,
+      ),
+      width: Math.min(...boxes.map((box) => box.width)),
+      height: Math.min(...boxes.map((box) => box.height)),
+      pageExtraHeight: document.documentElement.scrollHeight - innerHeight,
+      pageExtraWidth: document.documentElement.scrollWidth - innerWidth,
+      boardExtraWidth: board.scrollWidth - board.clientWidth,
+      railExtraWidth: rail.scrollWidth - rail.clientWidth,
+      toolsBelowOrders: (() => {
+        const tools = document.querySelector<HTMLElement>('.actions');
+        const orders = document.querySelector<HTMLElement>('.orders-panel');
+        return (
+          !!tools &&
+          !!orders &&
+          tools.getBoundingClientRect().top >= orders.getBoundingClientRect().bottom - 1
+        );
+      })(),
+      allPanelsVisible: (() => {
+        const selectors = ['.board-panel', '.orders-panel', '.actions', '.producers', '.footer'];
+        return selectors.every((selector) => {
+          const el = document.querySelector<HTMLElement>(selector);
+          if (!el) return false;
+          const rect = el.getBoundingClientRect();
+          return (
+            rect.top >= -1 &&
+            rect.bottom <= innerHeight + 1 &&
+            rect.left >= -1 &&
+            rect.right <= innerWidth + 1
+          );
+        });
+      })(),
+    };
+  });
+}
+
+test.describe('C17 no-save artwork frame-fit regression', () => {
+  for (const viewport of [
+    { width: 1000, height: 660 },
+    { width: 1024, height: 768 },
+    { width: 1100, height: 700 },
+    { width: 1280, height: 720 },
+    { width: 1440, height: 900 },
+    { width: 1534, height: 682 },
+    { width: 1918, height: 852 },
+  ]) {
+    test(`desktop ${viewport.width}x${viewport.height} has no page scroll or frame overlap`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto(C17_COMPOSITION_PREVIEW);
+      const result = await measureC17FrameGeometry(page);
+      expect(result.count).toBe(42);
+      expect(result.fits).toBe(true);
+      expect(result.width).toBeGreaterThanOrEqual(48);
+      expect(result.height).toBeGreaterThanOrEqual(48);
+      expect(result.pageExtraHeight).toBeLessThanOrEqual(1);
+      expect(result.pageExtraWidth).toBeLessThanOrEqual(1);
+      expect(result.railExtraWidth).toBeGreaterThan(0);
+      expect(result.toolsBelowOrders).toBe(true);
+      expect(result.allPanelsVisible).toBe(true);
+      await page.locator('#open-storage').click();
+      await expect(page.locator('#storage')).toBeVisible();
+      await page.locator('#storage-close').click();
+      await expect(page.locator('#storage')).toBeHidden();
+    });
+  }
+
+  for (const viewport of [
+    { width: 320, height: 700 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`mobile ${viewport.width}x${viewport.height} keeps 48px board targets and internal pan`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto(C17_COMPOSITION_PREVIEW);
+      const result = await measureC17FrameGeometry(page);
+      expect(result.count).toBe(42);
+      expect(result.fits).toBe(true);
+      expect(result.width).toBeGreaterThanOrEqual(48);
+      expect(result.height).toBeGreaterThanOrEqual(48);
+      expect(result.pageExtraWidth).toBeLessThanOrEqual(1);
+      expect(result.boardExtraWidth).toBeGreaterThan(0);
+      expect(result.railExtraWidth).toBeGreaterThan(0);
+      await page.locator('#help').click();
+      await expect(page.locator('#guide')).toBeVisible();
+      await page.locator('#guide-exit').click();
+      await expect(page.locator('#guide')).toBeHidden();
+    });
+  }
+});
+
+test('C17 viewport-fit v2 deploy preview keeps the entire desktop composition visible', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1534, height: 682 });
+  await page.goto('/design-previews/crystalarium-c17-viewport-fit-v2.html');
+  await expect(page.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
+  const result = await measureC17FrameGeometry(page);
+  expect(result.count).toBe(42);
+  expect(result.fits).toBe(true);
+  expect(result.toolsBelowOrders).toBe(true);
+  expect(result.allPanelsVisible).toBe(true);
+  expect(result.width).toBeGreaterThanOrEqual(48);
+  expect(result.height).toBeGreaterThanOrEqual(48);
+  expect(result.pageExtraHeight).toBeLessThanOrEqual(1);
+  expect(result.pageExtraWidth).toBeLessThanOrEqual(1);
+  expect(result.railExtraWidth).toBeGreaterThan(0);
+});
+
+test('C18 real illustrated game reveals two scrollable active cards and fulfils a later one first', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  const cells = [...seed.cells];
+  cells[0] = { family: 'low' as const, tier: 1 as const };
+  cells[1] = { family: 'low' as const, tier: 1 as const };
+  await enterResonanceGarden(page, false, true, {
+    ...seed,
+    completed: 1,
+    cells,
+  });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const cards = live.locator('.crystalarium-live-order-card');
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText('Double Echo');
+  await expect(cards.nth(1)).toContainText('Clearer Tone');
+  await expect(cards.nth(0)).toBeEnabled();
+  await expect(cards.nth(1)).toBeDisabled();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+
+  // Complete Double Echo with two tier-one pieces from the real saved board.
+  await cards.nth(0).click();
+  const after = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(after.version).toBe(4);
+  expect(after.completedPatternIds).toEqual(['crystalarium:1-1', 'crystalarium:1-2']);
+  expect(after.revealedCount).toBe(4);
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText('Clearer Tone');
+  await expect(cards.nth(1)).toContainText('Pair of Crystals');
+});
+
+test('C18 ready later card can be offered without consuming an earlier incomplete order', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  const cells = [...seed.cells];
+  cells[0] = { family: 'low' as const, tier: 2 as const };
+  await enterResonanceGarden(page, false, true, { ...seed, completed: 1, cells });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const cards = live.locator('.crystalarium-live-order-card');
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toBeDisabled();
+  await expect(cards.nth(1)).toBeEnabled();
+  await cards.nth(1).click();
+  const after = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(after.completed).toBe(2);
+  expect(after.completedPatternIds).toEqual(['crystalarium:1-1', 'crystalarium:1-3']);
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText('Double Echo');
+  await expect(cards.nth(1)).toContainText('Pair of Crystals');
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C21 staged illustrated live game uses canonical state, actions and isolated save', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  const cells = live.locator('[data-crystalarium-cell]');
+  await expect(cells).toHaveCount(42);
+  await expect(live.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
+  const frame = await live.locator('.crystalarium-live-frame').boundingBox();
+  expect(frame).not.toBeNull();
+  const first = await cells.first().boundingBox();
+  const last = await cells.last().boundingBox();
+  expect(first).not.toBeNull();
+  expect(last).not.toBeNull();
+  expect(first!.x).toBeGreaterThanOrEqual(frame!.x);
+  expect(last!.x + last!.width).toBeLessThanOrEqual(frame!.x + frame!.width);
+  expect(last!.y + last!.height).toBeLessThanOrEqual(frame!.y + frame!.height);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollHeight - innerHeight),
+  ).toBeLessThanOrEqual(1);
+
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  const grown = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(grown.cells).toHaveLength(42);
+  expect(grown.cells[2]).toEqual({ family: 'low', tier: 0 });
+  await live.locator('[data-crystalarium-cell="0"]').click();
+  await live.locator('[data-crystalarium-cell="1"]').click();
+  await expect(live.locator('[data-crystalarium-action="offer"]')).toBeEnabled();
+  await live.locator('[data-crystalarium-action="offer"]').click();
+  const offered = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(offered.completed).toBe(1);
+  expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+
+  await live.locator('[data-crystalarium-action="storage"]').click();
+  await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toBeVisible();
+  await expect(live.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
+  await expect(live.locator('.crystalarium-live-storage-slot.is-empty')).toHaveCount(12);
+  await expect(live.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
+  await expect(live.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
+  const close = live.getByRole('button', { name: 'Close Storage' });
+  await expect(close).toHaveText('×');
+  await close.click();
+  await expect(live.getByRole('dialog', { name: 'Storage Chamber' })).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath('c21-live-art-1440.png'), fullPage: true });
+});
+
+test('C19 Storage offers twelve safe slots with one-tap return and accessible close', async ({
+  page,
+}) => {
+  // CI trace #41217666640 shows all gameplay assertions and both close actions
+  // complete; only the generic 45s test/fixture deadline was exceeded.
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const from = await live.locator('[data-crystalarium-cell="0"]').boundingBox();
+  const to = await live.locator('[data-crystalarium-action="storage"]').boundingBox();
+  if (!from || !to) throw new Error('Missing starting crystal or Storage drop target');
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+  await page.mouse.up();
+
+  const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('1 / 12 slots used');
+  await expect(dialog).toContainText('Tap to return to the board');
+  await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
+  await expect(dialog.locator('.crystalarium-live-storage-slot img')).toHaveCount(1);
+  await expect(dialog.locator('[data-crystalarium-action="shelve"]')).toHaveCount(0);
+  await expect(dialog.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
+  await expect(dialog.getByRole('button', { name: 'Close Storage' })).toHaveText('×');
+  for (const action of ['storage-arrange', 'storage-return', 'storage-choose-socket']) {
+    await expect(dialog.locator('[data-crystalarium-action="' + action + '"]')).toHaveCount(0);
+  }
+  // The entire 4 × 3 chamber fits without an internal scroll bar, even at the
+  // 1006 × 810 viewport where the user identified the oversized panel.
+  await page.setViewportSize({ width: 1006, height: 810 });
+  const chamberSize = await dialog.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    const slots = Array.from(element.querySelectorAll('.crystalarium-live-storage-slot'));
+    const rows = [...new Set(slots.map((slot) => Math.round(slot.getBoundingClientRect().top)))];
+    return {
+      height: bounds.height,
+      internalOverflow: element.scrollHeight > element.clientHeight + 1,
+      slots: slots.length,
+      rows: rows.length,
+      insideViewport: bounds.top >= 0 && bounds.bottom <= innerHeight,
+    };
+  });
+  expect(chamberSize.slots).toBe(12);
+  expect(chamberSize.rows).toBe(3);
+  expect(chamberSize.height).toBeLessThan(510);
+  expect(chamberSize.internalOverflow).toBe(false);
+  expect(chamberSize.insideViewport).toBe(true);
+  // The upper-right close cross must never cover the instructions. Reserve
+  // clear horizontal space while keeping the compact non-scrolling chamber.
+  const captionClearance = await dialog.evaluate((element) => {
+    const help = element.querySelector('.crystalarium-live-storage-help');
+    const close = element.querySelector('.crystalarium-live-storage-close');
+    if (!help || !close) throw new Error('Missing Storage caption or close control');
+    const helpRect = help.getBoundingClientRect();
+    const closeRect = close.getBoundingClientRect();
+    return {
+      gap: closeRect.left - helpRect.right,
+      textOverflow: help.scrollWidth > help.clientWidth + 1,
+    };
+  });
+  expect(captionClearance.gap).toBeGreaterThanOrEqual(8);
+  expect(captionClearance.textOverflow).toBe(false);
+
+  const stored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(stored.cells[0]).toBeNull();
+  expect(stored.shelf[0]).toEqual({ family: 'low', tier: 0 });
+
+  // A single pointer tap must restore immediately, without waiting for
+  // a second click or relying on the browser to synthesise a click.
+  const occupied = dialog.locator('[data-crystalarium-action="shelf-0"]');
+  const bounds = await occupied.boundingBox();
+  if (!bounds) throw new Error('Missing occupied storage slot');
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.down();
+  await page.mouse.up();
+  await expect(dialog).toContainText('0 / 12 slots used');
+  const restored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(restored.shelf[0]).toBeNull();
+  expect(restored.cells[0]).toEqual({ family: 'low', tier: 0 });
+
+  await dialog.getByRole('button', { name: 'Close Storage' }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  await live.locator('[data-crystalarium-action="storage"]').click();
+  await expect(dialog).toContainText('0 / 12 slots used');
+  await dialog.getByRole('button', { name: 'Close Storage' }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
+test('C21 drag a crystal onto the Storage dock without opening the modal', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const from = await live.locator('[data-crystalarium-cell="0"]').boundingBox();
+  const to = await live.locator('[data-crystalarium-action="storage"]').boundingBox();
+  if (!from || !to) throw new Error('Missing crystal or Storage drop target');
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+  await page.mouse.up();
+  const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
+  await expect(dialog).toBeVisible();
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(saved.cells[0]).toBeNull();
+  expect(saved.shelf[0]).toEqual({ family: 'low', tier: 0 });
+});
+
+test('C19 chamber drag-rearranges and one-tap returns to the first vacant board socket', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  await enterResonanceGarden(page, false, true, {
+    ...seed,
+    shelf: [{ family: 'bell', tier: 3 }, { family: 'bright', tier: 2 }, null, null],
+  });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="storage"]').click();
+  const dialog = live.getByRole('dialog', { name: 'Storage Chamber' });
+  await expect(dialog.locator('.crystalarium-live-storage-slot')).toHaveCount(12);
+  for (const command of ['storage-arrange', 'storage-return', 'storage-choose-socket']) {
+    await expect(dialog.locator('[data-crystalarium-action="' + command + '"]')).toHaveCount(0);
+  }
+
+  const dragSlot = async (source: number, destination: number) => {
+    const from = await dialog
+      .locator('[data-crystalarium-action="shelf-' + source + '"]')
+      .boundingBox();
+    const to = await dialog
+      .locator('[data-crystalarium-action="shelf-' + destination + '"]')
+      .boundingBox();
+    if (!from || !to) throw new Error('Storage sockets must remain visible drag targets');
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+    await expect(
+      dialog.locator('[data-crystalarium-action="shelf-' + destination + '"]'),
+    ).toHaveAttribute('data-crystalarium-drop', 'valid');
+    await page.mouse.up();
+  };
+
+  // Drag onto an empty socket, then onto an occupied socket to prove swapping.
+  await dragSlot(0, 11);
+  let saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(saved.version).toBe(4);
+  expect(saved.shelf[0]).toBeNull();
+  expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
+  expect(saved.shelf[1]).toEqual({ family: 'bright', tier: 2 });
+  await dragSlot(1, 11);
+  saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(saved.shelf[1]).toEqual({ family: 'bell', tier: 3 });
+  expect(saved.shelf[11]).toEqual({ family: 'bright', tier: 2 });
+
+  // Shift+Enter offers keyboard users an equivalent move without mode buttons.
+  await dialog.locator('[data-crystalarium-action="shelf-1"]').focus();
+  await page.keyboard.press('Shift+Enter');
+  await expect(dialog.locator('[data-crystalarium-action="shelf-1"]')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await dialog.locator('[data-crystalarium-action="shelf-10"]').focus();
+  await page.keyboard.press('Shift+Enter');
+  saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(saved.shelf[1]).toBeNull();
+  expect(saved.shelf[10]).toEqual({ family: 'bell', tier: 3 });
+
+  // Ordinary click returns immediately, without closing the compact chamber.
+  await dialog.locator('[data-crystalarium-action="shelf-10"]').click();
+  const restored = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(restored.cells[2]).toEqual({ family: 'bell', tier: 3 });
+  expect(restored.shelf[10]).toBeNull();
+  expect(restored.shelf[11]).toEqual({ family: 'bright', tier: 2 });
+  expect(restored.cells).toHaveLength(42);
+  expect(restored.shelf).toHaveLength(12);
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close Storage' }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
+test('C21 top Guide is retained while four expanded Garden Tools omit the duplicate', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
+  await expect(live.getByRole('heading', { name: 'Crystal Garden' })).toBeVisible();
+  await expect(
+    live.locator('.crystalarium-live-header-actions .crystalarium-live-button'),
+  ).toHaveCount(3);
+  await expect(
+    live.locator('.crystalarium-live-header-actions [data-crystalarium-action="guide"]'),
+  ).toHaveCount(1);
+  await expect(
+    live.locator('.crystalarium-live-tools [data-crystalarium-action="guide"]'),
+  ).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-tools .crystalarium-live-tool')).toHaveCount(4);
+  await expect(live.locator('.crystalarium-live-message')).toHaveCount(0);
+  const layout = await live.evaluate((root) => {
+    const buttons = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-tool'));
+    const title = root.querySelector<HTMLElement>('.crystalarium-live-heading h1');
+    const subheading = root.querySelector<HTMLElement>('.crystalarium-live-garden h2');
+    const status = root.querySelector<HTMLElement>('.crystalarium-live-sr-status');
+    if (!title || !subheading || !status) throw new Error('Missing heading or accessible status');
+    return {
+      widths: buttons.map((button) => button.getBoundingClientRect().width),
+      titleFontSize: parseFloat(getComputedStyle(title).fontSize),
+      subtitleFontSize: parseFloat(getComputedStyle(subheading).fontSize),
+      statusClipped: getComputedStyle(status).clipPath,
+      statusRole: status.getAttribute('role'),
+      headingBacking: getComputedStyle(title.parentElement!).backgroundImage,
+      subtitleBacking: getComputedStyle(subheading.parentElement!).backgroundImage,
+      pageOverflow: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(Math.max(...layout.widths) - Math.min(...layout.widths)).toBeLessThanOrEqual(2);
+  expect(Math.min(...layout.widths)).toBeGreaterThan(80);
+  expect(layout.titleFontSize).toBeGreaterThanOrEqual(28);
+  expect(layout.subtitleFontSize).toBeGreaterThanOrEqual(17);
+  expect(layout.statusClipped).toBe('inset(50%)');
+  expect(layout.statusRole).toBe('status');
+  expect(layout.headingBacking).toContain('linear-gradient');
+  expect(layout.subtitleBacking).toContain('linear-gradient');
+  expect(layout.pageOverflow).toBeLessThanOrEqual(1);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C21 Brook Chorus ready two-crystal card keeps its title and status inside parchment', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  const seed = createCrystalariumFullState();
+  const cells = [...seed.cells];
+  cells[0] = { family: 'low', tier: 2 };
+  cells[1] = { family: 'bright', tier: 2 };
+  await enterResonanceGarden(page, false, true, { ...seed, completed: 6, cells });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const card = live.locator('.crystalarium-live-order-card.has-two-goals.is-ready');
+  await expect(card).toBeVisible();
+  await expect(card).toBeEnabled();
+  await expect(card.locator('strong')).toHaveText('Brook Chorus');
+  await expect(card.locator('em')).toHaveText('Ready to offer');
+  await expect(card.locator('.crystalarium-live-goal')).toHaveCount(2);
+
+  for (const viewport of [
+    { width: 1819, height: 792 },
+    { width: 960, height: 560 },
+  ]) {
+    await page.setViewportSize(viewport);
+    const layout = await card.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const title = element.querySelector('strong')!.getBoundingClientRect();
+      const goals = Array.from(element.querySelectorAll('.crystalarium-live-goal')).map((goal) =>
+        goal.getBoundingClientRect(),
+      );
+      const status = element.querySelector('em')!.getBoundingClientRect();
+      return {
+        cardTop: bounds.top,
+        cardBottom: bounds.bottom,
+        cardWidth: bounds.width,
+        titleTop: title.top,
+        titleBottom: title.bottom,
+        goals: goals.map((goal) => ({
+          x: goal.x,
+          y: goal.y,
+          top: goal.top,
+          bottom: goal.bottom,
+        })),
+        statusTop: status.top,
+        statusBottom: status.bottom,
+        pageOverflow: document.documentElement.scrollHeight - innerHeight,
+      };
+    });
+    expect(layout.titleTop).toBeGreaterThan(layout.cardTop + layout.cardWidth * 0.21);
+    expect(layout.titleBottom).toBeLessThan(layout.goals[0].top);
+    expect(Math.abs(layout.goals[0].x - layout.goals[1].x)).toBeLessThan(3);
+    expect(layout.goals[1].y).toBeGreaterThan(layout.goals[0].y + 20);
+    expect(layout.statusTop).toBeGreaterThan(layout.goals[1].bottom);
+    expect(layout.statusBottom).toBeLessThan(layout.cardBottom - layout.cardWidth * 0.15);
+    expect(layout.pageOverflow).toBeLessThanOrEqual(1);
+  }
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C20 Growth Potion uses approved twelve-frame art after a saved generator growth', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live.locator('.crystalarium-live-potion')).toContainText('Free growth');
+  await expect(live.locator('.crystalarium-live-potion')).not.toContainText('Balance pending');
+  await expect(live.locator('.crystalarium-live-growth-fx img')).toHaveCount(0);
+
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  const effects = live.locator('.crystalarium-live-growth-fx');
+  // The effect lasts ~1.3 seconds. Its retained paint evidence survives
+  // Playwright scheduling delays; active-only attributes do not.
+  await expect(effects).toHaveAttribute('data-crystalarium-last-growth-id', '1');
+  // The entire pour is drawn atomically into one persistent canvas.
+  // No image nodes or async opacity transitions may appear during playback.
+  await expect(effects.locator('canvas.crystalarium-live-growth-canvas')).toHaveCount(1);
+  await expect(effects.locator('img')).toHaveCount(0);
+  const activeCanvas = effects.locator('canvas');
+  await expect
+    .poll(async () => Number(await effects.getAttribute('data-crystalarium-last-frames-painted')))
+    .toBeGreaterThanOrEqual(3);
+  const dimensions = await activeCanvas.evaluate((canvas) => ({
+    width: (canvas as HTMLCanvasElement).width,
+    height: (canvas as HTMLCanvasElement).height,
+  }));
+  expect(dimensions.width).toBeGreaterThan(100);
+  expect(dimensions.height).toBeGreaterThan(100);
+  const cell = await effects.getAttribute('data-crystalarium-last-growth-cell');
+  expect(cell).not.toBeNull();
+  const state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(state.cells[Number(cell)]).toEqual({ family: 'low', tier: 0 });
+  const target = live.locator('[data-crystalarium-cell="' + cell + '"]');
+  await expect(target.locator('img')).toBeVisible();
+
+  const pour = await page.request.get(
+    '/design-assets/crystalarium-c17/growth-potion-assets/pour-12.webp',
+  );
+  const growth = await page.request.get(
+    '/design-assets/crystalarium-c17/growth-potion-assets/growth-04.webp',
+  );
+  expect(pour.ok()).toBe(true);
+  expect(growth.ok()).toBe(true);
+  await expect(effects).not.toHaveAttribute('data-crystalarium-growth-id', '1', {
+    timeout: 5000,
+  });
+  await expect(effects).toHaveAttribute('data-crystalarium-last-growth-id', '1');
+  await expect(target.locator('img')).toBeVisible();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C20 rapid generator pointer taps and keyboard activation are all saved during pouring', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const well = live.locator('[data-crystalarium-action="well-low"]');
+  const bounds = await well.boundingBox();
+  if (!bounds) throw new Error('Missing playable Low generator');
+  const x = bounds.x + bounds.width / 2;
+  const y = bounds.y + bounds.height / 2;
+
+  // A new sandbox has two starter pieces in memory but no persisted record
+  // until its first accepted action. Count the actual board, not a missing save.
+  const beforeCount = await live.locator('.crystalarium-live-cell img').count();
+  // Use real pointer-down/up pairs, not DOM click(), to catch detached
+  // generator elements losing their synthetic clicks under frequent redraws.
+  for (let index = 0; index < 8; index += 1) {
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.up();
+  }
+  const stateAfterPointers = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(stateAfterPointers.cells.filter(Boolean)).toHaveLength(beforeCount + 8);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+
+  // Keyboard-based activation must work once, not twice, without pointer-up.
+  await well.focus();
+  await page.keyboard.press('Enter');
+  const stateAfterKeyboard = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(stateAfterKeyboard.cells.filter(Boolean)).toHaveLength(beforeCount + 9);
+
+  // The growth animation occupies a bounded canvas that cannot cover
+  // controls or consume full-screen repaint work on every frame.
+  const fx = live.locator('.crystalarium-live-growth-fx');
+  await expect(fx).toHaveAttribute('data-crystalarium-last-growth-id', '9');
+  const geometry = await fx.evaluate((layer) => {
+    const canvas = layer.querySelector('canvas');
+    const root = layer.parentElement;
+    if (!canvas || !root) throw new Error('Missing animation canvas/root');
+    const box = canvas.getBoundingClientRect();
+    const rootBox = root.getBoundingClientRect();
+    return {
+      areaRatio: (box.width * box.height) / (rootBox.width * rootBox.height),
+      pointerEvents: getComputedStyle(canvas).pointerEvents,
+      rootPointerEvents: getComputedStyle(layer).pointerEvents,
+    };
+  });
+  expect(geometry.areaRatio).toBeLessThan(0.8);
+  expect(geometry.pointerEvents).toBe('none');
+  expect(geometry.rootPointerEvents).toBe('none');
+  const target = await page.evaluate(
+    ({ x: cx, y: cy }) => {
+      return document
+        .elementFromPoint(cx, cy)
+        ?.closest('[data-crystalarium-action]')
+        ?.getAttribute('data-crystalarium-action');
+    },
+    { x, y },
+  );
+  expect(target).toBe('well-low');
+});
+
+test('C20 potion canvas stays attached through a controller redraw during a pour', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const layer = live.locator('.crystalarium-live-growth-fx');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(layer).toHaveAttribute('data-crystalarium-last-growth-id', '1');
+  const originalCanvas = await layer.locator('canvas').elementHandle();
+  if (!originalCanvas) throw new Error('Missing pouring canvas');
+
+  await live.locator('[data-crystalarium-action="sound"]').click();
+  const remainsAttached = await layer.evaluate((element, original) => {
+    return element.querySelector('canvas') === original && element.parentElement !== null;
+  }, originalCanvas);
+  expect(remainsAttached).toBe(true);
+  await expect(layer).toHaveAttribute('data-crystalarium-last-growth-id', '1');
+  await expect
+    .poll(async () => Number(await layer.getAttribute('data-crystalarium-last-frames-painted')))
+    .toBeGreaterThanOrEqual(3);
+});
+
+test('C20 reduced motion skips pouring but canonical well growth still saves', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(live.locator('.crystalarium-live-growth-fx')).not.toHaveAttribute(
+    'data-crystalarium-growth-id',
+    '1',
+  );
+  const state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  // Two starter crystals already occupy the board; growth adds exactly one.
+  expect(state.cells.filter(Boolean)).toHaveLength(3);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C20 blocked full-board generator growth never plays a pouring animation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const seed = createCrystalariumFullState();
+  const cells = Array.from({ length: 42 }, () => ({ family: 'low' as const, tier: 0 as const }));
+  await enterResonanceGarden(page, false, true, { ...seed, cells });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(live.locator('.crystalarium-live-growth-fx')).not.toHaveAttribute(
+    'data-crystalarium-growth-id',
+    '1',
+  );
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(saved.cells.filter(Boolean)).toHaveLength(42);
+});
+
+test('C21 Three Notes card keeps its title and status safe around a two-column recipe', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await enterResonanceGarden(page, false, true, {
+    ...createCrystalariumFullState(),
+    completed: 8,
+  });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const card = live.locator('.crystalarium-live-order-card.has-three-goals');
+  await expect(card).toBeVisible();
+  await expect(card.locator('strong')).toHaveText('Three Notes');
+  await expect(card.locator('.crystalarium-live-goal')).toHaveCount(3);
+  const positions = await card.evaluate((root) => {
+    const bounds = root.getBoundingClientRect();
+    const title = root.querySelector('strong')!.getBoundingClientRect();
+    const goals = Array.from(root.querySelectorAll('.crystalarium-live-goal')).map((x) =>
+      x.getBoundingClientRect(),
+    );
+    const status = root.querySelector('em')!.getBoundingClientRect();
+    return {
+      cardTop: bounds.top,
+      cardBottom: bounds.bottom,
+      titleTop: title.top,
+      titleBottom: title.bottom,
+      statusTop: status.top,
+      statusBottom: status.bottom,
+      goals: goals.map((g) => ({ x: g.x, y: g.y, top: g.top, bottom: g.bottom })),
+      isGrid: getComputedStyle(root.querySelector('.crystalarium-live-goals')!).display,
+      pageOverflow: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(positions.isGrid).toBe('grid');
+  expect(positions.titleTop).toBeGreaterThan(positions.cardTop + 15);
+  expect(positions.titleBottom).toBeLessThan(positions.goals[0].top);
+  expect(Math.abs(positions.goals[0].x - positions.goals[1].x)).toBeLessThan(3);
+  expect(positions.goals[1].y).toBeGreaterThan(positions.goals[0].y + 15);
+  expect(positions.goals[2].x).toBeGreaterThan(positions.goals[0].x + 20);
+  expect(positions.statusTop).toBeGreaterThan(positions.goals[1].bottom);
+  expect(positions.statusBottom).toBeLessThan(positions.cardBottom - 12);
+  expect(positions.pageOverflow).toBeLessThanOrEqual(1);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+});
+
+test('C21 visual integration opt-in leaves existing full-game UI default unchanged', async ({
+  page,
+}) => {
+  await enterResonanceGarden(page);
+  await expect(page.locator('[data-crystalarium-live]')).toHaveCount(0);
+  const scene = await fullBoardSnapshot(page);
+  expect(
+    scene.objects.filter((object) => object.name.startsWith('crystalarium-full-cell:')),
+  ).toHaveLength(42);
+});
+
+test('C21 illustrated real game survives a zoom-equivalent desktop viewport with the first lesson', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 960, height: 560 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  await expect(live.locator('.crystalarium-live-frame')).toBeVisible();
+  await expect(live.locator('.crystalarium-live-frame-art')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-frame-corner')).toHaveCount(0);
+  await expect(live.locator('.crystalarium-live-frame-jewel')).toHaveCount(0);
+  const metrics = await live.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    return {
+      display: getComputedStyle(element).display,
+      width: bounds.width,
+      height: bounds.height,
+      pageExtraHeight: document.documentElement.scrollHeight - innerHeight,
+    };
+  });
+  expect(metrics.display).not.toBe('none');
+  expect(metrics.width).toBeGreaterThan(900);
+  expect(metrics.height).toBeGreaterThan(500);
+  expect(metrics.pageExtraHeight).toBeLessThanOrEqual(1);
+  await expect(live.getByRole('heading', { name: 'Crystalarium' })).toBeVisible();
+  await expect(live.locator('[data-crystalarium-action="well-low"]')).toBeVisible();
+});
+
+test('C21 real player sees illustrated Crystalarium without a query flag', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => window.localStorage.clear());
+  await openDiagnostics(page);
+  await waitForScene(page, 'TitleScene');
+  await clickNamedObject(page, 'TitleScene', 'title-menu-just-games');
+  await waitForScene(page, 'JustGamesScene');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-card:crystalarium');
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-variant:resonance-patterns');
+  // In-memory diagnostics remains available, but the game sees the URL used
+  // by ordinary players, with no query flags at all.
+  await page.evaluate(() => {
+    localStorage.setItem('unicorn-valley:crystalarium:guide:just-games:v1', 'seen');
+    history.replaceState(null, '', window.location.pathname);
+  });
+  await clickNamedObject(page, 'JustGamesScene', 'just-games-play');
+  await waitForNamedObject(page, SCENE, 'crystalarium-full-cell:0');
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  expect(await page.evaluate(() => location.search)).toBe('');
+});
+
+test('C21 first lesson remains playable without a blocking overlay', async ({ page }) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const guide = live.locator('.crystalarium-live-guide');
+  const grow = live.locator('[data-crystalarium-action="well-low"]');
+  await expect(guide).toBeVisible();
+  await expect(guide).toContainText('1 of 4');
+  await expect(grow).toBeEnabled();
+  await expect(grow).toHaveAttribute('data-crystalarium-guide-target', 'true');
+  await expect(live.locator('[data-crystalarium-action="grow"]')).toHaveCount(0);
+  await expect(
+    live.locator('.crystalarium-live-tools [data-crystalarium-action="grow"]'),
+  ).toHaveCount(0);
+  await expect(live.locator('[data-crystalarium-action="storage"]')).toBeDisabled();
+  const initial = await live.evaluate((root) => {
+    const board = root.querySelector<HTMLElement>('.crystalarium-live-board-viewport');
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    const grid = root.querySelector<HTMLElement>('.crystalarium-live-grid');
+    if (!board || !frame || !grid) throw new Error('Missing illustrated board');
+    const a = frame.getBoundingClientRect();
+    const b = grid.getBoundingClientRect();
+    return {
+      boardOverflowX: board.scrollWidth - board.clientWidth,
+      boardOverflowY: board.scrollHeight - board.clientHeight,
+      overflowMode: getComputedStyle(board).overflow,
+      insideFrame: b.left >= a.left && b.right <= a.right && b.top >= a.top && b.bottom <= a.bottom,
+      guidePosition: getComputedStyle(root.querySelector('.crystalarium-live-guide')!).position,
+    };
+  });
+  expect(initial.boardOverflowX).toBeLessThanOrEqual(1);
+  expect(initial.boardOverflowY).toBeLessThanOrEqual(1);
+  expect(initial.overflowMode).toBe('hidden');
+  expect(initial.insideFrame).toBe(true);
+  expect(initial.guidePosition).not.toBe('absolute');
+  await expect(live.locator('.crystalarium-live-orders > .crystalarium-live-guide')).toBeVisible();
+  const artwork = await live.evaluate((root) => {
+    const background = getComputedStyle(root).backgroundImage;
+    const skip = root.querySelector<HTMLElement>('[data-crystalarium-action="skip-guide"]');
+    if (!skip) throw new Error('Skip guide must stay visible');
+    const style = getComputedStyle(skip);
+    return { background, skipColour: style.color, skipBackground: style.backgroundColor };
+  });
+  expect(artwork.background).toContain('garden-desktop-approved-1920x1080.webp');
+  expect(artwork.background).not.toContain('linear-gradient');
+  expect(artwork.skipColour).toBe('rgb(255, 244, 203)');
+  expect(artwork.skipBackground).toBe('rgb(25, 70, 106)');
+
+  await grow.click();
+  await expect(guide).toContainText('2 of 4');
+  // The policy chooses the correct pair from the saved board, not fixed indices.
+  await expect(live.locator('.crystalarium-live-cell.is-guide-focus')).toHaveCount(1);
+  await live.locator('.crystalarium-live-cell.is-guide-focus').click();
+  await expect(guide).toContainText('3 of 4');
+  await live.locator('.crystalarium-live-cell.is-guide-focus').click();
+  await expect(guide).toContainText('4 of 4');
+  await expect(live.locator('[data-crystalarium-action="inspect-goal"]')).toHaveCount(0);
+  const offer = live.locator('[data-crystalarium-action="offer"]');
+  await expect(offer).toBeEnabled();
+  await offer.click();
+  await expect(guide).toHaveCount(0);
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
+  expect(saved.completed).toBe(1);
+});
+
+test('C21 zoomed desktop scales the 42-socket board with no internal scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 960, height: 560 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await expect(live).toBeVisible();
+  const geometry = await live.evaluate((root) => {
+    const board = root.querySelector<HTMLElement>('.crystalarium-live-board-viewport');
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    if (!board || !frame) throw new Error('Missing board');
+    const br = board.getBoundingClientRect();
+    const fr = frame.getBoundingClientRect();
+    return {
+      overflowX: board.scrollWidth - board.clientWidth,
+      overflowY: board.scrollHeight - board.clientHeight,
+      displayOverflow: getComputedStyle(board).overflow,
+      frameInside:
+        fr.left >= br.left - 1 &&
+        fr.right <= br.right + 1 &&
+        fr.top >= br.top - 1 &&
+        fr.bottom <= br.bottom + 1,
+      socketCount: root.querySelectorAll('[data-crystalarium-cell]').length,
+      documentOverflow: document.documentElement.scrollHeight - innerHeight,
+      socketAspects: Array.from(
+        root.querySelectorAll<HTMLElement>('.crystalarium-live-cell'),
+        (cell) => {
+          const rect = cell.getBoundingClientRect();
+          return rect.width / rect.height;
+        },
+      ),
+    };
+  });
+  expect(geometry.socketAspects).toHaveLength(42);
+  for (const ratio of geometry.socketAspects) {
+    expect(ratio).toBeGreaterThan(0.7);
+    expect(ratio).toBeLessThan(0.92);
+  }
+  expect(geometry.overflowX).toBeLessThanOrEqual(1);
+  expect(geometry.overflowY).toBeLessThanOrEqual(1);
+  expect(geometry.displayOverflow).toBe('hidden');
+  expect(geometry.frameInside).toBe(true);
+  expect(geometry.socketCount).toBe(42);
+  expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 4');
+});
+
+test('C21 tutorial sits alongside orders and never reduces crystal board height', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const frame = live.locator('.crystalarium-live-frame');
+  const guide = live.locator('.crystalarium-live-orders > .crystalarium-live-guide');
+  await expect(guide).toBeVisible();
+  const initialHeight = (await frame.boundingBox())?.height ?? 0;
+  await guide.locator('[data-crystalarium-action="skip-guide"]').click();
+  await expect(guide).toHaveCount(0);
+  const afterHeight = (await frame.boundingBox())?.height ?? 0;
+  expect(initialHeight).toBeGreaterThan(400);
+  expect(Math.abs(afterHeight - initialHeight)).toBeLessThanOrEqual(2);
+  await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollHeight - innerHeight),
+  ).toBeLessThanOrEqual(1);
+});
+
+test('C21 unadorned board keeps every crystal socket clickable', async ({ page }) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const result = await live.evaluate((root) => {
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    const cells = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-cell'));
+    if (!frame || cells.length !== 42) throw new Error('Missing board or sockets');
+    return {
+      noDecorativeOverlay: !frame.querySelector('.crystalarium-live-frame-ornaments'),
+      allSocketsTargetable: cells.every((cell) => {
+        const bounds = cell.getBoundingClientRect();
+        const target = document.elementFromPoint(
+          bounds.x + bounds.width / 2,
+          bounds.y + bounds.height / 2,
+        );
+        return target === cell || cell.contains(target);
+      }),
+      frameRatio: (() => {
+        const bounds = frame.getBoundingClientRect();
+        return bounds.width / bounds.height;
+      })(),
+    };
+  });
+  expect(result.noDecorativeOverlay).toBe(true);
+  expect(result.allSocketsTargetable).toBe(true);
+  expect(result.frameRatio).toBeCloseTo(0.92, 1);
+});
+
+test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1819, height: 792 });
+  await enterResonanceGarden(page, false, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const geometry = await live.evaluate((root) => {
+    const frame = root.querySelector<HTMLElement>('.crystalarium-live-frame');
+    const cells = root.querySelector<HTMLElement>('.crystalarium-live-grid');
+    const garden = root.querySelector<HTMLElement>('.crystalarium-live-garden');
+    const card = root.querySelector<HTMLElement>('.crystalarium-live-order-card');
+    const wells = Array.from(root.querySelectorAll<HTMLElement>('.crystalarium-live-well'));
+    const tools = root.querySelector<HTMLElement>('.crystalarium-live-tools');
+    if (!frame || !garden || !cells || !card || !tools) {
+      throw new Error('Missing Crystalarium components');
+    }
+    const a = frame.getBoundingClientRect();
+    const b = cells.getBoundingClientRect();
+    return {
+      socketCount: cells.children.length,
+      gridInsetLeft: b.left - a.left,
+      gridInsetRight: a.right - b.right,
+      gridInsetTop: b.top - a.top,
+      gridInsetBottom: a.bottom - b.bottom,
+      frameWidth: a.width,
+      frameHeight: a.height,
+      gardenWidth: garden.getBoundingClientRect().width,
+      gridWidth: b.width,
+      frameBorder: getComputedStyle(frame).borderTopWidth,
+      illustratedFrameCount: root.querySelectorAll('.crystalarium-live-frame-art').length,
+      gardenBorder: getComputedStyle(garden).borderTopWidth,
+      guideGrowsFromWell: wells.some((well) => well.dataset.crystalariumAction === 'well-low'),
+      noExtraGrow: !tools.querySelector('[data-crystalarium-action="grow"]'),
+      cardArt: getComputedStyle(card).backgroundImage,
+      cardAspect: card.getBoundingClientRect().width / card.getBoundingClientRect().height,
+      socketAspects: Array.from(cells.children, (cell) => {
+        const rect = cell.getBoundingClientRect();
+        return rect.width / rect.height;
+      }),
+      cardTexture: getComputedStyle(card).backgroundImage,
+    };
+  });
+  expect(geometry.socketCount).toBe(42);
+  for (const inset of [
+    geometry.gridInsetLeft,
+    geometry.gridInsetRight,
+    geometry.gridInsetTop,
+    geometry.gridInsetBottom,
+  ]) {
+    expect(inset).toBeGreaterThanOrEqual(11);
+    expect(inset).toBeLessThanOrEqual(19);
+  }
+  expect(geometry.frameWidth).toBeGreaterThan(0);
+  expect(geometry.frameHeight).toBeGreaterThan(0);
+  expect(geometry.frameWidth / geometry.frameHeight).toBeCloseTo(0.92, 1);
+  expect(geometry.frameBorder).toBe('3px');
+  expect(geometry.illustratedFrameCount).toBe(0);
+  expect(geometry.gridWidth / geometry.gardenWidth).toBeGreaterThan(0.48);
+  expect(geometry.socketAspects).toHaveLength(42);
+  for (const ratio of geometry.socketAspects) {
+    expect(ratio).toBeGreaterThan(0.7);
+    expect(ratio).toBeLessThan(0.92);
+  }
+  expect(geometry.frameWidth / geometry.gardenWidth).toBeGreaterThan(0.5);
+  expect(geometry.gardenBorder).toBe('0px');
+  expect(geometry.guideGrowsFromWell).toBe(true);
+  expect(geometry.noExtraGrow).toBe(true);
+  expect(geometry.cardArt).toContain('order-card-clean.svg');
+  const cardSource = await page.request.get(
+    '/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg',
+  );
+  expect(cardSource.ok()).toBe(true);
+  expect(await cardSource.text()).not.toContain('id="grain"');
+  expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
+});
+
+test('C20 Gate D preview compares capacities and dry recovery without touching saves', async ({
+  page,
+}) => {
+  await page.goto('/design-previews/crystalarium-c20-potion-balance.html');
+  await expect(
+    page.getByRole('heading', { name: 'Growth Potion · C20 balancing study' }),
+  ).toBeVisible();
+  await page.evaluate(() => localStorage.setItem('crystalarium-c20-guard', 'unchanged'));
+  await page.locator('[data-capacity="150"]').click();
+  await expect(page.locator('#balance')).toHaveText('150 / 150');
+  await page.locator('#empty').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="basic"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="refill"]').click();
+  await expect(page.locator('#balance')).toHaveText('25 / 150');
+  await page.locator('input[value="free-basic-at-zero"]').check();
+  await expect(page.locator('[data-step="refill"]')).toBeHidden();
+  // Alternative rewards must affect the preview only, not the game's saves.
+  await page.locator('input[name="rewards"][value="merge-only"]').check();
+  await expect(page.locator('#merge-reward')).toContainText('(+1)');
+  await expect(page.locator('#offer-reward')).toContainText('(+0)');
+  await page.locator('#empty').click();
+  await page.locator('[data-step="offer"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="merge"]').click();
+  await expect(page.locator('#balance')).toHaveText('1 / 150');
+  await page.locator('input[name="rewards"][value="offer-only"]').check();
+  await expect(page.locator('#merge-reward')).toContainText('(+0)');
+  await expect(page.locator('#offer-reward')).toContainText('(+3)');
+  await page.locator('[data-step="offer"]').click();
+  await expect(page.locator('#balance')).toHaveText('4 / 150');
+  await page.locator('#empty').click();
+  await page.locator('[data-step="basic"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  await page.locator('[data-step="refined"]').click();
+  await expect(page.locator('#balance')).toHaveText('0 / 150');
+  const retained = await page.evaluate(() => ({
+    sentinel: localStorage.getItem('crystalarium-c20-guard'),
+    sandbox: localStorage.getItem('unicorn-valley:just-games:crystalarium:v1'),
+    world: localStorage.getItem('unicorn-valley.save'),
+  }));
+  expect(retained).toEqual({ sentinel: 'unchanged', sandbox: null, world: null });
+});
+
+test('C20 approved live potion: spend, reject dry growth, refill and reward a real merge', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const baseline = readCrystalariumPotion(createCrystalariumFullState());
+  if (!baseline) throw new Error('Cannot initialise C20 potion state');
+  await enterResonanceGarden(page, false, true, { ...baseline, potion: 1 });
+  const live = page.locator('[data-crystalarium-live="true"]');
+  const count = live.locator('.crystalarium-live-potion-count');
+  await expect(count).toHaveText('1 / 100');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(count).toHaveText('0 / 100');
+  const spent = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(spent.version).toBe(4);
+  expect(spent.cells.filter(Boolean)).toHaveLength(3);
+  expect(spent.potion).toBe(0);
+  // A rejected action cannot spend potion, add crystals or claim a save.
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(count).toHaveText('0 / 100');
+  const blocked = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(blocked).toEqual(spent);
+  await live.locator('[data-crystalarium-action="potion-refill"]').click();
+  await expect(count).toHaveText('25 / 100');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await expect(count).toHaveText('24 / 100');
+  const from = await live.locator('[data-crystalarium-cell="0"]').boundingBox();
+  const to = await live.locator('[data-crystalarium-cell="1"]').boundingBox();
+  if (!from || !to) throw new Error('C20 needs real occupied board targets for its merge reward');
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await expect(count).toHaveText('25 / 100');
+  const merged = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  expect(merged.version).toBe(4);
+  expect(merged.potion).toBe(25);
+  expect(merged.merges).toBe(1);
+  expect(merged.cells[1]).toMatchObject({ tier: 1 });
+});
+
+test.describe('C20 approved mobile potion recovery', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test('keeps free Brook Spring visible and restores basic growth from zero', async ({ page }) => {
+    test.setTimeout(90_000);
+    const seed = readCrystalariumPotion(createCrystalariumFullState());
+    if (!seed) throw new Error('C20 portrait seed migration failed');
+    await enterResonanceGarden(page, false, false, { ...seed, potion: 0 });
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('0 / 100');
+    await portrait.locator('[data-crystalarium-action="potion-refill"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('25 / 100');
+    await portrait.locator('[data-crystalarium-action="well-low"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('24 / 100');
+    const saved = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+      SANDBOX_KEY,
+    );
+    expect(saved.version).toBe(4);
+    expect(saved.potion).toBe(24);
+    expect(saved.cells.filter(Boolean)).toHaveLength(3);
+  });
+});

@@ -1,4 +1,9 @@
-export const CURRENT_SAVE_SCHEMA_VERSION = 9;
+import type { CrystalariumFullState } from '../minigames/crystalarium/CrystalariumFullRules';
+import type { CrystalariumQueueState } from '../minigames/crystalarium/CrystalariumMultiOrderRules';
+import type { CrystalariumChamberState } from '../minigames/crystalarium/CrystalariumChamberRules';
+import type { CrystalariumPotionState } from '../minigames/crystalarium/CrystalariumPotionRules';
+
+export const CURRENT_SAVE_SCHEMA_VERSION = 13;
 export const SAVE_STORAGE_KEY = 'unicorn-valley.save';
 export const DEFAULT_START_LOCATION_ID = 'moonflower-cottage';
 export const NEW_GAME_START_LOCATION_ID = 'location:moonflower-glade';
@@ -75,6 +80,12 @@ export interface RaceRecord {
 export interface ActivityState {
   racesById: Record<string, RaceRecord>;
   miniGameRecords: Record<string, number>;
+  crystalarium?:
+    | CrystalariumFullState
+    | CrystalariumQueueState
+    | CrystalariumChamberState
+    | CrystalariumPotionState
+    | null;
 }
 
 export interface CollectionState {

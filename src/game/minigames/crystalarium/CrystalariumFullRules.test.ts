@@ -1,0 +1,168 @@
+import { describe, expect, it } from 'vitest';
+import {
+  RESONANCE_CHAPTERS,
+  RESONANCE_PATTERNS,
+  FULL_CELL_COUNT,
+  createCrystalariumFullState,
+  isCrystalariumFullState,
+  moveOrMergeCrystal,
+  spawnCrystal,
+  growCrystalFromWell,
+  spawnRefinedCrystal,
+  refinedSourceTier,
+  washCrystal,
+  shelveCrystal,
+  restoreCrystal,
+  restoreCrystalToCell,
+  canOfferPattern,
+  offerResonancePattern,
+  unlockedCrystalFamilies,
+  chooseCrystalSource,
+  createHarmony,
+  polishCrystal,
+  startFreshCrystalariumBoard,
+} from './CrystalariumFullRules';
+
+describe('H6.9C Crystalarium deep merge mechanics', () => {
+  it('defines a complete five-chapter, fifty-pattern game on 42 cells', () => {
+    const state = createCrystalariumFullState();
+    expect(state.cells).toHaveLength(FULL_CELL_COUNT);
+    expect(state.shelf).toHaveLength(4);
+    expect(RESONANCE_CHAPTERS).toHaveLength(5);
+    expect(RESONANCE_PATTERNS).toHaveLength(50);
+    expect(new Set(RESONANCE_PATTERNS.map((p) => p.id)).size).toBe(50);
+    expect(isCrystalariumFullState(state)).toBe(true);
+  });
+  it('rejects malformed persisted boards and invalid merges', () => {
+    const original = createCrystalariumFullState();
+    expect(isCrystalariumFullState({ ...original, cells: [] })).toBe(false);
+    expect(isCrystalariumFullState({ ...original, completed: 60 })).toBe(false);
+    const previous = JSON.stringify(original);
+    expect(moveOrMergeCrystal(original, 0, 0).accepted).toBe(false);
+    expect(moveOrMergeCrystal(original, 0, 50).accepted).toBe(false);
+    expect(JSON.stringify(original)).toBe(previous);
+  });
+  it('uses the canonical same-family, same-tier merge and accepts exact pattern offerings', () => {
+    const initial = createCrystalariumFullState();
+    const result = moveOrMergeCrystal(initial, 0, 1);
+    expect(result.accepted).toBe(true);
+    expect(result.state.cells[1]).toEqual({ family: 'low', tier: 1 });
+    expect(canOfferPattern(result.state)).toBe(true);
+    const offered = offerResonancePattern(result.state);
+    expect(offered.accepted).toBe(true);
+    expect(offered.state.completed).toBe(1);
+    expect(offered.state.cells.filter(Boolean)).toHaveLength(0);
+    expect(offerResonancePattern(offered.state).accepted).toBe(false);
+  });
+  it('supports unlimited generation and cost-free rescue even when all spaces fill', () => {
+    let state = createCrystalariumFullState();
+    for (let i = 0; i < 40; i += 1) state = spawnCrystal(state).state;
+    expect(state.cells.every(Boolean)).toBe(true);
+    expect(spawnCrystal(state).accepted).toBe(false);
+    state = washCrystal(state, 9).state;
+    expect(spawnCrystal(state).accepted).toBe(true);
+  });
+  it('grows free basic shards atomically from rooted family wells, preserving all 42 sockets', () => {
+    const initial = createCrystalariumFullState();
+    const snapshot = JSON.stringify(initial);
+    const first = growCrystalFromWell(initial, 'low');
+    expect(first.accepted).toBe(true);
+    expect(first.state.cells).toHaveLength(42);
+    expect(first.state.cells[2]).toEqual({ family: 'low', tier: 0 });
+    expect(first.state.selectedFamily).toBe('low');
+    expect(JSON.stringify(initial)).toBe(snapshot);
+    const locked = growCrystalFromWell(initial, 'bright');
+    expect(locked.accepted).toBe(false);
+    expect(locked.state).toBe(initial);
+    expect(growCrystalFromWell({ ...initial, completed: 4 }, 'bright').state.cells[2]).toEqual({
+      family: 'bright',
+      tier: 0,
+    });
+    const allFamilies = { ...initial, completed: 7 };
+    const bell = growCrystalFromWell(allFamilies, 'bell');
+    expect(bell.accepted).toBe(true);
+    expect(bell.state.selectedFamily).toBe('bell');
+    expect(bell.state.cells[2]).toEqual({ family: 'bell', tier: 0 });
+    let filled = initial;
+    for (let i = 0; i < 40; i += 1) filled = spawnCrystal(filled).state;
+    const full = growCrystalFromWell(filled, 'low');
+    expect(full.accepted).toBe(false);
+    expect(full.state).toBe(filled);
+    expect(growCrystalFromWell(washCrystal(filled, 10).state, 'low').accepted).toBe(true);
+  });
+
+  it('stores pieces in a four-slot shelf and restores them safely', () => {
+    let state = createCrystalariumFullState();
+    state = shelveCrystal(state, 0).state;
+    expect(state.shelf[0]).toEqual({ family: 'low', tier: 0 });
+    state = restoreCrystal(state, 0).state;
+    expect(state.shelf[0]).toBeNull();
+    expect(state.cells.filter(Boolean)).toHaveLength(2);
+  });
+  it('restores dragged shelf pieces to the requested free socket and rejects occupied slots', () => {
+    const original = createCrystalariumFullState();
+    const shelved = shelveCrystal(original, 0).state;
+    const untouched = JSON.stringify(shelved);
+    expect(restoreCrystalToCell(shelved, 0, 1).accepted).toBe(false);
+    expect(restoreCrystalToCell(shelved, 0, 42).accepted).toBe(false);
+    expect(JSON.stringify(shelved)).toBe(untouched);
+    const restored = restoreCrystalToCell(shelved, 0, 5);
+    expect(restored.accepted).toBe(true);
+    expect(restored.state.cells[5]).toEqual({ family: 'low', tier: 0 });
+    expect(restored.state.shelf[0]).toBeNull();
+    expect(restored.state.cells[0]).toBeNull();
+  });
+  it('gradually unlocks families and a voluntary three-family harmony', () => {
+    const initial = createCrystalariumFullState();
+    expect(unlockedCrystalFamilies(initial)).toEqual(['low']);
+    expect(chooseCrystalSource(initial, 'bell').accepted).toBe(false);
+    expect(unlockedCrystalFamilies({ ...initial, completed: 7 })).toHaveLength(3);
+    const cells = [...initial.cells];
+    cells[0] = { family: 'low' as const, tier: 1 as const };
+    cells[1] = { family: 'bright' as const, tier: 1 as const };
+    cells[2] = { family: 'bell' as const, tier: 1 as const };
+    const result = createHarmony({ ...initial, completed: 10, cells });
+    expect(result.accepted).toBe(true);
+    expect(result.state.harmonies).toBe(1);
+  });
+  it('reduces late-game generator tapping without blocking lower-tier harmony recipes', () => {
+    const original = createCrystalariumFullState();
+    expect(refinedSourceTier(original)).toBeNull();
+    expect(spawnRefinedCrystal(original).accepted).toBe(false);
+
+    const pools = { ...original, completed: 20 };
+    expect(refinedSourceTier(pools)).toBe(1);
+    const polished = spawnRefinedCrystal(pools);
+    expect(polished.accepted).toBe(true);
+    expect(polished.state.cells[2]).toEqual({ family: 'low', tier: 1 });
+    expect(spawnCrystal(polished.state).state.cells[3]).toEqual({ family: 'low', tier: 0 });
+
+    const garden = { ...original, completed: 40 };
+    expect(refinedSourceTier(garden)).toBe(2);
+    const refined = spawnRefinedCrystal(garden);
+    expect(refined.state.cells[2]).toEqual({ family: 'low', tier: 2 });
+    expect(refined.state.discovered).toContain('low:2');
+    expect(isCrystalariumFullState(refined.state)).toBe(true);
+
+    const forged = { ...original, selectedFamily: 'bell' as const };
+    expect(spawnCrystal(forged).accepted).toBe(false);
+    expect(spawnRefinedCrystal({ ...forged, completed: 20 }).accepted).toBe(true);
+    expect(spawnRefinedCrystal({ ...forged, completed: 0 }).accepted).toBe(false);
+  });
+  it('spends a crafted harmony to polish only after the workshop unlocks', () => {
+    const initial = createCrystalariumFullState();
+    const before = JSON.stringify(initial);
+    expect(polishCrystal(initial, 0).accepted).toBe(false);
+    expect(JSON.stringify(initial)).toBe(before);
+    expect(polishCrystal({ ...initial, completed: 20, harmonies: 1 }, 0).accepted).toBe(false);
+    const workshop = { ...initial, completed: 32, harmonies: 1 };
+    const result = polishCrystal(workshop, 0);
+    expect(result.accepted).toBe(true);
+    expect(result.state.cells[0]).toEqual({ family: 'low', tier: 1 });
+    expect(result.state.harmonies).toBe(0);
+    expect(polishCrystal(result.state, 1).accepted).toBe(false);
+    const reset = startFreshCrystalariumBoard(workshop);
+    expect(reset.completed).toBe(32);
+    expect(reset.harmonies).toBe(1);
+  });
+});

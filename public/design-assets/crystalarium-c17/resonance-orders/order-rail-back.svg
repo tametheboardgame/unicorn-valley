@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="340" viewBox="0 0 1600 340"><title>Decorative Resonance Order rail</title>
+<defs>
+<linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#3a4264"/><stop offset=".30" stop-color="#142a47"/><stop offset=".70" stop-color="#162138"/><stop offset="1" stop-color="#3b2b45"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe1a2"/><stop offset=".22" stop-color="#b77b38"/><stop offset=".49" stop-color="#f9d18a"/><stop offset=".71" stop-color="#8e502c"/><stop offset="1" stop-color="#edb978"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#81ecff" stop-opacity=".8"/><stop offset="1" stop-color="#80bbfb" stop-opacity="0"/></radialGradient>
+<filter id="shadow"><feGaussianBlur stdDeviation="8"/></filter>
+<pattern id="runes" width="110" height="100" patternUnits="userSpaceOnUse"><path d="M55 10l12 15-12 15-12-15z M55 59v16m-8-8h16" stroke="#82bddd" stroke-opacity=".13" fill="none" stroke-width="2"/></pattern>
+</defs>
+<rect x="44" y="35" width="1512" height="264" rx="54" fill="#080c25" opacity=".46" filter="url(#shadow)"/>
+<rect x="30" y="26" width="1540" height="280" rx="58" fill="url(#wood)" stroke="url(#gold)" stroke-width="11"/>
+<rect x="46" y="41" width="1508" height="247" rx="45" fill="url(#runes)" stroke="#78b3dc" stroke-opacity=".38" stroke-width="3"/>
+<path d="M85 52Q800 0 1515 52M88 280Q800 326 1514 280" stroke="url(#gold)" stroke-width="5" fill="none" opacity=".95"/>
+<path d="M108 61Q800 27 1492 61M108 270Q800 302 1492 270" stroke="#a9e4f5" stroke-width="1.5" fill="none" opacity=".42"/>
+<g transform="translate(83 58)"><path d="M0 50C30 10 48 28 58 0M0 50C35 85 42 60 72 99" fill="none" stroke="#48783b" stroke-width="9"/><path d="M18 43Q-10 4 36 10Q46 29 18 43M27 61Q64 70 47 99Q15 92 27 61" fill="#4d995f"/><path d="M7 28Q-9 5 15 11L22 33zM51 79Q77 58 80 88L63 96z" fill="#79ad6a"/></g>
+<g transform="translate(1517 58) scale(-1 1)"><path d="M0 50C30 10 48 28 58 0M0 50C35 85 42 60 72 99" fill="none" stroke="#48783b" stroke-width="9"/><path d="M18 43Q-10 4 36 10Q46 29 18 43M27 61Q64 70 47 99Q15 92 27 61" fill="#4d995f"/><path d="M7 28Q-9 5 15 11L22 33zM51 79Q77 58 80 88L63 96z" fill="#79ad6a"/></g>
+<g fill="#c7faff" opacity=".92"><circle cx="80" cy="78" r="4"/><circle cx="1515" cy="78" r="4"/><circle cx="75" cy="248" r="4"/><circle cx="1527" cy="248" r="4"/></g>
+<g transform="translate(798 29)"><path d="M0-18l15 19-15 22L-15 1Z" fill="#58dafa" stroke="#f4d08b" stroke-width="4"/><circle r="24" fill="url(#glow)"/></g>
+<g transform="translate(800 307)"><path d="M0-12l13 12L0 14-13 0Z" fill="#4bbce6" stroke="#e7bc74" stroke-width="3"/></g>
+</svg>

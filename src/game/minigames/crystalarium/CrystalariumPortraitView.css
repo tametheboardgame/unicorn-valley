@@ -1,0 +1,882 @@
+/* Crystalarium's portrait presentation uses the existing native mobile-control
+   pattern because a 1280×720 canvas cannot meet the 48px touch target when
+   letterboxed into 390×844. The Phaser scene/controller remains authoritative. */
+.crystalarium-portrait {
+  display: none;
+}
+
+/* Responsive potion HUD lives above the board's menus; a refill must never
+   require opening a hidden drawer at zero. */
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait {
+    position: fixed;
+    z-index: 2500;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: max(9px, env(safe-area-inset-top)) max(9px, env(safe-area-inset-right)) 135px
+      max(9px, env(safe-area-inset-left));
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: linear-gradient(168deg, #162f50, #213e62 60%, #392c63);
+    color: #eaf8ff;
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .crystalarium-portrait-potion {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 5px 10px;
+    background: #153453;
+    border: 2px solid #8fc8df;
+    border-radius: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .crystalarium-portrait-potion strong { color: #fce6b2; font-size: 13px; }
+  .crystalarium-portrait-potion .crystalarium-portrait-action {
+    min-height: 48px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  .crystalarium-portrait-potion-meter {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 9px;
+    accent-color: #65dfe8;
+  }
+
+  .crystalarium-portrait h1,
+  .crystalarium-portrait h2,
+  .crystalarium-portrait p {
+    margin: 0;
+  }
+
+  .crystalarium-portrait-header,
+  .crystalarium-portrait-board-heading {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .crystalarium-portrait-heading {
+    font-size: clamp(22px, 6.5vw, 30px);
+    line-height: 1.12;
+  }
+
+  .crystalarium-portrait-subtitle {
+    margin-top: 3px !important;
+    color: #b8e8f4;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .crystalarium-portrait-pattern,
+  .crystalarium-portrait-board-section,
+  .crystalarium-portrait-controls,
+  .crystalarium-portrait-tools {
+    display: grid;
+    gap: 9px;
+    padding: 12px 9px;
+    border: 2px solid #78b5d1;
+    border-radius: 18px;
+    background: #1d3658;
+  }
+
+  .crystalarium-portrait-order-rail {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    min-width: 0;
+    width: 100%;
+    padding: 4px 0;
+  }
+  .crystalarium-portrait-extra-order {
+    flex: 0 0 min(70vw, 230px);
+    min-height: 52px;
+    white-space: normal;
+  }
+  .crystalarium-portrait-extra-order.is-ready {
+    border-color: #ffe4a0;
+    box-shadow: 0 0 10px #fbe59966;
+  }
+  .crystalarium-portrait-pattern {
+    gap: 5px;
+    border-color: #a2cce0;
+    background: #25476c;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-ready="true"] {
+    border-color: #ffe4a0;
+    box-shadow:
+      0 0 0 2px rgb(255 225 158 / 28%),
+      0 0 18px rgb(255 226 153 / 22%);
+  }
+
+  .crystalarium-portrait-pattern > .crystalarium-portrait-action.is-offer {
+    width: 100%;
+    grid-column: 1 / -1;
+    min-height: 48px;
+  }
+
+  .crystalarium-portrait-pattern > .crystalarium-portrait-action.is-offer.is-ready {
+    border-color: #ffe8af;
+    background: linear-gradient(120deg, #38837b, #6b6290);
+    color: #fff8d6;
+    box-shadow: 0 0 13px rgb(251 229 153 / 37%);
+  }
+
+  .crystalarium-portrait-tools {
+    border-color: #9083be;
+    background: #283659;
+  }
+
+  /* First-play single-picture recipes must leave a real board visible above the
+     fixed recovery shelf, including at 320×700. More complex recipes still wrap. */
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] {
+    grid-template-columns: minmax(0, 1fr) 90px;
+    grid-template-rows: min-content 1fr;
+    align-items: center;
+    column-gap: 7px;
+    padding-block: 9px;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] .crystalarium-portrait-eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"]
+    .crystalarium-portrait-pattern-title {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    line-height: 1.15;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] .crystalarium-portrait-goals {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] .crystalarium-portrait-goal {
+    min-width: 76px;
+    min-height: 80px;
+    padding: 3px 6px;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"]
+    .crystalarium-portrait-goal
+    .crystalarium-art {
+    width: 46px;
+    height: 50px;
+  }
+
+  .crystalarium-portrait-eyebrow,
+  .crystalarium-portrait-board-title,
+  .crystalarium-portrait-section-title {
+    color: #aee5ef;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-pattern-title {
+    font-size: clamp(19px, 5.3vw, 24px);
+  }
+
+  .crystalarium-portrait-goals {
+    color: #fff5da;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .crystalarium-portrait-goals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    align-items: center;
+  }
+
+  .crystalarium-portrait-goal {
+    display: grid;
+    place-items: center;
+    min-width: 76px;
+    min-height: 98px;
+    padding: 6px 9px;
+    border: 2px solid #9acbe3;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #34587d, #192d4d);
+  }
+
+  .crystalarium-portrait-goal-count {
+    color: #fff3c7;
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-harmony-goal {
+    padding: 8px;
+    color: #fff3c7;
+    font-weight: 900;
+  }
+
+  .crystalarium-art {
+    display: block;
+    width: 40px;
+    height: 44px;
+    overflow: visible;
+    filter: drop-shadow(0 3px 3px rgb(4 19 40 / 35%));
+    pointer-events: none;
+  }
+
+  .crystalarium-portrait-goal .crystalarium-art {
+    width: 55px;
+    height: 60px;
+  }
+
+  .crystalarium-portrait-guide {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border: 2px solid #ffe5a4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #365781, #28465e);
+    box-shadow: 0 3px 10px rgb(4 21 46 / 24%);
+  }
+
+  .crystalarium-portrait-guide[hidden] {
+    display: none;
+  }
+
+  .crystalarium-portrait-guide-title {
+    color: #fff4be;
+    font-size: 17px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-guide-copy {
+    margin: 0;
+    color: #f4faff;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .crystalarium-portrait-cell.is-guide-focus,
+  .crystalarium-portrait-goal.is-guide-focus,
+  .crystalarium-portrait-grid.is-guide-focus,
+  .crystalarium-portrait-action.is-guide-focus {
+    outline: 3px solid #ffe59c;
+    outline-offset: 3px;
+    box-shadow: 0 0 14px rgb(255 224 146 / 36%);
+  }
+
+  .crystalarium-portrait-scroll-cue {
+    margin: 0;
+    color: #ffecab;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .crystalarium-portrait-rooted-wells {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 3px 4px 5px;
+    border: 2px solid #9cbccf;
+    border-radius: 14px 14px 5px 5px;
+    background: linear-gradient(130deg, #365e79, #343f6b);
+  }
+
+  .crystalarium-portrait-wells-title {
+    padding: 0 6px;
+    color: #e9daff;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-rooted-wells .crystalarium-portrait-action.is-rooted-well {
+    min-height: 48px;
+    padding: 3px;
+    border-color: #aadce4;
+    border-radius: 12px;
+    background: #2c5971;
+    font-size: 12px;
+  }
+
+  .crystalarium-portrait-rooted-wells .crystalarium-portrait-action.is-rooted-well.is-locked {
+    border-color: #8794b1;
+    background: #353d5c;
+    color: #e2d7f0;
+  }
+
+  .crystalarium-portrait-growing-hint {
+    color: #c7ebef;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .crystalarium-portrait-board-scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-color: #83c5df #263c61;
+  }
+
+  .crystalarium-portrait[data-crystalarium-celebration="merge"] .crystalarium-portrait-grid {
+    animation: crystalarium-resonance 540ms ease-out;
+  }
+
+  .crystalarium-portrait[data-crystalarium-celebration="offer"] .crystalarium-portrait-pattern,
+  .crystalarium-portrait[data-crystalarium-celebration="harmony"] .crystalarium-portrait-pattern {
+    animation: crystalarium-pattern-glow 650ms ease-out;
+  }
+
+  .crystalarium-portrait-grid {
+    display: grid;
+    width: max-content;
+    grid-template-columns: repeat(7, 48px);
+    grid-template-rows: repeat(6, 48px);
+    gap: 4px;
+    padding: 3px;
+    border-radius: 11px;
+    background: #132843;
+  }
+
+  .crystalarium-portrait-cell {
+    display: grid;
+    min-width: 48px;
+    min-height: 48px;
+    place-items: center;
+    padding: 1px;
+    border: 2px solid #6489af;
+    border-radius: 10px;
+    background: #2b4b6d;
+    color: #f4fcff;
+    font:
+      900 17px / 1.02 "Trebuchet MS",
+      system-ui,
+      sans-serif;
+    white-space: pre-line;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .crystalarium-portrait-cell.is-occupied,
+  .crystalarium-portrait-action.is-shelf:not(:disabled) {
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-drop="valid"] {
+    border-color: #aaf6d7;
+    box-shadow: inset 0 0 0 2px rgb(170 246 215 / 55%);
+  }
+
+  .crystalarium-portrait.is-dragging-crystal [data-crystalarium-drop="blocked"] {
+    opacity: 0.45;
+  }
+
+  .crystalarium-portrait.is-dragging-crystal
+    [data-crystalarium-over="true"][data-crystalarium-drop="valid"] {
+    outline: 4px solid #fff0a0;
+    outline-offset: -3px;
+    background: #467a89;
+  }
+
+  .crystalarium-portrait.is-dragging-crystal
+    [data-crystalarium-over="true"][data-crystalarium-drop="blocked"] {
+    outline: 3px dashed #f0b6a0;
+    outline-offset: -3px;
+  }
+
+  .crystalarium-portrait-cell[data-family="low"] {
+    border-color: #9cc4fa;
+    background: #3267a7;
+  }
+
+  .crystalarium-portrait-cell[data-family="bright"] {
+    border-color: #f1dc8f;
+    background: #896729;
+  }
+
+  .crystalarium-portrait-cell[data-family="bell"] {
+    border-color: #dfb2f4;
+    background: #774c9b;
+  }
+
+  .crystalarium-portrait-cell.is-selected {
+    border-width: 4px;
+    border-color: #fff2ac;
+    background: #5d79a3;
+  }
+
+  .crystalarium-portrait-hint {
+    color: #c9e9f4;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .crystalarium-portrait-sources,
+  .crystalarium-portrait-primary-actions,
+  .crystalarium-portrait-secondary-actions,
+  .crystalarium-portrait-shelf-slots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .crystalarium-portrait-sources {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .crystalarium-portrait-primary-actions {
+    margin-top: 2px;
+  }
+
+  .crystalarium-portrait-primary-actions.is-refined {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .crystalarium-portrait-action {
+    min-width: 0;
+    min-height: 48px;
+    padding: 7px 8px;
+    border: 2px solid #96bdd6;
+    border-radius: 12px;
+    background: #345e83;
+    color: #fff;
+    font:
+      800 15px / 1.15 "Trebuchet MS",
+      system-ui,
+      sans-serif;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .crystalarium-portrait-action.is-primary,
+  .crystalarium-portrait-action.is-offer {
+    border-color: #bcebd3;
+    background: #347c73;
+  }
+
+  .crystalarium-portrait-action.is-quiet,
+  .crystalarium-portrait-action.is-shelf {
+    border-color: #aac9d8;
+    background: #284969;
+  }
+
+  .crystalarium-portrait-action.is-warning {
+    border-color: #f5d38d;
+    background: #825734;
+  }
+
+  .crystalarium-portrait-action.is-selected {
+    border-color: #ffe6a6;
+    background: #5c6e97;
+  }
+
+  .crystalarium-portrait-action:disabled {
+    opacity: 0.5;
+  }
+
+  .crystalarium-portrait button:focus-visible {
+    outline: 4px solid #ffe6a6;
+    outline-offset: 2px;
+  }
+
+  .crystalarium-portrait-shelf {
+    position: fixed;
+    z-index: 6;
+    right: max(9px, env(safe-area-inset-right));
+    bottom: max(9px, env(safe-area-inset-bottom));
+    left: max(9px, env(safe-area-inset-left));
+    display: grid;
+    gap: 3px;
+    padding: 7px;
+    border: 2px solid #b6e8f7;
+    border-radius: 18px;
+    background: rgb(24 49 78 / 97%);
+    box-shadow: 0 5px 18px rgb(0 0 0 / 40%);
+  }
+
+  .crystalarium-portrait-shelf-slots {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .crystalarium-portrait-shelf-slots .crystalarium-portrait-action {
+    padding: 2px;
+    min-height: 48px;
+  }
+
+  .crystalarium-portrait-shelf-heading {
+    color: #bceaf4;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  .crystalarium-portrait-status {
+    position: static;
+    min-height: 48px;
+    padding: 12px;
+    border: 2px solid #bddfef;
+    border-radius: 12px;
+    background: #284b69;
+    color: #fff1cf;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+}
+
+@media (pointer: coarse) and (max-width: 360px) and (orientation: portrait) {
+  .crystalarium-portrait-action {
+    font-size: 13px;
+  }
+
+  .crystalarium-portrait-eyebrow {
+    font-size: 13px;
+  }
+
+  .crystalarium-portrait-guide {
+    gap: 2px;
+    padding: 8px 10px;
+  }
+
+  .crystalarium-portrait-guide-title {
+    font-size: 15px;
+  }
+
+  .crystalarium-portrait-guide-copy {
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .crystalarium-portrait-pattern,
+  .crystalarium-portrait-board-section,
+  .crystalarium-portrait-controls,
+  .crystalarium-portrait-tools {
+    padding-inline: 7px;
+  }
+
+  /* At 320×700, three final-chapter recipe cards and the new 48px wells
+     must leave the first *real* board row above the fixed safe shelf.
+     Compact non-interactive spacing; never shrink targets below 48px. */
+  .crystalarium-portrait {
+    gap: 6px;
+    padding-top: max(6px, env(safe-area-inset-top));
+  }
+
+  .crystalarium-portrait-pattern,
+  .crystalarium-portrait-board-section {
+    gap: 5px;
+    padding-block: 7px;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="3"] .crystalarium-portrait-goals {
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="3"] .crystalarium-portrait-goal {
+    min-width: 0;
+    min-height: 74px;
+    padding: 2px 3px;
+    border-radius: 12px;
+  }
+
+  .crystalarium-portrait-pattern[data-crystalarium-goal-count="3"]
+    .crystalarium-portrait-goal
+    .crystalarium-art {
+    width: 40px;
+    height: 43px;
+  }
+
+  .crystalarium-portrait-rooted-wells {
+    padding-block: 1px 3px;
+  }
+
+  .crystalarium-portrait-scroll-cue {
+    font-size: 12px;
+  }
+}
+
+/* C13A second visual pass: board-first mobile surface.
+   Drawer panels are presentation only; the controller and saves are unchanged. */
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait {
+    gap: 6px;
+    padding-bottom: max(110px, env(safe-area-inset-bottom) + 104px);
+    overflow-y: auto;
+  }
+
+  .crystalarium-portrait-header {
+    gap: 6px;
+    min-height: 54px;
+  }
+  .crystalarium-portrait-heading {
+    font-size: clamp(20px, 5.7vw, 25px);
+  }
+  .crystalarium-portrait-subtitle {
+    font-size: 12px;
+  }
+  .crystalarium-portrait-header > .crystalarium-portrait-action {
+    padding-inline: 6px;
+    min-width: 48px;
+    font-size: 13px;
+  }
+
+  /* Keep navigation, Skip guide and Leave usable while a drawer is open. */
+  .crystalarium-portrait-header {
+    position: relative;
+    z-index: 14;
+  }
+  .crystalarium-portrait-menu-strip {
+    position: relative;
+    z-index: 13;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .crystalarium-portrait-menu-strip .crystalarium-portrait-action {
+    min-height: 48px;
+    font-size: 14px;
+    padding: 5px 3px;
+  }
+  .crystalarium-portrait-guide {
+    position: relative;
+    z-index: 14;
+  }
+  .crystalarium-portrait-menu-strip [data-crystalarium-menu="pattern"] {
+    display: grid;
+    gap: 0;
+    align-content: center;
+    text-align: left;
+  }
+  .crystalarium-portrait-menu-label {
+    font-size: 12px;
+    font-weight: 900;
+  }
+  .crystalarium-portrait-menu-detail {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .crystalarium-portrait-menu-strip .is-active,
+  .crystalarium-portrait-menu-strip .is-ready {
+    border-color: #ffe5a0;
+    background: #466b82;
+    box-shadow: 0 0 0 2px rgb(255 225 158 / 18%);
+  }
+  .crystalarium-portrait-board-section {
+    flex: 1 0 auto;
+    min-height: 390px;
+    align-content: start;
+    padding-block: 9px;
+    background: linear-gradient(160deg, #1b365a, #243c60);
+  }
+  .crystalarium-portrait-board-heading {
+    min-height: 25px;
+  }
+  .crystalarium-portrait-board-count {
+    font-size: 12px;
+    font-weight: 800;
+    color: #b8e8f4;
+  }
+  .crystalarium-portrait-rooted-wells {
+    margin-top: 0;
+  }
+  .crystalarium-portrait-hint {
+    display: none;
+  }
+  .crystalarium-portrait-menu-backdrop {
+    position: fixed;
+    z-index: 10;
+    inset: 0;
+    background: rgb(7 19 40 / 58%);
+  }
+  .crystalarium-portrait-menu-backdrop[hidden],
+  .crystalarium-portrait-menu-panel[hidden],
+  .crystalarium-portrait-menu-panel > [hidden] {
+    display: none;
+  }
+  .crystalarium-portrait-menu-panel {
+    position: fixed;
+    z-index: 11;
+    right: max(9px, env(safe-area-inset-right));
+    bottom: max(103px, env(safe-area-inset-bottom) + 96px);
+    left: max(9px, env(safe-area-inset-left));
+    max-height: min(65dvh, 560px);
+    overflow-y: auto;
+    padding: 10px;
+    border: 2px solid #a4dbed;
+    border-radius: 20px;
+    background: #203957;
+    box-shadow: 0 9px 30px rgb(2 10 25 / 60%);
+    overscroll-behavior: contain;
+  }
+  .crystalarium-portrait-menu-heading {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #f3e6ff;
+  }
+  .crystalarium-portrait-menu-title {
+    font-size: 18px;
+    text-transform: capitalize;
+  }
+  .crystalarium-portrait-menu-heading .crystalarium-portrait-action {
+    min-width: 84px;
+  }
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-pattern,
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-controls,
+  .crystalarium-portrait-menu-panel > .crystalarium-portrait-tools {
+    width: 100%;
+    min-width: 0;
+  }
+  .crystalarium-portrait-menu-panel
+    > .crystalarium-portrait-pattern[data-crystalarium-goal-count="1"] {
+    grid-template-columns: minmax(0, 1fr) 90px;
+  }
+  .crystalarium-portrait-shelf {
+    z-index: 12;
+    gap: 2px;
+    padding: 5px;
+  }
+  .crystalarium-portrait-shelf-heading {
+    font-size: 12px;
+  }
+  .crystalarium-portrait-status {
+    position: fixed;
+    z-index: 7;
+    right: max(9px, env(safe-area-inset-right));
+    bottom: max(103px, env(safe-area-inset-bottom) + 96px);
+    left: max(9px, env(safe-area-inset-left));
+    min-height: 0;
+    padding: 5px 9px;
+    overflow: hidden;
+    border-width: 1px;
+    border-radius: 8px;
+    background: rgb(24 53 78 / 93%);
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+}
+
+.crystalarium-drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  display: grid;
+  width: 70px;
+  height: 76px;
+  place-items: center;
+  pointer-events: none;
+  transform: translate(-50%, -58%);
+  border: 2px solid #fff4b2;
+  border-radius: 24px;
+  background: rgb(39 79 117 / 70%);
+  box-shadow:
+    0 8px 25px rgb(0 0 0 / 35%),
+    0 0 18px rgb(201 236 255 / 45%);
+}
+
+.crystalarium-drag-ghost .crystalarium-art {
+  width: 65px;
+  height: 70px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crystalarium-drag-ghost {
+    box-shadow: 0 4px 10px rgb(0 0 0 / 35%);
+  }
+}
+
+@keyframes crystalarium-resonance {
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 243 174 / 0%);
+  }
+  45% {
+    box-shadow: 0 0 0 5px rgb(255 243 174 / 70%);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 243 174 / 0%);
+  }
+}
+
+@keyframes crystalarium-pattern-glow {
+  0% {
+    border-color: #a2cce0;
+  }
+  40% {
+    border-color: #ffecae;
+    background: #3b657b;
+  }
+  100% {
+    border-color: #a2cce0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crystalarium-portrait[data-crystalarium-celebration] .crystalarium-portrait-grid,
+  .crystalarium-portrait[data-crystalarium-celebration] .crystalarium-portrait-pattern {
+    animation: none;
+  }
+}
+
+/* C19: closed chest stays compact; opened 4 x 3 chamber is a bounded sheet. */
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait-shelf.is-open {
+    z-index: 20;
+    max-height: min(78dvh, 450px);
+    overflow: hidden;
+    padding: 12px;
+    border-color: #f1d99b;
+    box-shadow: 0 0 0 100vmax rgb(4 14 34 / 75%);
+  }
+
+  .crystalarium-portrait-shelf-slots {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .crystalarium-portrait-shelf-slots .crystalarium-portrait-action {
+    min-height: 56px;
+    aspect-ratio: 1;
+    padding: 3px;
+  }
+
+  .crystalarium-portrait-shelf-slots .is-empty {
+    opacity: 0.58;
+  }
+
+  .crystalarium-portrait-shelf-slots .crystalarium-portrait-action {
+    touch-action: none;
+  }
+
+  .crystalarium-portrait-shelf-slots .is-selected {
+    outline: 4px solid #ffe39b;
+    outline-offset: -3px;
+  }
+
+  .crystalarium-portrait-cell.is-storage-target {
+    border-color: #a8f8d1;
+    box-shadow: inset 0 0 0 3px #79e5b8;
+  }
+}
