@@ -67,9 +67,10 @@ describe('C19 Crystalarium Storage Chamber pure transfer contract', () => {
   });
 
   it('rearranges or swaps occupied slots without destroying either crystal', () => {
-    const initial = { ...fresh(), shelf: [
-      makeCrystalPiece('low'), makeCrystalPiece('bright', 3), ...Array(10).fill(null),
-    ] };
+    const initial = {
+      ...fresh(),
+      shelf: [makeCrystalPiece('low'), makeCrystalPiece('bright', 3), ...Array(10).fill(null)],
+    };
     const moved = moveStoredCrystal(initial, 0, 9);
     expect(moved.accepted).toBe(true);
     if (!moved.accepted) return;
@@ -128,7 +129,9 @@ describe('C19 Crystalarium Storage Chamber pure transfer contract', () => {
     expect(readCrystalariumChamber(valid)).toBe(valid);
     expect(readCrystalariumChamber({ ...valid, version: 4 })).toBeNull();
     expect(readCrystalariumChamber({ ...valid, shelf: valid.shelf.slice(0, 11) })).toBeNull();
-    expect(readCrystalariumChamber({ ...valid, shelf: [...valid.shelf.slice(0, 11), {}] })).toBeNull();
+    expect(
+      readCrystalariumChamber({ ...valid, shelf: [...valid.shelf.slice(0, 11), {}] }),
+    ).toBeNull();
     expect(readCrystalariumChamber({ ...valid, completed: 60 })).toBeNull();
     expect(readCrystalariumChamber({ ...valid, completedPatternIds: ['unknown'] })).toBeNull();
     expect(isCrystalariumChamberState({ ...valid, cells: [] })).toBe(false);
