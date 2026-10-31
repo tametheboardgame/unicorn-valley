@@ -618,7 +618,9 @@ test.describe('H6.9C8 native touch and mouse carrying', () => {
     // No rearrange mode, Board or Choose socket buttons are displayed.
     await expect(region.locator('[data-crystalarium-action="storage-arrange"]')).toHaveCount(0);
     await expect(region.locator('[data-crystalarium-action="storage-return"]')).toHaveCount(0);
-    await expect(region.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(0);
+    await expect(region.locator('[data-crystalarium-action="storage-choose-socket"]')).toHaveCount(
+      0,
+    );
     await region.locator('[data-crystalarium-action="shelf-0"]').click();
     const restored = await page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
@@ -662,16 +664,18 @@ test.describe('C19 portrait Storage direct manipulation', () => {
     );
     expect(saved.shelf[0]).toBeNull();
     expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
-    const chamberLayout = await portrait.locator('.crystalarium-portrait-shelf.is-open').evaluate(
-      (panel) => ({
+    const chamberLayout = await portrait
+      .locator('.crystalarium-portrait-shelf.is-open')
+      .evaluate((panel) => ({
         hasOverflow: panel.scrollHeight > panel.clientHeight + 1,
-        rows: [...new Set(
-          Array.from(panel.querySelectorAll('.crystalarium-portrait-shelf-slots button')).map(
-            (slot) => Math.round(slot.getBoundingClientRect().top),
+        rows: [
+          ...new Set(
+            Array.from(panel.querySelectorAll('.crystalarium-portrait-shelf-slots button')).map(
+              (slot) => Math.round(slot.getBoundingClientRect().top),
+            ),
           ),
-        )].length,
-      }),
-    );
+        ].length,
+      }));
     expect(chamberLayout.hasOverflow).toBe(false);
     expect(chamberLayout.rows).toBe(3);
     await slots.locator('[data-crystalarium-action="shelf-11"]').click();
@@ -1654,22 +1658,28 @@ test('C19 chamber drag-rearranges and one-tap returns to the first vacant board 
   }
 
   const dragSlot = async (source: number, destination: number) => {
-    const from = await dialog.locator('[data-crystalarium-action="shelf-' + source + '"]').boundingBox();
-    const to = await dialog.locator('[data-crystalarium-action="shelf-' + destination + '"]').boundingBox();
+    const from = await dialog
+      .locator('[data-crystalarium-action="shelf-' + source + '"]')
+      .boundingBox();
+    const to = await dialog
+      .locator('[data-crystalarium-action="shelf-' + destination + '"]')
+      .boundingBox();
     if (!from || !to) throw new Error('Storage sockets must remain visible drag targets');
     await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
     await page.mouse.down();
     await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
-    await expect(dialog.locator('[data-crystalarium-action="shelf-' + destination + '"]')).toHaveAttribute(
-      'data-crystalarium-drop',
-      'valid',
-    );
+    await expect(
+      dialog.locator('[data-crystalarium-action="shelf-' + destination + '"]'),
+    ).toHaveAttribute('data-crystalarium-drop', 'valid');
     await page.mouse.up();
   };
 
   // Drag onto an empty socket, then onto an occupied socket to prove swapping.
   await dragSlot(0, 11);
-  let saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+  let saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+    SANDBOX_KEY,
+  );
   expect(saved.version).toBe(3);
   expect(saved.shelf[0]).toBeNull();
   expect(saved.shelf[11]).toEqual({ family: 'bell', tier: 3 });
@@ -1683,7 +1693,8 @@ test('C19 chamber drag-rearranges and one-tap returns to the first vacant board 
   await dialog.locator('[data-crystalarium-action="shelf-1"]').focus();
   await page.keyboard.press('Shift+Enter');
   await expect(dialog.locator('[data-crystalarium-action="shelf-1"]')).toHaveAttribute(
-    'aria-pressed', 'true',
+    'aria-pressed',
+    'true',
   );
   await dialog.locator('[data-crystalarium-action="shelf-10"]').focus();
   await page.keyboard.press('Shift+Enter');
