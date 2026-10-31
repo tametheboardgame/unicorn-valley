@@ -116,7 +116,7 @@ export class CrystalariumPortraitView {
           this.storageOpen = false;
           this.storageKeyboardSource = null;
           if (this.currentView) this.render(this.currentView);
-         } else if (this.activeMenu !== null) {
+        } else if (this.activeMenu !== null) {
           const menu = this.activeMenu;
           this.toggleMenu(menu);
         } else {
