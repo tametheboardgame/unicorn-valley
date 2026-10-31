@@ -111,29 +111,35 @@ describe('C18 gate B multi-order pure model', () => {
   });
 
   it('consumes one chosen ready card atomically, then recalculates overlapping readiness', () => {
-    const start = withPieces(migrate(1), [
-      { family: 'low', tier: 1 },
+    // Clearer Tone needs one Low tier-two crystal. Pair of Crystals needs
+    // the SAME tier-two crystal plus a tier-one crystal.
+    const start = withPieces(migrate(2), [
+      { family: 'low', tier: 2 },
       { family: 'low', tier: 1 },
     ]);
-    const firstId = RESONANCE_PATTERNS[1].id;
-    const secondId = RESONANCE_PATTERNS[2].id;
+    const firstId = RESONANCE_PATTERNS[2].id;
+    const secondId = RESONANCE_PATTERNS[3].id;
     expect(canOfferQueuedPattern(start, firstId)).toBe(true);
     expect(canOfferQueuedPattern(start, secondId)).toBe(true);
-    const firstResult = offerQueuedPattern(start, secondId);
+    const firstResult = offerQueuedPattern(start, firstId);
     expect(firstResult.accepted).toBe(true);
     if (!firstResult.accepted) return;
     const next = firstResult.state;
-    expect(next.completedPatternIds).toEqual([RESONANCE_PATTERNS[0].id, secondId]);
+    expect(next.completedPatternIds).toEqual([
+      RESONANCE_PATTERNS[0].id,
+      RESONANCE_PATTERNS[1].id,
+      firstId,
+    ]);
     expect(next.offers).toBe(start.offers + 1);
     expect(next.cells.filter(Boolean)).toHaveLength(1);
-    expect(next.revealedCount).toBe(4);
+    expect(next.revealedCount).toBe(5);
     expect(activeResonanceQueue(next).map((pattern) => pattern.id)).toEqual([
-      firstId,
-      RESONANCE_PATTERNS[3].id,
+      secondId,
+      RESONANCE_PATTERNS[4].id,
     ]);
-    expect(canOfferQueuedPattern(next, firstId)).toBe(false);
+    expect(canOfferQueuedPattern(next, secondId)).toBe(false);
     const beforeRetry = JSON.stringify(next);
-    const rejected = offerQueuedPattern(next, firstId);
+    const rejected = offerQueuedPattern(next, secondId);
     expect(rejected.accepted).toBe(false);
     expect(rejected.state).toBe(next);
     expect(JSON.stringify(next)).toBe(beforeRetry);
