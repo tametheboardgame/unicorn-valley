@@ -78,6 +78,10 @@ export class CrystalariumPointerDrag {
         ? { kind: 'shelf' as const, index: Number(shelf.dataset.crystalariumAction?.slice(6)) }
         : null;
     if (!origin) return;
+    // A new gesture must never inherit the synthetic-click guard from an
+    // earlier same-slot drag. Native taps are handled by the button itself.
+    this.lastShelfTapAt = 0;
+    this.lastShelfTapIndex = -1;
     const piece = this.getPiece(origin);
     if (!piece) return;
     this.current = {
