@@ -124,12 +124,11 @@ export class CrystalariumPointerDrag {
     const current = this.current;
     if (!current || current.pointerId !== event.pointerId) return;
     if (!current.dragging) {
+      // Leave an ordinary Storage tap to the native button click. Running the
+      // action on pointer-up redraws and replaces its button before click,
+      // which can drop a return or immediately cancel a rearrangement choice.
+      // Unlike a drag, this path has not captured the pointer.
       this.clear();
-      if (current.origin.kind === 'shelf') {
-        this.lastShelfTapAt = Date.now();
-        this.lastShelfTapIndex = current.origin.index;
-        this.actions.tapShelf(current.origin.index);
-      }
       return;
     }
     event.preventDefault();
