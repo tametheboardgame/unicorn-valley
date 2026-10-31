@@ -31,10 +31,7 @@ import {
   returnStoredCrystal,
   moveStoredCrystal,
 } from './CrystalariumChamberRules';
-import {
-  activeResonanceQueue,
-  offerQueuedPattern,
-} from './CrystalariumMultiOrderRules';
+import { activeResonanceQueue, offerQueuedPattern } from './CrystalariumMultiOrderRules';
 import {
   CrystalariumPortraitView,
   type CrystalariumPortraitActions,
