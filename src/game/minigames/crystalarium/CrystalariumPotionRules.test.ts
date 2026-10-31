@@ -92,7 +92,11 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     expect(washed.message).toContain('returned 1 Growth Potion drop');
     expect(state.cells[0]).toBe(original);
     expect(state.potion).toBe(23);
-    const duplicate = applyCrystalariumPotion(washed.state, washCrystal(washed.state, 0), undefined);
+    const duplicate = applyCrystalariumPotion(
+      washed.state,
+      washCrystal(washed.state, 0),
+      undefined,
+    );
     expect(duplicate.accepted).toBe(false);
     expect(duplicate.state).toBe(washed.state);
   });
@@ -118,7 +122,11 @@ describe('C20 approved live potion rules, single-state atomicity', () => {
     const first = applyCrystalariumPotion(initial, growCrystalFromWell(initial, 'low'), 'basic');
     expect(first.accepted).toBe(true);
     if (!first.accepted) return;
-    const second = applyCrystalariumPotion(first.state, growCrystalFromWell(first.state, 'low'), 'basic');
+    const second = applyCrystalariumPotion(
+      first.state,
+      growCrystalFromWell(first.state, 'low'),
+      'basic',
+    );
     expect(second.accepted).toBe(true);
     if (!second.accepted) return;
     const merged = applyCrystalariumPotion(
