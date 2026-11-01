@@ -1024,7 +1024,9 @@
   border-radius: 10px;
   background: #fff0bf;
   color: #173850;
-  font: 800 11px/26px system-ui, sans-serif;
+  font:
+    800 11px / 26px system-ui,
+    sans-serif;
   text-align: center;
   white-space: nowrap;
   box-shadow: 0 3px 12px #071d3bba;
