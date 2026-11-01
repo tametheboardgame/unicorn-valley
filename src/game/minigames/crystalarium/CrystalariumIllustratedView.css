@@ -499,7 +499,9 @@
 .crystalarium-live-order-card.is-ready {
   border-color: #9af1c6 !important;
   background: linear-gradient(155deg, #f5ffdc, #bfe7d6) !important;
-  box-shadow: 0 0 0 2px #53dca6, 0 0 16px #78eed1ab;
+  box-shadow:
+    0 0 0 2px #53dca6,
+    0 0 16px #78eed1ab;
 }
 .crystalarium-live-order-card.is-ready:not(:disabled) {
   cursor: pointer;
@@ -508,7 +510,9 @@
   display: block;
   flex: 0 0 auto;
   width: 100%;
-  font: 800 clamp(15px, 1.4vw, 19px) / 1.17 Georgia, serif;
+  font:
+    800 clamp(15px, 1.4vw, 19px) / 1.17 Georgia,
+    serif;
   overflow-wrap: break-word;
   color: #1c3d55;
 }

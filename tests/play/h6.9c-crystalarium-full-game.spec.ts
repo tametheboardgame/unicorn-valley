@@ -2108,9 +2108,7 @@ test('C20 blocked full-board generator growth never plays a pouring animation', 
   expect(saved.cells.filter(Boolean)).toHaveLength(42);
 });
 
-test('C23 Three Notes card gives every crystal a full-size horizontal slot', async ({
-  page,
-}) => {
+test('C23 Three Notes card gives every crystal a full-size horizontal slot', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await enterResonanceGarden(page, false, true, {
     ...createCrystalariumFullState(),
