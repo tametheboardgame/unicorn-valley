@@ -2203,6 +2203,88 @@ test('C21 real player sees illustrated Crystalarium without a query flag', async
   expect(await page.evaluate(() => location.search)).toBe('');
 });
 
+test.describe('C22A passive first-lesson spotlight over canonical buttons', () => {
+  for (const viewport of [
+    { width: 960, height: 560 },
+    { width: 1280, height: 720 },
+    { width: 1440, height: 900 },
+  ]) {
+    test(`keeps the live target and directional cue clear at ${viewport.width}x${viewport.height}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await enterResonanceGarden(page, true, true);
+      const live = page.locator('[data-crystalarium-live="true"]');
+      const spotlight = live.locator('[data-crystalarium-spotlight="true"]');
+      const grow = live.locator('[data-crystalarium-action="well-low"]');
+      await expect(spotlight).toBeVisible();
+      await expect(grow).toBeEnabled();
+      await expect(grow).toHaveAttribute(
+        'aria-describedby',
+        'crystalarium-live-guide-instruction',
+      );
+      const geometry = await live.evaluate((root) => {
+        const target = root.querySelector<HTMLElement>('[data-crystalarium-guide-target]');
+        const overlay = root.querySelector<HTMLElement>('[data-crystalarium-spotlight]');
+        const cue = overlay?.querySelector<HTMLElement>('.crystalarium-live-spotlight-arrow');
+        const shades = Array.from(
+          overlay?.querySelectorAll<HTMLElement>('.crystalarium-live-spotlight-shade') ?? [],
+        );
+        if (!target || !overlay || !cue) throw new Error('C22 live spotlight is absent');
+        const t = target.getBoundingClientRect();
+        const a = cue.getBoundingClientRect();
+        const separation =
+          a.right <= t.left ||
+          a.left >= t.right ||
+          a.bottom <= t.top ||
+          a.top >= t.bottom;
+        const center = document.elementFromPoint(t.left + t.width / 2, t.top + t.height / 2);
+        return {
+          overlayPointer: getComputedStyle(overlay).pointerEvents,
+          shadePointers: shades.map((panel) => getComputedStyle(panel).pointerEvents),
+          arrowPointer: getComputedStyle(cue).pointerEvents,
+          arrowVisible: getComputedStyle(cue).display !== 'none',
+          arrowAwayFromTarget: separation,
+          centerIsRealButton: center === target || target.contains(center),
+          shades: shades.length,
+        };
+      });
+      expect(geometry.shades).toBe(4);
+      expect(geometry.overlayPointer).toBe('none');
+      expect(geometry.shadePointers).toEqual(['none', 'none', 'none', 'none']);
+      expect(geometry.arrowPointer).toBe('none');
+      expect(geometry.arrowVisible).toBe(true);
+      expect(geometry.arrowAwayFromTarget).toBe(true);
+      expect(geometry.centerIsRealButton).toBe(true);
+
+      // Sound is a safe exception; its redraw cannot strand the spotlight.
+      await live.locator('[data-crystalarium-action="sound"]').click();
+      await expect(spotlight).toBeVisible();
+      await expect(grow).toBeEnabled();
+      await grow.click();
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 4');
+      const pick = live.locator('.crystalarium-live-cell.is-guide-focus');
+      await expect(pick).toHaveAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
+      await pick.click();
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('3 of 4');
+      await expect(live.locator('.crystalarium-live-cell.is-guide-focus')).toHaveAttribute(
+        'aria-describedby',
+        'crystalarium-live-guide-instruction',
+      );
+      await live.locator('.crystalarium-live-cell.is-guide-focus').click();
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('4 of 4');
+      await expect(live.locator('.crystalarium-live-order-card.is-guide-focus')).toHaveAttribute(
+        'aria-describedby',
+        'crystalarium-live-guide-instruction',
+      );
+      await live.locator('[data-crystalarium-action="skip-guide"]').click();
+      await expect(spotlight).toHaveCount(0);
+      await expect(live.locator('.crystalarium-live-guide')).toHaveCount(0);
+      await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+    });
+  }
+});
+
 test('C21 first lesson remains playable without a blocking overlay', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, true, true);
