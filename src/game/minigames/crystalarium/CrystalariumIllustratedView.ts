@@ -10,6 +10,7 @@ import {
 import { CRYSTAL_TIER_NAMES, type CrystalPiece } from './CrystalariumOpeningRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
 import { CrystalariumGrowthPotionFx } from './CrystalariumGrowthPotionFx';
+import { CrystalariumSpotlight } from './CrystalariumSpotlight';
 import { activeResonanceQueue, canOfferQueuedPattern } from './CrystalariumMultiOrderRules';
 import { POTION_CAPACITY, potionChamber } from './CrystalariumPotionRules';
 import type {
@@ -63,6 +64,7 @@ export class CrystalariumIllustratedView {
   private readonly dragging: CrystalariumPointerDrag;
   private readonly actions: CrystalariumPortraitActions;
   private readonly growthFx = new CrystalariumGrowthPotionFx();
+  private readonly spotlight: CrystalariumSpotlight;
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
   private orderRailObserver: ResizeObserver | null = null;
@@ -75,6 +77,7 @@ export class CrystalariumIllustratedView {
     this.root.setAttribute('role', 'region');
     this.root.setAttribute('aria-label', 'Crystalarium illustrated live game');
     this.root.dataset.crystalariumLive = 'true';
+    this.spotlight = new CrystalariumSpotlight(this.root);
     // Native buttons must not propagate presses to Phaser canvas controls.
     for (const name of ['pointerdown', 'pointerup', 'pointercancel', 'click']) {
       this.root.addEventListener(name, (event) => event.stopPropagation());
@@ -205,6 +208,7 @@ export class CrystalariumIllustratedView {
   }
 
   public render(view: CrystalariumPortraitPresentation): void {
+    this.spotlight.clear();
     this.dragging.cancelActiveGesture();
     this.orderRailObserver?.disconnect();
     this.latest = view;
@@ -552,6 +556,7 @@ export class CrystalariumIllustratedView {
       guide.setAttribute('aria-label', 'Crystalarium guide');
       guide.setAttribute('aria-live', 'polite');
       const instruction = node('div', 'crystalarium-live-guide-copy');
+      instruction.id = 'crystalarium-live-guide-instruction';
       instruction.append(
         node('strong', '', prompt.title),
         node(
@@ -672,9 +677,38 @@ export class CrystalariumIllustratedView {
             : '[data-crystalarium-action="' + selectedKey + '"]';
       this.root.querySelector<HTMLButtonElement>(query)?.focus({ preventScroll: true });
     }
+    // Anchor visual guidance to the real, currently permitted control.
+    // The shade and arrow never receive pointer input or replace game actions.
+    const lessonTarget =
+      activeLesson === 'grow'
+        ? this.root.querySelector<HTMLElement>('[data-crystalarium-guide-target="true"]')
+        : activeLesson === 'pick-up' && prompt?.sourceIndex !== undefined
+          ? this.root.querySelector<HTMLElement>(
+              '[data-crystalarium-cell="' + prompt.sourceIndex + '"]',
+            )
+          : activeLesson === 'merge' && prompt?.targetIndex !== undefined
+            ? this.root.querySelector<HTMLElement>(
+                '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
+              )
+            : activeLesson === 'offer'
+              ? this.root.querySelector<HTMLElement>('.crystalarium-live-order-card.is-guide-focus')
+              : null;
+    if (lessonTarget && prompt) {
+      lessonTarget.setAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
+      const cue =
+        activeLesson === 'grow'
+          ? '↓ Grow here'
+          : activeLesson === 'pick-up'
+            ? '↓ Pick this'
+            : activeLesson === 'merge'
+              ? '↓ Match here'
+              : '↓ Offer here';
+      this.spotlight.show(lessonTarget, cue);
+    }
   }
 
   public destroy(): void {
+    this.spotlight.destroy();
     this.orderRailObserver?.disconnect();
     this.growthFx.destroy();
     this.dragging.destroy();
