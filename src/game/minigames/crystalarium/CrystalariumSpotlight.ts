@@ -56,7 +56,10 @@ export class CrystalariumSpotlight {
 
   private position(): void {
     const target = this.target;
-    if (!target || !this.root.contains(target)) return this.clear();
+    if (!target || !this.root.contains(target)) {
+      this.clear();
+      return;
+    }
     const root = this.root.getBoundingClientRect();
     const bounds = target.getBoundingClientRect();
     const w = root.width;
