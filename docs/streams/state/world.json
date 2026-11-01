@@ -5,7 +5,7 @@
   "workPackage": "R6.5-WP19H6.9C17",
   "workPackagePath": "docs/work-packages/R6.5-WP19H6.9C17-C24-CRYSTALARIUM-ILLUSTRATED-REDESIGN-ROADMAP.md",
   "branch": "agent/world-c22-crystalarium-spotlight-guide",
-  "prNumber": null,
+  "prNumber": 342,
   "baseMainSha": "d45acf0c76f819da70a554e10cbba9aadab7265f",
   "updatedOn": "2026-11-01",
   "note": "PR #337 Crystalarium C17-C21 playable pilot merged to main d45acf0c after full Tier0-4 qualification; daughter tablet playtest can proceed on production branch, separate C23 refinements remain. New C22A draft World work on agent/world-c22-crystalarium-spotlight-guide: added a passive four-rectangle dimming spotlight anchored to REAL current tutorial buttons and cells, non-blocking directional cue, first-lesson aria-describedby, resize/scroll observers and cleanup. Added three responsive viewport browser contracts. No gameplay/input policy, C20 potion, save schema, world/Just Games integration or other stream changes. Exact-head CI and human Gate F outstanding. Next: pictorial goal inspection step, focus/accessibility and phone/native bridge; C23/C24 remain deferred. Production Cloudflare SHA verification was outside the GitHub merge result."
