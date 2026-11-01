@@ -65,6 +65,7 @@ export class CrystalariumIllustratedView {
   private readonly growthFx = new CrystalariumGrowthPotionFx();
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
+  private orderRailObserver: ResizeObserver | null = null;
   // Shift+Enter is the accessible equivalent of dragging between Storage slots.
   private storageKeyboardSource: number | null = null;
 
@@ -205,6 +206,7 @@ export class CrystalariumIllustratedView {
 
   public render(view: CrystalariumPortraitPresentation): void {
     this.dragging.cancelActiveGesture();
+    this.orderRailObserver?.disconnect();
     this.latest = view;
     const active = document.activeElement;
     const selectedKey =
@@ -405,7 +407,29 @@ export class CrystalariumIllustratedView {
     );
     const orderRow = node('div', 'crystalarium-live-orders-row');
     const rail = node('div', 'crystalarium-live-orders-scroll');
-    rail.setAttribute('aria-label', 'Current Resonance Orders');
+    rail.setAttribute('role', 'group');
+    rail.setAttribute('aria-label', 'Current Resonance Orders, scroll horizontally');
+    const previousOrder = this.button('‹', 'orders-previous', () => {
+      rail.scrollBy({ left: -Math.max(180, rail.clientWidth * 0.75), behavior: 'auto' });
+    }, true);
+    previousOrder.classList.add('crystalarium-live-order-nav');
+    previousOrder.setAttribute('aria-label', 'Scroll Resonance Orders left');
+    previousOrder.hidden = true;
+    const nextOrder = this.button('›', 'orders-next', () => {
+      rail.scrollBy({ left: Math.max(180, rail.clientWidth * 0.75), behavior: 'auto' });
+    }, true);
+    nextOrder.classList.add('crystalarium-live-order-nav');
+    nextOrder.setAttribute('aria-label', 'Scroll Resonance Orders right');
+    nextOrder.hidden = true;
+    const syncOrderNavigation = () => {
+      const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+      const hasOverflow = maxScroll > 1;
+      previousOrder.hidden = !hasOverflow;
+      nextOrder.hidden = !hasOverflow;
+      previousOrder.disabled = !hasOverflow || rail.scrollLeft <= 1;
+      nextOrder.disabled = !hasOverflow || rail.scrollLeft >= maxScroll - 1;
+    };
+    rail.addEventListener('scroll', syncOrderNavigation, { passive: true });
     const visible = patterns.length > 0 ? patterns : pattern ? [pattern] : [];
     for (const [index, activePattern] of visible.entries()) {
       const ready = queue ? canOfferQueuedPattern(queue, activePattern.id) : canOfferPattern(state);
@@ -420,17 +444,21 @@ export class CrystalariumIllustratedView {
       card.classList.toggle('has-two-goals', activePattern.goals.length === 2);
       card.classList.toggle('has-three-goals', activePattern.goals.length >= 3);
       card.classList.toggle('is-guide-focus', index === 0 && activeLesson === 'offer');
-      card.setAttribute('aria-label', 'Offer Resonance Order: ' + activePattern.title);
       card.classList.toggle('is-ready', ready);
       card.dataset.crystalariumPatternId = activePattern.id;
       card.dataset.cardArt = ready ? 'ready' : 'in-progress';
       card.append(node('strong', '', activePattern.title));
       const goals = node('div', 'crystalarium-live-goals');
+      const spokenGoals: string[] = [];
       for (const goal of activePattern.goals) {
         const count = [...state.cells, ...state.shelf].filter(
           (piece) => piece?.family === goal.family && piece.tier === goal.tier,
         ).length;
         const item = node('div', 'crystalarium-live-goal');
+        spokenGoals.push(
+          goal.family + ' ' + CRYSTAL_TIER_NAMES[goal.tier] + ': ' +
+            Math.min(count, goal.quantity) + ' of ' + goal.quantity,
+        );
         item.append(
           image(sprite({ family: goal.family, tier: goal.tier })),
           node('span', '', Math.min(count, goal.quantity) + ' / ' + goal.quantity),
@@ -444,6 +472,16 @@ export class CrystalariumIllustratedView {
         );
       }
       card.append(node('em', '', ready ? 'Ready to offer' : 'In progress'));
+      card.setAttribute(
+        'aria-label',
+        (ready ? 'Ready to offer: ' : 'In progress: ') +
+          activePattern.title +
+          '. ' +
+          spokenGoals.join(', ') +
+          (activePattern.harmonies
+            ? '. Harmonies: ' + state.harmonies + ' of ' + activePattern.harmonies
+            : ''),
+      );
       rail.append(card);
     }
     if (visible.length === 0) {
@@ -455,7 +493,7 @@ export class CrystalariumIllustratedView {
       );
       rail.append(card);
     }
-    orderRow.append(rail);
+    orderRow.append(previousOrder, rail, nextOrder);
     const orderFooter = node(
       'p',
       'crystalarium-live-order-foot',
@@ -594,6 +632,13 @@ export class CrystalariumIllustratedView {
     for (const child of children) this.root.insertBefore(child, effectLayer);
     this.growthFx.render(this.root, view.growthCue);
     rail.scrollLeft = scrollLeft;
+    syncOrderNavigation();
+    // Browser zoom and desktop resizing can change the number of visible
+    // cards without a gameplay re-render. Reuse one observer per live view.
+    if (typeof ResizeObserver !== 'undefined') {
+      this.orderRailObserver = new ResizeObserver(syncOrderNavigation);
+      this.orderRailObserver.observe(rail);
+    }
     if (this.storageOpen) {
       const focusSelector = selectedKey?.startsWith('shelf-')
         ? '[data-crystalarium-action="' + selectedKey + '"]'
@@ -611,6 +656,7 @@ export class CrystalariumIllustratedView {
   }
 
   public destroy(): void {
+    this.orderRailObserver?.disconnect();
     this.growthFx.destroy();
     this.dragging.destroy();
     this.root.remove();
