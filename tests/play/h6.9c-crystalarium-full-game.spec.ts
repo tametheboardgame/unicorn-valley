@@ -1497,7 +1497,8 @@ test.describe('C21 desktop order navigation without gameplay side effects', () =
       await page.setViewportSize(viewport);
       await enterResonanceGarden(page, false, true, {
         ...createCrystalariumFullState(),
-        completed: 8,
+        // C18 opens the third simultaneous card only after ten completed orders.
+        completed: 10,
       });
       const live = page.locator('[data-crystalarium-live="true"]');
       const rail = live.locator('.crystalarium-live-orders-scroll');
