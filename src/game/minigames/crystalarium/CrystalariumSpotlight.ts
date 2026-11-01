@@ -34,7 +34,12 @@ export class CrystalariumSpotlight {
   /** Accept a DOM element already wired to the canonical controller. */
   public show(target: HTMLElement | null, label: string): void {
     this.clear();
-    if (!target || (target instanceof HTMLButtonElement && target.disabled) || !this.root.contains(target)) return;
+    if (
+      !target ||
+      (target instanceof HTMLButtonElement && target.disabled) ||
+      !this.root.contains(target)
+    )
+      return;
     this.target = target;
     this.arrow.textContent = label;
     this.root.append(this.layer);
