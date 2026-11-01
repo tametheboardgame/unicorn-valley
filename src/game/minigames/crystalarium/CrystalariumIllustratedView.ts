@@ -104,6 +104,10 @@ export class CrystalariumIllustratedView {
       this.root,
       {
         move: actions.dragMove,
+        start: (origin) => origin.kind === 'cell' && this.advanceHeldCrystal(origin.index),
+        cancel: (origin) => {
+          if (origin.kind === 'cell') actions.dragCancelPickUp(origin.index);
+        },
         shelve: (index, targetSlot) => {
           this.storageOpen = true;
           actions.dragShelve(index, targetSlot);
@@ -121,6 +125,38 @@ export class CrystalariumIllustratedView {
         (kind === 'cell' ? this.latest?.state.cells[index] : this.latest?.state.shelf[index]) ??
         null,
     );
+  }
+
+  /**
+   * A drag already owns pointer capture. Only update the displayed guide and
+   * real destination in-place, because a render would remove the held cell.
+   */
+  private advanceHeldCrystal(index: number): boolean {
+    if (this.latest?.guide?.lessonStep !== 'pick-up') return false;
+    const prompt = this.actions.dragPickUp(index);
+    if (prompt?.lessonStep !== 'merge' || prompt.targetIndex === undefined) return false;
+    this.latest = { ...this.latest, guide: prompt };
+    const source = this.root.querySelector<HTMLElement>(
+      '[data-crystalarium-cell="' + index + '"]',
+    );
+    const target = this.root.querySelector<HTMLButtonElement>(
+      '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
+    );
+    if (!target) return true;
+    target.disabled = false;
+    source?.classList.remove('is-guide-focus');
+    source?.removeAttribute('aria-describedby');
+    target.classList.add('is-guide-focus');
+    target.setAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
+    const instruction = this.root.querySelector<HTMLElement>(
+      '#crystalarium-live-guide-instruction',
+    );
+    const title = instruction?.querySelector('strong');
+    const copy = instruction?.querySelector('span');
+    if (title) title.textContent = prompt.title.replace('of 4', 'of 5');
+    if (copy) copy.textContent = prompt.instruction;
+    this.spotlight.show(target, 'Match here');
+    return true;
   }
 
   private activateStoredSlot(index: number): void {

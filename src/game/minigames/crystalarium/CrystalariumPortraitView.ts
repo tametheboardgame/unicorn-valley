@@ -136,6 +136,10 @@ export class CrystalariumPortraitView {
       this.root,
       {
         move: actions.dragMove,
+        start: (origin) => origin.kind === 'cell' && this.advanceHeldCrystal(origin.index),
+        cancel: (origin) => {
+          if (origin.kind === 'cell') actions.dragCancelPickUp(origin.index);
+        },
         shelve: (index, slot) => {
           this.storageOpen = true;
           actions.dragShelve(index, slot);
@@ -154,6 +158,33 @@ export class CrystalariumPortraitView {
         return (kind === 'cell' ? view?.state.cells[index] : view?.state.shelf[index]) ?? null;
       },
     );
+  }
+
+  /** Change the teaching target while preserving the held touch/mouse cell. */
+  private advanceHeldCrystal(index: number): boolean {
+    if (this.currentView?.guide?.lessonStep !== 'pick-up') return false;
+    const prompt = this.actions.dragPickUp(index);
+    if (prompt?.lessonStep !== 'merge' || prompt.targetIndex === undefined) return false;
+    this.currentView = { ...this.currentView, guide: prompt };
+    this.previousLessonFocus = 'cell-' + prompt.targetIndex;
+    const source = this.root.querySelector<HTMLElement>(
+      '[data-crystalarium-cell="' + index + '"]',
+    );
+    const target = this.root.querySelector<HTMLButtonElement>(
+      '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
+    );
+    if (!target) return true;
+    target.disabled = false;
+    source?.classList.remove('is-guide-focus');
+    source?.removeAttribute('aria-describedby');
+    target.classList.add('is-guide-focus');
+    target.setAttribute('aria-describedby', 'crystalarium-portrait-guide-instruction');
+    const title = this.root.querySelector<HTMLElement>('.crystalarium-portrait-guide-title');
+    const copy = this.root.querySelector<HTMLElement>('.crystalarium-portrait-guide-copy');
+    if (title) title.textContent = '✦ ' + prompt.title.replace('of 4', 'of 5');
+    if (copy) copy.textContent = prompt.instruction;
+    this.spotlight.show(target, 'Match here');
+    return true;
   }
 
   private activateStoredSlot(index: number): void {
