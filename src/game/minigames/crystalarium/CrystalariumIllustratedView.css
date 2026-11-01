@@ -249,6 +249,9 @@
   padding: 2px;
   border: 0 !important;
   border-radius: 8px !important;
+  /* The illustrated board does not scroll: preserve held touch drags. */
+  touch-action: none;
+  user-select: none;
   background:
     #224664 url("/design-assets/crystalarium-c17/socket-empty.webp") center / 100% 100% no-repeat !important;
   display: grid;

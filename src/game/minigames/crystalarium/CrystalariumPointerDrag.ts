@@ -162,7 +162,9 @@ export class CrystalariumPointerDrag {
     // Releasing off another socket cancels this tutorial lift without a save.
     if (
       current.advancedLesson &&
-      (!cell || Number(cell.dataset.crystalariumCell) === current.origin.index)
+      (!cell ||
+        (cell instanceof HTMLButtonElement && cell.disabled) ||
+        Number(cell.dataset.crystalariumCell) === current.origin.index)
     ) {
       this.actions.cancel?.(current.origin);
       return;
