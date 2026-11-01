@@ -429,12 +429,31 @@
   flex: 1;
   min-height: 0;
   min-width: 0;
-  display: grid;
+  display: flex;
+  gap: 3px;
   align-items: center;
   overflow: hidden;
   padding: 2px 0;
 }
+.crystalarium-live-order-nav {
+  flex: 0 0 48px;
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
+  border-color: #d6c38b !important;
+  color: #ffebae !important;
+  font-size: 32px !important;
+  line-height: 1;
+}
+.crystalarium-live-order-nav[hidden] {
+  display: none;
+}
+.crystalarium-live-order-nav:disabled {
+  opacity: 0.55;
+}
 .crystalarium-live-orders-scroll {
+  flex: 1 1 0;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
