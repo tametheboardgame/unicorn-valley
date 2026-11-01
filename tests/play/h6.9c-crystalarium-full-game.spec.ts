@@ -2387,10 +2387,11 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
   });
 });
 
-test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
+test.describe('C23A one/two/three-goal cards expand without shrinking their artwork', () => {
   for (const width of [900, 1024, 1440]) {
-    for (const completed of [6, 8]) {
-      test(`${completed === 6 ? 'two' : 'three'} goals at ${width}px keep full-sized pictures`, async ({
+    for (const completed of [0, 6, 8]) {
+      const goalCount = completed === 0 ? 1 : completed === 6 ? 2 : 3;
+      test(`${goalCount} goal card at ${width}px retains its proportional width and full-sized pictures`, async ({
         page,
       }) => {
         await page.setViewportSize({ width, height: width === 900 ? 700 : 900 });
@@ -2398,7 +2399,9 @@ test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
           ...createCrystalariumFullState(),
           completed,
         });
-        const selector = completed === 6 ? '.has-two-goals' : '.has-three-goals';
+        const selector =
+          completed === 0 ? ':not(.has-two-goals):not(.has-three-goals)' :
+          completed === 6 ? '.has-two-goals' : '.has-three-goals';
         const card = page.locator('.crystalarium-live-order-card' + selector).first();
         await expect(card).toBeVisible();
         const sizes = await card.evaluate((element) => {
@@ -2408,6 +2411,8 @@ test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
           const title = element.querySelector('strong')!.getBoundingClientRect();
           const status = element.querySelector('em')!.getBoundingClientRect();
           return {
+            width: element.getBoundingClientRect().width,
+            goalsLayout: getComputedStyle(element.querySelector('.crystalarium-live-goals')!).display,
             images: images.map((img) => ({ width: img.width, height: img.height })),
             firstTop: Math.min(...images.map((img) => img.top)),
             lastBottom: Math.max(...images.map((img) => img.bottom)),
@@ -2415,7 +2420,16 @@ test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
             statusTop: status.top,
           };
         });
-        expect(sizes.images).toHaveLength(completed === 6 ? 2 : 3);
+        expect(sizes.images).toHaveLength(goalCount);
+        expect(sizes.goalsLayout).toBe('flex');
+        // One crystal takes a compact tile, two a medium tile, three a wide
+        // tile. Responsive clamp allows the cards to grow, not their art to shrink.
+        expect(sizes.width).toBeGreaterThanOrEqual(
+          goalCount === 1 ? 195 : goalCount === 2 ? 279 : 369,
+        );
+        expect(sizes.width).toBeLessThanOrEqual(
+          goalCount === 1 ? 231 : goalCount === 2 ? 331 : 421,
+        );
         for (const img of sizes.images) {
           expect(img.width).toBeGreaterThanOrEqual(72);
           expect(img.height).toBeGreaterThanOrEqual(77);

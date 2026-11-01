@@ -468,13 +468,14 @@
   gap: 8px;
   align-items: center;
 }
-/* C23A: plain horizontal resonance tiles: spend space on the requirements,
-   not a tall decorative parchment. Every card stays a genuine Offer button. */
+/* C23A: simple, horizontally scrolling resonance tiles. Width follows the
+   number of pictured goals; every crystal stays large enough to recognise.
+   Each tile remains the genuine Offer button, with no extra gameplay action. */
 .crystalarium-live-order-card {
   position: relative;
   isolation: isolate;
-  flex: 0 0 clamp(300px, 27vw, 390px);
-  width: clamp(300px, 27vw, 390px);
+  flex: 0 0 clamp(196px, 17vw, 230px);
+  width: clamp(196px, 17vw, 230px);
   height: clamp(182px, 27vh, 232px);
   max-height: 100%;
   min-height: 0;
@@ -553,10 +554,13 @@
   max-width: 100%;
   object-fit: contain;
 }
-.crystalarium-live-order-card.has-two-goals,
+.crystalarium-live-order-card.has-two-goals {
+  flex-basis: clamp(280px, 25vw, 330px);
+  width: clamp(280px, 25vw, 330px);
+}
 .crystalarium-live-order-card.has-three-goals {
-  flex-basis: clamp(330px, 31vw, 420px);
-  width: clamp(330px, 31vw, 420px);
+  flex-basis: clamp(370px, 33vw, 420px);
+  width: clamp(370px, 33vw, 420px);
 }
 .crystalarium-live-order-card.has-three-goals .crystalarium-live-goal {
   padding-inline: 2px;
@@ -841,16 +845,10 @@
     max-width: 100%;
     width: min(100%, 92cqh);
   }
-  /* Keep the artwork full size. Scroll the order rail instead of shrinking cards. */
+  /* The rail scrolls, not the crystals. Retain compact/medium/wide sizing
+     at tablet widths instead of forcing the same wide card on every order. */
   .crystalarium-live-order-card {
-    flex-basis: 302px;
-    width: 302px;
     height: min(200px, 100%);
-  }
-  .crystalarium-live-order-card.has-two-goals,
-  .crystalarium-live-order-card.has-three-goals {
-    flex-basis: 330px;
-    width: 330px;
   }
   .crystalarium-live-producers {
     gap: 3px;
