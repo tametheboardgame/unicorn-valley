@@ -2298,7 +2298,6 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
   }
 });
 
-
 test.describe('C22 one held crystal drag advances Pick up and merges without another tap', () => {
   test.use({ hasTouch: true });
 
@@ -2319,7 +2318,9 @@ test.describe('C22 one held crystal drag advances Pick up and merges without ano
         portrait ? '.crystalarium-portrait-guide' : '.crystalarium-live-guide',
       );
       await root
-        .locator(portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]')
+        .locator(
+          portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]',
+        )
         .click();
       await expect(guide).toContainText('2 of 5');
       const source = root.locator('[data-crystalarium-cell="2"]');

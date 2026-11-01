@@ -136,9 +136,7 @@ export class CrystalariumIllustratedView {
     const prompt = this.actions.dragPickUp(index);
     if (prompt?.lessonStep !== 'merge' || prompt.targetIndex === undefined) return false;
     this.latest = { ...this.latest, guide: prompt };
-    const source = this.root.querySelector<HTMLElement>(
-      '[data-crystalarium-cell="' + index + '"]',
-    );
+    const source = this.root.querySelector<HTMLElement>('[data-crystalarium-cell="' + index + '"]');
     const target = this.root.querySelector<HTMLButtonElement>(
       '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
     );

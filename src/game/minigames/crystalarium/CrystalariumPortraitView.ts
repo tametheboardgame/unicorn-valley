@@ -167,9 +167,7 @@ export class CrystalariumPortraitView {
     if (prompt?.lessonStep !== 'merge' || prompt.targetIndex === undefined) return false;
     this.currentView = { ...this.currentView, guide: prompt };
     this.previousLessonFocus = 'cell-' + prompt.targetIndex;
-    const source = this.root.querySelector<HTMLElement>(
-      '[data-crystalarium-cell="' + index + '"]',
-    );
+    const source = this.root.querySelector<HTMLElement>('[data-crystalarium-cell="' + index + '"]');
     const target = this.root.querySelector<HTMLButtonElement>(
       '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
     );
