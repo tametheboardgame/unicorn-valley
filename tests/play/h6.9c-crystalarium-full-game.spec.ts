@@ -1486,6 +1486,67 @@ test('C18 ready later card can be offered without consuming an earlier incomplet
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
+test.describe('C21 desktop order navigation without gameplay side effects', () => {
+  for (const viewport of [
+    { width: 1280, height: 720 },
+    { width: 1440, height: 900 },
+  ]) {
+    test(`scrolls three orders with accessible arrows and preserves the rail at ${viewport.width}x${viewport.height}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await enterResonanceGarden(page, false, true, {
+        ...createCrystalariumFullState(),
+        completed: 8,
+      });
+      const live = page.locator('[data-crystalarium-live="true"]');
+      const rail = live.locator('.crystalarium-live-orders-scroll');
+      const left = live.getByRole('button', { name: 'Scroll Resonance Orders left' });
+      const right = live.getByRole('button', { name: 'Scroll Resonance Orders right' });
+      await expect(rail.locator('.crystalarium-live-order-card')).toHaveCount(3);
+      await expect(right).toBeVisible();
+      await expect(left).toBeDisabled();
+      await expect(right).toBeEnabled();
+      const before = await page.evaluate(
+        (key) => localStorage.getItem(key),
+        SANDBOX_KEY,
+      );
+      await right.click();
+      await expect.poll(() => rail.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+      await expect(left).toBeEnabled();
+      await expect(right).toBeDisabled();
+      const offset = await rail.evaluate((element) => element.scrollLeft);
+      await live.locator('[data-crystalarium-action="sound"]').click();
+      await expect.poll(() => rail.evaluate((element) => element.scrollLeft)).toBe(offset);
+      await left.click();
+      await expect.poll(() => rail.evaluate((element) => element.scrollLeft)).toBe(0);
+      await expect(left).toBeDisabled();
+      expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+      const labels = await rail.locator('.crystalarium-live-order-card').evaluateAll((cards) =>
+        cards.map((card) => card.getAttribute('aria-label')),
+      );
+      expect(labels).toHaveLength(3);
+      for (const label of labels) {
+        expect(label).toMatch(/^(In progress|Ready to offer): /);
+        expect(label).toMatch(/\d+ of \d+/);
+      }
+    });
+  }
+
+  test('one visible order needs no previous/next arrows or redundant Offer button', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await enterResonanceGarden(page, false, true);
+    const live = page.locator('[data-crystalarium-live="true"]');
+    await expect(live.locator('.crystalarium-live-order-card')).toHaveCount(1);
+    await expect(live.locator('[data-crystalarium-action="orders-previous"]')).toBeHidden();
+    await expect(live.locator('[data-crystalarium-action="orders-next"]')).toBeHidden();
+    await expect(live.locator('.crystalarium-live-tools [data-crystalarium-action="offer"]')).toHaveCount(0);
+    await expect(live.locator('.crystalarium-live-producers [data-crystalarium-action="grow"]')).toHaveCount(0);
+  });
+});
+
 test('C21 staged illustrated live game uses canonical state, actions and isolated save', async ({
   page,
 }, testInfo) => {
