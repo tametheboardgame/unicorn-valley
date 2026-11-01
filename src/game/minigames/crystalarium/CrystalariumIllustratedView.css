@@ -249,6 +249,9 @@
   padding: 2px;
   border: 0 !important;
   border-radius: 8px !important;
+  /* The illustrated board does not scroll: preserve held touch drags. */
+  touch-action: none;
+  user-select: none;
   background:
     #224664 url("/design-assets/crystalarium-c17/socket-empty.webp") center / 100% 100% no-repeat !important;
   display: grid;
@@ -995,4 +998,87 @@
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* C22A: non-modal, pointer-transparent spotlight over the REAL game.
+   The four shade segments leave the target itself undimmed; the existing
+   controller (not the shade) rejects unrelated actions. */
+.crystalarium-live-spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  overflow: hidden;
+}
+.crystalarium-live-spotlight[hidden],
+.crystalarium-live-spotlight-arrow[hidden] {
+  display: none;
+}
+.crystalarium-live-spotlight-shade {
+  position: absolute;
+  background: #031124b8;
+  pointer-events: none;
+}
+.crystalarium-live-spotlight-arrow {
+  position: absolute;
+  width: 112px;
+  height: 30px;
+  border: 2px solid #f8d98c;
+  border-radius: 10px;
+  background: #fff0bf;
+  color: #173850;
+  font:
+    800 11px / 26px system-ui,
+    sans-serif;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px #071d3bba;
+  pointer-events: none;
+}
+.crystalarium-live-spotlight-arrow::before {
+  content: "↓";
+  margin-right: 5px;
+}
+.crystalarium-live-spotlight-arrow[data-direction="up"]::before {
+  content: "↑";
+}
+.crystalarium-live-spotlight-arrow[data-direction="left"]::before {
+  content: "←";
+}
+.crystalarium-live-spotlight-arrow[data-direction="right"]::before {
+  content: "→";
+}
+/* Keep the real Skip/Leave/Sound controls and guide instructions legible,
+   but never introduce a modal pane that could block tapping a crystal. */
+.crystalarium-live:has(.crystalarium-live-spotlight) .crystalarium-live-header {
+  position: relative;
+  z-index: 10;
+}
+.crystalarium-live:has(.crystalarium-live-spotlight) .crystalarium-live-guide {
+  z-index: 10;
+}
+@media (prefers-reduced-motion: reduce) {
+  .crystalarium-live-spotlight,
+  .crystalarium-live-spotlight-arrow {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* C22: illustrated recipe inspection before the existing Offer action. */
+.crystalarium-live-goals.is-guide-goal {
+  outline: 3px solid #fff1ab;
+  outline-offset: 4px;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px #0bcabe);
+}
+.crystalarium-live-guide [data-crystalarium-action="goal-continue"] {
+  color: #142f49;
+  background: #ffdf8a;
+  border: 2px solid #91642f;
+  font-weight: 800;
+}
+.crystalarium-live-guide [data-crystalarium-action="goal-continue"]:focus-visible {
+  outline: 3px solid #007f90;
+  outline-offset: 2px;
 }

@@ -243,6 +243,13 @@ export class CrystalariumGuide {
     }
   }
 
+  /** Revert the teaching step when a held crystal was not dropped. */
+  public unpicked(index: number): boolean {
+    if (this.lesson?.step !== 'merge' || this.lesson.pair?.source !== index) return false;
+    this.lesson.step = 'pick-up';
+    return true;
+  }
+
   public replay(state: CrystalariumFullState): void {
     this.lesson = feasibleFirstLesson(state);
     this.active = true;

@@ -21,8 +21,11 @@ for (const test of tests) {
   }
 }
 
-console.log(`> npx playwright test ${tests.join(' ')}`);
-const result = spawnSync('npx', ['playwright', 'test', ...tests], {
+// Tier 2 executes every selected test; two isolated browser workers keep broad
+// feature selections within the bounded CI job without reducing coverage.
+const workerArgs = process.env.CI ? ['--workers=2'] : [];
+console.log(`> npx playwright test ${[...tests, ...workerArgs].join(' ')}`);
+const result = spawnSync('npx', ['playwright', 'test', ...tests, ...workerArgs], {
   stdio: 'inherit',
   shell: false,
 });
