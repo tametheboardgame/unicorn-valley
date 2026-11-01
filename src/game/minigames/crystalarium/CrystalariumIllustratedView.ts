@@ -646,6 +646,10 @@ export class CrystalariumIllustratedView {
     }
     for (const child of children) this.root.insertBefore(child, effectLayer);
     this.growthFx.render(this.root, view.growthCue);
+    // The navigation arrows start hidden in the new DOM. Show them before
+    // restoring the old offset, otherwise the temporarily wider rail clamps
+    // scrollLeft and loses the position on sound/guide redraws.
+    syncOrderNavigation();
     rail.scrollLeft = scrollLeft;
     syncOrderNavigation();
     // Browser zoom and desktop resizing can change the number of visible
