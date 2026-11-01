@@ -2219,10 +2219,7 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
       const grow = live.locator('[data-crystalarium-action="well-low"]');
       await expect(spotlight).toBeVisible();
       await expect(grow).toBeEnabled();
-      await expect(grow).toHaveAttribute(
-        'aria-describedby',
-        'crystalarium-live-guide-instruction',
-      );
+      await expect(grow).toHaveAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
       const geometry = await live.evaluate((root) => {
         const target = root.querySelector<HTMLElement>('[data-crystalarium-guide-target]');
         const overlay = root.querySelector<HTMLElement>('[data-crystalarium-spotlight]');
@@ -2234,10 +2231,7 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
         const t = target.getBoundingClientRect();
         const a = cue.getBoundingClientRect();
         const separation =
-          a.right <= t.left ||
-          a.left >= t.right ||
-          a.bottom <= t.top ||
-          a.top >= t.bottom;
+          a.right <= t.left || a.left >= t.right || a.bottom <= t.top || a.top >= t.bottom;
         const center = document.elementFromPoint(t.left + t.width / 2, t.top + t.height / 2);
         return {
           overlayPointer: getComputedStyle(overlay).pointerEvents,
