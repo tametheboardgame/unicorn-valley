@@ -2720,7 +2720,7 @@ test('C21 unadorned board keeps every crystal socket clickable', async ({ page }
   expect(result.frameRatio).toBeCloseTo(0.92, 1);
 });
 
-test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({
+test('C23A clean 7x6 crystal frame coexists with simple wide order tiles', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
@@ -2759,7 +2759,6 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
         const rect = cell.getBoundingClientRect();
         return rect.width / rect.height;
       }),
-      cardTexture: getComputedStyle(card).backgroundImage,
     };
   });
   expect(geometry.socketCount).toBe(42);
@@ -2787,13 +2786,11 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
   expect(geometry.gardenBorder).toBe('0px');
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
-  expect(geometry.cardArt).toContain('order-card-clean.svg');
-  const cardSource = await page.request.get(
-    '/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg',
-  );
-  expect(cardSource.ok()).toBe(true);
-  expect(await cardSource.text()).not.toContain('id="grain"');
-  expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
+  // C23A deliberately retired ornate 512:704 order parchment in favour
+  // of a wide, readable goal-first panel with a calm gradient background.
+  expect(geometry.cardArt).toContain('linear-gradient(');
+  expect(geometry.cardArt).not.toContain('order-card-clean.svg');
+  expect(geometry.cardAspect).toBeGreaterThan(0.85);
 });
 
 test('C20 Gate D preview compares capacities and dry recovery without touching saves', async ({
