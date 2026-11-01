@@ -67,7 +67,11 @@ export class CrystalariumSpotlight {
     let visibleTop = bounds.top;
     let visibleRight = bounds.right;
     let visibleBottom = bounds.bottom;
-    for (let ancestor = target.parentElement; ancestor && ancestor !== this.root; ancestor = ancestor.parentElement) {
+    for (
+      let ancestor = target.parentElement;
+      ancestor && ancestor !== this.root;
+      ancestor = ancestor.parentElement
+    ) {
       const style = getComputedStyle(ancestor);
       const clipsX = /(auto|scroll|hidden|clip)/.test(style.overflowX);
       const clipsY = /(auto|scroll|hidden|clip)/.test(style.overflowY);

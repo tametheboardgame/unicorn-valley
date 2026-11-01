@@ -328,7 +328,9 @@ export class CrystalariumPortraitView {
           : lesson === 'merge'
             ? 'cell-' + view.guide?.targetIndex
             : lesson === 'offer'
-              ? inspectingGoal ? 'goal-continue' : 'offer'
+              ? inspectingGoal
+                ? 'goal-continue'
+                : 'offer'
               : null;
     const advanceFocus =
       this.previousLessonFocus !== null &&
@@ -497,17 +499,42 @@ export class CrystalariumPortraitView {
       guidePanel.setAttribute('aria-live', 'polite');
       guidePanel.id = 'crystalarium-portrait-guide-instruction';
       guidePanel.append(
-        makeElement('strong', 'crystalarium-portrait-guide-title',
-          '✦ ' + (inspectingGoal ? '4 of 5 • Look at the picture' : lesson === 'offer' ? '5 of 5 • Offer' : locked ? view.guide.title.replace('of 4', 'of 5') : view.guide.title)),
-        makeElement('p', 'crystalarium-portrait-guide-copy',
-          inspectingGoal ? 'Look at the crystal picture. When you recognise the matching shapes, continue to offer.' : view.guide.instruction),
+        makeElement(
+          'strong',
+          'crystalarium-portrait-guide-title',
+          '✦ ' +
+            (inspectingGoal
+              ? '4 of 5 • Look at the picture'
+              : lesson === 'offer'
+                ? '5 of 5 • Offer'
+                : locked
+                  ? view.guide.title.replace('of 4', 'of 5')
+                  : view.guide.title),
+        ),
+        makeElement(
+          'p',
+          'crystalarium-portrait-guide-copy',
+          inspectingGoal
+            ? 'Look at the crystal picture. When you recognise the matching shapes, continue to offer.'
+            : view.guide.instruction,
+        ),
       );
       if (inspectingGoal) {
-        guidePanel.append(this.button('Continue to offer', () => {
-          this.goalInspected = true;
-          if (this.currentView) this.render(this.currentView);
-          this.root.querySelector<HTMLButtonElement>('[data-crystalarium-action="offer"]')?.focus({ preventScroll: true });
-        }, 'primary', false, 'goal-continue'));
+        guidePanel.append(
+          this.button(
+            'Continue to offer',
+            () => {
+              this.goalInspected = true;
+              if (this.currentView) this.render(this.currentView);
+              this.root
+                .querySelector<HTMLButtonElement>('[data-crystalarium-action="offer"]')
+                ?.focus({ preventScroll: true });
+            },
+            'primary',
+            false,
+            'goal-continue',
+          ),
+        );
       }
     } else {
       guidePanel.hidden = true;
@@ -840,21 +867,35 @@ export class CrystalariumPortraitView {
     }
     // The native portrait panel uses the same pointer-pass-through coordinator.
     // Target only controls in the active drawer; no duplicate Phaser buttons.
-    const target =
-      inspectingGoal
-        ? this.root.querySelector<HTMLElement>('[data-crystalarium-goal-preview="true"]')
-        : lesson === 'grow'
-          ? this.root.querySelector<HTMLElement>('[data-crystalarium-action="grow"]')
-          : lesson === 'pick-up'
-            ? this.root.querySelector<HTMLElement>('[data-crystalarium-cell="' + view.guide?.sourceIndex + '"]')
-            : lesson === 'merge'
-              ? this.root.querySelector<HTMLElement>('[data-crystalarium-cell="' + view.guide?.targetIndex + '"]')
-              : lesson === 'offer'
-                ? this.root.querySelector<HTMLElement>('[data-crystalarium-action="offer"]')
-                : null;
+    const target = inspectingGoal
+      ? this.root.querySelector<HTMLElement>('[data-crystalarium-goal-preview="true"]')
+      : lesson === 'grow'
+        ? this.root.querySelector<HTMLElement>('[data-crystalarium-action="grow"]')
+        : lesson === 'pick-up'
+          ? this.root.querySelector<HTMLElement>(
+              '[data-crystalarium-cell="' + view.guide?.sourceIndex + '"]',
+            )
+          : lesson === 'merge'
+            ? this.root.querySelector<HTMLElement>(
+                '[data-crystalarium-cell="' + view.guide?.targetIndex + '"]',
+              )
+            : lesson === 'offer'
+              ? this.root.querySelector<HTMLElement>('[data-crystalarium-action="offer"]')
+              : null;
     if (target && view.guide) {
       target.setAttribute('aria-describedby', 'crystalarium-portrait-guide-instruction');
-      this.spotlight.show(target, inspectingGoal ? 'Look here' : lesson === 'grow' ? 'Grow here' : lesson === 'pick-up' ? 'Pick this' : lesson === 'merge' ? 'Match here' : 'Offer here');
+      this.spotlight.show(
+        target,
+        inspectingGoal
+          ? 'Look here'
+          : lesson === 'grow'
+            ? 'Grow here'
+            : lesson === 'pick-up'
+              ? 'Pick this'
+              : lesson === 'merge'
+                ? 'Match here'
+                : 'Offer here',
+      );
     }
   }
 
