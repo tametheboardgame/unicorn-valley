@@ -2298,6 +2298,88 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
   }
 });
 
+
+test.describe('C22 one held crystal drag advances Pick up and merges without another tap', () => {
+  test.use({ hasTouch: true });
+
+  for (const surface of ['illustrated desktop', 'native portrait'] as const) {
+    test(`preserves pointer capture across the instruction change on ${surface}`, async ({
+      page,
+    }) => {
+      test.setTimeout(90_000);
+      const portrait = surface === 'native portrait';
+      await page.setViewportSize(
+        portrait ? { width: 390, height: 844 } : { width: 1280, height: 720 },
+      );
+      await enterResonanceGarden(page, true, !portrait);
+      const root = page.locator(
+        portrait ? '[data-crystalarium-portrait="true"]' : '[data-crystalarium-live="true"]',
+      );
+      const guide = root.locator(
+        portrait ? '.crystalarium-portrait-guide' : '.crystalarium-live-guide',
+      );
+      await root
+        .locator(portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]')
+        .click();
+      await expect(guide).toContainText('2 of 5');
+      const source = root.locator('[data-crystalarium-cell="2"]');
+      const target = root.locator('[data-crystalarium-cell="0"]');
+      await expect(source).toBeEnabled();
+      await expect(target).toBeDisabled();
+      const start = await source.boundingBox();
+      const end = await target.boundingBox();
+      if (!start || !end) throw new Error('The first crystal pair must remain visible');
+      const x = start.x + start.width / 2;
+      const y = start.y + start.height / 2;
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      await page.mouse.move(x + 16, y + 10, { steps: 3 });
+      await expect(guide).toContainText('3 of 5');
+      await expect(target).toBeEnabled();
+      await expect(target).toHaveClass(/is-guide-focus/);
+      await expect(page.locator('.crystalarium-drag-ghost')).toBeVisible();
+      await page.mouse.move(end.x + end.width / 2, end.y + end.height / 2, {
+        steps: 4,
+      });
+      await page.mouse.up();
+      await expect(guide).toContainText('4 of 5');
+      await expect(page.locator('.crystalarium-drag-ghost')).toHaveCount(0);
+      await expect(root.locator('[data-crystalarium-goal-preview="true"]')).toBeVisible();
+      expect(
+        await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key) ?? '{}').merges,
+          SANDBOX_KEY,
+        ),
+      ).toBe(1);
+    });
+  }
+});
+
+test('C22 cancelling a held tutorial crystal returns to Pick up without saving', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await enterResonanceGarden(page, true, true);
+  const root = page.locator('[data-crystalarium-live="true"]');
+  await root.locator('[data-crystalarium-action="well-low"]').click();
+  const guide = root.locator('.crystalarium-live-guide');
+  const source = root.locator('[data-crystalarium-cell="2"]');
+  const bounds = await source.boundingBox();
+  if (!bounds) throw new Error('Teaching crystal missing');
+  const x = bounds.x + bounds.width / 2;
+  const y = bounds.y + bounds.height / 2;
+  const saved = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 20, y + 20, { steps: 3 });
+  await expect(guide).toContainText('3 of 5');
+  await page.mouse.move(3, 3);
+  await page.mouse.up();
+  await expect(guide).toContainText('2 of 5');
+  await expect(root.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
+  expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(saved);
+});
+
 test('C22 pictured goal survives sound and keyboard continuation', async ({ page }) => {
   await page.setViewportSize({ width: 960, height: 560 });
   await enterResonanceGarden(page, true, true);
