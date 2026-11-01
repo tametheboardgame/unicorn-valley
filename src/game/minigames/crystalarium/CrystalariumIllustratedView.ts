@@ -409,15 +409,25 @@ export class CrystalariumIllustratedView {
     const rail = node('div', 'crystalarium-live-orders-scroll');
     rail.setAttribute('role', 'group');
     rail.setAttribute('aria-label', 'Current Resonance Orders, scroll horizontally');
-    const previousOrder = this.button('‹', 'orders-previous', () => {
-      rail.scrollBy({ left: -Math.max(180, rail.clientWidth * 0.75), behavior: 'auto' });
-    }, true);
+    const previousOrder = this.button(
+      '‹',
+      'orders-previous',
+      () => {
+        rail.scrollBy({ left: -Math.max(180, rail.clientWidth * 0.75), behavior: 'auto' });
+      },
+      true,
+    );
     previousOrder.classList.add('crystalarium-live-order-nav');
     previousOrder.setAttribute('aria-label', 'Scroll Resonance Orders left');
     previousOrder.hidden = true;
-    const nextOrder = this.button('›', 'orders-next', () => {
-      rail.scrollBy({ left: Math.max(180, rail.clientWidth * 0.75), behavior: 'auto' });
-    }, true);
+    const nextOrder = this.button(
+      '›',
+      'orders-next',
+      () => {
+        rail.scrollBy({ left: Math.max(180, rail.clientWidth * 0.75), behavior: 'auto' });
+      },
+      true,
+    );
     nextOrder.classList.add('crystalarium-live-order-nav');
     nextOrder.setAttribute('aria-label', 'Scroll Resonance Orders right');
     nextOrder.hidden = true;
@@ -456,8 +466,13 @@ export class CrystalariumIllustratedView {
         ).length;
         const item = node('div', 'crystalarium-live-goal');
         spokenGoals.push(
-          goal.family + ' ' + CRYSTAL_TIER_NAMES[goal.tier] + ': ' +
-            Math.min(count, goal.quantity) + ' of ' + goal.quantity,
+          goal.family +
+            ' ' +
+            CRYSTAL_TIER_NAMES[goal.tier] +
+            ': ' +
+            Math.min(count, goal.quantity) +
+            ' of ' +
+            goal.quantity,
         );
         item.append(
           image(sprite({ family: goal.family, tier: goal.tier })),
