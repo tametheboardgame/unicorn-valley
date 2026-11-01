@@ -1,6 +1,16 @@
 # Project Status
 
-Last updated: 2026-10-22
+Last updated: 2026-11-01
+
+## Crystalarium C17–C21 playable tablet pilot integrated
+
+- [World PR #337](https://github.com/tametheboardgame/unicorn-valley/pull/337) is **merged** into `main` at the verified integration SHA `d45acf0c76f819da70a554e10cbba9aadab7265f` (1 November 2026). The original short Grotto entrance melody remains separate. The illustrated **full Crystalarium merging game** is now in the production branch: 42 sockets, 50 staged Resonance Orders, direct merge/ready-card Offer, 12-slot Storage, Growth Potion and Brook Spring, Brook Wash one-drop refunds, and independent Just Games/world saves.
+- Authoritative [CI #41301379005](https://github.com/tametheboardgame/unicorn-valley/actions/runs/41301379005) **passed on the exact PR head `f6f2dfc` after a bounded retry**. Verified Tier 0, full unit, build/performance, whole-game smoke, all six Chromium shards, seven compatibility profiles and exact-head Merge Gate green; the initially failing unrelated R5 weather-key edge test succeeded on retry. **This is verified GitHub integration evidence, not independent verification that Cloudflare production deployment has completed.**
+- The owner approved releasing this **playable pilot** so his daughter can try it on a tablet before remaining polish. This is *not* completion or human tablet-UX acceptance of **C22** contextual spotlight/tutorial, **C23** responsive tablet/mobile and accessibility polish, or **C24** extended campaign/playtest hardening. These remain the next World tasks under the existing [C17–C24 staged roadmap](docs/work-packages/R6.5-WP19H6.9C17-C24-CRYSTALARIUM-ILLUSTRATED-REDESIGN-ROADMAP.md), beginning at C22 in a new independent World work-package branch.
+- Child pilot review should exercise Just Games → Crystalarium → Resonance Patterns, tap/drag matching crystals, Growth Potion/refill, Storage, offer-ready cards, Save/Continue, orientation and legibility. Record touch/layout issues under C23 without rewriting the accepted desktop UI. Cloudflare Pages is configured to deploy `main` automatically to [unicorn-valley.pages.dev](https://unicorn-valley.pages.dev/), but the live deployment SHA has not been independently verified in this checkpoint.
+- **Parallel safety:** No unrelated Story House, Mini Games or shared test architecture changes are included in this docs-only integration checkpoint; historic World and engineering checkpoints remain below.
+
+## Previous integration checkpoint — 22 October 2026
 
 ## Crystal Brook H6.5A integrated and next World stage
 
