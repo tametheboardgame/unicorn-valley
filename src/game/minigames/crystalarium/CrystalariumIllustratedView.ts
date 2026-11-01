@@ -697,12 +697,12 @@ export class CrystalariumIllustratedView {
       lessonTarget.setAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
       const cue =
         activeLesson === 'grow'
-          ? '↓ Grow here'
+          ? 'Grow here'
           : activeLesson === 'pick-up'
-            ? '↓ Pick this'
+            ? 'Pick this'
             : activeLesson === 'merge'
-              ? '↓ Match here'
-              : '↓ Offer here';
+              ? 'Match here'
+              : 'Offer here';
       this.spotlight.show(lessonTarget, cue);
     }
   }
