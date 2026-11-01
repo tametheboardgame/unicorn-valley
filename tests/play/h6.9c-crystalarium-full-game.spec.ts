@@ -299,6 +299,9 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
   test('teaches accepted actions, allows replay and keeps the adventure save untouched', async ({
     page,
   }) => {
+    // A complete first-visit, offering and guide-replay journey is longer than
+    // the default 45 seconds on the constrained CI browser runner.
+    test.setTimeout(90_000);
     await enterResonanceGarden(page, true);
     const region = page.getByRole('region', { name: 'Crystalarium Resonance Garden' });
     const step = region.locator('[data-crystalarium-guide]');
