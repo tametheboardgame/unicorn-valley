@@ -2400,8 +2400,11 @@ test.describe('C23A one/two/three-goal cards expand without shrinking their artw
           completed,
         });
         const selector =
-          completed === 0 ? ':not(.has-two-goals):not(.has-three-goals)' :
-          completed === 6 ? '.has-two-goals' : '.has-three-goals';
+          completed === 0
+            ? ':not(.has-two-goals):not(.has-three-goals)'
+            : completed === 6
+              ? '.has-two-goals'
+              : '.has-three-goals';
         const card = page.locator('.crystalarium-live-order-card' + selector).first();
         await expect(card).toBeVisible();
         const sizes = await card.evaluate((element) => {
@@ -2412,7 +2415,8 @@ test.describe('C23A one/two/three-goal cards expand without shrinking their artw
           const status = element.querySelector('em')!.getBoundingClientRect();
           return {
             width: element.getBoundingClientRect().width,
-            goalsLayout: getComputedStyle(element.querySelector('.crystalarium-live-goals')!).display,
+            goalsLayout: getComputedStyle(element.querySelector('.crystalarium-live-goals')!)
+              .display,
             images: images.map((img) => ({ width: img.width, height: img.height })),
             firstTop: Math.min(...images.map((img) => img.top)),
             lastBottom: Math.max(...images.map((img) => img.bottom)),
