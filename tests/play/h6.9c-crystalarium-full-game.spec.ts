@@ -2720,9 +2720,7 @@ test('C21 unadorned board keeps every crystal socket clickable', async ({ page }
   expect(result.frameRatio).toBeCloseTo(0.92, 1);
 });
 
-test('C23A clean 7x6 crystal frame coexists with simple wide order tiles', async ({
-  page,
-}) => {
+test('C23A clean 7x6 crystal frame coexists with simple wide order tiles', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
