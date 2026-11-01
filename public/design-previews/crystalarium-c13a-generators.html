@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#142944">
+<title>Crystalarium • C13A Rooted Producer Study</title>
+<style>
+:root{color-scheme:dark;font-family:"Trebuchet MS","Segoe UI",sans-serif;--ink:#ecf8ff;--soft:#b8dbea;--gold:#ffe5a0;--aqua:#9adbea;--violet:#e3cffa;--line:#87b6cf}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 80% -15%,#4b5587 0,transparent 44%),linear-gradient(150deg,#142944,#1b3156 60%,#30294a);color:var(--ink)}
+button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
+button:focus-visible{outline:3px solid #fff0a9;outline-offset:3px}
+button:disabled{cursor:not-allowed;opacity:.48}
+main{max-width:1230px;margin:auto;padding:14px 18px 45px}
+h1{font-size:clamp(23px,3vw,34px);margin:5px 0 3px}
+h2{font-size:18px;margin:0 0 8px}
+p{margin:6px 0 12px;line-height:1.45}
+small,.caption{font-size:12px;color:#c0d9eb}
+.topline{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:12px}
+.kicker{font-size:12px;font-weight:900;letter-spacing:.095em;text-transform:uppercase;color:#c4eff5}
+.revision{border:1px dashed #ceb8e9;border-radius:12px;background:#302d54;padding:10px 13px;color:#e9dfff;font-size:12px;max-width:510px}
+.layout{display:grid;grid-template-columns:minmax(350px,1.3fr) minmax(280px,.8fr);gap:16px;align-items:start}
+.panel{border:2px solid #6f99be;border-radius:21px;padding:14px;background:linear-gradient(155deg,#2b4b72,#1a3152);box-shadow:0 12px 28px #05172c77}
+.panel.warm{border-color:#cbb5dd;background:linear-gradient(140deg,#414773,#2b355e)}
+.panel.mint{border-color:#8adbc7;background:linear-gradient(150deg,#264e68,#203954)}
+.choice{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.choice button,.action{border:2px solid #8ab6d1;border-radius:12px;padding:10px 12px;min-height:45px;background:#294b6c;font-weight:800;white-space:normal}
+.choice button[aria-pressed="true"]{border-color:#ffe5a0;background:#555779;box-shadow:inset 0 0 0 1px #ffe5a075}
+.choice button:disabled{opacity:.52}
+.board-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 0 10px}
+.board-head strong{font-size:17px}
+.board-note{font-size:13px;color:#bddfe7}
+.board-shell{border:3px solid #739eb4;background:#1c3859;border-radius:18px;padding:10px 9px;box-shadow:inset 0 2px 0 #d5eff433}
+.board-shell.rooted{border-color:#a2c7cb;background:linear-gradient(140deg,#325a6d,#1b3658)}
+.board-shell.occupied{border-color:#aa93c6}
+.rooted-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;align-items:stretch;margin:0 0 10px;padding:6px;border-radius:15px;background:linear-gradient(90deg,#33577d,#52617b 50%,#3e526e);border:2px solid #c1b7ce;position:relative}
+.rooted-strip[hidden]{display:none}
+.rooted-strip:after{content:"";position:absolute;pointer-events:none;bottom:-10px;left:5%;right:5%;height:9px;border-inline:2px solid #a6cbd6;border-bottom:3px solid #a6cbd6;border-radius:0 0 20px 20px}
+.root-control{position:relative;border:2px solid var(--family,#8adbea);border-radius:12px;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;background:linear-gradient(140deg,#285476,#243f63)}
+.root-control.selected{box-shadow:0 0 0 2px #ffe5a090,inset 0 0 20px #a7e9f21f;border-color:#ffe5a0}
+.root-control.locked{background:#313f57;border-color:#6b748f}
+.root-control strong{font-size:13px}.root-control span{font-size:11px;line-height:1.2}
+.crystal{width:31px;height:35px;filter:drop-shadow(0 2px 2px #081f40bd);display:block}
+.crystal.large{width:48px;height:54px}
+.board-window{width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-color:#a6dbe6 #213a5b;padding:4px 1px 7px}
+.board{padding:0;border:0;min-inline-size:0;display:grid;grid-template-columns:repeat(7,48px);grid-template-rows:repeat(6,48px);gap:5px;width:max-content;margin:auto}
+.cell{width:48px;height:48px;border:2px solid #6f96b5;border-radius:11px;background:linear-gradient(145deg,#345777,#213e5d);display:grid;place-items:center;padding:0}
+.cell.empty{color:#53789c}.cell.blocked{border-color:#b9a3d9;background:linear-gradient(150deg,#47466c,#403c65);padding:2px}
+.cell .crystal{width:32px;height:35px}.cell .tiny{font-size:8px;font-weight:900;letter-spacing:.05em}
+.cell.occupied-producer{box-shadow:inset 0 0 0 1px #ceb2ff40}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 5px}
+.metric{flex:1;min-width:118px;border-radius:12px;border:1px solid #729bbc;background:#203957;padding:9px}
+.metric strong{display:block;font-size:23px;color:#ffe4a0}
+.metric span{font-size:11px;color:#bedbea}
+.legend{color:#cce5ef;font-size:12px}
+.info{display:flex;align-items:start;gap:10px;border:1px solid #a99ccc;background:#292f56;padding:12px;border-radius:13px;margin-top:12px}
+.info .symbol{font-size:23px}.info p{margin:0;font-size:13px;color:#e6dcfa}
+.source-cards{padding:0;border:0;min-inline-size:0;display:grid;gap:7px;margin:11px 0}
+.source-card{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #769cba;border-radius:12px;background:#254563;text-align:left;min-height:58px}
+.source-card[aria-pressed="true"]{border:2px solid #ffe4a0;background:#425676}
+.source-card strong{display:block;font-size:13px}
+.source-card .text{flex:1;font-size:11px;color:#cce6f4}
+.cta{width:100%;border:2px solid #d9cf9b;background:linear-gradient(115deg,#348f83,#4d8c92);min-height:54px;border-radius:13px;font-weight:900;font-size:16px}
+.cta:disabled{background:#2f4560}
+.status{padding:11px;border-radius:11px;border:1px solid #aed8c7;background:#213f55;margin-top:10px;min-height:55px;font-size:13px;line-height:1.35}
+.separation{height:1px;background:#6c91b1;margin:14px 0}
+.shelf{border:1px solid #8eb1c7;border-radius:11px;background:#213d60;padding:8px;margin-top:10px;display:flex;align-items:center;gap:8px}
+.shelf strong{font-size:12px}.slots{display:flex;flex:1;gap:6px}.slot{flex:1;min-width:35px;height:35px;border:1px dashed #9dc4d9;border-radius:8px;display:grid;place-items:center;color:#789cb7}
+.unused{color:#c2e4db;font-size:12px;line-height:1.4;margin-top:9px}
+mark{background:transparent;color:#ffe5a0;font-weight:900}
+@media(max-width:850px){.layout{display:flex;flex-direction:column}.panel{width:100%}.panel.board-panel{order:2}.panel.control-panel{order:1}.topline{align-items:start}.root-control{min-height:72px}.board{margin:0}.panel{padding:12px}.rooted-strip{gap:5px}}
+@media(max-width:360px){main{padding:9px 9px 34px}.panel{padding:9px;border-radius:15px}.revision{font-size:10px}.root-control strong{font-size:11px}.root-control span{font-size:9px}.rooted-strip{padding:4px}.source-card{padding:7px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto;animation:none;transition:none}}
+</style>
+</head>
+<body>
+<main>
+ <div class="topline">
+  <div><div class="kicker">Unicorn Valley • H6.9C13A</div><h1>✦ Where should crystals grow?</h1><div class="caption">An interactive placement comparison for the Crystalarium board</div></div>
+  <div class="revision">DESIGN STUDY ONLY • Not the playable Crystalarium • No game saves, timers, Growth Fluid or world data are used</div>
+ </div>
+ <div class="layout">
+  <section class="panel board-panel" aria-labelledby="board-title">
+   <div class="board-head"><strong id="board-title">✦ Crystal Board</strong><span class="board-note">7 columns × 6 rows</span></div>
+   <div class="board-shell rooted" id="shell">
+    <fieldset class="rooted-strip" id="frame-sources" aria-label="Crystal veins rooted into the board frame"></fieldset>
+    <div class="board-window"><fieldset class="board" id="board" aria-label="Simulated Crystalarium board"></fieldset></div>
+   </div>
+   <div class="metrics">
+    <div class="metric"><strong id="space">42 / 42</strong><span>usable merge sockets</span></div>
+    <div class="metric"><strong id="unlocks">1 / 3</strong><span>unlocked crystal wells</span></div>
+    <div class="metric"><strong id="total">2</strong><span>crystals on the board</span></div>
+   </div>
+   <div class="shelf"><strong>✦ Safe shelf</strong><div class="slots" aria-hidden="true"><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span><span class="slot">·</span></div></div>
+   <div class="unused">Tap an unlocked well on the board to <mark>grow immediately</mark>. The four-slot shelf stays separate. All basic growing is free and unlimited.</div>
+  </section>
+  <aside class="panel control-panel warm" aria-label="Producer design controls">
+   <h2>1. Choose the placement</h2>
+   <div class="choice" id="layouts">
+    <button type="button" id="frame-choice" aria-pressed="true">A · Board-frame wells</button>
+    <button type="button" id="grid-choice" aria-pressed="false">B · Three board cells</button>
+   </div>
+   <p id="comparison" class="caption">A: all 42 merge sockets stay available. Wells are physically rooted into the board's frame.</p>
+   <div class="separation"></div>
+   <h2>2. See the family unlocks</h2>
+   <div class="choice">
+    <button type="button" data-progress="0" aria-pressed="true">0 patterns</button>
+    <button type="button" data-progress="4" aria-pressed="false">4 patterns</button>
+    <button type="button" data-progress="7" aria-pressed="false">7 patterns</button>
+   </div>
+   <p class="caption">These are test scenarios, not actual saved campaign progress. Tap a well on the board to grow directly; source cards below use a separate Grow button for comparison.</p>
+   <div class="separation"></div>
+   <h2>3. Try growing a free shard</h2>
+   <fieldset class="source-cards" id="source-cards" aria-label="Select an unlocked crystal family"></fieldset>
+   <button type="button" id="grow" class="cta">✦ Grow free Low crystal</button>
+   <div class="status" id="message" aria-live="polite">Low is unlocked from the start. Tap its producer, then Grow.</div>
+   <div class="choice"><button type="button" id="reset">↺ Reset this illustration</button></div>
+   <div class="info"><span class="symbol" aria-hidden="true">✦</span><p><strong>Design gate:</strong> This page compares placement and unlocked crystal growth only. Advanced charges, waiting, Growth Fluid, rewards and save migration are deliberately absent.</p></div>
+  </aside>
+ </div>
+</main>
+<script>
+(()=>{
+  "use strict";
+  const families=[
+    {id:"low",name:"Low",unlock:0,base:"#589bde",light:"#daf7ff",desc:"Always unlocked"},
+    {id:"bright",name:"Bright",unlock:4,base:"#3ac7b1",light:"#d3fff2",desc:"Unlock after 4 patterns"},
+    {id:"bell",name:"Bell",unlock:7,base:"#aa80da",light:"#f5dcff",desc:"Unlock after 7 patterns"}
+  ];
+  let placement="frame",progress=0,selected="low",cells=[];
+  const producerIndices=[7,14,21];
+  const byId=(id)=>document.getElementById(id);
+  const htmlCrystal=(family)=>{
+    const f=families.find((x)=>x.id===family);
+    return `<svg class='crystal' viewBox='0 0 40 46' aria-hidden='true'><path d='M20 2L32 10L38 25L20 43L2 25L8 10Z' fill='${f.base}' stroke='${f.light}' stroke-width='2'/><path d='M20 2L8 10L16 25L20 43L26 25L32 10Z' fill='${f.light}' opacity='.6'/><path d='M2 25L16 25L20 43Z' fill='#183b66' opacity='.6'/><path d='M38 25L26 25L20 43Z' fill='#143759' opacity='.45'/></svg>`;
+  };
+  const isLocked=(f)=>progress<f.unlock;
+  const isReserved=(i)=>placement==="grid"&&producerIndices.includes(i);
+  function resetBoard(){
+    cells=Array.from({length:42},()=>null);
+    cells[0]="low";cells[1]="low";
+  }
+  function drawSources(){
+    const strip=byId("frame-sources");
+    strip.replaceChildren();
+    strip.hidden=placement!=="frame";
+    const list=byId("source-cards");
+    list.replaceChildren();
+    for(const f of families){
+      const locked=isLocked(f);
+      const label=locked?`🔒 ${f.name} • ${f.unlock} patterns`:`${f.name} • ready`;
+      if(placement==="frame"){
+        const button=document.createElement("button");
+        button.type="button";
+        button.className=`root-control${selected===f.id?' selected':''}${locked?' locked':''}`;
+        button.style.setProperty("--family",f.base);
+        button.innerHTML=`${htmlCrystal(f.id)}<strong>${f.name}</strong><span>${locked?`Unlock at ${f.unlock}`:'Free growth'}</span>`;
+        button.setAttribute("aria-label",locked?label:`Grow free ${f.name} crystal from the board-frame well`);
+        button.setAttribute("aria-pressed",String(selected===f.id&&!locked));
+        button.addEventListener("click",()=>growFromWell(f.id));
+        strip.append(button);
+      }
+      const card=document.createElement("button");
+      card.type="button";
+      card.className="source-card";
+      card.setAttribute("aria-pressed",String(selected===f.id&&!locked));
+      card.innerHTML=`${htmlCrystal(f.id)}<div><strong>${label}</strong><span class='text'>${f.desc}</span></div>`;
+      card.addEventListener("click",()=>selectFamily(f.id));
+      list.append(card);
+    }
+    const active=families.find(f=>f.id===selected);
+    byId("grow").textContent=`✦ Grow free ${active.name} crystal`;
+    byId("grow").disabled=isLocked(active);
+    byId("unlocks").textContent=`${families.filter(f=>!isLocked(f)).length} / 3`;
+  }
+  function drawBoard(){
+    const board=byId("board");
+    board.replaceChildren();
+    for(let i=0;i<42;i++){
+      const cell=document.createElement("button");
+      cell.type="button";
+      const reserved=isReserved(i),piece=cells[i];
+      cell.className=`cell${reserved?' blocked occupied-producer':piece?'':' empty'}`;
+      if(reserved){
+        const f=families[producerIndices.indexOf(i)];
+        cell.innerHTML=`${htmlCrystal(f.id)}<span class='tiny'>WELL</span>`;
+        cell.setAttribute("aria-label",isLocked(f)?`Locked ${f.name} producer: unlock after ${f.unlock} patterns`:`Grow free ${f.name} crystal from fixed board well`);
+        cell.addEventListener("click",()=>growFromWell(f.id));
+      }else if(piece){
+        cell.innerHTML=htmlCrystal(piece);
+        cell.setAttribute("aria-label",`Demo ${piece} crystal in socket ${i+1}`);
+        cell.addEventListener("click",()=>announce("This prototype compares generator placement. Play the actual Crystalarium for merging."));
+      }else{
+        cell.textContent="·";
+        cell.setAttribute("aria-label",`Empty merge socket ${i+1}`);
+        cell.addEventListener("click",()=>announce("Choose a producer and tap Grow free shard to add a crystal."));
+      }
+      board.append(cell);
+    }
+    byId("space").textContent=placement==="frame"?"42 / 42":"39 / 42";
+    byId("total").textContent=cells.filter(Boolean).length;
+  }
+  function announce(value){byId("message").textContent=value;}
+  function selectFamily(id){
+    const f=families.find(x=>x.id===id);
+    if(isLocked(f)){announce(`${f.name} unlocks after ${f.unlock} completed patterns. Try the progress selector above.`);return;}
+    selected=id;
+    announce(`${f.name} is selected. Grow a free basic shard when you choose.`);
+    drawSources();
+  }
+  function growFromWell(id){
+    const family=families.find((value)=>value.id===id);
+    if(isLocked(family)){
+      announce(`${family.name} unlocks after ${family.unlock} completed patterns. No shard was grown.`);
+      return;
+    }
+    selected=id;
+    grow();
+    drawSources();
+  }
+  function redraw(){
+    byId("frame-choice").setAttribute("aria-pressed",String(placement==="frame"));
+    byId("grid-choice").setAttribute("aria-pressed",String(placement==="grid"));
+    byId("shell").className=`board-shell ${placement==='frame'?'rooted':'occupied'}`;
+    byId("comparison").textContent=placement==="frame"
+      ?"A: all 42 merge sockets stay usable. Producer wells are rooted into the physical board frame."
+      :"B: three producer structures permanently occupy board cells. Only 39 merge sockets remain.";
+    document.querySelectorAll("[data-progress]").forEach(x=>{x.setAttribute("aria-pressed",String(Number(x.dataset.progress)===progress));});
+    drawSources();drawBoard();
+  }
+  function grow(){
+    const f=families.find(x=>x.id===selected);
+    if(isLocked(f)){announce("Unlock this family before growing.");return;}
+    const index=cells.findIndex((v,i)=>v===null&&!isReserved(i));
+    if(index<0){announce("There are no free sockets in this illustration. Reset the board to continue.");return;}
+    cells[index]=f.id;
+    drawBoard();
+    announce(`A free ${f.name} shard grew in socket ${index+1}. No charges, fluid or timers were used.`);
+  }
+  byId("frame-choice").addEventListener("click",()=>{placement="frame";resetBoard();redraw();announce("Frame-rooted nursery: 42 usable merge cells.");});
+  byId("grid-choice").addEventListener("click",()=>{placement="grid";resetBoard();redraw();announce("Board-cell nursery: only 39 cells remain for merging. This is a comparison, not an approved choice.");});
+  document.querySelectorAll("[data-progress]").forEach(button=>{button.addEventListener("click",()=>{progress=Number(button.dataset.progress);selected="low";redraw();announce(`Previewing ${progress} completed patterns: ${families.filter(x=>!isLocked(x)).map(x=>x.name).join(', ')} producers unlocked.`);});});
+  byId("grow").addEventListener("click",grow);
+  byId("reset").addEventListener("click",()=>{resetBoard();redraw();announce("Illustration reset. Nothing was saved.");});
+  resetBoard();redraw();
+})();
+</script>
+</body>
+</html>

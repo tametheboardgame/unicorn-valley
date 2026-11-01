@@ -408,6 +408,7 @@ export const CRYSTAL_BROOK_REFLECTION_STONES = [
 ] as const satisfies readonly MapPoint[];
 export const CRYSTAL_BROOK_SHALLOW_RIPPLE = { x: 1900, y: 1110 } as const;
 export const CRYSTAL_BROOK_SINGING_CRYSTALS = { x: 2440, y: 1110 } as const;
+export const CRYSTAL_BROOK_CRYSTALARIUM_NURSERY = { x: 1330, y: 1770 } as const;
 export const CRYSTAL_BROOK_SHELL_SPARKLE = { x: 1760, y: 980 } as const;
 export const CRYSTAL_BROOK_PEBBLE_STACK = { x: 1160, y: 1290 } as const;
 export const CRYSTAL_BROOK_CASCADE_MEMORY = { x: 2660, y: 1160 } as const;
@@ -1207,7 +1208,7 @@ export const CRYSTAL_BROOK_BOUNDARY_OPENINGS = [
 export const CRYSTAL_BROOK_ACTIVITY_POCKETS = [
   {
     id: 'crystalarium',
-    centre: { x: 1330, y: 1770 },
+    centre: CRYSTAL_BROOK_CRYSTALARIUM_NURSERY,
     approach: { x: 1450, y: 1450 },
     radiusX: 270,
     radiusY: 190,

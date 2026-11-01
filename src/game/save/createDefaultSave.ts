@@ -71,6 +71,7 @@ export function createDefaultSave(timestamp: string = new Date().toISOString()):
     activities: {
       racesById: {},
       miniGameRecords: {},
+      crystalarium: null,
     },
     collections: {
       discoveryIds: [],

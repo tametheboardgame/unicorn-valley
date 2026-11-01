@@ -1,0 +1,2130 @@
+{
+  "schemaVersion": 1,
+  "package": "R6.5-WP19H6.9C17",
+  "date": "2026-10-28",
+  "status": "C17 painted desktop and portrait background WebP assets committed on World draft branch; original source PNGs archived separately in project Google Drive; composition screenshot acceptance pending",
+  "sourceOfTruth": "docs/design/2026-10-28-CRYSTALARIUM-APPROVED-VISUAL-AND-INTERACTION-CONTRACT.md",
+  "provenance": "Original procedurally authored SVG artwork for the project's design review; no third-party graphics/fonts embedded.",
+  "designReference": "User-approved in-chat illustrated Garden concept image; flattened concept screenshot is NOT used as a runtime texture.",
+  "publishedReview": "/design-previews/crystalarium-c17-illustrated-layout.html",
+  "usageRules": [
+    "C17 only: no live runtime imports or save writes",
+    "Preserve existing Low/Bright/Bell identities and 42 real cells",
+    "No UI text, button or state baked into garden backplate",
+    "Art delivered as separate scalable files for replacement by final approved painted derivatives",
+    "Keep all art lazy-loaded on entering Crystalarium; fail gracefully without image"
+  ],
+  "assets": [
+    {
+      "file": "public/design-assets/crystalarium-c17/garden-desktop.svg",
+      "purpose": "desktop background, clean no HUD",
+      "viewBox": "1280x720",
+      "alpha": false,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/garden-portrait.svg",
+      "purpose": "portrait background, clean no HUD",
+      "viewBox": "720x1280",
+      "alpha": false,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/well-low.svg",
+      "purpose": "Low rooted generator prototype with plinth",
+      "viewBox": "120x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/well-bright.svg",
+      "purpose": "Bright rooted generator prototype with plinth",
+      "viewBox": "120x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/well-bell.svg",
+      "purpose": "Bell rooted generator prototype with plinth",
+      "viewBox": "120x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low.svg",
+      "purpose": "Low loose piece prototype (no plinth)",
+      "viewBox": "96x112",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright.svg",
+      "purpose": "Bright loose piece prototype (no plinth)",
+      "viewBox": "96x112",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell.svg",
+      "purpose": "Bell loose piece prototype (no plinth)",
+      "viewBox": "96x112",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion.svg",
+      "purpose": "Potion reservoir icon; fill level is UI not image",
+      "viewBox": "128x148",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chest.svg",
+      "purpose": "Storage chamber button glyph",
+      "viewBox": "128x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/return-board.svg",
+      "purpose": "Board return drop target glyph",
+      "viewBox": "128x128",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/tutorial-arrow.svg",
+      "purpose": "Tutorial pointer/arrow glyph",
+      "viewBox": "100x100",
+      "alpha": true,
+      "licence": "Original project-owned design study",
+      "review": "pending",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-empty.webp",
+      "purpose": "Independent dark blue socket surface, carved rounded border",
+      "format": "Transparent WebP candidate",
+      "sha256": "2ab807be7e22ee9dd9b00f328d472e6dd6f8291dbef72cfbb0d769889cd5b2ed",
+      "gitBlobSha": "55cc716e7dc06cfa0699d1653828789a0bb733ce",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-selected.webp",
+      "purpose": "Independent cyan highlighted socket",
+      "format": "Transparent WebP candidate",
+      "sha256": "e9a7fefc00fcaf47cd505d3fe976e606fbc99f2aa00e0baec8a6295782db99c3",
+      "gitBlobSha": "d91ca0ff685066d14ac9e9576f044170668d7f7e",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-valid-drop.webp",
+      "purpose": "Independent green legal-drop preview socket",
+      "format": "Transparent WebP candidate",
+      "sha256": "65d480f5aceec5b11a715774640cd6a7c472c46ece8e3b4bcddadb77d955bfd7",
+      "gitBlobSha": "66b8226a55999cde4f82983f63c3afdbc141a765",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/socket-invalid-drop.webp",
+      "purpose": "Independent coral/red invalid-drop preview socket",
+      "format": "Transparent WebP candidate",
+      "sha256": "71d86841c18d178a4575c95708222d359a77273b666330e0b897ced1c20a348b",
+      "gitBlobSha": "6c1b6a5387f2b84073f81cfab8a85eafcc0d8436",
+      "licence": "Original project-owned AI-generated candidate imagery, manually extracted/processed",
+      "source": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+      "review": "pending user approval",
+      "runtimeApproved": false
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/board-frame-only-approved-candidate.webp",
+      "purpose": "Standalone original painted stone-and-crystal ornamental frame only; centre/outside fully transparent; no scenery, sockets, game board or controls baked in",
+      "format": "1536×1024 alpha WebP",
+      "sha256": "fea38a860708ec8a73c78986a2be17da5fb45289151536ef203b1fcb90ea38d7",
+      "gitBlobSha": "6545f74792a5ed946e89013328fdfcaad0b0418b",
+      "sourcePngSha256": "83599c65d785b6e389e81bf6d8f3deb2a285b4a9ac9459847a6931f82c3f02db",
+      "originalPng": "Google Drive/Unicorn Valley/C17 Board Candidates/crystalarium-frame-only-source.png",
+      "review": "user accepted corrected frame visual direction 2026-10-28; live overlay geometry remains to be reviewed",
+      "runtimeApproved": false,
+      "provenance": "Original project-owned painted illustration; alpha cut-out carefully processed and inspected",
+      "alphaContract": "RGBA; all four corners and entire central rectangular void transparent; alpha centre and corners zero"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-sky-blue.webp",
+      "purpose": "Standalone Sky · Blue crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "97aadfa940699f583d6aa5c5fd47b7f6d7595930abd073a091b1250cefb56628",
+      "gitBlobSha": "e571b5ba826b96716e26ed3ad10a419614447e43",
+      "bytes": 216296,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/sky-blue-source.png",
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-moon-purple.webp",
+      "purpose": "Standalone Moon · Purple crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "c1513d6fc702a72e207252317cba3494738f4871f73d9d525ff8557cd0cd9ecb",
+      "gitBlobSha": "e1a3b4b9810e5cae45cad58fcf27b0464d3bb98c",
+      "bytes": 213488,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/moon-purple-source.png",
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-flame-red.webp",
+      "purpose": "Standalone Flame · Red crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "6d09abba4e3c34bee9d4a5017765927416e1d4b5af632f68f23ac959a4676276",
+      "gitBlobSha": "23ea04508d12b1074f57ed504e0d236bf399d4a8",
+      "bytes": 207850,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/flame-red-source.png",
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-forest-green.webp",
+      "purpose": "Standalone Forest · Green crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "c6b0dd8cbaddb9dfe850e53f411311efcc8f78235ac242843c955c79530c9d9f",
+      "gitBlobSha": "c7ca28fcc4c203a09e24814a54b29e9b8a4cac67",
+      "bytes": 219620,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/forest-green-source.png",
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/generator-sun-gold.webp",
+      "purpose": "Standalone Sun · Gold crystalline stone fountain generator, no baked text; illustrative art for future generator slots",
+      "viewBox": "320×480",
+      "format": "Lossless alpha WebP",
+      "sha256": "469493bbad59df9870300bd2c03f2187bc65d7795a4d633f638efacb89884604",
+      "gitBlobSha": "1184d99e2d7e4a884dc6817cf4afd242ed437506",
+      "bytes": 204232,
+      "licence": "Original project-owned C17 generated/extracted art candidate",
+      "originalPngArchived": "Google Drive/Unicorn Valley/C17 Generators/sun-gold-source.png",
+      "review": "User explicitly approved and requested lock of artwork 2026-10-28; runtime mechanics/integration separate gate",
+      "runtimeApproved": false,
+      "artDecision": "USER_APPROVED_LOCKED"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-0.webp",
+      "purpose": "Low/blue crystal family tier 0: Single shard, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 121682,
+      "sha256": "d7b9b21aafd9a49d242f8facc153ee1f89f3fd3eaa91b747efa66406cd56da50",
+      "gitBlobSha": "e65fffcf63179924e2862bc2d3ffbb91e11da450",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-0.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-1.webp",
+      "purpose": "Low/blue crystal family tier 1: Short cluster, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 227110,
+      "sha256": "69fc2f742d0a71c35f52486abfcf495b2c762d5b6f93fb1ee379128e6d226adb",
+      "gitBlobSha": "45114eea0a8da563719b2d3c336407f8ffeeab64",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-1.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-2.webp",
+      "purpose": "Low/blue crystal family tier 2: Tall spire, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 172350,
+      "sha256": "30a81fa8df969b6f3e7d9491f1362ff73cd9df2122f6b108996a4bcbbbef6ec5",
+      "gitBlobSha": "4d5fb3393414891fad6aa2a7e5399665428861ef",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-2.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-3.webp",
+      "purpose": "Low/blue crystal family tier 3: Floating crown, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 204306,
+      "sha256": "0f26d3f408c66b73ea17079e7b6ceeea46ff9115fe3673b639264431b35e1c3f",
+      "gitBlobSha": "82bdd4cbaec916832b7c1667e4755393f5d5373a",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-3.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-4.webp",
+      "purpose": "Low/blue crystal family tier 4: Golden wings, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 219306,
+      "sha256": "d4c2ddcfa52b0af343e18c41eceb4cf182e05f3cff7b912be2c0c24af5d64a68",
+      "gitBlobSha": "49659f0823e558d51be6f9e32d6e304140b6c59a",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-4.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-low-tier-5.webp",
+      "purpose": "Low/blue crystal family tier 5: Grand formation, approved 48px legible silhouette",
+      "format": "512x512 alpha WebP",
+      "bytes": 225340,
+      "sha256": "a2a288547474f05d8942b41c6da480ebef9191959d7cabe1a1a530522d424924",
+      "gitBlobSha": "44f2b9a321f617406eb1852508939e268747d5dd",
+      "licence": "Original project-owned C17 artwork",
+      "review": "USER_APPROVED_LOCKED - 28 Oct 2026",
+      "runtimeApproved": false,
+      "sourcePng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved/low-tier-5.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-0.webp",
+      "purpose": "Bright (teal) family tier 0: Single teal shard",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 91532,
+      "sha256": "e039fc982bcff40f4e6318abfbc527fe93f96483878bf68df40bc9092244e38c",
+      "gitBlobSha": "1b2e1e423441b915f3a17d5a4272bd64ae4960d8",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-0.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-1.webp",
+      "purpose": "Bright (teal) family tier 1: Small teal cluster",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 139622,
+      "sha256": "c9e7721c1c01ecca70884ce1afd87626aa103b39ccfaf009f767c165dc91f3a9",
+      "gitBlobSha": "26e6ef831c64b1f1e7bda94b798560ae71bb70ef",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-1.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-2.webp",
+      "purpose": "Bright (teal) family tier 2: Tall teal formation",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 145872,
+      "sha256": "e7fb9f63eb6d727a401476e0314bcf121f956330048237b2612dd07a28227932",
+      "gitBlobSha": "3450c035fc1903a8d1147369ae314acde8f066e0",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-2.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-3.webp",
+      "purpose": "Bright (teal) family tier 3: Floating teal fragments",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 151906,
+      "sha256": "7e0980fef379255bef5cc4f6204c4b06672035ddb29cea41c36c4520ed591e72",
+      "gitBlobSha": "d0104333c7f9f2fd11b45437c0be1720a0a48a68",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-3.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-4.webp",
+      "purpose": "Bright (teal) family tier 4: Gilded teal spire",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 164358,
+      "sha256": "809a69aa65b730ccf75a77c1501578cf9ff6a5c1254e1b93a5ac53f559e327fb",
+      "gitBlobSha": "2609018fa3ccbbb5f57becb35c545f4f8ad9dc9f",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-4.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bright-tier-5.webp",
+      "purpose": "Bright (teal) family tier 5: Grand teal crown",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 176292,
+      "sha256": "3b18b3918ed39cca1ac3572cbc7a24a8eb7f72599508a440b339de5bcca8fcbd",
+      "gitBlobSha": "86a94c34aae9734fa764eb574909903917b51562",
+      "licence": "Original project-owned C17 generated sprite candidate",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved/bright-tier-5.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-0.webp",
+      "purpose": "Bell (violet) crystal family tier 0: Single violet shard",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 86174,
+      "sha256": "518356b776bd35367dd72ffba7e5c72b9f0475b02dcfd8db2e721621c36bd488",
+      "gitBlobSha": "80882dedbd133a23f5f9e912e11851fe8e81c29d",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-0.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-1.webp",
+      "purpose": "Bell (violet) crystal family tier 1: Violet floral cluster",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 142928,
+      "sha256": "ea6a014fb038374e4d5f244a2fc6642eacf5ba60e4db840d5d22737d8aa1b5d4",
+      "gitBlobSha": "80a21260742a8673a04b1b94bfc0cbbed912f46f",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-1.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-2.webp",
+      "purpose": "Bell (violet) crystal family tier 2: Tall violet spire",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 136000,
+      "sha256": "a2729a89b32511c9cd9a3f8c0e9545b31511a77980f21396e2f19be052f5bad5",
+      "gitBlobSha": "f75acc7bc801142478db218b88fd37ccda2c34ad",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-2.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-3.webp",
+      "purpose": "Bell (violet) crystal family tier 3: Floating violet geode",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 145342,
+      "sha256": "634e9547945b01fd91d05a588540f03cd714951ad862df13e62cca23a99083cc",
+      "gitBlobSha": "ac0e226a2795cbad98e01e9dc67a05efdc26fd08",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-3.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-4.webp",
+      "purpose": "Bell (violet) crystal family tier 4: Violet golden wings",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 144612,
+      "sha256": "0f9919917a3f4d6de7b38530c3d6e356ea742543ce121bbddcbf919ba447a361",
+      "gitBlobSha": "f72111696d4a291fef779adff832c5f7521614a8",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-4.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/crystal-bell-tier-5.webp",
+      "purpose": "Bell (violet) crystal family tier 5: Grand violet crown",
+      "format": "512x512 alpha lossless WebP",
+      "bytes": 151634,
+      "sha256": "f76eaf9d0a3c79c8de50e83892eee180fc25d2cecfd5e6c5539ff8a095cdcc50",
+      "gitBlobSha": "68f24a55c0ed86757e808de62dce8a72ddbfbd84",
+      "licence": "Original project-owned C17 generated and individually extracted sprite artwork",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; six tiers visually accepted by user after 48px gallery review; runtime integration remains separately gated",
+      "runtimeApproved": false,
+      "originalPng": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved/bell-tier-5.png"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/bubbles.webp",
+      "purpose": "Isolated Growth Potion candidate bubbles",
+      "format": "lossless transparent WebP",
+      "bytes": 16008,
+      "gitBlobSha": "a4636accec05d9921c3a29d039ebec0d5d4dbe7b",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-add-disabled.webp",
+      "purpose": "Isolated Growth Potion candidate button-add-disabled",
+      "format": "lossless transparent WebP",
+      "bytes": 12370,
+      "gitBlobSha": "8bb5dacd12fba8a5b15a80e1df0dbce41bd03259",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-add.webp",
+      "purpose": "Isolated Growth Potion candidate button-add",
+      "format": "lossless transparent WebP",
+      "bytes": 14950,
+      "gitBlobSha": "59d35084ab09a6a13ad02bd85ea40952b66f4634",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-pour-disabled.webp",
+      "purpose": "Isolated Growth Potion candidate button-pour-disabled",
+      "format": "lossless transparent WebP",
+      "bytes": 10704,
+      "gitBlobSha": "6da61470759d03c2f1d6bf6698341236cd754c29",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/button-pour.webp",
+      "purpose": "Isolated Growth Potion candidate button-pour",
+      "format": "lossless transparent WebP",
+      "bytes": 14882,
+      "gitBlobSha": "e6ede5324f2eb7d9d41f60d54f75bbaa5b5fd6a1",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-medium.webp",
+      "purpose": "Isolated Growth Potion candidate drop-medium",
+      "format": "lossless transparent WebP",
+      "bytes": 9058,
+      "gitBlobSha": "2c18d8f197ddc2e7820ebff14d4bff67615d9362",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-small.webp",
+      "purpose": "Isolated Growth Potion candidate drop-small",
+      "format": "lossless transparent WebP",
+      "bytes": 8806,
+      "gitBlobSha": "afdceb504e28a8c98c183b46fc68e98f36a7b9dd",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-sparkle.webp",
+      "purpose": "Isolated Growth Potion candidate drop-sparkle",
+      "format": "lossless transparent WebP",
+      "bytes": 12864,
+      "gitBlobSha": "f2ee4701921c7fd82fac70eedfc801923dc74d8b",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/drop-triple.webp",
+      "purpose": "Isolated Growth Potion candidate drop-triple",
+      "format": "lossless transparent WebP",
+      "bytes": 8370,
+      "gitBlobSha": "20742fe67c85fc6a3b4e12908e6cc48d26aeaa20",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-empty.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 26886,
+      "gitBlobSha": "04e0e738e0daa10e49f63951b63efffc81994170",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-fill-region-mask.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-fill-region-mask",
+      "format": "lossless transparent WebP",
+      "bytes": 274,
+      "gitBlobSha": "a274dba891793a8c58931acd1d0e82301556f4ea",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-full.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-full",
+      "format": "lossless transparent WebP",
+      "bytes": 29694,
+      "gitBlobSha": "9feacdfa61bbd29e41c0d5ede8e11089da53d7f7",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-glass-shell.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-glass-shell",
+      "format": "lossless transparent WebP",
+      "bytes": 26688,
+      "gitBlobSha": "71f3f182002331b7511229314e3eb8ff970ec523",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-half.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-half",
+      "format": "lossless transparent WebP",
+      "bytes": 32578,
+      "gitBlobSha": "4cd1a9167e68b213dd4bb7012fe08a3840debabf",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-high.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-high",
+      "format": "lossless transparent WebP",
+      "bytes": 31204,
+      "gitBlobSha": "ca9722400c1e0aa6a34e8b346474bb5911e64591",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-low.webp",
+      "purpose": "Isolated Growth Potion candidate gauge-low",
+      "format": "lossless transparent WebP",
+      "bytes": 31348,
+      "gitBlobSha": "df8c8cb7739d055cf060601da09bf1e56644b60b",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-01.webp",
+      "purpose": "Isolated Growth Potion candidate growth-01",
+      "format": "lossless transparent WebP",
+      "bytes": 19190,
+      "gitBlobSha": "4c96e4f3bd19b24c47a14d0d0cea5b98a95a6a9e",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-02.webp",
+      "purpose": "Isolated Growth Potion candidate growth-02",
+      "format": "lossless transparent WebP",
+      "bytes": 22256,
+      "gitBlobSha": "6cdffa2374ad49a38ae20b89e2abfd6857a50ab2",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-03.webp",
+      "purpose": "Isolated Growth Potion candidate growth-03",
+      "format": "lossless transparent WebP",
+      "bytes": 33606,
+      "gitBlobSha": "85ec6b26f8a78b12e728c96b138ae257ae59cb0a",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/growth-04.webp",
+      "purpose": "Isolated Growth Potion candidate growth-04",
+      "format": "lossless transparent WebP",
+      "bytes": 35106,
+      "gitBlobSha": "d8a1454e7f5f93c09fe865241e25e517ad69847d",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop-empty.webp",
+      "purpose": "Isolated Growth Potion candidate icon-drop-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 5400,
+      "gitBlobSha": "9a6f374e44e76012a00ec0a549c769078b5948da",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop-filled.webp",
+      "purpose": "Isolated Growth Potion candidate icon-drop-filled",
+      "format": "lossless transparent WebP",
+      "bytes": 5542,
+      "gitBlobSha": "dffd6ad62c6c0195b98dcd814ba229eaf8a0ed86",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-drop.webp",
+      "purpose": "Isolated Growth Potion candidate icon-drop",
+      "format": "lossless transparent WebP",
+      "bytes": 11080,
+      "gitBlobSha": "da20cfd13f0a41aaed9be486b3de57c0a12a35dd",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/icon-vial.webp",
+      "purpose": "Isolated Growth Potion candidate icon-vial",
+      "format": "lossless transparent WebP",
+      "bytes": 12884,
+      "gitBlobSha": "48d42dc458851bb94fa03910b0a039420f0597c4",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/liquid-surface.webp",
+      "purpose": "Isolated Growth Potion candidate liquid-surface",
+      "format": "lossless transparent WebP",
+      "bytes": 22530,
+      "gitBlobSha": "33f0b2c1ffe6dd98f61b8908b532d3ca48b2c506",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-01.webp",
+      "purpose": "Isolated Growth Potion candidate pour-01",
+      "format": "lossless transparent WebP",
+      "bytes": 21952,
+      "gitBlobSha": "bf3bc01c16bf6899e057eb7869b532583818c7ad",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-02.webp",
+      "purpose": "Isolated Growth Potion candidate pour-02",
+      "format": "lossless transparent WebP",
+      "bytes": 22874,
+      "gitBlobSha": "b98fcbcf016c416bc12e1d2bc954d760222bdb70",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-03.webp",
+      "purpose": "Isolated Growth Potion candidate pour-03",
+      "format": "lossless transparent WebP",
+      "bytes": 23956,
+      "gitBlobSha": "04dd046787c9226df1f28cc675b2565ecd4cac90",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-04.webp",
+      "purpose": "Isolated Growth Potion candidate pour-04",
+      "format": "lossless transparent WebP",
+      "bytes": 25024,
+      "gitBlobSha": "57393f5400013996c76a05f7826f2dde19a50262",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-05.webp",
+      "purpose": "Isolated Growth Potion candidate pour-05",
+      "format": "lossless transparent WebP",
+      "bytes": 25924,
+      "gitBlobSha": "a4e61f71cd66fbfa8b4934ea0a330b329b9c3b4a",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-empty.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 117574,
+      "gitBlobSha": "83f4be646e367717eef86a17527e73d3c996209b",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-fill-region-mask.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-fill-region-mask",
+      "format": "lossless transparent WebP",
+      "bytes": 2356,
+      "gitBlobSha": "a6123c433d29d0553387b19bfc968d7a6e598b4d",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-full.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-full",
+      "format": "lossless transparent WebP",
+      "bytes": 106892,
+      "gitBlobSha": "edbedffca9c66bf886104481f8ed338708d5fae8",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-glass-shell.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-glass-shell",
+      "format": "lossless transparent WebP",
+      "bytes": 119540,
+      "gitBlobSha": "99b6c2ffb46e3502e0345b9e73df9ae9ffcdbb5f",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-high.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-high",
+      "format": "lossless transparent WebP",
+      "bytes": 101854,
+      "gitBlobSha": "b35bc72f8a20769ced8f714fa56f86a197936df2",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-low.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-low",
+      "format": "lossless transparent WebP",
+      "bytes": 101610,
+      "gitBlobSha": "9edd0854027b602cdcda6ed06116a4c510df5e61",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-medium.webp",
+      "purpose": "Isolated Growth Potion candidate reservoir-medium",
+      "format": "lossless transparent WebP",
+      "bytes": 102146,
+      "gitBlobSha": "b792b7de81f9b2ae68179af52bb444561462cb29",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/sparkles.webp",
+      "purpose": "Isolated Growth Potion candidate sparkles",
+      "format": "lossless transparent WebP",
+      "bytes": 15730,
+      "gitBlobSha": "1233caba8becc41fb2ede201400d3dadc9b386cf",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-01.webp",
+      "purpose": "Isolated Growth Potion candidate splash-01",
+      "format": "lossless transparent WebP",
+      "bytes": 22536,
+      "gitBlobSha": "640ef2ecc5158ce602498efdc9779f9b476e1898",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-02.webp",
+      "purpose": "Isolated Growth Potion candidate splash-02",
+      "format": "lossless transparent WebP",
+      "bytes": 20204,
+      "gitBlobSha": "2389d7bf71d5aa3daa201125548f288ca4734002",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-03.webp",
+      "purpose": "Isolated Growth Potion candidate splash-03",
+      "format": "lossless transparent WebP",
+      "bytes": 24714,
+      "gitBlobSha": "b4e5f5b4b5905420c51ecab927091b424a6d1884",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/splash-04.webp",
+      "purpose": "Isolated Growth Potion candidate splash-04",
+      "format": "lossless transparent WebP",
+      "bytes": 24742,
+      "gitBlobSha": "1e2ed77490645b708038a9ab175b504442a36dfe",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-empty.webp",
+      "purpose": "Isolated Growth Potion candidate vial-empty",
+      "format": "lossless transparent WebP",
+      "bytes": 31304,
+      "gitBlobSha": "165f610f8759935f6e877f7525ebe39c3b76e419",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-fill-region-mask.webp",
+      "purpose": "Isolated Growth Potion candidate vial-fill-region-mask",
+      "format": "lossless transparent WebP",
+      "bytes": 604,
+      "gitBlobSha": "d0657445b7dbde221dfb1cd811f7649add2599f1",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-full.webp",
+      "purpose": "Isolated Growth Potion candidate vial-full",
+      "format": "lossless transparent WebP",
+      "bytes": 37520,
+      "gitBlobSha": "1c7ad8993387a108ff4e59bb2059d4ce628dcc8a",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-glass-shell.webp",
+      "purpose": "Isolated Growth Potion candidate vial-glass-shell",
+      "format": "lossless transparent WebP",
+      "bytes": 31968,
+      "gitBlobSha": "e3401b994a8acff15d211bb2f4f4644946227a19",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-half.webp",
+      "purpose": "Isolated Growth Potion candidate vial-half",
+      "format": "lossless transparent WebP",
+      "bytes": 32050,
+      "gitBlobSha": "20dc6caffa5f66994705cd6f6f24ecc8c008e6e7",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-quarter.webp",
+      "purpose": "Isolated Growth Potion candidate vial-quarter",
+      "format": "lossless transparent WebP",
+      "bytes": 32600,
+      "gitBlobSha": "7c7bcd28fc3de4683ae39d0cd9a2127aa8558499",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-three-quarter.webp",
+      "purpose": "Isolated Growth Potion candidate vial-three-quarter",
+      "format": "lossless transparent WebP",
+      "bytes": 33116,
+      "gitBlobSha": "254120619edec1013cdda4bb332438af0f9d67f7",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "source": "C17 asset-sheet generation, archived PNG/WebP source in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-liquid-surface-line.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "gauge-liquid-surface-line",
+      "bytes": 912,
+      "gitBlobSha": "5f362f485f6a18dd07b23efee97e28b44f54be26",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/gauge-liquid-texture.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "gauge-liquid-texture",
+      "bytes": 8172,
+      "gitBlobSha": "fbd671bb3238c5b5e9cc0e61f9fc28936caf08b8",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-06.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-06",
+      "bytes": 26924,
+      "gitBlobSha": "ce454de5923c1d559916abe9e2a9e3e94653b28a",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-07.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-07",
+      "bytes": 29784,
+      "gitBlobSha": "f815ede94f6918b0d3ade854612867fa7f1b3c00",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-08.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-08",
+      "bytes": 30522,
+      "gitBlobSha": "c42269fbc8e2b6ba0b109796d45658bd6e5106de",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-09.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-09",
+      "bytes": 29368,
+      "gitBlobSha": "10e863bdd8e1938005aab4a2a0ef1229af31e886",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-10.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-10",
+      "bytes": 28630,
+      "gitBlobSha": "61af1f08cfc944e75b1333d5f01e85700d21d47e",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-11.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-11",
+      "bytes": 25962,
+      "gitBlobSha": "e34924480658e307ab4948350734c0519f348ff9",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/pour-12.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "pour-12",
+      "bytes": 23564,
+      "gitBlobSha": "fef905c57377966e29675dec7893fb260bb11e01",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-liquid-surface-line.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "reservoir-liquid-surface-line",
+      "bytes": 6036,
+      "gitBlobSha": "a411fdf96f065f6c519da7f143f21a81bb3f1f03",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/reservoir-liquid-texture.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "reservoir-liquid-texture",
+      "bytes": 23408,
+      "gitBlobSha": "ec26018f22af620eb84efb0390271c89df861960",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-liquid-surface-line.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "vial-liquid-surface-line",
+      "bytes": 4834,
+      "gitBlobSha": "eca2867fc7fcd79fd554880a3f327cb36b10c6a4",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 targeted final polish: curved 12-frame cropped-flow correction or bright dynamic liquid surface line; replaces prior candidate",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/growth-potion-assets/vial-liquid-texture.webp",
+      "format": "transparent lossless WebP",
+      "purpose": "vial-liquid-texture",
+      "bytes": 10394,
+      "gitBlobSha": "37a6651ae3772a51884f86aebaf89fcab0a01fd1",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; visual asset accepted, gameplay integration separately gated",
+      "runtimeApproved": false,
+      "refinement": "2026-10-28 stable 12-frame pouring / rich continuous liquid / halo cleanup; existing source art preserved in archived previous version",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-complete.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 249694,
+      "gitBlobSha": "9dacefcb22f168ee0ea0cc3b448fe3ade5a83388",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-focused.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 251770,
+      "gitBlobSha": "0f813921926b2e18e1eb0edea21ffd0edcb3dee7",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-in-progress.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 246352,
+      "gitBlobSha": "788e6518e1861d0b93ea9b819482decec505aa4d",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-locked.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 162086,
+      "gitBlobSha": "4f997f5fd33beb9f06d6b8e9d5efd6b88d986c33",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-normal.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 237636,
+      "gitBlobSha": "89dbe6b302aa7efcdef11bd03ecf3dae46181c86",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-card-ready.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 250792,
+      "gitBlobSha": "3b57a0af26a418e75ab91e1b5341e3dfaefeb37f",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-back.svg",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "SVG source",
+      "bytes": 2713,
+      "gitBlobSha": "ba37762691de75913e00870463d837d1961dabb7",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-back.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 44684,
+      "gitBlobSha": "c5997737cc800eaa0426756458668d19a80b377a",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-ready-aura.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 23356,
+      "gitBlobSha": "61e5b1b45ebd4f8a0281c0c8ded604c66bafcb8d",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-left.svg",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "SVG source",
+      "bytes": 841,
+      "gitBlobSha": "0fc1f411c935684fd2535e400d500c32ce33eb94",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-left.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 9848,
+      "gitBlobSha": "7699619d5a4d3c77d83dccce215704d9c99aaec8",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-right.svg",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "SVG source",
+      "bytes": 885,
+      "gitBlobSha": "e1c1da9d14c1018fdd30809605b1933f42233909",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-scroll-right.webp",
+      "purpose": "C17 Resonance Order reusable illustrated UI candidate",
+      "format": "transparent lossless WebP",
+      "bytes": 9826,
+      "gitBlobSha": "fab96bdf5a9af7f0cb1501eaec14be32c7c4b49e",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Generated and isolated 28-Oct C17 order design; source archived in Drive",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-ornament-left.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-rail-ornament-left",
+      "format": "transparent scalable SVG",
+      "bytes": 2484,
+      "gitBlobSha": "7f6d1754ec523b2c94bc2db73f8e3b5e966163a8",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-rail-ornament-right.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-rail-ornament-right",
+      "format": "transparent scalable SVG",
+      "bytes": 2533,
+      "gitBlobSha": "a4da59d6ca28e510c13b31f4d948cd0ee65d9c82",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-completed-overlay.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-completed-overlay",
+      "format": "transparent scalable SVG",
+      "bytes": 2130,
+      "gitBlobSha": "7b0a2582c426c5fb5611cb6171010d224db8abe0",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-progress-overlay.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-progress-overlay",
+      "format": "transparent scalable SVG",
+      "bytes": 1922,
+      "gitBlobSha": "533adde094e11de0be469b3def5017791b5bf278",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/resonance-orders/order-state-ready-overlay.svg",
+      "purpose": "Resonance Order modular visual-state/rail-end refinement: order-state-ready-overlay",
+      "format": "transparent scalable SVG",
+      "bytes": 1973,
+      "gitBlobSha": "8c6865706850eee916450ad714743b51315a9b0d",
+      "review": "USER_APPROVED_LOCKED - 28 October 2026; user accepted final refined Resonance Order visual family",
+      "runtimeApproved": false,
+      "provenance": "Illustrated from approved Crystalarium colour palette, composited over existing card/rail artwork; created 28 October 2026",
+      "visualApprovedOn": "2026-10-28"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chamber-frame.svg",
+      "format": "SVG vector source",
+      "bytes": 4937,
+      "gitBlobSha": "a3dceca747a3e9a0e23a54bcd74dc398640c44af",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-closed.svg",
+      "format": "SVG vector source",
+      "bytes": 3629,
+      "gitBlobSha": "db430288e051b133202cd141dca3879e86bcb7c1",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-drop-target.svg",
+      "format": "SVG vector source",
+      "bytes": 3831,
+      "gitBlobSha": "6f9b49bd9edf3d6c896f86236f977b91065fdc51",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-full.svg",
+      "format": "SVG vector source",
+      "bytes": 3821,
+      "gitBlobSha": "4c568cb7708ea50b6019d2333fd21fb5997cabc8",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-chest-open.svg",
+      "format": "SVG vector source",
+      "bytes": 3762,
+      "gitBlobSha": "a79192f37f7da2d8b8e62ad97cc79cbbb60fe3fa",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-close.svg",
+      "format": "SVG vector source",
+      "bytes": 1605,
+      "gitBlobSha": "240c987fa95941232786951b166ed48ab08851c3",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-return-board-blocked.svg",
+      "format": "SVG vector source",
+      "bytes": 2630,
+      "gitBlobSha": "6905d4d018dffe3a413ee7754934cb7e58497b24",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-return-board-normal.svg",
+      "format": "SVG vector source",
+      "bytes": 2541,
+      "gitBlobSha": "a562ce39e6dbbd53f6548b45aadb65d44f74a343",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-return-board-ready.svg",
+      "format": "SVG vector source",
+      "bytes": 2660,
+      "gitBlobSha": "9f679ef138bbad90e40bfc0f118c619b9c76022c",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-blocked.svg",
+      "format": "SVG vector source",
+      "bytes": 2002,
+      "gitBlobSha": "15d47b6ded6deccdf22ea9fef6e6e77d19379859",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-empty.svg",
+      "format": "SVG vector source",
+      "bytes": 1914,
+      "gitBlobSha": "f461489f08e8e644c5a1c6cec60f9f75f90496fa",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-legal-drop.svg",
+      "format": "SVG vector source",
+      "bytes": 2053,
+      "gitBlobSha": "effce8114f2164998abe1a7eaed28bc5fa454c0d",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-occupied.svg",
+      "format": "SVG vector source",
+      "bytes": 1917,
+      "gitBlobSha": "5d81380de4810bcb639315cad9ac04c0474fceba",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/storage-chamber/storage-socket-selected.svg",
+      "format": "SVG vector source",
+      "bytes": 2035,
+      "gitBlobSha": "6d4150caf585c8905a27253f858c53dfa6128f1d",
+      "review": "USER_APPROVED_LOCKED - 29 October 2026; storage art visually accepted, gameplay implementation separately gated",
+      "runtimeApproved": false,
+      "purpose": "Separated Crystalarium Storage Chamber artwork: chest/frame/socket/Board-return state",
+      "visualApprovedOn": "2026-10-29"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/brook-wash.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: brook-wash",
+      "bytes": 1187,
+      "gitBlobSha": "65b8a3288ab954afa94b816eae5a7df30c6cb17c",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/fresh-board.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: fresh-board",
+      "bytes": 1229,
+      "gitBlobSha": "c8c9c47de9d433d0bca39d42da5d01970f8b195c",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/harmony.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: harmony",
+      "bytes": 1223,
+      "gitBlobSha": "6e627713d0b940f6b25f85884b1e09f2386f60f1",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/help.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: help",
+      "bytes": 1186,
+      "gitBlobSha": "d11d8cf741f73755cd29eea9ffc242a312b31195",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/leave.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: leave",
+      "bytes": 1211,
+      "gitBlobSha": "11ee2c2453338990ecf6928b0ab694300144b8bc",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/polish.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: polish",
+      "bytes": 1173,
+      "gitBlobSha": "6743a425331e502fc9a09fc32fe32ae23fc1a3fc",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/settings.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: settings",
+      "bytes": 1222,
+      "gitBlobSha": "be4bec4042b33f2458cd0a5d7605a8ebd9fd0c93",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/skip-guide.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: skip-guide",
+      "bytes": 1139,
+      "gitBlobSha": "9d8f51cb9d267467ad09d23ac47d26cfa5d4f33b",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/sound-off.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: sound-off",
+      "bytes": 1152,
+      "gitBlobSha": "f63f11433fcc136949a7ffd59cc35074eb699795",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    },
+    {
+      "file": "public/design-assets/crystalarium-c17/context-controls/sound-on.svg",
+      "purpose": "C17 independent ornate contextual tool glyph: sound-on",
+      "bytes": 1161,
+      "gitBlobSha": "24cb7f566df7a5d9db8b6c50380cc0ae5d892b78",
+      "format": "SVG",
+      "review": "C17_FINAL_COMPOSITION_CANDIDATE_PENDING_USER_VISUAL_ACCEPTANCE",
+      "runtimeApproved": false,
+      "provenance": "Original vector paths and shared gold/lapis medallion style; 29 October 2026; no external font/image assets"
+    }
+  ],
+  "releaseChecks": [
+    "SVG parsing and image load in preview",
+    "320x700 / 390x844 / 1280x720 / 1440x900 visual screenshots",
+    "Distinct crystal silhouette at 48px and colour independence",
+    "Focal point contrast with board and cards",
+    "Device performance, reduced-motion/static fallback",
+    "Final painted asset approval and provenance before integrating source"
+  ],
+  "paintedBackgrounds": {
+    "desktop": {
+      "decision": "USER_APPROVED_LOCKED",
+      "decisionDate": "2026-10-28",
+      "provenance": "Original AI-generated illustration from in-project C17 design conversation; no UI, fonts, labels or controls baked in",
+      "composition": "Crystalarium Garden landscape; mossy arches, hanging flowers, crystal mountains, stone steps, waterfalls, turquoise pools, crystal plants",
+      "sourceName": "crystalarium-garden-desktop-approved-source.png",
+      "sourceWidth": 1536,
+      "sourceHeight": 1024,
+      "sourceSha256": "3a913c4fd9038725c112230b01af1e5fa5ca30666f4f236cffdd5130588adb33",
+      "preparedWebp": "crystalarium-garden-desktop-approved-1920x1080.webp",
+      "preparedWebpSha256": "bb31ab491d498d5aebb31546575cd244126e4437467f40a2ec6558f5db13e6f8",
+      "formatTreatment": "The approved source is 3:2; 16:9 derived runtime composition crops 80 pixels from top and bottom, then resizes to 1920×1080. Preserve uncropped source.",
+      "userSource": "C17 approved background image in project chat; checksum identifies exact source and must be checked during eventual ingest",
+      "repositoryBinaryCommitted": true,
+      "pending": "Check SHA-bound Cloudflare rendering, contrast and required responsive screenshots; artwork approved, composition awaiting review.",
+      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-desktop-approved-1920x1080.webp",
+      "originalSourceArchived": "Google Drive/Unicorn Valley/crystalarium-garden-desktop-approved-source.png"
+    },
+    "portrait": {
+      "decision": "USER_APPROVED_LOCKED",
+      "generatedOn": "2026-10-28",
+      "sourceName": "crystalarium-garden-portrait-candidate-source.png",
+      "sourceWidth": 576,
+      "sourceHeight": 1024,
+      "sourceSha256": "524ccce0da3c43389363eb336b5b29b2cf786c8270ea2fb192e090fb4f22c162",
+      "preparedWebp": "crystalarium-garden-portrait-candidate-1080x1920.webp",
+      "preparedWebpSha256": "f25bae9923d06070cab91a741967d1a266b68779889f443568ee9c3c464bf684",
+      "formation": "The generator returned vertical painting inside wider white-margined canvas. Exactly cropped central 576×1024 9:16 composition, upscale derivative 1080×1920; not a stretched desktop crop.",
+      "repositoryBinaryCommitted": true,
+      "pending": "Check SHA-bound Cloudflare rendering, contrast and required responsive screenshots; artwork approved, composition awaiting review.",
+      "decisionDate": "2026-10-28",
+      "runtimeTarget": "public/design-assets/crystalarium-c17/garden-portrait-approved-1080x1920.webp",
+      "originalSourceArchived": "Google Drive/Unicorn Valley/crystalarium-garden-portrait-approved-source.png"
+    },
+    "note": "Approved optimised WebPs committed as verified Git binary blobs. Git blob SHAs: desktop d222f54d3685cc287a1843e425a9d65dab1bf5f5, portrait 1bb33626ff7547d3502cc93abfd7f5d049fd546b. Both byte lengths and SHA-256 match approved originals. Full-quality source PNGs archived in user's connected Google Drive (not in game bundle). SVG remains graceful fallback only. C17 visual overlay gate still pending."
+  },
+  "note": "Google Drive staging enabled binary handoff to GitHub create_blob(base64); both WebPs are now in the World draft repository. Earlier manual-upload instruction superseded.",
+  "boardCandidate": {
+    "status": "User accepted corrected frame-only artwork; NOT production-integrated",
+    "reviewPage": "/design-previews/crystalarium-c17-board-frame.html",
+    "sourceSheetArchived": "Google Drive/Unicorn Valley/C17 Board Candidates/board-asset-reference-sheet.png",
+    "composition": "Standalone alpha frame; optional independent 7×6 socket DOM grid; optional garden compositing; checkerboard default for transparency validation",
+    "designCaveat": "User approved the frame-only visual; responsive cell geometry and final game runtime integration remain gated. Socket visuals are separate candidates.",
+    "rejectedSource": "Prior board-frame-candidate.webp contained board/background, rejected by user; removed from active asset kit"
+  },
+  "generators": {
+    "status": "USER_APPROVED_LOCKED — all five separate generator illustrations approved as art; no gameplay mapping or integration approved",
+    "reviewPage": "/design-previews/crystalarium-c17-generators.html",
+    "familyCountInCurrentGame": 3,
+    "additionalArtCountBeyondExistingGame": 2,
+    "restriction": "Do not silently add two new crystal families, alter 0/4/7 unlock thresholds, rename Low/Bright/Bell, add charges or implement resource costs. Decide and test mapping separately within staged gates.",
+    "files": [
+      {
+        "name": "sky-blue",
+        "bytes": 216296,
+        "gitBlobSha": "e571b5ba826b96716e26ed3ad10a419614447e43",
+        "sha256": "97aadfa940699f583d6aa5c5fd47b7f6d7595930abd073a091b1250cefb56628"
+      },
+      {
+        "name": "moon-purple",
+        "bytes": 213488,
+        "gitBlobSha": "e1a3b4b9810e5cae45cad58fcf27b0464d3bb98c",
+        "sha256": "c1513d6fc702a72e207252317cba3494738f4871f73d9d525ff8557cd0cd9ecb"
+      },
+      {
+        "name": "flame-red",
+        "bytes": 207850,
+        "gitBlobSha": "23ea04508d12b1074f57ed504e0d236bf399d4a8",
+        "sha256": "6d09abba4e3c34bee9d4a5017765927416e1d4b5af632f68f23ac959a4676276"
+      },
+      {
+        "name": "forest-green",
+        "bytes": 219620,
+        "gitBlobSha": "c7ca28fcc4c203a09e24814a54b29e9b8a4cac67",
+        "sha256": "c6b0dd8cbaddb9dfe850e53f411311efcc8f78235ac242843c955c79530c9d9f"
+      },
+      {
+        "name": "sun-gold",
+        "bytes": 204232,
+        "gitBlobSha": "1184d99e2d7e4a884dc6817cf4afd242ed437506",
+        "sha256": "469493bbad59df9870300bd2c03f2187bc65d7795a4d633f638efacb89884604"
+      }
+    ],
+    "reviewDate": "2026-10-28",
+    "assetLoading": "On-demand in Crystalarium only; high-res source PNGs private Drive, WebP runtime files in World draft branch",
+    "artDecision": "USER_APPROVED_LOCKED",
+    "artApprovalDate": "2026-10-28",
+    "assetFilesCommitted": true,
+    "originalFilesArchivedToDrive": true
+  },
+  "crystalFamilies": {
+    "low": {
+      "artDecision": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "runtimeIntegrated": false,
+      "tierCount": 6,
+      "notes": "Refined art reviewed and accepted. WebPs match approved 48px sheet; PNG archival copies were regenerated pixel-for-pixel from approved lossless WebPs. No rules, save or render changes.",
+      "sourceFolder": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Low Blue Approved",
+      "files": [
+        {
+          "tier": 0,
+          "name": "Single shard",
+          "bytes": 121682,
+          "sha256": "d7b9b21aafd9a49d242f8facc153ee1f89f3fd3eaa91b747efa66406cd56da50",
+          "gitBlobSha": "e65fffcf63179924e2862bc2d3ffbb91e11da450"
+        },
+        {
+          "tier": 1,
+          "name": "Short cluster",
+          "bytes": 227110,
+          "sha256": "69fc2f742d0a71c35f52486abfcf495b2c762d5b6f93fb1ee379128e6d226adb",
+          "gitBlobSha": "45114eea0a8da563719b2d3c336407f8ffeeab64"
+        },
+        {
+          "tier": 2,
+          "name": "Tall spire",
+          "bytes": 172350,
+          "sha256": "30a81fa8df969b6f3e7d9491f1362ff73cd9df2122f6b108996a4bcbbbef6ec5",
+          "gitBlobSha": "4d5fb3393414891fad6aa2a7e5399665428861ef"
+        },
+        {
+          "tier": 3,
+          "name": "Floating crown",
+          "bytes": 204306,
+          "sha256": "0f26d3f408c66b73ea17079e7b6ceeea46ff9115fe3673b639264431b35e1c3f",
+          "gitBlobSha": "82bdd4cbaec916832b7c1667e4755393f5d5373a"
+        },
+        {
+          "tier": 4,
+          "name": "Golden wings",
+          "bytes": 219306,
+          "sha256": "d4c2ddcfa52b0af343e18c41eceb4cf182e05f3cff7b912be2c0c24af5d64a68",
+          "gitBlobSha": "49659f0823e558d51be6f9e32d6e304140b6c59a"
+        },
+        {
+          "tier": 5,
+          "name": "Grand formation",
+          "bytes": 225340,
+          "sha256": "a2a288547474f05d8942b41c6da480ebef9191959d7cabe1a1a530522d424924",
+          "gitBlobSha": "44f2b9a321f617406eb1852508939e268747d5dd"
+        }
+      ]
+    },
+    "bright": {
+      "artDecision": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "runtimeIntegrated": false,
+      "tierCount": 6,
+      "reviewPage": "/design-previews/crystalarium-c17-bright-crystals.html",
+      "sourceFolder": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bright Teal Approved",
+      "notes": "User authorised committing the six Bright/teal alpha sprites. Canonical WEBP is lossless; PNG archival copies regenerated pixel-identically to avoid transparent-pixel mismatch. Artwork approval does not authorise additional mechanics or replace game renderer.",
+      "files": [
+        {
+          "tier": 0,
+          "name": "Single teal shard",
+          "bytes": 91532,
+          "sha256": "e039fc982bcff40f4e6318abfbc527fe93f96483878bf68df40bc9092244e38c",
+          "gitBlobSha": "1b2e1e423441b915f3a17d5a4272bd64ae4960d8"
+        },
+        {
+          "tier": 1,
+          "name": "Small teal cluster",
+          "bytes": 139622,
+          "sha256": "c9e7721c1c01ecca70884ce1afd87626aa103b39ccfaf009f767c165dc91f3a9",
+          "gitBlobSha": "26e6ef831c64b1f1e7bda94b798560ae71bb70ef"
+        },
+        {
+          "tier": 2,
+          "name": "Tall teal formation",
+          "bytes": 145872,
+          "sha256": "e7fb9f63eb6d727a401476e0314bcf121f956330048237b2612dd07a28227932",
+          "gitBlobSha": "3450c035fc1903a8d1147369ae314acde8f066e0"
+        },
+        {
+          "tier": 3,
+          "name": "Floating teal fragments",
+          "bytes": 151906,
+          "sha256": "7e0980fef379255bef5cc4f6204c4b06672035ddb29cea41c36c4520ed591e72",
+          "gitBlobSha": "d0104333c7f9f2fd11b45437c0be1720a0a48a68"
+        },
+        {
+          "tier": 4,
+          "name": "Gilded teal spire",
+          "bytes": 164358,
+          "sha256": "809a69aa65b730ccf75a77c1501578cf9ff6a5c1254e1b93a5ac53f559e327fb",
+          "gitBlobSha": "2609018fa3ccbbb5f57becb35c545f4f8ad9dc9f"
+        },
+        {
+          "tier": 5,
+          "name": "Grand teal crown",
+          "bytes": 176292,
+          "sha256": "3b18b3918ed39cca1ac3572cbc7a24a8eb7f72599508a440b339de5bcca8fcbd",
+          "gitBlobSha": "86a94c34aae9734fa764eb574909903917b51562"
+        }
+      ]
+    },
+    "bell": {
+      "artDecision": "USER_REQUESTED_COMMITTED_CANDIDATE",
+      "approvedForCommit": "2026-10-28",
+      "visualAcceptance": "pending explicit user review of separated 48px sprites",
+      "runtimeIntegrated": false,
+      "tierCount": 6,
+      "reviewPage": "/design-previews/crystalarium-c17-bell-crystals.html",
+      "sourceFolder": "Google Drive/Unicorn Valley/C17 Crystal Sprites/Bell Violet Approved",
+      "notes": "Six independently extracted, 512x512 lossless-alpha violet crystal sprites. All PNG archive copies pixel-identical to decoded WebP. User requested creation and commit, not final visual lock. The existing Bell renderer, saved states and rules remain unchanged.",
+      "files": [
+        {
+          "tier": 0,
+          "name": "Single violet shard",
+          "bytes": 86174,
+          "sha256": "518356b776bd35367dd72ffba7e5c72b9f0475b02dcfd8db2e721621c36bd488",
+          "gitBlobSha": "80882dedbd133a23f5f9e912e11851fe8e81c29d"
+        },
+        {
+          "tier": 1,
+          "name": "Violet floral cluster",
+          "bytes": 142928,
+          "sha256": "ea6a014fb038374e4d5f244a2fc6642eacf5ba60e4db840d5d22737d8aa1b5d4",
+          "gitBlobSha": "80a21260742a8673a04b1b94bfc0cbbed912f46f"
+        },
+        {
+          "tier": 2,
+          "name": "Tall violet spire",
+          "bytes": 136000,
+          "sha256": "a2729a89b32511c9cd9a3f8c0e9545b31511a77980f21396e2f19be052f5bad5",
+          "gitBlobSha": "f75acc7bc801142478db218b88fd37ccda2c34ad"
+        },
+        {
+          "tier": 3,
+          "name": "Floating violet geode",
+          "bytes": 145342,
+          "sha256": "634e9547945b01fd91d05a588540f03cd714951ad862df13e62cca23a99083cc",
+          "gitBlobSha": "ac0e226a2795cbad98e01e9dc67a05efdc26fd08"
+        },
+        {
+          "tier": 4,
+          "name": "Violet golden wings",
+          "bytes": 144612,
+          "sha256": "0f9919917a3f4d6de7b38530c3d6e356ea742543ce121bbddcbf919ba447a361",
+          "gitBlobSha": "f72111696d4a291fef779adff832c5f7521614a8"
+        },
+        {
+          "tier": 5,
+          "name": "Grand violet crown",
+          "bytes": 151634,
+          "sha256": "f76eaf9d0a3c79c8de50e83892eee180fc25d2cecfd5e6c5539ff8a095cdcc50",
+          "gitBlobSha": "68f24a55c0ed86757e808de62dce8a72ddbfbd84"
+        }
+      ]
+    }
+  },
+  "growthPotionArt": {
+    "status": "USER_APPROVED_LOCKED_FINAL_ART",
+    "approvedOn": "2026-10-28",
+    "direction": "Ornate gold-and-glass vessel with cyan glowing crystal crown; turquoise liquid, carved floral/leaf/plinth detailing and separate readable slim vertical gauge. Approved multi-state vial, single-drop, pour, splash and emerging crystal visuals.",
+    "assetPlan": [
+      "reservoir glass-and-gold empty shell alpha",
+      "separable cyan liquid level mask/tint controlled by UI code, not five fixed bitmaps",
+      "vertical gauge empty frame with independent fill bar",
+      "hand-held empty vial, dynamic fill support",
+      "isolated droplet",
+      "pour stream and splash effects",
+      "crystal emergence/glow effect and reduced motion static states"
+    ],
+    "constraints": [
+      "Reference contact sheet is a visual guide only; do not ship it as a flattened runtime texture",
+      "Never bake percentage labels into the asset art; quantities and progress are real UI data",
+      "All controls and interactive targets remain independent hit-tested UI",
+      "Any numeric growth costs, capacity and refill remain C20 pending approval",
+      "Art-only C17, no change to existing game saves, mechanics, economy or scene"
+    ],
+    "artifactStatus": "All 62 standalone transparent WebP artwork files user-approved and locked; present on World PR #337. No runtime import or C20 resource economy approved.",
+    "runtimeApproved": false,
+    "candidateArchive": {
+      "status": "HISTORICAL_CANDIDATE_ARCHIVE; files incorporated into final approved 62-sprite collection",
+      "fileCount": 49,
+      "included": "43 individually separated illustrated sprites plus 6 experimental shell/fill-mask layers; each exported as transparent PNG and lossless WebP",
+      "archiveDriveUrl": "https://drive.google.com/file/d/11D9Sz8CAhY6UfohDHycSb73s4xfLDtcN/view",
+      "qaContactSheetDriveUrl": "https://drive.google.com/file/d/1Dgxaj_nG4QTUgSvL1JRDi17Xd5WODEm1/view",
+      "archiveSha256": "4fd793121f52f5ffd539899adb682ed88ddc60e79f0a9fd4144c3fedaf47fe13",
+      "archiveBytes": 5310775,
+      "standaloneWebpBytes": 1553670,
+      "checks": [
+        "All 49 export canvases have transparent corner pixels",
+        "Each sprite isolated from labelled reference sheet; label removal and visual fit still subject to human review",
+        "Includes approximate mask/shell layer geometry for arbitrary liquid fill, not verified final UI implementation"
+      ],
+      "warnings": [
+        "Generated art contains possible edge/halo artefacts, especially small effects and disabled icons; visual QA still pending",
+        "C17 final art acceptance, integration, source-bound Cloudflare QA and C20 economy gate remain open"
+      ],
+      "repositoryPath": "public/design-assets/crystalarium-c17/growth-potion-assets/",
+      "publishedReview": "/design-previews/crystalarium-c17-growth-potion-assets.html",
+      "gitBlobCount": 49,
+      "totalWebpBytes": 1553670,
+      "reviewSupersededBy": "growthPotionArt.finalArtLock"
+    },
+    "refinement": {
+      "date": "2026-10-28",
+      "status": "REFINEMENT_HISTORY; approved within final 62-sprite artwork lock",
+      "humanDecision": "Correction work authorised; approved Growth Potion visual direction unchanged. Do not treat corrected sprites as final player acceptance.",
+      "changedExistingAssetCount": 19,
+      "newCandidateAssetCount": 13,
+      "correctedWebpCount": 32,
+      "refinedZipDrive": "https://drive.google.com/file/d/1qm83CuOrhNISOazrQ5xv-tjyZxbP0wC4/view",
+      "transferZipDrive": "https://drive.google.com/file/d/1GruEgspIwiGztRT239rOeYMsgcjgEWHZ/view",
+      "sourceZipSha256": "e3114c595837554ad98a3fde1ce13aee29f9165521fdcd2243a0ddca5bd41486",
+      "refinedVisualReview": "/design-previews/crystalarium-c17-growth-potion-refined.html",
+      "qa": "Alpha corners zero; transparent RGB cleaned; 12-frame glass anchor identical in first 225px; independent rich liquid and masks with 0/25/50/75/100% screenshot comparisons. Five fixed sprites are only comparisons.",
+      "note": "Glass shells, masked vibrant liquid overlays and waterline are separated; dynamic fill demonstration is art-only, not a C20 balance implementation."
+    },
+    "finalPolish": {
+      "date": "2026-10-28",
+      "status": "USER_APPROVED_LOCKED_FINAL_ART",
+      "replacedWebps": 15,
+      "changes": [
+        "Removed the right-side source crop seam from all 12 pouring poses while retaining fixed bottle anchor",
+        "Distinct early frame progression, with gradual extension to a tapered flow and detached droplets",
+        "Bright separate waterline for reservoir/vial/gauge, repositioned to arbitrary liquid level after glass compositing and clipped to interior mask"
+      ],
+      "verified": [
+        "12 individual lossless PNG/WebP exports with alpha corners zero",
+        "12 successive frames have different non-empty stream extents",
+        "No alpha at x=322 seam in the cropped stream region",
+        "3 line sprites have nonzero highlights and 0-alpha backgrounds",
+        "Archive blob SHAs checked against GitHub returned SHA after upload"
+      ],
+      "sourceArchive": "https://drive.google.com/file/d/1SU5FdvMhOKVVnPWmUy1hahgJAdC4lWE5/view",
+      "review": "/design-previews/crystalarium-c17-growth-potion-refined.html",
+      "limitations": [
+        "Dynamic demo is not gameplay",
+        "Final human art review and browser deployment are distinct gates",
+        "Do not treat illustrative 0–100 slider as approved gameplay economy or potion capacity"
+      ],
+      "runtimeApproved": false
+    },
+    "finalArtLock": {
+      "status": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "approvalSource": "User explicitly confirmed the polished Growth Potion artwork and instructed formal lock and commit.",
+      "spriteCount": 62,
+      "repositoryPath": "public/design-assets/crystalarium-c17/growth-potion-assets/",
+      "commitHistory": [
+        "faac236e0977629584f14bf665970f6e8ca50066",
+        "63d7c4b76f4d0286412649179aecfaf31ade7cd6",
+        "de99728943398f676a28574c3010cb4eb570c29d",
+        "8fb9c133365aadda1d53b02229576a6652709bfa"
+      ],
+      "approvedComposition": "Ornate gold-and-glass turquoise reservoir, transparent vials and gauge, independently animated luminous liquid surface, 12 polished curved pouring frames, droplets, splashes, crystal emergence, buttons and reduced-motion source effects",
+      "finalReviewPath": "/design-previews/crystalarium-c17-growth-potion-refined.html",
+      "filesVerifiedAgainstGitHub": 62,
+      "assetHashesAndLengthsPreserved": true,
+      "notApproved": [
+        "C17 whole-screen responsive composition, real runtime use or final acceptance",
+        "C20 Growth Potion capacity, refill, costs or other resource economy",
+        "C18-C19 queue/storage and save migrations",
+        "H6.9D merge or deployment to production"
+      ],
+      "implementationRule": "Dynamic resource quantity is rendered from canonical state with independently masked textured liquid and readable text, never from a fixed 0/25/50/75/100 bitmap. Use one approved collection as source of art; preserve accessibility, 48px touch targets and reduced-motion behaviour."
+    }
+  },
+  "resonanceOrderArt": {
+    "status": "USER_APPROVED_LOCKED_FINAL_ART",
+    "createdOn": "2026-10-28",
+    "sourceArtwork": "Original AI-generated fantasy UI reference with text-free card manually isolated; independent gold/indigo SVG rail and arrow artwork created for game UI",
+    "sourceArchive": "https://drive.google.com/file/d/1bzE52SjuLlxTMlsDjESKn55nw8zKIxLe/view",
+    "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
+    "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
+    "assetCount": 18,
+    "approvedCrystalFamiliesReused": ["low", "bright", "bell"],
+    "components": [
+      "six illustration-only normal, progress, ready, focus, locked and completed card state surfaces",
+      "independent ready aura",
+      "scalable decorative rail SVG/WebP",
+      "separate left/right gold navigation SVG/WebP"
+    ],
+    "rules": [
+      "No baked recipe labels, counters, ranks, currencies, rarities, timers, reward icons or Offer button",
+      "Whole ready card is Offer target",
+      "Real horizontally scrollable rail (native touch/trackpad plus arrow controls) rather than pre-painted card collection",
+      "Use locked 18 Low/Bright/Bell crystal tier assets as card content",
+      "Preview state is simulated, no real game/state/save changes",
+      "Do not lock these new graphics until user visually approves; other C17/C18-C24 gates stay open"
+    ],
+    "refinement": {
+      "date": "2026-10-28",
+      "status": "HISTORICAL_REFINEMENTS_ACCEPTED_IN_FINAL_ART_LOCK",
+      "newLayerCount": 5,
+      "combinedArtAssetCount": 18,
+      "visualChanges": [
+        "In-progress cards use a blue gem/filigree and stronger real progress track, distinct from empty state",
+        "Ready cards gain a bright turquoise and pale-gold continuous silhouette glow with sparkles; active offer remains the whole card",
+        "Completed cards gain gold/green rim accents and a clear green-ticked medallion independent of recipe text",
+        "Rail receives restrained independently layered blue crystals, leaves, white flowers at each end, with the scrolling viewport unobstructed",
+        "Card/card-rail proportions checked in a side-panel layout on desktop and board-first narrow screen demo"
+      ],
+      "assetsRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
+      "reviewPage": "/design-previews/crystalarium-c17-resonance-orders.html",
+      "sourceZip": "https://drive.google.com/file/d/1MjlM3fro15bU6m8wCcj0QoXQ1RXmcO-D/view",
+      "transferArchiveSha256": "f9a7a72c296d49db6b5d358abe30449927e85fba2336b8602d8828a22da4fd2b",
+      "qaEvidence": [
+        "SVG XML parsed and transparent alpha corners checked",
+        "Node --check for independent preview JavaScript passed",
+        "Local headless browser DOM/interaction review at 1280x720, 1440x900, 390x844 and 320x700; exactly five cards overflow and rail navigates in each; no horizontal document overflow or page errors; ready card progresses to completed in no-save test",
+        "The preview CSS was repaired to ensure 8px progress fills are contained within their tracks and titles do not overlap the gem crest",
+        "Fixed earlier preview accessibility/markup errors: button types, control group semantics, labelled rail region and invalid CSS property"
+      ],
+      "notApproved": [
+        "Not final user acceptance of refined art",
+        "No 50-order queue, C18 data migration or runtime implementation",
+        "No Growth Potion economy, storage transfer or save changes",
+        "No merge/release"
+      ],
+      "accessibilityRepair": "Eight decorative SVG files now contain non-empty title nodes; semantic region and controls simplify to native HTML. Earlier preview lint errors corrected."
+    },
+    "finalArtLock": {
+      "status": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-28",
+      "approvalSource": "User stated Resonance Order artwork looked good and explicitly instructed lock, then generate Storage Chamber art.",
+      "count": 18,
+      "verifiedGitBlobCount": 18,
+      "filesAndHashesUnchanged": true,
+      "assetRoot": "public/design-assets/crystalarium-c17/resonance-orders/",
+      "preview": "/design-previews/crystalarium-c17-resonance-orders.html",
+      "scope": "Visual art library only, not C18 queue/save migration or C21 runtime integration",
+      "next": "Storage Chamber art-only preview and modular components"
+    }
+  },
+  "storageChamberArt": {
+    "status": "USER_APPROVED_LOCKED_FINAL_VISUAL_ART",
+    "createdOn": "2026-10-28",
+    "assetRoot": "public/design-assets/crystalarium-c17/storage-chamber/",
+    "assetCount": 14,
+    "preview": "/design-previews/crystalarium-c17-storage-chamber.html",
+    "assetManifestVerifiedAgainstGitHub": true,
+    "visualDirection": "One ornate crystal-and-gold chest as permanent entry/drop target, separate 4x3 miniature board-like modal/chamber overlay, independent slot states and Board-return icon; Crystalarium indigo/teal/flowers styling.",
+    "illustrativeLayoutOnly": "4 columns × 3 rows / 12 slots now approved as C17 visual layout and C19 design target. Real storage schema and transfer changes remain separately gated.",
+    "files": [
+      "chest closed/open/drop-target/full",
+      "chamber decorative frame",
+      "socket empty/occupied/selected/legal-drop/blocked",
+      "Board return normal/ready/blocked",
+      "close icon"
+    ],
+    "preserveExisting": [
+      "Do not duplicate inventory or store stack counts/rareness/timers",
+      "Use existing Low/Bright/Bell canonical crystal art",
+      "Preserve all four legacy shelf pieces pending a versioned save migration",
+      "No changes to actual board, stored item transfer semantics or real saves"
+    ],
+    "provisionalInteraction": "No-save preview models board→chest and storage→Board; demo actions are not a C19 storage engine.",
+    "reviewNeeded": [
+      "C17 full-screen responsive and hit-target composition approval remains open",
+      "C19 storage mechanics, atomic transfer, legacy four-shelf migration and save-safety testing remain separate gate",
+      "Capacity may only be revisited through explicit gameplay evidence/design change, not silently during coding"
+    ],
+    "provenance": "Separately authored original SVG layers based on approved C17 garden visual direction; experimental generated storage environment sheets with unrelated rarity/shelving were excluded as game specification",
+    "runtimeApproved": false,
+    "finalArtLock": {
+      "status": "USER_APPROVED_LOCKED",
+      "approvedOn": "2026-10-29",
+      "approvalSource": "Owner liked the final Storage Chamber and agreed that the 4×3 / 12-slot layout works, then explicitly requested artwork lock and commit.",
+      "assetCount": 14,
+      "gitBlobHashesAndSizesPreserved": true,
+      "assetRoot": "public/design-assets/crystalarium-c17/storage-chamber/",
+      "layoutTarget": {
+        "columns": 4,
+        "rows": 3,
+        "slots": 12,
+        "status": "APPROVED_DESIGN_BASELINE_C19_IMPLEMENTATION_NOT_YET_QUALIFIED"
+      },
+      "noRuntimeApproval": [
+        "No migration or replacement of legacy four shelf pieces",
+        "No C19 game-state or storage-return transfer behaviour change",
+        "No 42-cell board, Growth Potion economy, or queue state change",
+        "No H6.9D merge or release"
+      ],
+      "preservation": [
+        "Single persistent chest entry/board-to-storage drop target",
+        "Miniature board-like chamber with selectable storage sockets and one Board-return control",
+        "Recoverable full board/full chamber and fail-safe cancelled/rejected transfers",
+        "Use unchanged Low/Bright/Bell crystal sprites as contents, not baked-in item imagery"
+      ],
+      "next": "Complete remaining C17 icon/action/visual-composition audit then C18 multi-order pure rules and legacy-save migration gate B; implement storage C19 only after separate exact migration/atomic-transfer review."
+    }
+  },
+  "contextualControlsArt": {
+    "status": "C17_CANDIDATE_PENDING_USER_VISUAL_REVIEW",
+    "createdOn": "2026-10-29",
+    "assetCount": 10,
+    "root": "public/design-assets/crystalarium-c17/context-controls/",
+    "preview": "/design-previews/crystalarium-c17-context-controls.html",
+    "sourceArchive": "https://drive.google.com/file/d/15xTZqev4gJreRThUDZygnIxvY6NdXvZy/view?usp=drivesdk",
+    "coverage": "Help, sound on/off, leave, Harmony, Polish, Brook Wash, Fresh Board, settings and guide skip",
+    "interactionRule": "Accessible minimum 48px click targets; SVG supplies icon only, no painted text/quantities; focus, hover, disabled and reduced motion handled by the shared UI and CSS; no game mutations in C17.",
+    "artApproval": "NOT_YET_USER_APPROVED"
+  },
+  "finalCompositionReview": {
+    "status": "C17_NO_SAVE_PREVIEW_COMMITTED_AWAITING_SHA_BOUND_VISUAL_ACCEPTANCE",
+    "createdOn": "2026-10-29",
+    "url": "/design-previews/crystalarium-c17-final-composition.html",
+    "sourceArchive": "https://drive.google.com/file/d/15xTZqev4gJreRThUDZygnIxvY6NdXvZy/view?usp=drivesdk",
+    "demonstration": "Desktop board-left, potions/wells next, horizontally overflowing order cards right; portrait board-first/well-row/order rail/actions; storage/spotlight example; all illustrative no saves.",
+    "checkSummary": "Static JavaScript syntax and XML passed; Chromium set_content DOM/geometry smoke passed at 320×700, 390×844, 768×1024, 1280×720, 1440×900: 42 sockets, 4 overflowing sample orders, 6 tool controls, 48px socket width, zero document overflow, functional demo storage/help and zero JS exceptions. Local browser cannot retrieve local file/HTTP asset URLs in this execution environment, so SHA-bound exact-asset visual rendering and accessibility/contrast acceptance are still pending.",
+    "remaining": [
+      "Actual source-bound deployed CSS/img loading and screenshots of approved painted background/board, mobile contrast, socket compositing and typography",
+      "Review board socket state prototypes (empty/selected/valid/invalid) and final frame fit, which are not yet artwork-locked",
+      "Check tool glyph visual acceptance, labels, keyboard/zoom focus and reduced-motion in runtime",
+      "Check lazy-loaded image/no-art fallback and interaction bridge with canonical gameplay at C21-C23"
+    ],
+    "runtimeApproved": false
+  }
+}

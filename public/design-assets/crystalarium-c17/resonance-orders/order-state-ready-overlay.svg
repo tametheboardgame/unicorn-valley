@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="720" viewBox="0 0 512 720"><title>Ready Resonance Order luminous glow</title><defs>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5ba"/><stop offset=".24" stop-color="#f7b85f"/><stop offset=".56" stop-color="#ad6227"/><stop offset=".82" stop-color="#fff1af"/><stop offset="1" stop-color="#9d572b"/></linearGradient>
+<linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d4fff1"/><stop offset=".35" stop-color="#6be8c8"/><stop offset=".72" stop-color="#19a8ad"/><stop offset="1" stop-color="#2b608e"/></linearGradient>
+<linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d7e878"/><stop offset=".6" stop-color="#4a9c55"/><stop offset="1" stop-color="#245c43"/></linearGradient>
+<filter id="glow" x="-45%" y="-45%" width="190%" height="190%"><feGaussianBlur stdDeviation="9"/></filter>
+<filter id="smallGlow"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<path d="M58 188Q32 351 57 529M454 189Q485 357 454 530M101 97Q256 57 410 97M99 628Q251 679 414 628" fill="none" stroke="#88f8cf" stroke-width="26" opacity=".58" filter="url(#glow)"/>
+<path d="M57 190Q40 344 60 527M453 190Q468 346 453 526M101 100Q250 66 410 100M99 629Q248 667 414 628" fill="none" stroke="#d5ffc3" stroke-width="6" stroke-linecap="round" opacity=".88"/>
+<path d="M70 203Q55 338 68 480M439 216Q453 361 441 494" fill="none" stroke="#fff0a3" stroke-width="3" opacity=".9"/>
+<g transform="translate(425 134)"><circle r="27" fill="#d7ffd5" opacity=".6" filter="url(#smallGlow)"/><path d="M0-22L8-7L24 0L8 8L0 24L-8 8L-24 0L-8-7Z" fill="#fff2c0" stroke="#7eead3" stroke-width="3"/></g>
+<g fill="#f9f9cf"><circle cx="90" cy="164" r="5"/><circle cx="429" cy="489" r="4"/><circle cx="89" cy="572" r="4"/></g>
+<g stroke="#d1fff2" stroke-width="3" stroke-linecap="round"><path d="M82 166h24M94 154v24"/><path d="M426 489h21M437 478v21"/><path d="M88 560v23M76 572h24"/></g>
+</svg>

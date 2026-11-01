@@ -1,5 +1,6 @@
 import { GAME_HEIGHT, GAME_WIDTH } from '../config/gameConstants';
 import type { InteractionTarget } from '../interaction/InteractionTarget';
+import { launchMiniGame } from '../minigames/MiniGameLauncher';
 import { getBrowserQuestEngine } from '../quests/browserQuestEngine';
 import { getBrowserSaveService } from '../save/browserSaveService';
 import { CrystalGrottoStoryService, type CrystalNoteId } from '../story/CrystalGrottoStoryService';
@@ -12,6 +13,7 @@ import { InteractiveMicroLocationScene } from './InteractiveMicroLocationScene';
 
 const PLAYER_TEXTURE_KEY = 'player-unicorn-crystal-grotto';
 const BROOK_RETURN = CRYSTAL_BROOK_GROTTO_THRESHOLD.returnPosition;
+const CRYSTALARIUM_ALTAR = { x: 1090, y: 190 } as const;
 const NOTE_INTERACTIONS = [
   {
     id: 'interaction:grotto-note-low',
@@ -62,6 +64,15 @@ export class CrystalGrottoScene extends InteractiveMicroLocationScene {
   protected getMicroLocationInteractions(): readonly InteractionTarget[] {
     return [
       {
+        id: 'interaction:grotto-crystalarium-altar',
+        label: 'Crystalarium Altar',
+        actionLabel: 'Play Crystalarium',
+        position: CRYSTALARIUM_ALTAR,
+        interactionRadius: 110,
+        priority: 35,
+        result: { type: 'message', title: 'Crystalarium', message: '' },
+      },
+      {
         id: 'interaction:grotto-exit',
         label: 'Crystal Brook',
         actionLabel: 'Go outside',
@@ -93,6 +104,20 @@ export class CrystalGrottoScene extends InteractiveMicroLocationScene {
   }
 
   protected activateMicroLocationInteraction(id: string): void {
+    if (id === 'interaction:grotto-crystalarium-altar') {
+      void launchMiniGame(this, {
+        gameId: 'crystalarium',
+        variantId: 'resonance-patterns',
+        source: 'world',
+        worldContext: {
+          locationId: 'crystal-grotto',
+          interactionId: 'crystalarium-altar',
+        },
+      }).catch(() => {
+        this.showMicroLocationFeedback('The altar is resting. Please try again.');
+      });
+      return;
+    }
     if (id === 'interaction:grotto-exit') {
       this.leaveMicroLocation();
       return;
@@ -199,6 +224,36 @@ export class CrystalGrottoScene extends InteractiveMicroLocationScene {
         glowing ? 0.22 : 0.1,
       );
     }
+    // Distinct repeat-play destination, not part of the one-time doorway melody.
+    // Keep the final Grotto environment redesign independent from H6.9C6.
+    const altar = this.add.container(CRYSTALARIUM_ALTAR.x, CRYSTALARIUM_ALTAR.y).setDepth(18);
+    altar.setName('crystal-grotto:crystalarium-altar');
+    altar.add([
+      this.add.ellipse(0, 40, 158, 35, 0x071d36, 0.65),
+      this.add.ellipse(0, 22, 144, 63, 0x496e86).setStrokeStyle(4, 0x9ae2f0),
+      this.add.ellipse(0, 8, 122, 42, 0x184a76).setStrokeStyle(3, 0xcaf6ff),
+      this.add.triangle(-34, -3, 0, 44, 18, 0, 36, 44, 0x63cddd),
+      this.add.triangle(3, -16, 0, 60, 20, 0, 40, 60, 0xbd91e7),
+      this.add.triangle(35, -3, 0, 46, 18, 0, 36, 46, 0x82bfff),
+      this.add
+        .text(0, 63, '✦ PLAY CRYSTALARIUM ✦', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '16px',
+          fontStyle: 'bold',
+          color: '#fff7d4',
+          backgroundColor: '#223e5cdd',
+          padding: { x: 8, y: 5 },
+        })
+        .setOrigin(0.5),
+    ]);
+    this.tweens.add({
+      targets: altar,
+      y: CRYSTALARIUM_ALTAR.y - 5,
+      yoyo: true,
+      repeat: -1,
+      duration: 1350,
+      ease: 'Sine.InOut',
+    });
     if (glowing) {
       const glow = this.add
         .text(640, 325, '✦   ✧   ✦   ✧   ✦', {

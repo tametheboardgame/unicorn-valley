@@ -59,6 +59,7 @@ export const BROWSER_GROUPS = Object.freeze({
     'tests/play/r6.5-wp12-race-expansion.spec.ts',
   ],
   'mini-games': [
+    'tests/play/h6.9c-crystalarium-full-game.spec.ts',
     'tests/play/mg-wp3-just-games.spec.ts',
     'tests/play/mg-wp4-mini-game-launch-return-contract.spec.ts',
     'tests/play/r6.5-wp14-repeatable-activities.spec.ts',
