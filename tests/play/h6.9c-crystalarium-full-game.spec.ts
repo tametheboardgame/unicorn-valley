@@ -1507,10 +1507,7 @@ test.describe('C21 desktop order navigation without gameplay side effects', () =
       await expect(right).toBeVisible();
       await expect(left).toBeDisabled();
       await expect(right).toBeEnabled();
-      const before = await page.evaluate(
-        (key) => localStorage.getItem(key),
-        SANDBOX_KEY,
-      );
+      const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
       await right.click();
       await expect.poll(() => rail.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
       await expect(left).toBeEnabled();
@@ -1522,9 +1519,9 @@ test.describe('C21 desktop order navigation without gameplay side effects', () =
       await expect.poll(() => rail.evaluate((element) => element.scrollLeft)).toBe(0);
       await expect(left).toBeDisabled();
       expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
-      const labels = await rail.locator('.crystalarium-live-order-card').evaluateAll((cards) =>
-        cards.map((card) => card.getAttribute('aria-label')),
-      );
+      const labels = await rail
+        .locator('.crystalarium-live-order-card')
+        .evaluateAll((cards) => cards.map((card) => card.getAttribute('aria-label')));
       expect(labels).toHaveLength(3);
       for (const label of labels) {
         expect(label).toMatch(/^(In progress|Ready to offer): /);
@@ -1542,8 +1539,12 @@ test.describe('C21 desktop order navigation without gameplay side effects', () =
     await expect(live.locator('.crystalarium-live-order-card')).toHaveCount(1);
     await expect(live.locator('[data-crystalarium-action="orders-previous"]')).toBeHidden();
     await expect(live.locator('[data-crystalarium-action="orders-next"]')).toBeHidden();
-    await expect(live.locator('.crystalarium-live-tools [data-crystalarium-action="offer"]')).toHaveCount(0);
-    await expect(live.locator('.crystalarium-live-producers [data-crystalarium-action="grow"]')).toHaveCount(0);
+    await expect(
+      live.locator('.crystalarium-live-tools [data-crystalarium-action="offer"]'),
+    ).toHaveCount(0);
+    await expect(
+      live.locator('.crystalarium-live-producers [data-crystalarium-action="grow"]'),
+    ).toHaveCount(0);
   });
 });
 
