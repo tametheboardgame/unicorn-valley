@@ -2298,7 +2298,6 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
   }
 });
 
-
 test.describe('C23A native touchscreen and tablet card readability', () => {
   test.use({ hasTouch: true });
 
@@ -2309,7 +2308,9 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
     }) => {
       test.skip(browserName !== 'chromium', 'CDP touchscreen input is Chromium-specific');
       test.setTimeout(90_000);
-      await page.setViewportSize(portrait ? { width: 390, height: 844 } : { width: 1024, height: 768 });
+      await page.setViewportSize(
+        portrait ? { width: 390, height: 844 } : { width: 1024, height: 768 },
+      );
       await enterResonanceGarden(page, true, !portrait);
       const root = page.locator(
         portrait ? '[data-crystalarium-portrait="true"]' : '[data-crystalarium-live="true"]',
@@ -2317,9 +2318,11 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
       const guide = root.locator(
         portrait ? '.crystalarium-portrait-guide' : '.crystalarium-live-guide',
       );
-      await root.locator(
-        portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]',
-      ).tap();
+      await root
+        .locator(
+          portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]',
+        )
+        .tap();
       await expect(guide).toContainText('2 of 5');
       const source = root.locator('[data-crystalarium-cell="2"]');
       const target = root.locator('[data-crystalarium-cell="0"]');
@@ -2334,10 +2337,12 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
       for (let i = 1; i <= 8; i += 1) {
         await cd.send('Input.dispatchTouchEvent', {
           type: 'touchMove',
-          touchPoints: [{
-            x: start.x + ((finish.x - start.x) * i) / 8,
-            y: start.y + ((finish.y - start.y) * i) / 8,
-          }],
+          touchPoints: [
+            {
+              x: start.x + ((finish.x - start.x) * i) / 8,
+              y: start.y + ((finish.y - start.y) * i) / 8,
+            },
+          ],
         });
         if (i === 3) {
           await expect(guide).toContainText('3 of 5');
@@ -2347,7 +2352,10 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
       await cd.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
       await expect(guide).toContainText('4 of 5');
       await expect(page.locator('.crystalarium-drag-ghost')).toHaveCount(0);
-      const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+      const saved = await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+        SANDBOX_KEY,
+      );
       expect(saved.merges).toBe(1);
       expect(saved.cells[2]).toBeNull();
       expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
@@ -2368,7 +2376,8 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
     const cd = await page.context().newCDPSession(page);
     await cd.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
     await cd.send('Input.dispatchTouchEvent', {
-      type: 'touchMove', touchPoints: [{ x: start.x + 18, y: start.y + 18 }],
+      type: 'touchMove',
+      touchPoints: [{ x: start.x + 18, y: start.y + 18 }],
     });
     await expect(root.locator('.crystalarium-portrait-guide')).toContainText('3 of 5');
     await cd.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
@@ -2380,10 +2389,13 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
 test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
   for (const width of [900, 1024, 1440]) {
     for (const completed of [6, 8]) {
-      test(`${completed === 6 ? 'two' : 'three'} goals at ${width}px keep full-sized pictures`, async ({ page }) => {
+      test(`${completed === 6 ? 'two' : 'three'} goals at ${width}px keep full-sized pictures`, async ({
+        page,
+      }) => {
         await page.setViewportSize({ width, height: width === 900 ? 700 : 900 });
         await enterResonanceGarden(page, false, true, {
-          ...createCrystalariumFullState(), completed,
+          ...createCrystalariumFullState(),
+          completed,
         });
         const selector = completed === 6 ? '.has-two-goals' : '.has-three-goals';
         const card = page.locator('.crystalarium-live-order-card' + selector).first();
