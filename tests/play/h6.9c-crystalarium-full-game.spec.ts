@@ -1860,7 +1860,7 @@ test('C21 top Guide is retained while four expanded Garden Tools omit the duplic
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
-test('C21 Brook Chorus ready two-crystal card keeps its title and status inside parchment', async ({
+test('C23 Brook Chorus two-crystal card shows a horizontal readable recipe and Offer status', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
@@ -1906,12 +1906,12 @@ test('C21 Brook Chorus ready two-crystal card keeps its title and status inside 
         pageOverflow: document.documentElement.scrollHeight - innerHeight,
       };
     });
-    expect(layout.titleTop).toBeGreaterThan(layout.cardTop + layout.cardWidth * 0.21);
+    expect(layout.titleTop).toBeGreaterThan(layout.cardTop + 4);
     expect(layout.titleBottom).toBeLessThan(layout.goals[0].top);
-    expect(Math.abs(layout.goals[0].x - layout.goals[1].x)).toBeLessThan(3);
-    expect(layout.goals[1].y).toBeGreaterThan(layout.goals[0].y + 20);
+    expect(layout.goals[1].x).toBeGreaterThan(layout.goals[0].x + 40);
+    expect(Math.abs(layout.goals[0].y - layout.goals[1].y)).toBeLessThan(8);
     expect(layout.statusTop).toBeGreaterThan(layout.goals[1].bottom);
-    expect(layout.statusBottom).toBeLessThan(layout.cardBottom - layout.cardWidth * 0.15);
+    expect(layout.statusBottom).toBeLessThan(layout.cardBottom - 4);
     expect(layout.pageOverflow).toBeLessThanOrEqual(1);
   }
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
@@ -2108,7 +2108,7 @@ test('C20 blocked full-board generator growth never plays a pouring animation', 
   expect(saved.cells.filter(Boolean)).toHaveLength(42);
 });
 
-test('C21 Three Notes card keeps its title and status safe around a two-column recipe', async ({
+test('C23 Three Notes card gives every crystal a full-size horizontal slot', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -2136,18 +2136,21 @@ test('C21 Three Notes card keeps its title and status safe around a two-column r
       statusTop: status.top,
       statusBottom: status.bottom,
       goals: goals.map((g) => ({ x: g.x, y: g.y, top: g.top, bottom: g.bottom })),
-      isGrid: getComputedStyle(root.querySelector('.crystalarium-live-goals')!).display,
+      goalsLayout: getComputedStyle(root.querySelector('.crystalarium-live-goals')!).display,
+      cardBackground: getComputedStyle(root).backgroundImage,
       pageOverflow: document.documentElement.scrollHeight - innerHeight,
     };
   });
-  expect(positions.isGrid).toBe('grid');
-  expect(positions.titleTop).toBeGreaterThan(positions.cardTop + 15);
+  expect(positions.goalsLayout).toBe('flex');
+  expect(positions.cardBackground).not.toContain('order-card-clean.svg');
+  expect(positions.titleTop).toBeGreaterThan(positions.cardTop + 4);
   expect(positions.titleBottom).toBeLessThan(positions.goals[0].top);
-  expect(Math.abs(positions.goals[0].x - positions.goals[1].x)).toBeLessThan(3);
-  expect(positions.goals[1].y).toBeGreaterThan(positions.goals[0].y + 15);
-  expect(positions.goals[2].x).toBeGreaterThan(positions.goals[0].x + 20);
-  expect(positions.statusTop).toBeGreaterThan(positions.goals[1].bottom);
-  expect(positions.statusBottom).toBeLessThan(positions.cardBottom - 12);
+  expect(positions.goals[1].x).toBeGreaterThan(positions.goals[0].x + 50);
+  expect(positions.goals[2].x).toBeGreaterThan(positions.goals[1].x + 50);
+  expect(Math.abs(positions.goals[0].y - positions.goals[1].y)).toBeLessThan(8);
+  expect(Math.abs(positions.goals[1].y - positions.goals[2].y)).toBeLessThan(8);
+  expect(positions.statusTop).toBeGreaterThan(positions.goals[2].bottom);
+  expect(positions.statusBottom).toBeLessThan(positions.cardBottom - 4);
   expect(positions.pageOverflow).toBeLessThanOrEqual(1);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
@@ -2416,8 +2419,8 @@ test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
         });
         expect(sizes.images).toHaveLength(completed === 6 ? 2 : 3);
         for (const img of sizes.images) {
-          expect(img.width).toBeGreaterThanOrEqual(47);
-          expect(img.height).toBeGreaterThanOrEqual(53);
+          expect(img.width).toBeGreaterThanOrEqual(72);
+          expect(img.height).toBeGreaterThanOrEqual(77);
         }
         expect(sizes.firstTop).toBeGreaterThan(sizes.titleBottom);
         expect(sizes.statusTop).toBeGreaterThan(sizes.lastBottom);
