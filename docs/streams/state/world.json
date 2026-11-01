@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "stream": "world",
   "status": "in_progress",
-  "workPackage": "R6.5-WP19H6.9C17",
+  "workPackage": "R6.5-WP19H6.9C23",
   "workPackagePath": "docs/work-packages/R6.5-WP19H6.9C17-C24-CRYSTALARIUM-ILLUSTRATED-REDESIGN-ROADMAP.md",
-  "branch": "agent/world-c22-crystalarium-spotlight-guide",
-  "prNumber": 342,
-  "baseMainSha": "d45acf0c76f819da70a554e10cbba9aadab7265f",
+  "branch": "agent/world-c23-crystalarium-touch-readable-orders",
+  "prNumber": 343,
+  "baseMainSha": "3b1ba13651302668e694e9750e939ac35e2266d9",
   "updatedOn": "2026-11-01",
-  "note": "C17–C21 pilot merged at d45acf0c. C22 PR #342 staged with five-step pointer-transparent desktop/portrait spotlight, pictured goal acknowledgement, keyboard/Skip/Leave, and one continuous captured drag that advances Pick up to Merge before the same drop. User tested latest Cloudflare preview at 36bc5653 and confirmed drag fix works perfectly, then authorised finalisation and merge. Independent first-time child's completion of an entire order was not separately observed and must be rechecked in C23/C24 tablet playtesting. Final CI for exact closing head and protected full Merge Gate are required; main/production not modified by this PR. C23 next: mobile/tablet board-first layout and accessibility; C24 long-play."
+  "note": "C22 CI #41323774725 passed full six-shard and seven-profile qualification; PR #342 merged to main at 3b1ba136. C23A draft PR #343 owns real touchscreen drag on phone/tablet and readable offering pictures: pointer movement/release/cancel tracked through document capture, avoid long-press selections, crystal images >=48x54px for two/three-goal illustrated cards, with sideways-scrolling rail. Real CDP touch on 390px phone and 1024px tablet plus 900/1024/1440px order art browser tests staged. CI and real-device user review pending. Main post-merge root summary checkpoint outstanding, do not edit root status from World feature PR. C24 long play separate."
 }
