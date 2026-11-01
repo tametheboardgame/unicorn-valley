@@ -25,6 +25,8 @@ import './CrystalariumPortraitView.css';
 export interface CrystalariumPortraitActions {
   cell(index: number): void;
   dragMove(source: number, target: number): void;
+  dragPickUp(source: number): CrystalariumGuidePrompt | null;
+  dragCancelPickUp(source: number): void;
   dragShelve(source: number, targetSlot?: number): void;
   dragWash(source: number): void;
   dragRestore(shelfIndex: number, target: number): void;

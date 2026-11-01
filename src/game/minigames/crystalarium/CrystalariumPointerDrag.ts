@@ -9,6 +9,10 @@ export interface CrystalariumDragActions {
   tapShelf(source: number): void;
   rearrange(source: number, target: number): void;
   invalid(): void;
+  /** Advance the first lesson when a real drag begins, without replacing its source. */
+  start?(origin: { kind: 'cell' | 'shelf'; index: number }): boolean;
+  /** Restore Pick up guidance after an incomplete first-lesson drag. */
+  cancel?(origin: { kind: 'cell' | 'shelf'; index: number }): void;
 }
 type Origin = { kind: 'cell' | 'shelf'; index: number; piece: CrystalPiece };
 interface CurrentDrag {
@@ -17,6 +21,7 @@ interface CurrentDrag {
   x: number;
   y: number;
   dragging: boolean;
+  advancedLesson: boolean;
   ghost: HTMLElement | null;
 }
 
@@ -90,6 +95,7 @@ export class CrystalariumPointerDrag {
       x: event.clientX,
       y: event.clientY,
       dragging: false,
+      advancedLesson: false,
       ghost: null,
     };
   };
@@ -121,6 +127,8 @@ export class CrystalariumPointerDrag {
       current.ghost = ghost;
       this.root.classList.add('is-dragging-crystal');
       this.showDropTargets(current.origin);
+      // The captured source cell must stay in the DOM until pointer-up.
+      current.advancedLesson = this.actions.start?.(current.origin) === true;
     }
     event.preventDefault();
     current.ghost?.style.setProperty('left', event.clientX + 'px');
@@ -151,6 +159,14 @@ export class CrystalariumPointerDrag {
     );
     this.lastDropAt = Date.now();
     this.clear();
+    // Releasing off another socket cancels this tutorial lift without a save.
+    if (
+      current.advancedLesson &&
+      (!cell || Number(cell.dataset.crystalariumCell) === current.origin.index)
+    ) {
+      this.actions.cancel?.(current.origin);
+      return;
+    }
     if (current.origin.kind === 'cell') {
       if (cell && Number(cell.dataset.crystalariumCell) !== current.origin.index) {
         this.actions.move(current.origin.index, Number(cell.dataset.crystalariumCell));
@@ -186,7 +202,11 @@ export class CrystalariumPointerDrag {
     }
   };
 
-  private readonly onCancel = (): void => this.clear();
+  private readonly onCancel = (): void => {
+    const current = this.current;
+    this.clear();
+    if (current?.advancedLesson) this.actions.cancel?.(current.origin);
+  };
 
   /** Preview legal destinations without mutating the controller or saved state. */
   private showDropTargets(origin: Origin): void {
