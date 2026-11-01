@@ -8,5 +8,5 @@
   "prNumber": 342,
   "baseMainSha": "d45acf0c76f819da70a554e10cbba9aadab7265f",
   "updatedOn": "2026-11-01",
-  "note": "C17–C21 integrated on main d45acf0c. C22 draft PR #342 includes pointer-transparent spotlight on genuine controls and a five-beat visual tutorial (Grow/Pick/Merge/real pictured goals/Offer). Goal acknowledgment uses an accessible guide Continue action, not a game Inspect control or persisted rule. Native rail clipping and keyboard focus restoration added with browser regressions. No canonical rules, save schema, controller allowlist or other stream changes. C22 Gate F awaits exact-head CI, phone/portrait bridge review, visual preview and child first-order acceptance. C23/C24 deferred."
+  "note": "C17–C21 pilot on main d45acf0c. C22 PR #342 now includes shared pointer-transparent spotlight on both illustrated desktop and native portrait real controls, and a presentation-only five-beat sequence Grow/Pick/Merge/pictured goal/Offer. Accessible Continue button gates real Offer, keyboard focus moves to permitted action; no fake Inspect gameplay command, controller allowlist change, schema or save leakage. Desktop scroll-aware clipping and new owned browser regressions staged. Exact-head CI and human Gate F first-order playtest pending; C23 complete tablet artwork/layout and C24 long-play deferred. Production deployment is separate."
 }

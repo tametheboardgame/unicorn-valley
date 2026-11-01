@@ -304,6 +304,8 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
     const step = region.locator('[data-crystalarium-guide]');
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'grow');
     await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveClass(/is-guide-focus/);
+    await expect(region.locator('[data-crystalarium-spotlight="true"]')).toBeVisible();
+    await expect(region.locator('[data-crystalarium-action="grow"]')).toHaveAttribute('aria-describedby', 'crystalarium-portrait-guide-instruction');
     // Only the spotlighted Grow control can mutate the fresh songbook.
     await expect(region.locator('[data-crystalarium-cell="0"]')).toBeDisabled();
     await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
@@ -319,12 +321,14 @@ test.describe('H6.9C9 illustrated first-play guidance', () => {
     await expect(mergeTarget).toBeFocused();
     await mergeTarget.click();
     await expect(step).toHaveAttribute('data-crystalarium-guide', 'offer');
-    // The approved four-step guide ends with the glowing Offer card.
-    // The obsolete Inspect button was deliberately removed.
+    // A fifth visual beat teaches the actual picture, never a fake Inspect game button.
     await expect(region.locator('[data-crystalarium-action="inspect-goal"]')).toHaveCount(0);
-    await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(
-      /is-guide-focus/,
-    );
+    await expect(region.locator('[data-crystalarium-goal-preview="true"]')).toBeVisible();
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
+    await expect(region.locator('[data-crystalarium-action="goal-continue"]')).toBeFocused();
+    await region.locator('[data-crystalarium-action="goal-continue"]').click();
+    await expect(step).toContainText('5 of 5');
+    await expect(region.locator('[data-crystalarium-action="offer"]')).toHaveClass(/is-guide-focus/);
     await expect(region.locator('[data-crystalarium-action="offer"]')).toBeEnabled();
     await expect(region.locator('[data-crystalarium-action="offer"]')).toBeFocused();
     await region.locator('[data-crystalarium-action="offer"]').click();

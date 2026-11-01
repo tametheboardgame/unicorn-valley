@@ -883,3 +883,56 @@
     box-shadow: inset 0 0 0 3px #79e5b8;
   }
 }
+
+/* C22: shared non-intercepting spotlight for the separate portrait control surface. */
+@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait .crystalarium-live-spotlight {
+    position: absolute;
+    inset: 0;
+    z-index: 13;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .crystalarium-portrait .crystalarium-live-spotlight[hidden],
+  .crystalarium-portrait .crystalarium-live-spotlight-arrow[hidden] {
+    display: none;
+  }
+  .crystalarium-portrait .crystalarium-live-spotlight-shade {
+    position: absolute;
+    background: #031124b8;
+    pointer-events: none;
+  }
+  .crystalarium-portrait .crystalarium-live-spotlight-arrow {
+    position: absolute;
+    width: 112px;
+    height: 30px;
+    border: 2px solid #f8d98c;
+    border-radius: 10px;
+    background: #fff0bf;
+    color: #173850;
+    font: 800 11px / 26px system-ui, sans-serif;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px #071d3bba;
+    pointer-events: none;
+  }
+  .crystalarium-portrait .crystalarium-live-spotlight-arrow::before {
+    content: "↓";
+    margin-right: 5px;
+  }
+  .crystalarium-portrait .crystalarium-live-spotlight-arrow[data-direction="up"]::before { content: "↑"; }
+  .crystalarium-portrait .crystalarium-live-spotlight-arrow[data-direction="left"]::before { content: "←"; }
+  .crystalarium-portrait .crystalarium-live-spotlight-arrow[data-direction="right"]::before { content: "→"; }
+  .crystalarium-portrait-guide:has([data-crystalarium-action="goal-continue"]) {
+    z-index: 14;
+  }
+  .crystalarium-portrait-goals.is-guide-focus {
+    outline: 3px solid #fff1ab;
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+  .crystalarium-portrait-guide [data-crystalarium-action="goal-continue"] {
+    min-height: 48px;
+    font-weight: 800;
+  }
+}
