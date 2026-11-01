@@ -405,7 +405,6 @@ describe('migrateSaveRecord', () => {
       ...save,
       schemaVersion: 10,
       tenthMigration: true,
-      eleventhMigration: true,
     });
     const toVersionEleven: SaveMigration = (save) => ({
       ...save,
@@ -415,10 +414,12 @@ describe('migrateSaveRecord', () => {
     const toVersionTwelve: SaveMigration = (save) => ({
       ...save,
       schemaVersion: 12,
+      twelfthMigration: true,
     });
     const toVersionThirteen: SaveMigration = (save) => ({
       ...save,
       schemaVersion: 13,
+      thirteenthMigration: true,
     });
     const migrations = new Map([
       [0, toVersionOne],
@@ -448,6 +449,9 @@ describe('migrateSaveRecord', () => {
       eighthMigration: true,
       ninthMigration: true,
       tenthMigration: true,
+      eleventhMigration: true,
+      twelfthMigration: true,
+      thirteenthMigration: true,
     });
   });
 
