@@ -1061,3 +1061,21 @@
     transition: none;
   }
 }
+
+/* C22: illustrated recipe inspection before the existing Offer action. */
+.crystalarium-live-goals.is-guide-goal {
+  outline: 3px solid #fff1ab;
+  outline-offset: 4px;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px #0bcabe);
+}
+.crystalarium-live-guide [data-crystalarium-action="goal-continue"] {
+  color: #142f49;
+  background: #ffdf8a;
+  border: 2px solid #91642f;
+  font-weight: 800;
+}
+.crystalarium-live-guide [data-crystalarium-action="goal-continue"]:focus-visible {
+  outline: 3px solid #007f90;
+  outline-offset: 2px;
+}

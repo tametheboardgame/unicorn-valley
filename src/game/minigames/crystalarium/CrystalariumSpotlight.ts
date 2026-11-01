@@ -62,12 +62,32 @@ export class CrystalariumSpotlight {
     }
     const root = this.root.getBoundingClientRect();
     const bounds = target.getBoundingClientRect();
+    // Clip the highlighted bounds to native order-scroll ancestors.
+    let visibleLeft = bounds.left;
+    let visibleTop = bounds.top;
+    let visibleRight = bounds.right;
+    let visibleBottom = bounds.bottom;
+    for (let ancestor = target.parentElement; ancestor && ancestor !== this.root; ancestor = ancestor.parentElement) {
+      const style = getComputedStyle(ancestor);
+      const clipsX = /(auto|scroll|hidden|clip)/.test(style.overflowX);
+      const clipsY = /(auto|scroll|hidden|clip)/.test(style.overflowY);
+      if (!clipsX && !clipsY) continue;
+      const area = ancestor.getBoundingClientRect();
+      if (clipsX) {
+        visibleLeft = Math.max(visibleLeft, area.left);
+        visibleRight = Math.min(visibleRight, area.right);
+      }
+      if (clipsY) {
+        visibleTop = Math.max(visibleTop, area.top);
+        visibleBottom = Math.min(visibleBottom, area.bottom);
+      }
+    }
     const w = root.width;
     const h = root.height;
-    const left = Math.max(0, Math.min(w, bounds.left - root.left - 5));
-    const top = Math.max(0, Math.min(h, bounds.top - root.top - 5));
-    const right = Math.max(left, Math.min(w, bounds.right - root.left + 5));
-    const bottom = Math.max(top, Math.min(h, bounds.bottom - root.top + 5));
+    const left = Math.max(0, Math.min(w, visibleLeft - root.left - 5));
+    const top = Math.max(0, Math.min(h, visibleTop - root.top - 5));
+    const right = Math.max(left, Math.min(w, visibleRight - root.left + 5));
+    const bottom = Math.max(top, Math.min(h, visibleBottom - root.top + 5));
     if (right - left < 10 || bottom - top < 10) {
       this.layer.hidden = true;
       return;

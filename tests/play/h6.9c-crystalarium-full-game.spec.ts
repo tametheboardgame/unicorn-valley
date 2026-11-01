@@ -2256,20 +2256,25 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
       await expect(spotlight).toBeVisible();
       await expect(grow).toBeEnabled();
       await grow.click();
-      await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 4');
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
       const pick = live.locator('.crystalarium-live-cell.is-guide-focus');
       await expect(pick).toHaveAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
       await pick.click();
-      await expect(live.locator('.crystalarium-live-guide')).toContainText('3 of 4');
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('3 of 5');
       await expect(live.locator('.crystalarium-live-cell.is-guide-focus')).toHaveAttribute(
         'aria-describedby',
         'crystalarium-live-guide-instruction',
       );
       await live.locator('.crystalarium-live-cell.is-guide-focus').click();
-      await expect(live.locator('.crystalarium-live-guide')).toContainText('4 of 4');
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('4 of 5');
+      await expect(live.locator('[data-crystalarium-goal-preview="true"]')).toHaveAttribute(
+        'aria-describedby', 'crystalarium-live-guide-instruction',
+      );
+      await expect(live.locator('[data-crystalarium-action="offer"]')).toBeDisabled();
+      await live.locator('[data-crystalarium-action="goal-continue"]').click();
+      await expect(live.locator('.crystalarium-live-guide')).toContainText('5 of 5');
       await expect(live.locator('.crystalarium-live-order-card.is-guide-focus')).toHaveAttribute(
-        'aria-describedby',
-        'crystalarium-live-guide-instruction',
+        'aria-describedby', 'crystalarium-live-guide-instruction',
       );
       await live.locator('[data-crystalarium-action="skip-guide"]').click();
       await expect(spotlight).toHaveCount(0);
@@ -2279,6 +2284,29 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
   }
 });
 
+test('C22 pictured goal survives sound and keyboard continuation', async ({ page }) => {
+  await page.setViewportSize({ width: 960, height: 560 });
+  await enterResonanceGarden(page, true, true);
+  const live = page.locator('[data-crystalarium-live="true"]');
+  await live.locator('[data-crystalarium-action="well-low"]').click();
+  await live.locator('.crystalarium-live-cell.is-guide-focus').click();
+  await live.locator('.crystalarium-live-cell.is-guide-focus').click();
+  const goal = live.locator('[data-crystalarium-goal-preview="true"]');
+  const offer = live.locator('[data-crystalarium-action="offer"]');
+  await expect(goal).toBeVisible();
+  await expect(offer).toBeDisabled();
+  await live.locator('[data-crystalarium-action="sound"]').click();
+  await expect(goal).toBeVisible();
+  await expect(offer).toBeDisabled();
+  const continueButton = live.locator('[data-crystalarium-action="goal-continue"]');
+  await continueButton.focus();
+  await page.keyboard.press('Enter');
+  await expect(offer).toBeEnabled();
+  await expect(offer).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(live.locator('.crystalarium-live-guide')).toHaveCount(0);
+});
+
 test('C21 first lesson remains playable without a blocking overlay', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, true, true);
@@ -2286,7 +2314,7 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   const guide = live.locator('.crystalarium-live-guide');
   const grow = live.locator('[data-crystalarium-action="well-low"]');
   await expect(guide).toBeVisible();
-  await expect(guide).toContainText('1 of 4');
+  await expect(guide).toContainText('1 of 5');
   await expect(grow).toBeEnabled();
   await expect(grow).toHaveAttribute('data-crystalarium-guide-target', 'true');
   await expect(live.locator('[data-crystalarium-action="grow"]')).toHaveCount(0);
@@ -2328,16 +2356,21 @@ test('C21 first lesson remains playable without a blocking overlay', async ({ pa
   expect(artwork.skipBackground).toBe('rgb(25, 70, 106)');
 
   await grow.click();
-  await expect(guide).toContainText('2 of 4');
+  await expect(guide).toContainText('2 of 5');
   // The policy chooses the correct pair from the saved board, not fixed indices.
   await expect(live.locator('.crystalarium-live-cell.is-guide-focus')).toHaveCount(1);
   await live.locator('.crystalarium-live-cell.is-guide-focus').click();
-  await expect(guide).toContainText('3 of 4');
+  await expect(guide).toContainText('3 of 5');
   await live.locator('.crystalarium-live-cell.is-guide-focus').click();
-  await expect(guide).toContainText('4 of 4');
+  await expect(guide).toContainText('4 of 5');
   await expect(live.locator('[data-crystalarium-action="inspect-goal"]')).toHaveCount(0);
   const offer = live.locator('[data-crystalarium-action="offer"]');
+  await expect(offer).toBeDisabled();
+  await expect(live.locator('[data-crystalarium-goal-preview="true"]')).toBeVisible();
+  await live.locator('[data-crystalarium-action="goal-continue"]').click();
+  await expect(guide).toContainText('5 of 5');
   await expect(offer).toBeEnabled();
+  await expect(offer).toBeFocused();
   await offer.click();
   await expect(guide).toHaveCount(0);
   const saved = await page.evaluate(
@@ -2390,7 +2423,7 @@ test('C21 zoomed desktop scales the 42-socket board with no internal scroll', as
   expect(geometry.socketCount).toBe(42);
   expect(geometry.documentOverflow).toBeLessThanOrEqual(1);
   await live.locator('[data-crystalarium-action="well-low"]').click();
-  await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 4');
+  await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
 });
 
 test('C21 tutorial sits alongside orders and never reduces crystal board height', async ({

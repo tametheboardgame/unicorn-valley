@@ -65,6 +65,8 @@ export class CrystalariumIllustratedView {
   private readonly actions: CrystalariumPortraitActions;
   private readonly growthFx = new CrystalariumGrowthPotionFx();
   private readonly spotlight: CrystalariumSpotlight;
+  // Presentation-only goal acknowledgement, never a new saved gameplay action.
+  private goalInspected = false;
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
   private orderRailObserver: ResizeObserver | null = null;
@@ -226,6 +228,8 @@ export class CrystalariumIllustratedView {
     const prompt = view.guide;
     const activeLesson = prompt?.lessonStep;
     const firstLesson = activeLesson !== undefined;
+    if (activeLesson !== 'offer') this.goalInspected = false;
+    const inspectingGoal = activeLesson === 'offer' && !this.goalInspected;
     const queue = potionChamber(state);
     const patterns = queue ? activeResonanceQueue(queue) : [];
     const pattern = patterns[0] ?? activeResonancePattern(state);
@@ -447,7 +451,7 @@ export class CrystalariumIllustratedView {
     const visible = patterns.length > 0 ? patterns : pattern ? [pattern] : [];
     for (const [index, activePattern] of visible.entries()) {
       const ready = queue ? canOfferQueuedPattern(queue, activePattern.id) : canOfferPattern(state);
-      const offering = ready && (!firstLesson || (index === 0 && activeLesson === 'offer'));
+      const offering = ready && (!firstLesson || (index === 0 && activeLesson === 'offer' && this.goalInspected));
       const card = this.button(
         '',
         index === 0 ? 'offer' : 'offer-' + activePattern.id,
@@ -457,7 +461,7 @@ export class CrystalariumIllustratedView {
       card.classList.add('crystalarium-live-order-card');
       card.classList.toggle('has-two-goals', activePattern.goals.length === 2);
       card.classList.toggle('has-three-goals', activePattern.goals.length >= 3);
-      card.classList.toggle('is-guide-focus', index === 0 && activeLesson === 'offer');
+      card.classList.toggle('is-guide-focus', index === 0 && activeLesson === 'offer' && !inspectingGoal);
       card.classList.toggle('is-ready', ready);
       card.dataset.crystalariumPatternId = activePattern.id;
       card.dataset.cardArt = ready ? 'ready' : 'in-progress';
@@ -483,6 +487,12 @@ export class CrystalariumIllustratedView {
           node('span', '', Math.min(count, goal.quantity) + ' / ' + goal.quantity),
         );
         goals.append(item);
+      }
+      if (index === 0 && inspectingGoal) {
+        goals.classList.add('is-guide-goal');
+        goals.dataset.crystalariumGoalPreview = 'true';
+        goals.setAttribute('role', 'img');
+        goals.setAttribute('aria-label', 'Goal pictures: ' + spokenGoals.join(', '));
       }
       card.append(goals);
       if (activePattern.harmonies) {
@@ -558,16 +568,22 @@ export class CrystalariumIllustratedView {
       const instruction = node('div', 'crystalarium-live-guide-copy');
       instruction.id = 'crystalarium-live-guide-instruction';
       instruction.append(
-        node('strong', '', prompt.title),
-        node(
-          'span',
-          '',
-          activeLesson === 'grow'
+        node('strong', '', inspectingGoal ? '4 of 5 • Look at the picture' : activeLesson === 'offer' ? '5 of 5 • Offer' : firstLesson ? prompt.title.replace('of 4', 'of 5') : prompt.title),
+        node('span', '', inspectingGoal
+          ? 'Look at the crystal picture on the order card. It shows what you have made. Then choose Continue to offer.'
+          : activeLesson === 'grow'
             ? 'Tap the glowing Low generator in the middle to grow your first crystal.'
-            : prompt.instruction,
-        ),
+            : prompt.instruction),
       );
-      guide.append(instruction, this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
+      guide.append(instruction);
+      if (inspectingGoal) {
+        guide.append(this.button('Continue to offer', 'goal-continue', () => {
+          this.goalInspected = true;
+          this.renderCurrent();
+          this.root.querySelector<HTMLButtonElement>('[data-crystalarium-action="offer"]')?.focus({ preventScroll: true });
+        }));
+      }
+      guide.append(this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
       orders.insertBefore(guide, orderRow);
     }
     const children: HTMLElement[] = [header, scene, message];
@@ -655,7 +671,7 @@ export class CrystalariumIllustratedView {
     // restoring the old offset, otherwise the temporarily wider rail clamps
     // scrollLeft and loses the position on sound/guide redraws.
     syncOrderNavigation();
-    rail.scrollLeft = scrollLeft;
+    rail.scrollLeft = activeLesson === 'offer' ? 0 : scrollLeft;
     syncOrderNavigation();
     // Browser zoom and desktop resizing can change the number of visible
     // cards without a gameplay re-render. Reuse one observer per live view.
@@ -680,7 +696,9 @@ export class CrystalariumIllustratedView {
     // Anchor visual guidance to the real, currently permitted control.
     // The shade and arrow never receive pointer input or replace game actions.
     const lessonTarget =
-      activeLesson === 'grow'
+      inspectingGoal
+        ? this.root.querySelector<HTMLElement>('[data-crystalarium-goal-preview="true"]')
+        : activeLesson === 'grow'
         ? this.root.querySelector<HTMLElement>('[data-crystalarium-guide-target="true"]')
         : activeLesson === 'pick-up' && prompt?.sourceIndex !== undefined
           ? this.root.querySelector<HTMLElement>(
@@ -696,7 +714,9 @@ export class CrystalariumIllustratedView {
     if (lessonTarget && prompt) {
       lessonTarget.setAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
       const cue =
-        activeLesson === 'grow'
+        inspectingGoal
+          ? 'Look here'
+          : activeLesson === 'grow'
           ? 'Grow here'
           : activeLesson === 'pick-up'
             ? 'Pick this'
@@ -708,6 +728,7 @@ export class CrystalariumIllustratedView {
   }
 
   public destroy(): void {
+    this.goalInspected = false;
     this.spotlight.destroy();
     this.orderRailObserver?.disconnect();
     this.growthFx.destroy();
