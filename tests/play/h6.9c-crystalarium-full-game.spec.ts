@@ -2298,6 +2298,122 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
   }
 });
 
+
+test.describe('C23A native touchscreen and tablet card readability', () => {
+  test.use({ hasTouch: true });
+
+  for (const portrait of [true, false]) {
+    test(`real touch drags one held tutorial crystal on ${portrait ? 'phone' : 'tablet'}`, async ({
+      page,
+      browserName,
+    }) => {
+      test.skip(browserName !== 'chromium', 'CDP touchscreen input is Chromium-specific');
+      test.setTimeout(90_000);
+      await page.setViewportSize(portrait ? { width: 390, height: 844 } : { width: 1024, height: 768 });
+      await enterResonanceGarden(page, true, !portrait);
+      const root = page.locator(
+        portrait ? '[data-crystalarium-portrait="true"]' : '[data-crystalarium-live="true"]',
+      );
+      const guide = root.locator(
+        portrait ? '.crystalarium-portrait-guide' : '.crystalarium-live-guide',
+      );
+      await root.locator(
+        portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]',
+      ).tap();
+      await expect(guide).toContainText('2 of 5');
+      const source = root.locator('[data-crystalarium-cell="2"]');
+      const target = root.locator('[data-crystalarium-cell="0"]');
+      await source.scrollIntoViewIfNeeded();
+      const a = await source.boundingBox();
+      const b = await target.boundingBox();
+      if (!a || !b) throw new Error('First tutorial crystal pair must be visible');
+      const start = { x: a.x + a.width / 2, y: a.y + a.height / 2 };
+      const finish = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+      const cd = await page.context().newCDPSession(page);
+      await cd.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+      for (let i = 1; i <= 8; i += 1) {
+        await cd.send('Input.dispatchTouchEvent', {
+          type: 'touchMove',
+          touchPoints: [{
+            x: start.x + ((finish.x - start.x) * i) / 8,
+            y: start.y + ((finish.y - start.y) * i) / 8,
+          }],
+        });
+        if (i === 3) {
+          await expect(guide).toContainText('3 of 5');
+          await expect(page.locator('.crystalarium-drag-ghost')).toBeVisible();
+        }
+      }
+      await cd.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await expect(guide).toContainText('4 of 5');
+      await expect(page.locator('.crystalarium-drag-ghost')).toHaveCount(0);
+      const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), SANDBOX_KEY);
+      expect(saved.merges).toBe(1);
+      expect(saved.cells[2]).toBeNull();
+      expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+    });
+  }
+
+  test('real cancelled touch leaves the saved board unchanged', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'CDP touchscreen input is Chromium-specific');
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterResonanceGarden(page, true);
+    const root = page.locator('[data-crystalarium-portrait="true"]');
+    await root.locator('[data-crystalarium-action="grow"]').tap();
+    const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    const source = await root.locator('[data-crystalarium-cell="2"]').boundingBox();
+    if (!source) throw new Error('Tutorial crystal is not visible');
+    const start = { x: source.x + source.width / 2, y: source.y + source.height / 2 };
+    const cd = await page.context().newCDPSession(page);
+    await cd.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+    await cd.send('Input.dispatchTouchEvent', {
+      type: 'touchMove', touchPoints: [{ x: start.x + 18, y: start.y + 18 }],
+    });
+    await expect(root.locator('.crystalarium-portrait-guide')).toContainText('3 of 5');
+    await cd.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
+    await expect(root.locator('.crystalarium-portrait-guide')).toContainText('2 of 5');
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+  });
+});
+
+test.describe('C23A two/three-goal artwork stays readable on tablets', () => {
+  for (const width of [900, 1024, 1440]) {
+    for (const completed of [6, 8]) {
+      test(`${completed === 6 ? 'two' : 'three'} goals at ${width}px keep full-sized pictures`, async ({ page }) => {
+        await page.setViewportSize({ width, height: width === 900 ? 700 : 900 });
+        await enterResonanceGarden(page, false, true, {
+          ...createCrystalariumFullState(), completed,
+        });
+        const selector = completed === 6 ? '.has-two-goals' : '.has-three-goals';
+        const card = page.locator('.crystalarium-live-order-card' + selector).first();
+        await expect(card).toBeVisible();
+        const sizes = await card.evaluate((element) => {
+          const images = Array.from(element.querySelectorAll('.crystalarium-live-goal img')).map(
+            (img) => img.getBoundingClientRect(),
+          );
+          const title = element.querySelector('strong')!.getBoundingClientRect();
+          const status = element.querySelector('em')!.getBoundingClientRect();
+          return {
+            images: images.map((img) => ({ width: img.width, height: img.height })),
+            firstTop: Math.min(...images.map((img) => img.top)),
+            lastBottom: Math.max(...images.map((img) => img.bottom)),
+            titleBottom: title.bottom,
+            statusTop: status.top,
+          };
+        });
+        expect(sizes.images).toHaveLength(completed === 6 ? 2 : 3);
+        for (const img of sizes.images) {
+          expect(img.width).toBeGreaterThanOrEqual(47);
+          expect(img.height).toBeGreaterThanOrEqual(53);
+        }
+        expect(sizes.firstTop).toBeGreaterThan(sizes.titleBottom);
+        expect(sizes.statusTop).toBeGreaterThan(sizes.lastBottom);
+      });
+    }
+  }
+});
+
 test.describe('C22 one held crystal drag advances Pick up and merges without another tap', () => {
   test.use({ hasTouch: true });
 
