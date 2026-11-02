@@ -2447,6 +2447,37 @@ test.describe('C23B tablet portrait gives the board and orders their own full-wi
     });
   }
 
+  test('rotation restores the landscape three-column composition without resetting orders', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await enterResonanceGarden(page, false, true, {
+      ...createCrystalariumFullState(),
+      completed: 8,
+    });
+    const live = page.locator('[data-crystalarium-live="true"]');
+    const relativeOrderPosition = () =>
+      live.evaluate((root) => {
+        const garden = root.querySelector<HTMLElement>('.crystalarium-live-garden');
+        const orders = root.querySelector<HTMLElement>('.crystalarium-live-orders');
+        if (!garden || !orders) throw new Error('C23B rotating panels missing');
+        const board = garden.getBoundingClientRect();
+        const cards = orders.getBoundingClientRect();
+        return { boardRight: board.right, boardBottom: board.bottom, cardsLeft: cards.left, cardsTop: cards.top };
+      });
+    const portrait = await relativeOrderPosition();
+    expect(portrait.cardsTop).toBeGreaterThanOrEqual(portrait.boardBottom);
+    const stored = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    await page.setViewportSize({ width: 1024, height: 768 });
+    const landscape = await relativeOrderPosition();
+    expect(landscape.cardsLeft).toBeGreaterThanOrEqual(landscape.boardRight);
+    await expect(live.locator('.crystalarium-live-order-card.has-three-goals')).toHaveCount(1);
+    await page.setViewportSize({ width: 768, height: 1024 });
+    const restored = await relativeOrderPosition();
+    expect(restored.cardsTop).toBeGreaterThanOrEqual(restored.boardBottom);
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(stored);
+  });
+
   test('tutorial keeps the real highlighted well and order rail visible on a portrait tablet', async ({
     page,
   }) => {
