@@ -2387,6 +2387,96 @@ test.describe('C23A native touchscreen and tablet card readability', () => {
   });
 });
 
+test.describe('C23B tablet portrait gives the board and orders their own full-width rows', () => {
+  test.use({ hasTouch: true });
+
+  for (const viewport of [
+    { width: 768, height: 1024 },
+    { width: 820, height: 1180 },
+    { width: 1024, height: 1366 },
+  ]) {
+    test(`stacks tools above large swipeable orders at ${viewport.width}x${viewport.height}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await enterResonanceGarden(page, false, true, {
+        ...createCrystalariumFullState(),
+        completed: 8,
+      });
+      const live = page.locator('[data-crystalarium-live="true"]');
+      await expect(live).toBeVisible();
+      await expect(page.locator('[data-crystalarium-portrait="true"]')).toBeHidden();
+      await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
+      const layout = await live.evaluate((root) => {
+        const rect = (selector: string) => {
+          const element = root.querySelector<HTMLElement>(selector);
+          if (!element) throw new Error('Missing C23B component: ' + selector);
+          const box = element.getBoundingClientRect();
+          return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+        };
+        const icons = Array.from(
+          root.querySelectorAll<HTMLImageElement>(
+            '.crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img',
+          ),
+          (icon) => icon.getBoundingClientRect().width,
+        );
+        const socket = root.querySelector<HTMLElement>('[data-crystalarium-cell="0"]');
+        return {
+          garden: rect('.crystalarium-live-garden'),
+          producers: rect('.crystalarium-live-producers'),
+          tools: rect('.crystalarium-live-tools'),
+          orders: rect('.crystalarium-live-orders'),
+          firstSocket: socket?.getBoundingClientRect().width ?? 0,
+          icons,
+          documentOverflowX: document.documentElement.scrollWidth - innerWidth,
+          documentOverflowY: document.documentElement.scrollHeight - innerHeight,
+        };
+      });
+      expect(layout.producers.left).toBeGreaterThan(layout.garden.left);
+      expect(layout.tools.top).toBeGreaterThanOrEqual(layout.garden.bottom);
+      expect(layout.orders.top).toBeGreaterThanOrEqual(layout.tools.bottom);
+      expect(layout.orders.right - layout.orders.left).toBeGreaterThan(viewport.width * 0.85);
+      expect(layout.firstSocket).toBeGreaterThanOrEqual(48);
+      expect(layout.icons).toHaveLength(3);
+      for (const imageWidth of layout.icons) {
+        expect(imageWidth).toBeGreaterThanOrEqual(72);
+      }
+      expect(layout.documentOverflowX).toBeLessThanOrEqual(1);
+      expect(layout.documentOverflowY).toBeLessThanOrEqual(1);
+      await expect(live.locator('[data-crystalarium-action="exit"]')).toBeEnabled();
+    });
+  }
+
+  test('tutorial keeps the real highlighted well and order rail visible on a portrait tablet', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await enterResonanceGarden(page, true, true);
+    const live = page.locator('[data-crystalarium-live="true"]');
+    await expect(live.locator('.crystalarium-live-guide')).toBeVisible();
+    await expect(live.locator('[data-crystalarium-action="well-low"]')).toBeEnabled();
+    const positions = await live.evaluate((root) => {
+      const garden = root.querySelector<HTMLElement>('.crystalarium-live-garden');
+      const orders = root.querySelector<HTMLElement>('.crystalarium-live-orders');
+      const guide = root.querySelector<HTMLElement>('.crystalarium-live-guide');
+      const card = root.querySelector<HTMLElement>('.crystalarium-live-order-card');
+      if (!garden || !orders || !guide || !card) throw new Error('C23B guide geometry missing');
+      return {
+        gardenBottom: garden.getBoundingClientRect().bottom,
+        ordersTop: orders.getBoundingClientRect().top,
+        guideBottom: guide.getBoundingClientRect().bottom,
+        cardBottom: card.getBoundingClientRect().bottom,
+        viewportHeight: innerHeight,
+      };
+    });
+    expect(positions.ordersTop).toBeGreaterThan(positions.gardenBottom);
+    expect(positions.guideBottom).toBeLessThan(positions.viewportHeight);
+    expect(positions.cardBottom).toBeLessThanOrEqual(positions.viewportHeight);
+    await live.locator('[data-crystalarium-action="well-low"]').tap();
+    await expect(live.locator('.crystalarium-live-guide')).toContainText('2 of 5');
+  });
+});
+
 test.describe('C23A one/two/three-goal cards expand without shrinking their artwork', () => {
   for (const width of [900, 1024, 1440]) {
     for (const completed of [0, 6, 8]) {
