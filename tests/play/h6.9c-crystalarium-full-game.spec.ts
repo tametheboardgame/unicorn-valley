@@ -2463,7 +2463,12 @@ test.describe('C23B tablet portrait gives the board and orders their own full-wi
         if (!garden || !orders) throw new Error('C23B rotating panels missing');
         const board = garden.getBoundingClientRect();
         const cards = orders.getBoundingClientRect();
-        return { boardRight: board.right, boardBottom: board.bottom, cardsLeft: cards.left, cardsTop: cards.top };
+        return {
+          boardRight: board.right,
+          boardBottom: board.bottom,
+          cardsLeft: cards.left,
+          cardsTop: cards.top,
+        };
       });
     const portrait = await relativeOrderPosition();
     expect(portrait.cardsTop).toBeGreaterThanOrEqual(portrait.boardBottom);
