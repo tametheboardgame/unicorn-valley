@@ -41,9 +41,11 @@ export class CrystalariumPointerDrag {
     }) => CrystalPiece | null,
   ) {
     root.addEventListener('pointerdown', this.onDown);
-    root.addEventListener('pointermove', this.onMove);
-    root.addEventListener('pointerup', this.onUp);
-    root.addEventListener('pointercancel', this.onCancel);
+    // Capture movement and release anywhere in the document, even when a
+    // finger leaves the board or crosses an overlay. Preserve native taps.
+    document.addEventListener('pointermove', this.onMove, true);
+    document.addEventListener('pointerup', this.onUp, true);
+    document.addEventListener('pointercancel', this.onCancel, true);
     root.addEventListener('click', this.onClickCapture, true);
   }
 
@@ -74,7 +76,14 @@ export class CrystalariumPointerDrag {
   };
 
   private readonly onDown = (event: PointerEvent): void => {
-    if (this.current || !(event.target instanceof Element)) return;
+    if (
+      this.current ||
+      !event.isPrimary ||
+      (event.pointerType === 'mouse' && event.button !== 0) ||
+      !(event.target instanceof Element)
+    ) {
+      return;
+    }
     const cell = event.target.closest<HTMLElement>('[data-crystalarium-cell]');
     const shelf = event.target.closest<HTMLElement>('[data-crystalarium-action^="shelf-"]');
     const origin = cell
@@ -287,9 +296,9 @@ export class CrystalariumPointerDrag {
   public destroy(): void {
     this.clear();
     this.root.removeEventListener('pointerdown', this.onDown);
-    this.root.removeEventListener('pointermove', this.onMove);
-    this.root.removeEventListener('pointerup', this.onUp);
-    this.root.removeEventListener('pointercancel', this.onCancel);
+    document.removeEventListener('pointermove', this.onMove, true);
+    document.removeEventListener('pointerup', this.onUp, true);
+    document.removeEventListener('pointercancel', this.onCancel, true);
     this.root.removeEventListener('click', this.onClickCapture, true);
   }
 }

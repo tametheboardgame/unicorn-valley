@@ -1860,7 +1860,7 @@ test('C21 top Guide is retained while four expanded Garden Tools omit the duplic
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
 
-test('C21 Brook Chorus ready two-crystal card keeps its title and status inside parchment', async ({
+test('C23 Brook Chorus two-crystal card shows a horizontal readable recipe and Offer status', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
@@ -1906,12 +1906,12 @@ test('C21 Brook Chorus ready two-crystal card keeps its title and status inside 
         pageOverflow: document.documentElement.scrollHeight - innerHeight,
       };
     });
-    expect(layout.titleTop).toBeGreaterThan(layout.cardTop + layout.cardWidth * 0.21);
+    expect(layout.titleTop).toBeGreaterThan(layout.cardTop + 4);
     expect(layout.titleBottom).toBeLessThan(layout.goals[0].top);
-    expect(Math.abs(layout.goals[0].x - layout.goals[1].x)).toBeLessThan(3);
-    expect(layout.goals[1].y).toBeGreaterThan(layout.goals[0].y + 20);
+    expect(layout.goals[1].x).toBeGreaterThan(layout.goals[0].x + 40);
+    expect(Math.abs(layout.goals[0].y - layout.goals[1].y)).toBeLessThan(8);
     expect(layout.statusTop).toBeGreaterThan(layout.goals[1].bottom);
-    expect(layout.statusBottom).toBeLessThan(layout.cardBottom - layout.cardWidth * 0.15);
+    expect(layout.statusBottom).toBeLessThan(layout.cardBottom - 4);
     expect(layout.pageOverflow).toBeLessThanOrEqual(1);
   }
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
@@ -2108,9 +2108,7 @@ test('C20 blocked full-board generator growth never plays a pouring animation', 
   expect(saved.cells.filter(Boolean)).toHaveLength(42);
 });
 
-test('C21 Three Notes card keeps its title and status safe around a two-column recipe', async ({
-  page,
-}) => {
+test('C23 Three Notes card gives every crystal a full-size horizontal slot', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await enterResonanceGarden(page, false, true, {
     ...createCrystalariumFullState(),
@@ -2136,18 +2134,21 @@ test('C21 Three Notes card keeps its title and status safe around a two-column r
       statusTop: status.top,
       statusBottom: status.bottom,
       goals: goals.map((g) => ({ x: g.x, y: g.y, top: g.top, bottom: g.bottom })),
-      isGrid: getComputedStyle(root.querySelector('.crystalarium-live-goals')!).display,
+      goalsLayout: getComputedStyle(root.querySelector('.crystalarium-live-goals')!).display,
+      cardBackground: getComputedStyle(root).backgroundImage,
       pageOverflow: document.documentElement.scrollHeight - innerHeight,
     };
   });
-  expect(positions.isGrid).toBe('grid');
-  expect(positions.titleTop).toBeGreaterThan(positions.cardTop + 15);
+  expect(positions.goalsLayout).toBe('flex');
+  expect(positions.cardBackground).not.toContain('order-card-clean.svg');
+  expect(positions.titleTop).toBeGreaterThan(positions.cardTop + 4);
   expect(positions.titleBottom).toBeLessThan(positions.goals[0].top);
-  expect(Math.abs(positions.goals[0].x - positions.goals[1].x)).toBeLessThan(3);
-  expect(positions.goals[1].y).toBeGreaterThan(positions.goals[0].y + 15);
-  expect(positions.goals[2].x).toBeGreaterThan(positions.goals[0].x + 20);
-  expect(positions.statusTop).toBeGreaterThan(positions.goals[1].bottom);
-  expect(positions.statusBottom).toBeLessThan(positions.cardBottom - 12);
+  expect(positions.goals[1].x).toBeGreaterThan(positions.goals[0].x + 50);
+  expect(positions.goals[2].x).toBeGreaterThan(positions.goals[1].x + 50);
+  expect(Math.abs(positions.goals[0].y - positions.goals[1].y)).toBeLessThan(8);
+  expect(Math.abs(positions.goals[1].y - positions.goals[2].y)).toBeLessThan(8);
+  expect(positions.statusTop).toBeGreaterThan(positions.goals[2].bottom);
+  expect(positions.statusBottom).toBeLessThan(positions.cardBottom - 4);
   expect(positions.pageOverflow).toBeLessThanOrEqual(1);
   await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
 });
@@ -2295,6 +2296,152 @@ test.describe('C22A passive first-lesson spotlight over canonical buttons', () =
       await expect(live.locator('.crystalarium-live-guide')).toHaveCount(0);
       await expect(live.locator('[data-crystalarium-cell]')).toHaveCount(42);
     });
+  }
+});
+
+test.describe('C23A native touchscreen and tablet card readability', () => {
+  test.use({ hasTouch: true });
+
+  for (const portrait of [true, false]) {
+    test(`real touch drags one held tutorial crystal on ${portrait ? 'phone' : 'tablet'}`, async ({
+      page,
+      browserName,
+    }) => {
+      test.skip(browserName !== 'chromium', 'CDP touchscreen input is Chromium-specific');
+      test.setTimeout(90_000);
+      await page.setViewportSize(
+        portrait ? { width: 390, height: 844 } : { width: 1024, height: 768 },
+      );
+      await enterResonanceGarden(page, true, !portrait);
+      const root = page.locator(
+        portrait ? '[data-crystalarium-portrait="true"]' : '[data-crystalarium-live="true"]',
+      );
+      const guide = root.locator(
+        portrait ? '.crystalarium-portrait-guide' : '.crystalarium-live-guide',
+      );
+      await root
+        .locator(
+          portrait ? '[data-crystalarium-action="grow"]' : '[data-crystalarium-action="well-low"]',
+        )
+        .tap();
+      await expect(guide).toContainText('2 of 5');
+      const source = root.locator('[data-crystalarium-cell="2"]');
+      const target = root.locator('[data-crystalarium-cell="0"]');
+      await source.scrollIntoViewIfNeeded();
+      const a = await source.boundingBox();
+      const b = await target.boundingBox();
+      if (!a || !b) throw new Error('First tutorial crystal pair must be visible');
+      const start = { x: a.x + a.width / 2, y: a.y + a.height / 2 };
+      const finish = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+      const cd = await page.context().newCDPSession(page);
+      await cd.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+      for (let i = 1; i <= 8; i += 1) {
+        await cd.send('Input.dispatchTouchEvent', {
+          type: 'touchMove',
+          touchPoints: [
+            {
+              x: start.x + ((finish.x - start.x) * i) / 8,
+              y: start.y + ((finish.y - start.y) * i) / 8,
+            },
+          ],
+        });
+        if (i === 3) {
+          await expect(guide).toContainText('3 of 5');
+          await expect(page.locator('.crystalarium-drag-ghost')).toBeVisible();
+        }
+      }
+      await cd.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await expect(guide).toContainText('4 of 5');
+      await expect(page.locator('.crystalarium-drag-ghost')).toHaveCount(0);
+      const saved = await page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? '{}'),
+        SANDBOX_KEY,
+      );
+      expect(saved.merges).toBe(1);
+      expect(saved.cells[2]).toBeNull();
+      expect(await page.evaluate(() => localStorage.getItem('unicorn-valley.save'))).toBeNull();
+    });
+  }
+
+  test('real cancelled touch leaves the saved board unchanged', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'CDP touchscreen input is Chromium-specific');
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterResonanceGarden(page, true);
+    const root = page.locator('[data-crystalarium-portrait="true"]');
+    await root.locator('[data-crystalarium-action="grow"]').tap();
+    const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    const source = await root.locator('[data-crystalarium-cell="2"]').boundingBox();
+    if (!source) throw new Error('Tutorial crystal is not visible');
+    const start = { x: source.x + source.width / 2, y: source.y + source.height / 2 };
+    const cd = await page.context().newCDPSession(page);
+    await cd.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+    await cd.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x: start.x + 18, y: start.y + 18 }],
+    });
+    await expect(root.locator('.crystalarium-portrait-guide')).toContainText('3 of 5');
+    await cd.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
+    await expect(root.locator('.crystalarium-portrait-guide')).toContainText('2 of 5');
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+  });
+});
+
+test.describe('C23A one/two/three-goal cards expand without shrinking their artwork', () => {
+  for (const width of [900, 1024, 1440]) {
+    for (const completed of [0, 6, 8]) {
+      const goalCount = completed === 0 ? 1 : completed === 6 ? 2 : 3;
+      test(`${goalCount} goal card at ${width}px retains its proportional width and full-sized pictures`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: width === 900 ? 700 : 900 });
+        await enterResonanceGarden(page, false, true, {
+          ...createCrystalariumFullState(),
+          completed,
+        });
+        const selector =
+          completed === 0
+            ? ':not(.has-two-goals):not(.has-three-goals)'
+            : completed === 6
+              ? '.has-two-goals'
+              : '.has-three-goals';
+        const card = page.locator('.crystalarium-live-order-card' + selector).first();
+        await expect(card).toBeVisible();
+        const sizes = await card.evaluate((element) => {
+          const images = Array.from(element.querySelectorAll('.crystalarium-live-goal img')).map(
+            (img) => img.getBoundingClientRect(),
+          );
+          const title = element.querySelector('strong')!.getBoundingClientRect();
+          const status = element.querySelector('em')!.getBoundingClientRect();
+          return {
+            width: element.getBoundingClientRect().width,
+            goalsLayout: getComputedStyle(element.querySelector('.crystalarium-live-goals')!)
+              .display,
+            images: images.map((img) => ({ width: img.width, height: img.height })),
+            firstTop: Math.min(...images.map((img) => img.top)),
+            lastBottom: Math.max(...images.map((img) => img.bottom)),
+            titleBottom: title.bottom,
+            statusTop: status.top,
+          };
+        });
+        expect(sizes.images).toHaveLength(goalCount);
+        expect(sizes.goalsLayout).toBe('flex');
+        // One crystal takes a compact tile, two a medium tile, three a wide
+        // tile. Responsive clamp allows the cards to grow, not their art to shrink.
+        expect(sizes.width).toBeGreaterThanOrEqual(
+          goalCount === 1 ? 195 : goalCount === 2 ? 279 : 369,
+        );
+        expect(sizes.width).toBeLessThanOrEqual(
+          goalCount === 1 ? 231 : goalCount === 2 ? 331 : 421,
+        );
+        for (const img of sizes.images) {
+          expect(img.width).toBeGreaterThanOrEqual(72);
+          expect(img.height).toBeGreaterThanOrEqual(77);
+        }
+        expect(sizes.firstTop).toBeGreaterThan(sizes.titleBottom);
+        expect(sizes.statusTop).toBeGreaterThan(sizes.lastBottom);
+      });
+    }
   }
 });
 
@@ -2573,9 +2720,7 @@ test('C21 unadorned board keeps every crystal socket clickable', async ({ page }
   expect(result.frameRatio).toBeCloseTo(0.92, 1);
 });
 
-test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwork', async ({
-  page,
-}) => {
+test('C23A clean 7x6 crystal frame coexists with simple wide order tiles', async ({ page }) => {
   await page.setViewportSize({ width: 1819, height: 792 });
   await enterResonanceGarden(page, false, true);
   const live = page.locator('[data-crystalarium-live="true"]');
@@ -2612,7 +2757,6 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
         const rect = cell.getBoundingClientRect();
         return rect.width / rect.height;
       }),
-      cardTexture: getComputedStyle(card).backgroundImage,
     };
   });
   expect(geometry.socketCount).toBe(42);
@@ -2640,13 +2784,11 @@ test('C21 CSS frame follows tall 7x6 crystal sockets with clean parchment artwor
   expect(geometry.gardenBorder).toBe('0px');
   expect(geometry.guideGrowsFromWell).toBe(true);
   expect(geometry.noExtraGrow).toBe(true);
-  expect(geometry.cardArt).toContain('order-card-clean.svg');
-  const cardSource = await page.request.get(
-    '/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg',
-  );
-  expect(cardSource.ok()).toBe(true);
-  expect(await cardSource.text()).not.toContain('id="grain"');
-  expect(geometry.cardAspect).toBeCloseTo(512 / 704, 1);
+  // C23A deliberately retired ornate 512:704 order parchment in favour
+  // of a wide, readable goal-first panel with a calm gradient background.
+  expect(geometry.cardArt).toContain('linear-gradient(');
+  expect(geometry.cardArt).not.toContain('order-card-clean.svg');
+  expect(geometry.cardAspect).toBeGreaterThan(0.85);
 });
 
 test('C20 Gate D preview compares capacities and dry recovery without touching saves', async ({
