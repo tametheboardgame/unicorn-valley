@@ -850,7 +850,9 @@ test.describe('C23C.1 narrow portrait zoom and keyboard parity', () => {
       const railOverflows = await rail.evaluate((node) => node.scrollWidth > node.clientWidth);
       await page.keyboard.press('ArrowRight');
       if (railOverflows) {
-        await expect.poll(() => rail.evaluate((node) => node.scrollLeft)).toBeGreaterThan(railBefore);
+        await expect
+          .poll(() => rail.evaluate((node) => node.scrollLeft))
+          .toBeGreaterThan(railBefore);
       } else {
         expect(await rail.evaluate((node) => node.scrollLeft)).toBe(railBefore);
       }
