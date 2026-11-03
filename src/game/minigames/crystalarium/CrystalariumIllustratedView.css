@@ -951,8 +951,8 @@
     grid-template-rows: minmax(0, 1fr) 88px minmax(330px, 38dvh);
   }
 }
-/* Preserve native portrait controls pending C23's responsive integration. */
-@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+/* C23C: native portrait controls also serve fine-pointer and keyboard zoom views. */
+@media (max-width: 700px) and (orientation: portrait) {
   .crystalarium-live {
     display: none;
   }

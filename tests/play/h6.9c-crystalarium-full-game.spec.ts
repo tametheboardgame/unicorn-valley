@@ -805,6 +805,70 @@ test.describe('H6.9C narrow portrait touch acceptance', () => {
   });
 });
 
+test.describe('C23C.1 narrow portrait zoom and keyboard parity', () => {
+  test.use({ hasTouch: false });
+
+  for (const viewport of [
+    { width: 640, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`uses the keyboard-accessible native board at ${viewport.width}x${viewport.height} without touch`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await enterResonanceGarden(page, false, true, {
+        ...createCrystalariumFullState(),
+        completed: 8,
+      });
+      const portrait = page.locator('[data-crystalarium-portrait="true"]');
+      await expect(portrait).toBeVisible();
+      await expect(page.locator('[data-crystalarium-live="true"]')).toBeHidden();
+      await expect(portrait.locator('[data-crystalarium-cell]')).toHaveCount(42);
+      const board = portrait.getByRole('region', { name: /Crystal board\. Use arrow keys/i });
+      await expect(board).toHaveAttribute('tabindex', '0');
+      await expect(board).toHaveAttribute('aria-describedby', 'crystalarium-board-horizontal-help');
+      const cell = portrait.locator('[data-crystalarium-cell="0"]');
+      const bounds = await cell.boundingBox();
+      expect(bounds?.width).toBeGreaterThanOrEqual(48);
+      expect(bounds?.height).toBeGreaterThanOrEqual(48);
+      await board.focus();
+      await page.keyboard.press('ArrowRight');
+      await expect.poll(() => board.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0);
+      await page.keyboard.press('ArrowLeft');
+      await expect.poll(() => board.evaluate((node) => node.scrollLeft)).toBe(0);
+      await portrait.locator('[data-crystalarium-menu="pattern"]').click();
+      const rail = portrait.getByRole('region', { name: /Other active Resonance Orders/i });
+      await expect(rail).toHaveAttribute('tabindex', '0');
+      await rail.focus();
+      const railBefore = await rail.evaluate((node) => node.scrollLeft);
+      await page.keyboard.press('ArrowRight');
+      await expect.poll(() => rail.evaluate((node) => node.scrollLeft)).toBeGreaterThan(railBefore);
+      await page.keyboard.press('Escape');
+      await expect(portrait.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+      expect(overflow).toBeLessThanOrEqual(1);
+      await portrait.locator('[data-crystalarium-action="exit"]').click();
+      await waitForScene(page, 'JustGamesScene');
+    });
+  }
+
+  test('keyboard-zoom portrait rotation retains one canonical Crystalarium save', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 640, height: 900 });
+    await enterResonanceGarden(page, false, true);
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await expect(portrait).toBeVisible();
+    await portrait.locator('[data-crystalarium-cell="0"]').click();
+    const before = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    await page.setViewportSize({ width: 900, height: 640 });
+    await expect(page.locator('[data-crystalarium-live="true"]')).toBeVisible();
+    await page.setViewportSize({ width: 640, height: 900 });
+    await expect(portrait).toBeVisible();
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(before);
+  });
+});
+
 test.describe('H6.9C10 final-chapter 320px experience', () => {
   test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
 

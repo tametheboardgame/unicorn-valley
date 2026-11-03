@@ -7,7 +7,7 @@
 
 /* Responsive potion HUD lives above the board's menus; a refill must never
    require opening a hidden drawer at zero. */
-@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) and (orientation: portrait) {
   .crystalarium-portrait {
     position: fixed;
     z-index: 2500;
@@ -618,7 +618,7 @@
 
 /* C13A second visual pass: board-first mobile surface.
    Drawer panels are presentation only; the controller and saves are unchanged. */
-@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) and (orientation: portrait) {
   .crystalarium-portrait {
     gap: 6px;
     padding-bottom: max(110px, env(safe-area-inset-bottom) + 104px);
@@ -846,7 +846,7 @@
 }
 
 /* C19: closed chest stays compact; opened 4 x 3 chamber is a bounded sheet. */
-@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) and (orientation: portrait) {
   .crystalarium-portrait-shelf.is-open {
     z-index: 20;
     max-height: min(78dvh, 450px);
@@ -888,7 +888,7 @@
 }
 
 /* C22: shared non-intercepting spotlight for the separate portrait control surface. */
-@media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) and (orientation: portrait) {
   .crystalarium-portrait .crystalarium-live-spotlight {
     position: absolute;
     inset: 0;
@@ -945,5 +945,31 @@
   .crystalarium-portrait-guide [data-crystalarium-action="goal-continue"] {
     min-height: 48px;
     font-weight: 800;
+  }
+}
+
+/* C23C.1: keyboard and 200%-zoom parity for narrow portrait viewports.
+   Board and order rail remain separate scroll regions; no global page pan. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .crystalarium-portrait-board-scroll,
+  .crystalarium-portrait-order-rail {
+    min-width: 0;
+    touch-action: pan-x;
+  }
+  .crystalarium-portrait-board-scroll:focus-visible,
+  .crystalarium-portrait-order-rail:focus-visible {
+    outline: 3px solid #ffe6a6;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+@media (forced-colors: active) {
+  .crystalarium-portrait-action.is-ready,
+  .crystalarium-portrait-extra-order.is-ready {
+    border: 3px solid Highlight;
+  }
+  .crystalarium-portrait-cell.is-guide-focus,
+  .crystalarium-portrait-action.is-guide-focus {
+    outline: 3px solid Highlight;
   }
 }
