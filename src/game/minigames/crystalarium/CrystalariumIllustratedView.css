@@ -892,6 +892,65 @@
     height: 32px;
   }
 }
+/* C23B: tablet portrait keeps the playable board dominant instead of
+   compressing it into the desktop's three narrow columns. The wells stay
+   rooted alongside the board; tools and swipeable orders take full-width rows.
+   This is presentation only, using the existing controller and Offer buttons. */
+@media (min-width: 701px) and (max-width: 1100px) and (orientation: portrait) {
+  .crystalarium-live-scene {
+    grid-template-columns: minmax(0, 1fr) clamp(96px, 12vw, 128px);
+    grid-template-rows: minmax(0, 1fr) 88px minmax(220px, 26dvh);
+    gap: 7px;
+  }
+  .crystalarium-live-garden {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .crystalarium-live-producers {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .crystalarium-live-tools {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 9px;
+  }
+  .crystalarium-live-tools h2 {
+    flex: 0 0 auto;
+  }
+  .crystalarium-live-tool-row {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+  }
+  .crystalarium-live-tool {
+    min-height: 48px;
+  }
+  .crystalarium-live-tool img {
+    height: 28px;
+    width: 28px;
+  }
+  .crystalarium-live-orders {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    padding: 8px;
+  }
+  .crystalarium-live-orders-row {
+    min-height: 0;
+  }
+  .crystalarium-live-order-card {
+    height: min(195px, 100%);
+  }
+  /* The tutorial includes an instruction bar and real target spotlight.
+     Reserve room for it without replacing, floating or hiding the order. */
+  .crystalarium-live-scene:has(.crystalarium-live-guide) {
+    grid-template-rows: minmax(0, 1fr) 88px minmax(330px, 38dvh);
+  }
+}
 /* Preserve native portrait controls pending C23's responsive integration. */
 @media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
   .crystalarium-live {
