@@ -811,6 +811,7 @@ test.describe('C23C.1 narrow portrait zoom and keyboard parity', () => {
   for (const viewport of [
     { width: 640, height: 900 },
     { width: 390, height: 844 },
+    { width: 320, height: 700 },
   ]) {
     test(`uses the keyboard-accessible native board at ${viewport.width}x${viewport.height} without touch`, async ({
       page,
@@ -831,11 +832,16 @@ test.describe('C23C.1 narrow portrait zoom and keyboard parity', () => {
       const bounds = await cell.boundingBox();
       expect(bounds?.width).toBeGreaterThanOrEqual(48);
       expect(bounds?.height).toBeGreaterThanOrEqual(48);
+      const boardOverflows = await board.evaluate((node) => node.scrollWidth > node.clientWidth);
       await board.focus();
       await page.keyboard.press('ArrowRight');
-      await expect.poll(() => board.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0);
-      await page.keyboard.press('ArrowLeft');
-      await expect.poll(() => board.evaluate((node) => node.scrollLeft)).toBe(0);
+      if (boardOverflows) {
+        await expect.poll(() => board.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0);
+        await page.keyboard.press('ArrowLeft');
+        await expect.poll(() => board.evaluate((node) => node.scrollLeft)).toBe(0);
+      } else {
+        expect(await board.evaluate((node) => node.scrollLeft)).toBe(0);
+      }
       await portrait.locator('[data-crystalarium-menu="pattern"]').click();
       const rail = portrait.getByRole('region', { name: /Other active Resonance Orders/i });
       await expect(rail).toHaveAttribute('tabindex', '0');
