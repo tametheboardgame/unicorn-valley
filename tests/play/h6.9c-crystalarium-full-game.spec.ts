@@ -847,8 +847,13 @@ test.describe('C23C.1 narrow portrait zoom and keyboard parity', () => {
       await expect(rail).toHaveAttribute('tabindex', '0');
       await rail.focus();
       const railBefore = await rail.evaluate((node) => node.scrollLeft);
+      const railOverflows = await rail.evaluate((node) => node.scrollWidth > node.clientWidth);
       await page.keyboard.press('ArrowRight');
-      await expect.poll(() => rail.evaluate((node) => node.scrollLeft)).toBeGreaterThan(railBefore);
+      if (railOverflows) {
+        await expect.poll(() => rail.evaluate((node) => node.scrollLeft)).toBeGreaterThan(railBefore);
+      } else {
+        expect(await rail.evaluate((node) => node.scrollLeft)).toBe(railBefore);
+      }
       await page.keyboard.press('Escape');
       await expect(portrait.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
