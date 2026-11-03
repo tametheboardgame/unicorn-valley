@@ -191,9 +191,7 @@ export class CrystalariumFullMode {
     // Never disable the Phaser scene-wide input subsystem; browser diagnostics,
     // canvas launch/return and orientation changes share that lifecycle.
     this.portraitQuery =
-      globalThis.matchMedia?.(
-        '(max-width: 700px) and (orientation: portrait)',
-      ) ?? null;
+      globalThis.matchMedia?.('(max-width: 700px) and (orientation: portrait)') ?? null;
     this.portraitQuery?.addEventListener('change', this.syncPortraitInput);
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);
