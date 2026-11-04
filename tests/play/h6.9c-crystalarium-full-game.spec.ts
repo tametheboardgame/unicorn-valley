@@ -970,7 +970,9 @@ test.describe('C23C.3 accessible viewport and visual-audit evidence', () => {
     expect(shelfBounds.x).toBeGreaterThanOrEqual(0);
     expect(shelfBounds.x + shelfBounds.width).toBeLessThanOrEqual(391);
     expect(shelfBounds.y + shelfBounds.height).toBeLessThanOrEqual(845);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
+    ).toBeLessThanOrEqual(1);
     await page.screenshot({
       path: testInfo.outputPath('c23c-gate-g-390-portrait.png'),
       fullPage: true,
@@ -980,7 +982,9 @@ test.describe('C23C.3 accessible viewport and visual-audit evidence', () => {
     await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('25 / 100');
     const saved = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
     await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
-    expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+    expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(
+      true,
+    );
     expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
     await expect(portrait.getByRole('status')).toBeVisible();
     await page.screenshot({
