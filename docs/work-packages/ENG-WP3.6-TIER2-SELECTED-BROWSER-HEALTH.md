@@ -29,6 +29,10 @@ Tracking: [CI health issue #347](https://github.com/tametheboardgame/unicorn-val
 4. Measure elapsed Tier 2 wall time and rough runner occupancy against the recorded serial 75/125-at-25-minute baseline. Review browser worker contention and test isolation from actual logs; retain the change only on observed stable evidence.
 5. Before integration, prove static-six Tier 3, Tier 4 profiles and full merge qualification remain green on the **exact** head. Evaluate compatibility with currently active World and Story House PRs; no direct merge or main push.
 
+## Independent selected-suite canary
+
+The path-filtered `.github/workflows/tier2-selected-validation.yml` runs only for edits to this selected runner or its proof machinery. It discovers all Crystalarium test identities using the identical selected config, executes the complete unchanged spec through the production ownership-selected wrapper, and uses the already-qualified WP3.1 normaliser and exact-cover reconciler for a 1/1 execution proof. Full protected CI remains a separate requirement. Cancellation, missing identities, unexpected outcomes and a non-green job do not qualify this experiment.
+
 ## Rollback and exit
 
 Rollback is confined to deleting `playwright.selected.config.ts` and restoring the prior selected runner invocation. No change to test inventory, product state or authoritative configuration is required. Keep this work package draft until selected-run evidence, isolated code review and the separate engineering merge decision are recorded; otherwise retain the established baseline and investigate splitting the large Crystalarium spec without losing identities.
