@@ -190,8 +190,7 @@ export class CrystalariumFullMode {
     // landscape screens. Touch is not required for readable 48px controls.
     // Never disable the Phaser scene-wide input subsystem; browser diagnostics,
     // canvas launch/return and orientation changes share that lifecycle.
-    this.portraitQuery =
-      globalThis.matchMedia?.('(max-width: 700px)') ?? null;
+    this.portraitQuery = globalThis.matchMedia?.('(max-width: 700px)') ?? null;
     this.portraitQuery?.addEventListener('change', this.syncPortraitInput);
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);

@@ -908,7 +908,9 @@ test.describe('C23C.2 narrow landscape and spoken-control recovery', () => {
       expect(first.height).toBeGreaterThanOrEqual(48);
       expect(first.y + first.height).toBeLessThan(shelf.y);
       await expect(portrait.locator('[data-crystalarium-action="exit"]')).toBeEnabled();
-      expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
+      ).toBeLessThanOrEqual(1);
       await page.screenshot({
         path: testInfo.outputPath('c23c-landscape-' + viewport.width + '.png'),
         fullPage: true,
@@ -918,7 +920,9 @@ test.describe('C23C.2 narrow landscape and spoken-control recovery', () => {
     });
   }
 
-  test('Storage Escape returns focus to the real chest and readiness is spoken', async ({ page }) => {
+  test('Storage Escape returns focus to the real chest and readiness is spoken', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterResonanceGarden(page, false, true, {
       ...createCrystalariumFullState(),
