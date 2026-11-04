@@ -185,13 +185,12 @@ export class CrystalariumFullMode {
     if (CrystalariumIllustratedView.enabled()) {
       this.illustrated = new CrystalariumIllustratedView(actions);
     }
-    // Keep native controls independently interactive on portrait phones.
+    // Select native board-first controls for narrow portrait CSS viewports,
+    // including keyboard/fine-pointer browsers at 200% zoom, and narrow
+    // landscape screens. Touch is not required for readable 48px controls.
     // Never disable the Phaser scene-wide input subsystem; browser diagnostics,
     // canvas launch/return and orientation changes share that lifecycle.
-    this.portraitQuery =
-      globalThis.matchMedia?.(
-        '(pointer: coarse) and (max-width: 700px) and (orientation: portrait)',
-      ) ?? null;
+    this.portraitQuery = globalThis.matchMedia?.('(max-width: 700px)') ?? null;
     this.portraitQuery?.addEventListener('change', this.syncPortraitInput);
     this.scene.input.keyboard?.on('keydown', this.keyDown, this);
     this.scene.input.on('pointerup', this.pointerUp, this);

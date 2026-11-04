@@ -83,6 +83,17 @@ function makeElement<K extends keyof HTMLElementTagNameMap>(
   return element;
 }
 
+/** A visible horizontal region is also operable without touch or a mouse. */
+function allowArrowScroll(region: HTMLElement, step: number): void {
+  region.tabIndex = 0;
+  region.addEventListener('keydown', (event) => {
+    if (event.target !== region || !['ArrowRight', 'ArrowLeft'].includes(event.key)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    region.scrollLeft += event.key === 'ArrowRight' ? step : -step;
+  });
+}
+
 /**
  * Portrait-only native presentation of the *existing* Crystalarium controller.
  * The 1280×720 canvas stays authoritative for the world/desktop and browser
@@ -122,7 +133,12 @@ export class CrystalariumPortraitView {
         if (this.storageOpen) {
           this.storageOpen = false;
           this.storageKeyboardSource = null;
-          if (this.currentView) this.render(this.currentView);
+          if (this.currentView) {
+            this.render(this.currentView);
+            this.root
+              .querySelector<HTMLButtonElement>('[data-crystalarium-action="storage-toggle"]')
+              ?.focus({ preventScroll: true });
+          }
         } else if (this.activeMenu !== null) {
           const menu = this.activeMenu;
           this.toggleMenu(menu);
@@ -505,7 +521,12 @@ export class CrystalariumPortraitView {
     task.append(label, title, goals, offer);
     if (activeOrders.length > 1) {
       const overflow = makeElement('div', 'crystalarium-portrait-order-rail');
-      overflow.setAttribute('aria-label', 'Other active Resonance Orders, swipe sideways');
+      overflow.setAttribute('role', 'region');
+      overflow.setAttribute(
+        'aria-label',
+        'Other active Resonance Orders. Use left or right arrow keys to scroll.',
+      );
+      allowArrowScroll(overflow, 180);
       for (const candidate of activeOrders.slice(1)) {
         const ready = queue ? canOfferQueuedPattern(queue, candidate.id) : false;
         const tile = this.button(
@@ -518,7 +539,10 @@ export class CrystalariumPortraitView {
         tile.classList.add('crystalarium-portrait-extra-order');
         tile.dataset.crystalariumPatternId = candidate.id;
         tile.classList.toggle('is-ready', ready);
-        tile.setAttribute('aria-label', 'Resonance Order: ' + candidate.title);
+        tile.setAttribute(
+          'aria-label',
+          'Resonance Order: ' + candidate.title + (ready ? ', ready to offer' : ', in progress'),
+        );
         overflow.append(tile);
       }
       task.append(overflow);
@@ -583,7 +607,12 @@ export class CrystalariumPortraitView {
       'crystalarium-portrait-scroll-cue',
       '↔ Swipe sideways to see the whole board',
     );
+    scrollCue.id = 'crystalarium-board-horizontal-help';
     const scroller = makeElement('div', 'crystalarium-portrait-board-scroll');
+    scroller.setAttribute('role', 'region');
+    scroller.setAttribute('aria-label', 'Crystal board. Use arrow keys to see all seven columns.');
+    scroller.setAttribute('aria-describedby', scrollCue.id);
+    allowArrowScroll(scroller, 52);
     const grid = makeElement('div', 'crystalarium-portrait-grid');
     grid.setAttribute('role', 'group');
     grid.setAttribute(
@@ -738,6 +767,8 @@ export class CrystalariumPortraitView {
     }
     tools.append(utility);
     const shelf = makeElement('div', 'crystalarium-portrait-shelf');
+    shelf.setAttribute('role', this.storageOpen ? 'dialog' : 'region');
+    shelf.setAttribute('aria-label', this.storageOpen ? 'Storage Chamber' : 'Storage Chest');
     shelf.classList.toggle('is-open', this.storageOpen);
     const storedCount = state.shelf.filter(Boolean).length;
     const storageToggle = this.button(
@@ -823,6 +854,7 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
+    status.setAttribute('role', 'status');
     // The three existing gameplay surfaces stay mounted, but only one is
     // exposed in the non-modal drawer. Saves and controller actions are shared.
     const backdrop = makeElement('div', 'crystalarium-portrait-menu-backdrop');
