@@ -1,0 +1,46 @@
+name: Tier 2 selected browser runner qualification
+
+on:
+  pull_request:
+    paths:
+      - 'playwright.selected.config.ts'
+      - 'scripts/verification/runSelectedBrowserTests.mjs'
+      - 'scripts/verification/verifySelectedBrowserCoverage.mjs'
+      - '.github/workflows/tier2-selected-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  selected-browser-proof:
+    name: Tier 2 complete selected Crystalarium proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.2
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Discover the exact selected identity inventory
+        run: npx playwright test tests/play/h6.9c-crystalarium-full-game.spec.ts --config=playwright.selected.config.ts --list --reporter=json > selected-discovery.json
+      - name: Execute unchanged ownership-selected browser contracts
+        env:
+          BROWSER_TESTS: tests/play/h6.9c-crystalarium-full-game.spec.ts
+        run: npm run test:browser:selected
+      - name: Reconcile exact discovery versus actual execution
+        run: node scripts/verification/verifySelectedBrowserCoverage.mjs
+      - name: Archive selected test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tier2-selected-complete-proof
+          path: |
+            selected-discovery.json
+            selected-browser-reconciliation.json
+            playtest-artifacts
+          if-no-files-found: warn
+          retention-days: 14

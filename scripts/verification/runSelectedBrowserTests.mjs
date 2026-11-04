@@ -21,11 +21,12 @@ for (const test of tests) {
   }
 }
 
-// Tier 2 executes every selected test; two isolated browser workers keep broad
-// feature selections within the bounded CI job without reducing coverage.
-const workerArgs = process.env.CI ? ['--workers=2'] : [];
-console.log(`> npx playwright test ${[...tests, ...workerArgs].join(' ')}`);
-const result = spawnSync('npx', ['playwright', 'test', ...tests, ...workerArgs], {
+// Keep every ownership-selected spec and assertion. The separate CI-only
+// Playwright configuration permits tests within a single large spec to run
+// in isolated parallel workers; normal and authoritative test modes stay as-is.
+const selectedConfigArgs = process.env.CI ? ['--config=playwright.selected.config.ts'] : [];
+console.log(`> npx playwright test ${[...tests, ...selectedConfigArgs].join(' ')}`);
+const result = spawnSync('npx', ['playwright', 'test', ...tests, ...selectedConfigArgs], {
   stdio: 'inherit',
   shell: false,
 });
