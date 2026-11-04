@@ -949,6 +949,67 @@ test.describe('C23C.2 narrow landscape and spoken-control recovery', () => {
   });
 });
 
+test.describe('C23C.3 accessible viewport and visual-audit evidence', () => {
+  test.use({ hasTouch: true });
+
+  test('preserves refill, safe-area bounds, contrast and saves across phone, landscape and tablet', async ({
+    page,
+  }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterResonanceGarden(page, false, true, {
+      ...createCrystalariumFullState(),
+      completed: 8,
+      potion: 0,
+    });
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    await expect(portrait).toBeVisible();
+    await expect(portrait.locator('[data-crystalarium-cell]')).toHaveCount(42);
+    const shelfBounds = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
+    if (!shelfBounds) throw new Error('C23C.3 Storage Chest is missing');
+    expect(shelfBounds.x).toBeGreaterThanOrEqual(0);
+    expect(shelfBounds.x + shelfBounds.width).toBeLessThanOrEqual(391);
+    expect(shelfBounds.y + shelfBounds.height).toBeLessThanOrEqual(845);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+    await page.screenshot({
+      path: testInfo.outputPath('c23c-gate-g-390-portrait.png'),
+      fullPage: true,
+    });
+
+    await portrait.locator('[data-crystalarium-action="potion-refill"]').click();
+    await expect(portrait.locator('.crystalarium-portrait-potion')).toContainText('25 / 100');
+    const saved = await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY);
+    await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
+    expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+    expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+    await expect(portrait.getByRole('status')).toBeVisible();
+    await page.screenshot({
+      path: testInfo.outputPath('c23c-gate-g-390-high-contrast.png'),
+      fullPage: true,
+    });
+
+    await page.emulateMedia({ reducedMotion: 'no-preference', forcedColors: 'none' });
+    await page.setViewportSize({ width: 640, height: 360 });
+    await expect(portrait).toBeVisible();
+    await expect(portrait.locator('[data-crystalarium-cell]')).toHaveCount(42);
+    await page.screenshot({
+      path: testInfo.outputPath('c23c-gate-g-640-landscape.png'),
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 768, height: 1024 });
+    const illustrated = page.locator('[data-crystalarium-live="true"]');
+    await expect(illustrated).toBeVisible();
+    await expect(illustrated.locator('[data-crystalarium-cell]')).toHaveCount(42);
+    await page.screenshot({
+      path: testInfo.outputPath('c23c-gate-g-768-tablet.png'),
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(portrait).toBeVisible();
+    expect(await page.evaluate((key) => localStorage.getItem(key), SANDBOX_KEY)).toBe(saved);
+  });
+});
+
 test.describe('H6.9C10 final-chapter 320px experience', () => {
   test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
 
