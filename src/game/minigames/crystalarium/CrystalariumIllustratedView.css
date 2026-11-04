@@ -952,7 +952,7 @@
   }
 }
 /* C23C: native portrait controls also serve fine-pointer and keyboard zoom views. */
-@media (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) {
   .crystalarium-live {
     display: none;
   }

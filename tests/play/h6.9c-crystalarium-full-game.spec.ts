@@ -882,6 +882,69 @@ test.describe('C23C.1 narrow portrait zoom and keyboard parity', () => {
   });
 });
 
+test.describe('C23C.2 narrow landscape and spoken-control recovery', () => {
+  test.use({ hasTouch: true });
+
+  for (const viewport of [
+    { width: 640, height: 360 },
+    { width: 568, height: 320 },
+  ]) {
+    test(`keeps a 48px real board row visible on ${viewport.width}x${viewport.height} landscape`, async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await enterResonanceGarden(page, false, true, {
+        ...createCrystalariumFullState(),
+        completed: 8,
+      });
+      const portrait = page.locator('[data-crystalarium-portrait="true"]');
+      await expect(portrait).toBeVisible();
+      await expect(page.locator('[data-crystalarium-live="true"]')).toBeHidden();
+      await expect(portrait.locator('[data-crystalarium-cell]')).toHaveCount(42);
+      const first = await portrait.locator('[data-crystalarium-cell="0"]').boundingBox();
+      const shelf = await portrait.locator('.crystalarium-portrait-shelf').boundingBox();
+      if (!first || !shelf) throw new Error('Missing landscape board or shelf');
+      expect(first.width).toBeGreaterThanOrEqual(48);
+      expect(first.height).toBeGreaterThanOrEqual(48);
+      expect(first.y + first.height).toBeLessThan(shelf.y);
+      await expect(portrait.locator('[data-crystalarium-action="exit"]')).toBeEnabled();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      await page.screenshot({
+        path: testInfo.outputPath('c23c-landscape-' + viewport.width + '.png'),
+        fullPage: true,
+      });
+      await portrait.locator('[data-crystalarium-action="exit"]').click();
+      await waitForScene(page, 'JustGamesScene');
+    });
+  }
+
+  test('Storage Escape returns focus to the real chest and readiness is spoken', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterResonanceGarden(page, false, true, {
+      ...createCrystalariumFullState(),
+      completed: 8,
+    });
+    const portrait = page.locator('[data-crystalarium-portrait="true"]');
+    const chest = portrait.locator('[data-crystalarium-action="storage-toggle"]');
+    await chest.click();
+    await expect(portrait.getByRole('dialog', { name: 'Storage Chamber' })).toBeVisible();
+    await expect(portrait.locator('.crystalarium-portrait-shelf-slots button')).toHaveCount(12);
+    await page.keyboard.press('Escape');
+    await expect(portrait.getByRole('region', { name: 'Storage Chest' })).toBeVisible();
+    await expect(chest).toBeFocused();
+    await portrait.locator('[data-crystalarium-menu="pattern"]').click();
+    const rail = portrait.getByRole('region', { name: /Other active Resonance Orders/i });
+    await expect(rail).toBeVisible();
+    await expect(rail.locator('button').first()).toHaveAttribute(
+      'aria-label',
+      /Resonance Order: .* (ready to offer|in progress)/i,
+    );
+    await expect(portrait.getByRole('status')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(portrait.locator('.crystalarium-portrait-menu-panel')).toBeHidden();
+  });
+});
+
 test.describe('H6.9C10 final-chapter 320px experience', () => {
   test.use({ viewport: { width: 320, height: 700 }, hasTouch: true });
 

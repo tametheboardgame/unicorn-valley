@@ -7,7 +7,7 @@
 
 /* Responsive potion HUD lives above the board's menus; a refill must never
    require opening a hidden drawer at zero. */
-@media (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) {
   .crystalarium-portrait {
     position: fixed;
     z-index: 2500;
@@ -618,7 +618,7 @@
 
 /* C13A second visual pass: board-first mobile surface.
    Drawer panels are presentation only; the controller and saves are unchanged. */
-@media (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) {
   .crystalarium-portrait {
     gap: 6px;
     padding-bottom: max(110px, env(safe-area-inset-bottom) + 104px);
@@ -846,7 +846,7 @@
 }
 
 /* C19: closed chest stays compact; opened 4 x 3 chamber is a bounded sheet. */
-@media (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) {
   .crystalarium-portrait-shelf.is-open {
     z-index: 20;
     max-height: min(78dvh, 450px);
@@ -888,7 +888,7 @@
 }
 
 /* C22: shared non-intercepting spotlight for the separate portrait control surface. */
-@media (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) {
   .crystalarium-portrait .crystalarium-live-spotlight {
     position: absolute;
     inset: 0;
@@ -950,7 +950,7 @@
 
 /* C23C.1: keyboard and 200%-zoom parity for narrow portrait viewports.
    Board and order rail remain separate scroll regions; no global page pan. */
-@media (max-width: 700px) and (orientation: portrait) {
+@media (max-width: 700px) {
   .crystalarium-portrait-board-scroll,
   .crystalarium-portrait-order-rail {
     min-width: 0;
@@ -971,5 +971,39 @@
   .crystalarium-portrait-cell.is-guide-focus,
   .crystalarium-portrait-action.is-guide-focus {
     outline: 3px solid Highlight;
+  }
+}
+
+/* C23C.2: the same real-size, canonical native board is usable when
+   a small landscape screen or a zoomed desktop is at most 700 CSS pixels
+   wide. Put the board ahead of secondary controls in this short viewport;
+   preserve 48px sockets, the independent horizontal pan and a 48px Leave. */
+@media (max-width: 700px) and (orientation: landscape) {
+  .crystalarium-portrait {
+    gap: 4px;
+    padding-top: max(5px, env(safe-area-inset-top));
+  }
+  .crystalarium-portrait-header {
+    order: 0;
+    min-height: 48px;
+  }
+  .crystalarium-portrait-subtitle {
+    display: none;
+  }
+  .crystalarium-portrait-board-section {
+    order: 1;
+    flex: 0 0 auto;
+    min-height: 0;
+    gap: 4px;
+    padding-block: 5px;
+  }
+  .crystalarium-portrait-potion {
+    order: 2;
+  }
+  .crystalarium-portrait-menu-strip {
+    order: 3;
+  }
+  .crystalarium-portrait-guide {
+    order: 4;
   }
 }

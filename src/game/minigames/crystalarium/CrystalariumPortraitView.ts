@@ -133,7 +133,12 @@ export class CrystalariumPortraitView {
         if (this.storageOpen) {
           this.storageOpen = false;
           this.storageKeyboardSource = null;
-          if (this.currentView) this.render(this.currentView);
+          if (this.currentView) {
+            this.render(this.currentView);
+            this.root
+              .querySelector<HTMLButtonElement>('[data-crystalarium-action="storage-toggle"]')
+              ?.focus({ preventScroll: true });
+          }
         } else if (this.activeMenu !== null) {
           const menu = this.activeMenu;
           this.toggleMenu(menu);
@@ -534,7 +539,10 @@ export class CrystalariumPortraitView {
         tile.classList.add('crystalarium-portrait-extra-order');
         tile.dataset.crystalariumPatternId = candidate.id;
         tile.classList.toggle('is-ready', ready);
-        tile.setAttribute('aria-label', 'Resonance Order: ' + candidate.title);
+        tile.setAttribute(
+          'aria-label',
+          'Resonance Order: ' + candidate.title + (ready ? ', ready to offer' : ', in progress'),
+        );
         overflow.append(tile);
       }
       task.append(overflow);
@@ -759,6 +767,8 @@ export class CrystalariumPortraitView {
     }
     tools.append(utility);
     const shelf = makeElement('div', 'crystalarium-portrait-shelf');
+    shelf.setAttribute('role', this.storageOpen ? 'dialog' : 'region');
+    shelf.setAttribute('aria-label', this.storageOpen ? 'Storage Chamber' : 'Storage Chest');
     shelf.classList.toggle('is-open', this.storageOpen);
     const storedCount = state.shelf.filter(Boolean).length;
     const storageToggle = this.button(
@@ -844,6 +854,7 @@ export class CrystalariumPortraitView {
     const status = makeElement('p', 'crystalarium-portrait-status', view.message);
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
+    status.setAttribute('role', 'status');
     // The three existing gameplay surfaces stay mounted, but only one is
     // exposed in the non-modal drawer. Saves and controller actions are shared.
     const backdrop = makeElement('div', 'crystalarium-portrait-menu-backdrop');
