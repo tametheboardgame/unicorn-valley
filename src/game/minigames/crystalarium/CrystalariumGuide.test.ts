@@ -49,6 +49,25 @@ describe('H6.9C9 optional child-first guide', () => {
     expect(guide.getPrompt()?.stage).toBe('explore');
   });
 
+  it('returns to Pick up after a cancelled lift without changing gameplay state', () => {
+    const fresh = createCrystalariumFullState();
+    const result = spawnCrystal(fresh);
+    expect(result.accepted).toBe(true);
+    if (!result.accepted) return;
+    const guide = new CrystalariumGuide('just-games', result.state, memoryStorage());
+    expect(guide.getPrompt()?.lessonStep).toBe('pick-up');
+    guide.picked(0);
+    expect(guide.getPrompt()?.lessonStep).toBe('pick-up');
+    guide.picked(2);
+    expect(guide.getPrompt()?.lessonStep).toBe('merge');
+    expect(guide.unpicked(0)).toBe(false);
+    expect(guide.unpicked(2)).toBe(true);
+    expect(guide.getPrompt()?.lessonStep).toBe('pick-up');
+    expect(guide.allows({ kind: 'merge', source: 2, target: 0 })).toBe(false);
+    guide.picked(2);
+    expect(guide.allows({ kind: 'merge', source: 2, target: 0 })).toBe(true);
+  });
+
   it('does not advance after rejected actions, and can be skipped/replayed', () => {
     const store = memoryStorage();
     const initial = createCrystalariumFullState();

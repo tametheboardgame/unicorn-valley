@@ -10,6 +10,7 @@ import {
 import { CRYSTAL_TIER_NAMES, type CrystalPiece } from './CrystalariumOpeningRules';
 import { CrystalariumPointerDrag } from './CrystalariumPointerDrag';
 import { CrystalariumGrowthPotionFx } from './CrystalariumGrowthPotionFx';
+import { CrystalariumSpotlight } from './CrystalariumSpotlight';
 import { activeResonanceQueue, canOfferQueuedPattern } from './CrystalariumMultiOrderRules';
 import { POTION_CAPACITY, potionChamber } from './CrystalariumPotionRules';
 import type {
@@ -63,6 +64,9 @@ export class CrystalariumIllustratedView {
   private readonly dragging: CrystalariumPointerDrag;
   private readonly actions: CrystalariumPortraitActions;
   private readonly growthFx = new CrystalariumGrowthPotionFx();
+  private readonly spotlight: CrystalariumSpotlight;
+  // Presentation-only goal acknowledgement, never a new saved gameplay action.
+  private goalInspected = false;
   private latest: CrystalariumPortraitPresentation | null = null;
   private storageOpen = false;
   private orderRailObserver: ResizeObserver | null = null;
@@ -75,6 +79,7 @@ export class CrystalariumIllustratedView {
     this.root.setAttribute('role', 'region');
     this.root.setAttribute('aria-label', 'Crystalarium illustrated live game');
     this.root.dataset.crystalariumLive = 'true';
+    this.spotlight = new CrystalariumSpotlight(this.root);
     // Native buttons must not propagate presses to Phaser canvas controls.
     for (const name of ['pointerdown', 'pointerup', 'pointercancel', 'click']) {
       this.root.addEventListener(name, (event) => event.stopPropagation());
@@ -99,6 +104,10 @@ export class CrystalariumIllustratedView {
       this.root,
       {
         move: actions.dragMove,
+        start: (origin) => origin.kind === 'cell' && this.advanceHeldCrystal(origin.index),
+        cancel: (origin) => {
+          if (origin.kind === 'cell') actions.dragCancelPickUp(origin.index);
+        },
         shelve: (index, targetSlot) => {
           this.storageOpen = true;
           actions.dragShelve(index, targetSlot);
@@ -116,6 +125,36 @@ export class CrystalariumIllustratedView {
         (kind === 'cell' ? this.latest?.state.cells[index] : this.latest?.state.shelf[index]) ??
         null,
     );
+  }
+
+  /**
+   * A drag already owns pointer capture. Only update the displayed guide and
+   * real destination in-place, because a render would remove the held cell.
+   */
+  private advanceHeldCrystal(index: number): boolean {
+    if (this.latest?.guide?.lessonStep !== 'pick-up') return false;
+    const prompt = this.actions.dragPickUp(index);
+    if (prompt?.lessonStep !== 'merge' || prompt.targetIndex === undefined) return false;
+    this.latest = { ...this.latest, guide: prompt };
+    const source = this.root.querySelector<HTMLElement>('[data-crystalarium-cell="' + index + '"]');
+    const target = this.root.querySelector<HTMLButtonElement>(
+      '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
+    );
+    if (!target) return true;
+    target.disabled = false;
+    source?.classList.remove('is-guide-focus');
+    source?.removeAttribute('aria-describedby');
+    target.classList.add('is-guide-focus');
+    target.setAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
+    const instruction = this.root.querySelector<HTMLElement>(
+      '#crystalarium-live-guide-instruction',
+    );
+    const title = instruction?.querySelector('strong');
+    const copy = instruction?.querySelector('span');
+    if (title) title.textContent = prompt.title.replace('of 4', 'of 5');
+    if (copy) copy.textContent = prompt.instruction;
+    this.spotlight.show(target, 'Match here');
+    return true;
   }
 
   private activateStoredSlot(index: number): void {
@@ -205,6 +244,7 @@ export class CrystalariumIllustratedView {
   }
 
   public render(view: CrystalariumPortraitPresentation): void {
+    this.spotlight.clear();
     this.dragging.cancelActiveGesture();
     this.orderRailObserver?.disconnect();
     this.latest = view;
@@ -222,6 +262,8 @@ export class CrystalariumIllustratedView {
     const prompt = view.guide;
     const activeLesson = prompt?.lessonStep;
     const firstLesson = activeLesson !== undefined;
+    if (activeLesson !== 'offer') this.goalInspected = false;
+    const inspectingGoal = activeLesson === 'offer' && !this.goalInspected;
     const queue = potionChamber(state);
     const patterns = queue ? activeResonanceQueue(queue) : [];
     const pattern = patterns[0] ?? activeResonancePattern(state);
@@ -443,7 +485,8 @@ export class CrystalariumIllustratedView {
     const visible = patterns.length > 0 ? patterns : pattern ? [pattern] : [];
     for (const [index, activePattern] of visible.entries()) {
       const ready = queue ? canOfferQueuedPattern(queue, activePattern.id) : canOfferPattern(state);
-      const offering = ready && (!firstLesson || (index === 0 && activeLesson === 'offer'));
+      const offering =
+        ready && (!firstLesson || (index === 0 && activeLesson === 'offer' && this.goalInspected));
       const card = this.button(
         '',
         index === 0 ? 'offer' : 'offer-' + activePattern.id,
@@ -453,7 +496,10 @@ export class CrystalariumIllustratedView {
       card.classList.add('crystalarium-live-order-card');
       card.classList.toggle('has-two-goals', activePattern.goals.length === 2);
       card.classList.toggle('has-three-goals', activePattern.goals.length >= 3);
-      card.classList.toggle('is-guide-focus', index === 0 && activeLesson === 'offer');
+      card.classList.toggle(
+        'is-guide-focus',
+        index === 0 && activeLesson === 'offer' && !inspectingGoal,
+      );
       card.classList.toggle('is-ready', ready);
       card.dataset.crystalariumPatternId = activePattern.id;
       card.dataset.cardArt = ready ? 'ready' : 'in-progress';
@@ -479,6 +525,12 @@ export class CrystalariumIllustratedView {
           node('span', '', Math.min(count, goal.quantity) + ' / ' + goal.quantity),
         );
         goals.append(item);
+      }
+      if (index === 0 && inspectingGoal) {
+        goals.classList.add('is-guide-goal');
+        goals.dataset.crystalariumGoalPreview = 'true';
+        goals.setAttribute('role', 'img');
+        goals.setAttribute('aria-label', 'Goal pictures: ' + spokenGoals.join(', '));
       }
       card.append(goals);
       if (activePattern.harmonies) {
@@ -552,17 +604,42 @@ export class CrystalariumIllustratedView {
       guide.setAttribute('aria-label', 'Crystalarium guide');
       guide.setAttribute('aria-live', 'polite');
       const instruction = node('div', 'crystalarium-live-guide-copy');
+      instruction.id = 'crystalarium-live-guide-instruction';
       instruction.append(
-        node('strong', '', prompt.title),
+        node(
+          'strong',
+          '',
+          inspectingGoal
+            ? '4 of 5 • Look at the picture'
+            : activeLesson === 'offer'
+              ? '5 of 5 • Offer'
+              : firstLesson
+                ? prompt.title.replace('of 4', 'of 5')
+                : prompt.title,
+        ),
         node(
           'span',
           '',
-          activeLesson === 'grow'
-            ? 'Tap the glowing Low generator in the middle to grow your first crystal.'
-            : prompt.instruction,
+          inspectingGoal
+            ? 'Look at the crystal picture on the order card. It shows what you have made. Then choose Continue to offer.'
+            : activeLesson === 'grow'
+              ? 'Tap the glowing Low generator in the middle to grow your first crystal.'
+              : prompt.instruction,
         ),
       );
-      guide.append(instruction, this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
+      guide.append(instruction);
+      if (inspectingGoal) {
+        guide.append(
+          this.button('Continue to offer', 'goal-continue', () => {
+            this.goalInspected = true;
+            this.renderCurrent();
+            this.root
+              .querySelector<HTMLButtonElement>('[data-crystalarium-action="offer"]')
+              ?.focus({ preventScroll: true });
+          }),
+        );
+      }
+      guide.append(this.button('Skip guide', 'skip-guide', this.actions.skipGuide));
       orders.insertBefore(guide, orderRow);
     }
     const children: HTMLElement[] = [header, scene, message];
@@ -650,7 +727,7 @@ export class CrystalariumIllustratedView {
     // restoring the old offset, otherwise the temporarily wider rail clamps
     // scrollLeft and loses the position on sound/guide redraws.
     syncOrderNavigation();
-    rail.scrollLeft = scrollLeft;
+    rail.scrollLeft = activeLesson === 'offer' ? 0 : scrollLeft;
     syncOrderNavigation();
     // Browser zoom and desktop resizing can change the number of visible
     // cards without a gameplay re-render. Reuse one observer per live view.
@@ -672,9 +749,41 @@ export class CrystalariumIllustratedView {
             : '[data-crystalarium-action="' + selectedKey + '"]';
       this.root.querySelector<HTMLButtonElement>(query)?.focus({ preventScroll: true });
     }
+    // Anchor visual guidance to the real, currently permitted control.
+    // The shade and arrow never receive pointer input or replace game actions.
+    const lessonTarget = inspectingGoal
+      ? this.root.querySelector<HTMLElement>('[data-crystalarium-goal-preview="true"]')
+      : activeLesson === 'grow'
+        ? this.root.querySelector<HTMLElement>('[data-crystalarium-guide-target="true"]')
+        : activeLesson === 'pick-up' && prompt?.sourceIndex !== undefined
+          ? this.root.querySelector<HTMLElement>(
+              '[data-crystalarium-cell="' + prompt.sourceIndex + '"]',
+            )
+          : activeLesson === 'merge' && prompt?.targetIndex !== undefined
+            ? this.root.querySelector<HTMLElement>(
+                '[data-crystalarium-cell="' + prompt.targetIndex + '"]',
+              )
+            : activeLesson === 'offer'
+              ? this.root.querySelector<HTMLElement>('.crystalarium-live-order-card.is-guide-focus')
+              : null;
+    if (lessonTarget && prompt) {
+      lessonTarget.setAttribute('aria-describedby', 'crystalarium-live-guide-instruction');
+      const cue = inspectingGoal
+        ? 'Look here'
+        : activeLesson === 'grow'
+          ? 'Grow here'
+          : activeLesson === 'pick-up'
+            ? 'Pick this'
+            : activeLesson === 'merge'
+              ? 'Match here'
+              : 'Offer here';
+      this.spotlight.show(lessonTarget, cue);
+    }
   }
 
   public destroy(): void {
+    this.goalInspected = false;
+    this.spotlight.destroy();
     this.orderRailObserver?.disconnect();
     this.growthFx.destroy();
     this.dragging.destroy();

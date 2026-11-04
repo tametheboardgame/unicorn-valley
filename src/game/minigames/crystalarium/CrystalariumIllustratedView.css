@@ -242,6 +242,8 @@
   min-height: 0;
 }
 .crystalarium-live-cell {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
   min-width: 0;
   min-height: 0 !important;
   width: 100%;
@@ -249,6 +251,9 @@
   padding: 2px;
   border: 0 !important;
   border-radius: 8px !important;
+  /* The illustrated board does not scroll: preserve held touch drags. */
+  touch-action: none;
+  user-select: none;
   background:
     #224664 url("/design-assets/crystalarium-c17/socket-empty.webp") center / 100% 100% no-repeat !important;
   display: grid;
@@ -463,140 +468,128 @@
   gap: 8px;
   align-items: center;
 }
+/* C23A: simple, horizontally scrolling resonance tiles. Width follows the
+   number of pictured goals; every crystal stays large enough to recognise.
+   Each tile remains the genuine Offer button, with no extra gameplay action. */
 .crystalarium-live-order-card {
   position: relative;
   isolation: isolate;
-  width: clamp(195px, 16vw, 284px);
-  flex: 0 0 clamp(195px, 16vw, 284px);
-  aspect-ratio: 512 / 704;
-  height: auto;
+  flex: 0 0 clamp(196px, 17vw, 230px);
+  width: clamp(196px, 17vw, 230px);
+  height: clamp(182px, 27vh, 232px);
+  max-height: 100%;
+  min-height: 0;
+  aspect-ratio: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: clamp(2px, 0.6vh, 8px);
-  padding: 15% 10%;
-  color: #342345 !important;
-  border: 0 !important;
-  background:
-    url("/design-assets/crystalarium-c17/resonance-orders/order-card-clean.svg") center / 100% 100%
-    no-repeat !important;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 2px solid #d0c58f !important;
+  border-radius: 16px !important;
+  color: #193d51 !important;
+  background: linear-gradient(160deg, #fcf8e9, #d7eae6) !important;
+  box-shadow: 0 5px 15px rgb(2 17 40 / 32%);
   scroll-snap-align: start;
   text-align: center;
-}
-.crystalarium-live-order-card > * {
-  position: relative;
-  z-index: 1;
 }
 .crystalarium-live-order-card:disabled {
   opacity: 1;
 }
 .crystalarium-live-order-card.is-ready {
-  filter: drop-shadow(0 0 13px #8afde0);
-}
-/* On two-goal orders, stacked crystal requirements need their own safe
-   artwork insets. Reserve room around the top jewel and bottom ornament
-   even when Ready to offer wraps onto two lines. */
-.crystalarium-live-order-card.has-two-goals {
-  width: clamp(230px, 18vw, 306px);
-  flex-basis: clamp(230px, 18vw, 306px);
-  padding: 24% 12% 20%;
-  gap: 3px;
-}
-.crystalarium-live-order-card.has-two-goals > strong {
-  max-width: 100%;
-  font-size: clamp(13px, 1vw, 16px);
-  line-height: 1.12;
-  overflow-wrap: break-word;
-}
-.crystalarium-live-order-card.has-two-goals .crystalarium-live-goals {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-  flex: 0 1 auto;
-  gap: 3px;
-  margin: 2px 0;
-}
-.crystalarium-live-order-card.has-two-goals .crystalarium-live-goal img {
-  width: clamp(34px, 3.1vw, 49px);
-  height: clamp(39px, 3.5vw, 52px);
-}
-.crystalarium-live-order-card.has-two-goals > em {
-  max-width: 100%;
-  font-size: 12px;
-  line-height: 1.15;
-}
-/* Three requirements keep their accepted two rows in the first column,
-   followed by the second column. Single-goal cards are unchanged. */
-.crystalarium-live-order-card.has-three-goals {
-  width: clamp(230px, 18vw, 300px);
-  flex-basis: clamp(230px, 18vw, 300px);
-  padding: 13% 12%;
-  gap: 3px;
-}
-.crystalarium-live-order-card.has-three-goals > strong {
-  max-width: 100%;
-  font-size: clamp(13px, 1vw, 16px);
-  line-height: 1.12;
-  overflow-wrap: break-word;
-}
-.crystalarium-live-order-card.has-three-goals .crystalarium-live-goals {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(2, max-content);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  place-items: center;
-  column-gap: 10px;
-  row-gap: 4px;
-  width: 100%;
-  flex: 0 1 auto;
-  max-height: none;
-  margin: 2px 0;
-}
-.crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
-  width: clamp(30px, 2.7vw, 43px);
-  height: clamp(35px, 3.1vw, 48px);
-}
-.crystalarium-live-order-card.has-three-goals > em {
-  max-width: 100%;
-  font-size: 12px;
-  line-height: 1.15;
+  border-color: #9af1c6 !important;
+  background: linear-gradient(155deg, #f5ffdc, #bfe7d6) !important;
+  box-shadow:
+    0 0 0 2px #53dca6,
+    0 0 16px #78eed1ab;
 }
 .crystalarium-live-order-card.is-ready:not(:disabled) {
   cursor: pointer;
 }
-.crystalarium-live-order-card strong {
+.crystalarium-live-order-card > strong {
+  display: block;
+  flex: 0 0 auto;
+  width: 100%;
   font:
-    700 clamp(12px, 1.1vw, 16px) / 1.1 Georgia,
+    800 clamp(15px, 1.4vw, 19px) / 1.17 Georgia,
     serif;
+  overflow-wrap: break-word;
+  color: #1c3d55;
 }
 .crystalarium-live-goals {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 7px;
+  width: 100%;
   max-width: 100%;
-  min-width: 0;
-  margin: 5px 0;
-  flex-wrap: wrap;
+  margin: 0;
+  flex-wrap: nowrap;
 }
 .crystalarium-live-goal {
+  flex: 0 1 auto;
   display: grid;
+  align-content: center;
   justify-items: center;
-  font-weight: 800;
-  font-size: 11px;
+  gap: 2px;
+  min-width: 0;
+  min-height: 0;
+  padding: 3px 4px;
+  border: 1px solid #afc9c7;
+  border-radius: 11px;
+  background: #ffffffad;
+  color: #17475b;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.1;
 }
 .crystalarium-live-goal img {
-  width: clamp(37px, 4.8vw, 62px);
-  height: clamp(42px, 5.5vw, 68px);
+  display: block;
+  width: clamp(74px, 7vw, 94px);
+  height: clamp(78px, 8vw, 100px);
+  max-width: 100%;
+  object-fit: contain;
+}
+.crystalarium-live-order-card.has-two-goals {
+  flex-basis: clamp(280px, 25vw, 330px);
+  width: clamp(280px, 25vw, 330px);
+}
+.crystalarium-live-order-card.has-three-goals {
+  flex-basis: clamp(370px, 33vw, 420px);
+  width: clamp(370px, 33vw, 420px);
+}
+.crystalarium-live-order-card.has-three-goals .crystalarium-live-goal {
+  padding-inline: 2px;
+}
+.crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
+  width: clamp(73px, 6.8vw, 90px);
+  height: clamp(78px, 7.5vw, 96px);
+}
+.crystalarium-live-order-card > small {
+  color: #24576b;
+  font-size: 12px;
+  font-weight: 800;
 }
 .crystalarium-live-order-card em {
-  font-size: 12px;
+  display: inline-block;
+  flex: 0 0 auto;
+  padding: 5px 16px;
+  min-height: 27px;
+  border-radius: 999px;
+  background: #d2e0df;
+  color: #1c5063;
+  font-size: 14px;
   font-style: normal;
-  font-weight: 800;
-  color: #17637b;
+  font-weight: 900;
+  line-height: 1.2;
 }
 .crystalarium-live-order-card.is-ready em {
-  color: #127049;
+  background: #15684b;
+  color: #fffde8;
 }
 .crystalarium-live-tools {
   grid-column: 3;
@@ -852,33 +845,10 @@
     max-width: 100%;
     width: min(100%, 92cqh);
   }
+  /* The rail scrolls, not the crystals. Retain compact/medium/wide sizing
+     at tablet widths instead of forcing the same wide card on every order. */
   .crystalarium-live-order-card {
-    flex-basis: clamp(145px, 16vw, 190px);
-    width: clamp(145px, 16vw, 190px);
-    height: auto;
-    padding: 12%;
-  }
-  .crystalarium-live-order-card.has-two-goals {
-    width: clamp(210px, 23vw, 240px);
-    flex-basis: clamp(210px, 23vw, 240px);
-    padding: 24% 11% 19%;
-  }
-  .crystalarium-live-order-card.has-two-goals .crystalarium-live-goal img {
-    width: 31px;
-    height: 36px;
-  }
-  .crystalarium-live-order-card.has-three-goals {
-    width: clamp(175px, 20vw, 205px);
-    flex-basis: clamp(175px, 20vw, 205px);
-    padding: 14% 10%;
-  }
-  .crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
-    width: 31px;
-    height: 36px;
-  }
-  .crystalarium-live-goal img {
-    width: 38px;
-    height: 43px;
+    height: min(200px, 100%);
   }
   .crystalarium-live-producers {
     gap: 3px;
@@ -922,6 +892,65 @@
     height: 32px;
   }
 }
+/* C23B: tablet portrait keeps the playable board dominant instead of
+   compressing it into the desktop's three narrow columns. The wells stay
+   rooted alongside the board; tools and swipeable orders take full-width rows.
+   This is presentation only, using the existing controller and Offer buttons. */
+@media (min-width: 701px) and (max-width: 1100px) and (orientation: portrait) {
+  .crystalarium-live-scene {
+    grid-template-columns: minmax(0, 1fr) clamp(96px, 12vw, 128px);
+    grid-template-rows: minmax(0, 1fr) 88px minmax(220px, 26dvh);
+    gap: 7px;
+  }
+  .crystalarium-live-garden {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .crystalarium-live-producers {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .crystalarium-live-tools {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 9px;
+  }
+  .crystalarium-live-tools h2 {
+    flex: 0 0 auto;
+  }
+  .crystalarium-live-tool-row {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+  }
+  .crystalarium-live-tool {
+    min-height: 48px;
+  }
+  .crystalarium-live-tool img {
+    height: 28px;
+    width: 28px;
+  }
+  .crystalarium-live-orders {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    padding: 8px;
+  }
+  .crystalarium-live-orders-row {
+    min-height: 0;
+  }
+  .crystalarium-live-order-card {
+    height: min(195px, 100%);
+  }
+  /* The tutorial includes an instruction bar and real target spotlight.
+     Reserve room for it without replacing, floating or hiding the order. */
+  .crystalarium-live-scene:has(.crystalarium-live-guide) {
+    grid-template-rows: minmax(0, 1fr) 88px minmax(330px, 38dvh);
+  }
+}
 /* Preserve native portrait controls pending C23's responsive integration. */
 @media (pointer: coarse) and (max-width: 700px) and (orientation: portrait) {
   .crystalarium-live {
@@ -939,32 +968,14 @@
   .crystalarium-live-well img {
     height: 43px;
   }
+  /* Short landscape screens keep 74px+ crystal artwork, never the old 31px. */
   .crystalarium-live-order-card {
-    flex-basis: clamp(160px, 15vw, 200px);
-    width: clamp(160px, 15vw, 200px);
-    height: auto;
-  }
-  .crystalarium-live-order-card.has-two-goals {
-    width: clamp(215px, 22vw, 250px);
-    flex-basis: clamp(215px, 22vw, 250px);
-    padding: 24% 11% 19%;
-  }
-  .crystalarium-live-order-card.has-two-goals .crystalarium-live-goal img {
-    width: 31px;
-    height: 36px;
-  }
-  .crystalarium-live-order-card.has-three-goals {
-    flex-basis: clamp(180px, 17vw, 225px);
-    width: clamp(180px, 17vw, 225px);
-    padding: 13% 10%;
-  }
-  .crystalarium-live-order-card.has-three-goals .crystalarium-live-goal img {
-    width: 31px;
-    height: 36px;
+    height: min(190px, 100%);
+    padding-block: 8px;
   }
   .crystalarium-live-order-card .crystalarium-live-goal img {
-    height: 40px;
-    width: 38px;
+    width: 74px;
+    height: 78px;
   }
 }
 /* Board-led 7 × 6 geometry with tall portrait cells and no internal scrolling. */
@@ -995,4 +1006,87 @@
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* C22A: non-modal, pointer-transparent spotlight over the REAL game.
+   The four shade segments leave the target itself undimmed; the existing
+   controller (not the shade) rejects unrelated actions. */
+.crystalarium-live-spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  overflow: hidden;
+}
+.crystalarium-live-spotlight[hidden],
+.crystalarium-live-spotlight-arrow[hidden] {
+  display: none;
+}
+.crystalarium-live-spotlight-shade {
+  position: absolute;
+  background: #031124b8;
+  pointer-events: none;
+}
+.crystalarium-live-spotlight-arrow {
+  position: absolute;
+  width: 112px;
+  height: 30px;
+  border: 2px solid #f8d98c;
+  border-radius: 10px;
+  background: #fff0bf;
+  color: #173850;
+  font:
+    800 11px / 26px system-ui,
+    sans-serif;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px #071d3bba;
+  pointer-events: none;
+}
+.crystalarium-live-spotlight-arrow::before {
+  content: "↓";
+  margin-right: 5px;
+}
+.crystalarium-live-spotlight-arrow[data-direction="up"]::before {
+  content: "↑";
+}
+.crystalarium-live-spotlight-arrow[data-direction="left"]::before {
+  content: "←";
+}
+.crystalarium-live-spotlight-arrow[data-direction="right"]::before {
+  content: "→";
+}
+/* Keep the real Skip/Leave/Sound controls and guide instructions legible,
+   but never introduce a modal pane that could block tapping a crystal. */
+.crystalarium-live:has(.crystalarium-live-spotlight) .crystalarium-live-header {
+  position: relative;
+  z-index: 10;
+}
+.crystalarium-live:has(.crystalarium-live-spotlight) .crystalarium-live-guide {
+  z-index: 10;
+}
+@media (prefers-reduced-motion: reduce) {
+  .crystalarium-live-spotlight,
+  .crystalarium-live-spotlight-arrow {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* C22: illustrated recipe inspection before the existing Offer action. */
+.crystalarium-live-goals.is-guide-goal {
+  outline: 3px solid #fff1ab;
+  outline-offset: 4px;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px #0bcabe);
+}
+.crystalarium-live-guide [data-crystalarium-action="goal-continue"] {
+  color: #142f49;
+  background: #ffdf8a;
+  border: 2px solid #91642f;
+  font-weight: 800;
+}
+.crystalarium-live-guide [data-crystalarium-action="goal-continue"]:focus-visible {
+  outline: 3px solid #007f90;
+  outline-offset: 2px;
 }

@@ -97,6 +97,19 @@ export class CrystalariumFullMode {
     this.scene.cameras.main.setBackgroundColor('#142944');
     const actions: CrystalariumPortraitActions = {
       cell: (index) => this.pick(index),
+      dragPickUp: (source) => {
+        if (
+          this.guide.getPrompt()?.lessonStep !== 'pick-up' ||
+          !this.guide.allows({ kind: 'pick', index: source })
+        ) {
+          return null;
+        }
+        this.guide.picked(source);
+        return this.guide.getPrompt();
+      },
+      dragCancelPickUp: (source) => {
+        if (this.guide.unpicked(source)) this.render();
+      },
       dragMove: (source, target) => {
         if (this.guide.getPrompt()?.lessonStep === 'pick-up') {
           if (!this.permitted({ kind: 'pick', index: source })) return;
